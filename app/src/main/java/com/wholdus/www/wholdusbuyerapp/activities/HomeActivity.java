@@ -1,13 +1,15 @@
-package com.wholdus.www.wholdusbuyerapp;
+package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class LoginSignupActivity extends AppCompatActivity {
+import com.wholdus.www.wholdusbuyerapp.R;
+
+public class HomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login_signup);
+        setContentView(R.layout.activity_home);
     }
 }

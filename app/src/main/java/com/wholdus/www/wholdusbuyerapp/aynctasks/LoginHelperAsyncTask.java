@@ -1,4 +1,4 @@
-package com.wholdus.www.wholdusbuyerapp;
+package com.wholdus.www.wholdusbuyerapp.aynctasks;
 
 import android.content.Context;
 import android.content.SharedPreferences;

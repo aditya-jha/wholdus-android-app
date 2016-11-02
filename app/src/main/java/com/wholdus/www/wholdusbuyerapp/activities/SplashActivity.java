@@ -1,9 +1,12 @@
-package com.wholdus.www.wholdusbuyerapp;
+package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+
+import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.aynctasks.LoginHelperAsyncTask;
 
 public class SplashActivity extends AppCompatActivity {
 
