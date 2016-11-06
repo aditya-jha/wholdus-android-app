@@ -74,7 +74,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void startLoginSignupActivity() {
-        Intent intent = new Intent(this, IntroActivity.class);
+        Intent intent = new Intent(this, LoginSignupActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
