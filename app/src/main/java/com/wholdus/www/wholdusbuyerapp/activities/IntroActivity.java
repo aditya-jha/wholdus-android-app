@@ -28,7 +28,17 @@ public class IntroActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
 
-        mIntroPagerDots = (LinearLayout) findViewById(R.id.introPagerDots);
+        initIntroPagerDots();
+        initViewPagerSettings();
+    }
+
+    public void finishIntro() {
+        Intent intent = new Intent(this, LoginSignupActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void initViewPagerSettings() {
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
         mPagerAdapter = new IntroViewPagerAdapter(getSupportFragmentManager(), TOTAL_DOTS, this);
         mViewPager.setAdapter(mPagerAdapter);
@@ -49,14 +59,6 @@ public class IntroActivity extends FragmentActivity {
 
             }
         });
-
-        initIntroPagerDots();
-    }
-
-    public void finishIntro() {
-        Intent intent = new Intent(this, HomeActivity.class);
-        startActivity(intent);
-        finish();
     }
 
     private int getPixelFromDPValue(int dpValue) {
@@ -69,7 +71,9 @@ public class IntroActivity extends FragmentActivity {
     }
 
     private void initIntroPagerDots() {
+        mIntroPagerDots = (LinearLayout) findViewById(R.id.introPagerDots);
         mDots = new ImageView[TOTAL_DOTS];
+
         for(int i=0; i<TOTAL_DOTS; i++) {
             mDots[i] = new ImageView(this);
             mDots[i].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.nonselected_dot));
