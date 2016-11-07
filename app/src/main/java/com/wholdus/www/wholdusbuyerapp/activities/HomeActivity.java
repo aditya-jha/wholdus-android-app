@@ -1,7 +1,9 @@
-package com.wholdus.www.wholdusbuyerapp;
+package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.wholdus.www.wholdusbuyerapp.R;
 
 public class HomeActivity extends AppCompatActivity {
 
