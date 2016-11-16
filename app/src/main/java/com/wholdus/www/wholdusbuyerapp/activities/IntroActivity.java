@@ -39,7 +39,7 @@ public class IntroActivity extends FragmentActivity implements IntroSlideFragmen
 
     @Override
     public void onStartButtonClicked() {
-        Intent intent = new Intent(this, HomeActivity.class);
+        Intent intent = new Intent(this, LoginSignupActivity.class);
         startActivity(intent);
         finish();
     }
