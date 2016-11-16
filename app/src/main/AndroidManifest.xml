@@ -19,8 +19,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.LoginSignupActivity" />
-        <activity android:name=".activities.IntroActivity"
-            android:theme="@style/FullPageWithBackgroundTheme"></activity>
+        <activity android:name=".activities.IntroActivity" />
     </application>
 
 </manifest>
