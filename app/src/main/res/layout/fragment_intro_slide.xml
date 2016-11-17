@@ -15,33 +15,31 @@
         tools:scaleType="fitCenter"
         tools:src="@drawable/wholdus_logo" />
 
-   <LinearLayout
-       android:layout_width="match_parent"
-       android:layout_height="0dp"
-       android:layout_weight="2"
-       android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:orientation="vertical">
 
-       <TextView
-           android:id="@+id/textView"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:gravity="center_horizontal"
-           android:textColor="@android:color/white"
-           android:textSize="@dimen/intro_text_size"
-           android:textStyle="bold"
-           tools:text="something great about wholdus goes here"
-           tools:textColor="@android:color/black"/>
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textSize="@dimen/intro_text_size"
+            android:textStyle="bold"
+            tools:text="something great about wholdus goes here"
+            tools:textColor="@android:color/black" />
 
-       <Button
-           android:id="@+id/startButton"
-           android:layout_marginTop="@dimen/activity_vertical_margin"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:text="@string/start_button"
-           android:layout_gravity="center_horizontal"
-           android:textSize="@dimen/intro_text_size"
-           android:padding="@dimen/activity_vertical_margin"
-           />
-   </LinearLayout>
+        <Button
+            android:id="@+id/startButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:padding="@dimen/activity_vertical_margin"
+            android:text="@string/start_button"
+            android:textSize="@dimen/intro_text_size" />
+    </LinearLayout>
 
 </LinearLayout>

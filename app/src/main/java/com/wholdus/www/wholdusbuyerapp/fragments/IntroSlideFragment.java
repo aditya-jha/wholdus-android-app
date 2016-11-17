@@ -1,5 +1,6 @@
 package com.wholdus.www.wholdusbuyerapp.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -24,6 +25,11 @@ public class IntroSlideFragment extends Fragment {
     private int mImageResourceID;
     private String mDisplayText;
     private int mStartButtonState;
+    private OnIntroSlideListener mIntroSlideListener;
+
+    public interface OnIntroSlideListener {
+        void onStartButtonClicked();
+    }
 
     public IntroSlideFragment() {}
 
@@ -51,11 +57,28 @@ public class IntroSlideFragment extends Fragment {
             startButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((IntroActivity)getActivity()).finishIntro();
+                    mIntroSlideListener.onStartButtonClicked();
                 }
             });
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            mIntroSlideListener = (OnIntroSlideListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement OnIntroSlideListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mIntroSlideListener = null;
     }
 }

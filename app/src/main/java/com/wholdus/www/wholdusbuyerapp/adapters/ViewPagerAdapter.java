@@ -13,12 +13,12 @@ import com.wholdus.www.wholdusbuyerapp.fragments.IntroSlideFragment;
  * Created by aditya on 6/11/16.
  */
 
-public class IntroViewPagerAdapter extends FragmentStatePagerAdapter {
+public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private Context mContext;
     private int mTotalPages;
 
-    public IntroViewPagerAdapter(FragmentManager fm, int totalPages, Context context) {
+    public ViewPagerAdapter(FragmentManager fm, int totalPages, Context context) {
         super(fm);
         mTotalPages = totalPages;
         mContext = context;
@@ -26,6 +26,21 @@ public class IntroViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
+        String callersClassName = mContext.getClass().getSimpleName();
+
+        if(callersClassName.equals("IntroActivity")) {
+            return handleIntroActivityCase(position);
+        }
+
+        return null;
+    }
+
+    @Override
+    public int getCount() {
+        return mTotalPages;
+    }
+
+    private Fragment handleIntroActivityCase(int position) {
         IntroSlideFragment introSlideFragment = new IntroSlideFragment();
 
         switch (position) {
@@ -40,10 +55,5 @@ public class IntroViewPagerAdapter extends FragmentStatePagerAdapter {
                 break;
         }
         return introSlideFragment;
-    }
-
-    @Override
-    public int getCount() {
-        return mTotalPages;
     }
 }

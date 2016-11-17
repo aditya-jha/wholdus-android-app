@@ -5,16 +5,17 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.wholdus.www.wholdusbuyerapp.R;
-import com.wholdus.www.wholdusbuyerapp.adapters.IntroViewPagerAdapter;
+import com.wholdus.www.wholdusbuyerapp.adapters.ViewPagerAdapter;
+import com.wholdus.www.wholdusbuyerapp.fragments.IntroSlideFragment;
 
-public class IntroActivity extends FragmentActivity {
+public class IntroActivity extends FragmentActivity implements IntroSlideFragment.OnIntroSlideListener {
 
     private LinearLayout mIntroPagerDots;
     private ViewPager mViewPager;
@@ -28,11 +29,16 @@ public class IntroActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
 
+        if(savedInstanceState != null) {
+            Log.v("bundle ", savedInstanceState.toString());
+            return;
+        }
         initIntroPagerDots();
         initViewPagerSettings();
     }
 
-    public void finishIntro() {
+    @Override
+    public void onStartButtonClicked() {
         Intent intent = new Intent(this, LoginSignupActivity.class);
         startActivity(intent);
         finish();
@@ -40,7 +46,7 @@ public class IntroActivity extends FragmentActivity {
 
     private void initViewPagerSettings() {
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
-        mPagerAdapter = new IntroViewPagerAdapter(getSupportFragmentManager(), TOTAL_DOTS, this);
+        mPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), TOTAL_DOTS, this);
         mViewPager.setAdapter(mPagerAdapter);
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
