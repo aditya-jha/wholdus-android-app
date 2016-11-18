@@ -1,4 +1,4 @@
-package com.wholdus.www.wholdusbuyerapp.DataSource;
+package com.wholdus.www.wholdusbuyerapp.dataSource;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

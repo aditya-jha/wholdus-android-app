@@ -1,9 +1,16 @@
 package com.wholdus.www.wholdusbuyerapp.aynctasks;
 
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.text.TextUtils;
+
+import com.wholdus.www.wholdusbuyerapp.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by aditya on 2/11/16.
@@ -17,33 +24,76 @@ public class LoginHelperAsyncTask extends AsyncTask<String, Void, Boolean> {
     }
 
     private final String ACCESS_TOKEN_KEY = "com.wholdus.www.wholdusbuyerapp.ACCESS_TOKEN";
+    private final String REFRESH_TOKEN_KEY = "com.wholdus.www.wholdusbuyerapp.REFRESH_TOKEN";
     private Context mContext;
     private AsyncResponse mAsyncResponse;
+    private boolean mShowProgressDialog;
+    private String mProgressDialogMessage;
+    private ProgressDialog mProgressDialog;
 
     public LoginHelperAsyncTask(Context context, AsyncResponse asyncResponse) {
         mContext = context;
         mAsyncResponse = asyncResponse;
     }
 
+    public void setUpProgressDialog(boolean showProgress, String message) {
+        mShowProgressDialog = showProgress;
+        mProgressDialogMessage = message;
+    }
+
     @Override
     protected Boolean doInBackground(String... params) {
-        final String LoginHelperSharedPreference = "LoginHelperSharedPreference";
+        final String LoginHelperSharedPreference = mContext.getString(R.string.login_helper_shared_preference);
 
         SharedPreferences loginHelperSharedPreference;
         loginHelperSharedPreference = mContext.getSharedPreferences(LoginHelperSharedPreference, Context.MODE_PRIVATE);
 
-        if(params[0].equals("checkIfLoggedIn")) {
+        if (params[0].equals("checkIfLoggedIn")) {
             return checkIfLoggedIn(loginHelperSharedPreference);
-        } else if(params[0].equals("logIn") && !TextUtils.isEmpty(params[1])){
-            return logIn(loginHelperSharedPreference, params[1]);
+        } else if (params[0].equals("logIn")) {
+            try {
+                JSONObject data = new JSONObject(params[1]);
+                return logIn(loginHelperSharedPreference, data);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return false;
+            }
+        } else if (params[0].equals("logout")) {
+            return logout(loginHelperSharedPreference);
         }
 
         return false;
     }
 
     @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        if (mShowProgressDialog) {
+            mProgressDialog = new ProgressDialog(mContext);
+            mProgressDialog.setMessage(mProgressDialogMessage);
+            mProgressDialog.show();
+        }
+    }
+
+    @Override
     protected void onPostExecute(Boolean result) {
+        if (mShowProgressDialog) {
+            mProgressDialog.dismiss();
+        }
         mAsyncResponse.processFinish(result);
+    }
+
+    private boolean logout(SharedPreferences loginHelperSharedPreference) {
+        SharedPreferences.Editor editor = loginHelperSharedPreference.edit();
+        try {
+            editor.remove(ACCESS_TOKEN_KEY);
+            editor.remove(REFRESH_TOKEN_KEY);
+            editor.apply();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     private Boolean checkIfLoggedIn(SharedPreferences loginHelperSharedPreference) {
@@ -60,10 +110,18 @@ public class LoginHelperAsyncTask extends AsyncTask<String, Void, Boolean> {
         return !accessToken.equals("");
     }
 
-    private Boolean logIn(SharedPreferences loginHelperSharedPreference, String accessToken) {
+    private Boolean logIn(SharedPreferences loginHelperSharedPreference, JSONObject apiResponse) {
         SharedPreferences.Editor editor = loginHelperSharedPreference.edit();
 
-        editor.putString(ACCESS_TOKEN_KEY, accessToken);
+        try {
+            final String ACCESS_TOKEN = (String) apiResponse.get("access_token");
+            final String REFRESH_TOKEN = (String) apiResponse.get("refresh_token");
+
+            editor.putString(ACCESS_TOKEN_KEY, ACCESS_TOKEN);
+            editor.putString(REFRESH_TOKEN_KEY, REFRESH_TOKEN);
+        } catch (JSONException e) {
+            return false;
+        }
 
         try {
             editor.apply();

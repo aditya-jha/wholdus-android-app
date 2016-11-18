@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
-import com.wholdus.www.wholdusbuyerapp.DataSource.NavigationDrawerData;
+import com.wholdus.www.wholdusbuyerapp.dataSource.NavigationDrawerData;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.ExpandableListViewAdapter;
 
