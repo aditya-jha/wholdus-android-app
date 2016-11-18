@@ -1,11 +1,13 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.inputmethod.InputMethodManager;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.fragments.LoginFragment;
@@ -60,5 +62,14 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
         // start HomeActivity and finish this activity
         startActivity(new Intent(this, HomeActivity.class));
         finish();
+    }
+
+    @Override
+    public void hideSoftKeyboard() {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) this.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(
+                this.getCurrentFocus().getWindowToken(), 0);
     }
 }

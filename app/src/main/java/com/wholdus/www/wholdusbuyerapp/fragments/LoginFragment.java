@@ -75,7 +75,7 @@ public class LoginFragment extends Fragment {
             }
         };
         new Thread(runnable).start();
-        
+
         return rootView;
     }
 
@@ -165,6 +165,7 @@ public class LoginFragment extends Fragment {
     }
 
     private void handleLoginSubmitButtonClick() {
+        listener.hideSoftKeyboard();
         String password = getPassword();
         String mobileNumber = getMobileNumber();
 

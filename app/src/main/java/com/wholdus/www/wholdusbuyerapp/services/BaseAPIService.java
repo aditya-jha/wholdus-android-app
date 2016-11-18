@@ -42,13 +42,11 @@ public class BaseAPIService {
     }
 
     public void volleyStringRequest(int method, String endPoint, final String jsonData, final String REQUEST_TAG) {
-        final ProgressDialog progressDialog = showLoader("Loading...");
 
         StringRequest stringRequest = new StringRequest(method, endPoint,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        progressDialog.dismiss();
                         Intent intent = new Intent(mContext.getString(R.string.api_response));
                         intent.putExtra(mContext.getString(R.string.api_response_data_key), response);
                         mContext.sendBroadcast(intent);
@@ -56,7 +54,6 @@ public class BaseAPIService {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                progressDialog.dismiss();
                 NetworkResponse networkResponse = error.networkResponse;
                 if (networkResponse != null && networkResponse.data != null) {
                     switch (networkResponse.statusCode) {
@@ -87,19 +84,5 @@ public class BaseAPIService {
         };
 
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest, REQUEST_TAG);
-    }
-
-    private ProgressDialog showLoader(String message) {
-        ProgressDialog progressDialog = new ProgressDialog(mContext);
-        progressDialog.setMessage(message);
-        progressDialog.show();
-        return progressDialog;
-    }
-
-    private boolean haveNetworkConnection() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = connectivityManager.getActiveNetworkInfo();
-
-        return netInfo != null && netInfo.isConnected();
     }
 }
