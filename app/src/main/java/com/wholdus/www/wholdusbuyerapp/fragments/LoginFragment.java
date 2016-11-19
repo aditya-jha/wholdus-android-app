@@ -195,7 +195,7 @@ public class LoginFragment extends Fragment {
                             }
                         });
                 loginHelperAsyncTask.setUpProgressDialog(true, getString(R.string.login_progress_message));
-                loginHelperAsyncTask.execute(new String[]{"logIn", buyerLogin.toString()});
+                loginHelperAsyncTask.execute("login", buyerLogin.toString());
             }
 
         } catch (JSONException e) {
