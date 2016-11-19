@@ -16,6 +16,7 @@ public class NavigationDrawerData {
         data.put("Hand Picked For You", handPicked);
 
         ArrayList<String> store = new ArrayList<>();
+        store.add("Store Home");
         store.add("Store Products");
         store.add("Purchase Requests");
         data.put("My Store", store);

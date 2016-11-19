@@ -76,8 +76,6 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
             } else {
                 imageView.setImageResource(R.drawable.ic_expand_more_black_24dp);
             }
-        } else {
-            imageView.setVisibility(View.GONE);
         }
 
         return convertView;

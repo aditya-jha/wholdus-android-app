@@ -29,7 +29,8 @@ public class NavigationDrawerFragment extends Fragment {
     private ExpandableListView mExpandableListView;
     private ExpandableListViewAdapter mExpandableListViewAdapter;
 
-    public NavigationDrawerFragment() {}
+    public NavigationDrawerFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,17 +60,55 @@ public class NavigationDrawerFragment extends Fragment {
                     case 4:
                         logout();
                         return true;
+                    default:
+                        return false;
                 }
-                return false;
             }
         });
 
         mExpandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                return false;
+                switch (groupPosition) {
+                    case 1:
+                        return handleStoreCase(groupPosition, childPosition);
+                    case 2:
+                        return handleAccountCase(groupPosition, childPosition);
+                    case 3:
+                        return handleHelpSupportCase(groupPosition, childPosition);
+                    default:
+                        return false;
+                }
             }
         });
+    }
+
+    private boolean handleStoreCase(int groupPosition, int childPosition) {
+        switch (childPosition) {
+            case 4:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private boolean handleAccountCase(int groupPosition, int childPosition) {
+        switch (childPosition) {
+            case 4:
+                logout();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private boolean handleHelpSupportCase(int groupPosition, int childPosition) {
+        switch (childPosition) {
+            case 1:
+                return true;
+            default:
+                return false;
+        }
     }
 
     private void logout() {
@@ -77,7 +116,7 @@ public class NavigationDrawerFragment extends Fragment {
                 new LoginHelperAsyncTask.AsyncResponse() {
                     @Override
                     public void processFinish(Boolean output) {
-                        if(output) {
+                        if (output) {
                             startActivity(new Intent(getContext(), LoginSignupActivity.class));
                             getActivity().finish();
                         }
