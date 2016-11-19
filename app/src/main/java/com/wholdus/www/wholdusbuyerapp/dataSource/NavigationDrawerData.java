@@ -34,6 +34,8 @@ public class NavigationDrawerData {
         helpSupport.add("About Us");
         data.put("Help And Support", helpSupport);
 
+        data.put("Logout", new ArrayList<String>());
+
         return data;
     }
 }

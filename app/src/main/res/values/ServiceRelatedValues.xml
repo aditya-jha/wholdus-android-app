@@ -5,5 +5,5 @@
 
     <string name="login_helper_shared_preference">LoginHelperSharedPreference</string>
 
-    <string name="logout_loader_message">Logging you out..</string>
+    <string name="logout_loader_message">Logging out&#8230;</string>
 </resources>
