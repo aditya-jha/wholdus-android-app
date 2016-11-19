@@ -94,6 +94,9 @@ public class NavigationDrawerFragment extends Fragment {
 
     private boolean handleAccountCase(int groupPosition, int childPosition) {
         switch (childPosition) {
+            case 0:
+                // open profile fragment of account activity
+                
             case 4:
                 logout();
                 return true;
