@@ -4,11 +4,14 @@ package com.wholdus.www.wholdusbuyerapp.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
+import com.wholdus.www.wholdusbuyerapp.activities.AccountActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.LoginSignupActivity;
 import com.wholdus.www.wholdusbuyerapp.aynctasks.LoginHelperAsyncTask;
 import com.wholdus.www.wholdusbuyerapp.dataSource.NavigationDrawerData;
@@ -24,11 +27,6 @@ import java.util.List;
  */
 public class NavigationDrawerFragment extends Fragment {
 
-    private LinkedHashMap<String, List<String>> mNavigationDrawerData;
-    private ArrayList<String> mNavigationDrawerDataTitles;
-    private ExpandableListView mExpandableListView;
-    private ExpandableListViewAdapter mExpandableListViewAdapter;
-
     public NavigationDrawerFragment() {
     }
 
@@ -42,11 +40,13 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     private void initNavigationDrawer(ViewGroup rootView) {
-        mExpandableListView = (ExpandableListView) rootView.findViewById(R.id.expandable_list_view);
+        final DrawerLayout mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
+        ExpandableListView mExpandableListView = (ExpandableListView) rootView.findViewById(R.id.expandable_list_view);
+        LinkedHashMap<String, List<String>> mNavigationDrawerData;
         mNavigationDrawerData = NavigationDrawerData.getData();
-        mNavigationDrawerDataTitles = new ArrayList<>(mNavigationDrawerData.keySet());
+        ArrayList<String> mNavigationDrawerDataTitles = new ArrayList<>(mNavigationDrawerData.keySet());
 
-        mExpandableListViewAdapter = new ExpandableListViewAdapter(getContext(),
+        ExpandableListViewAdapter mExpandableListViewAdapter = new ExpandableListViewAdapter(getContext(),
                 mNavigationDrawerDataTitles, mNavigationDrawerData,
                 R.layout.navigation_drawer_list_group, R.layout.navigation_drawer_list_item);
         mExpandableListView.setAdapter(mExpandableListViewAdapter);
@@ -71,19 +71,24 @@ public class NavigationDrawerFragment extends Fragment {
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 switch (groupPosition) {
                     case 1:
-                        return handleStoreCase(groupPosition, childPosition);
+                        handleStoreCase(childPosition);
+                        break;
                     case 2:
-                        return handleAccountCase(groupPosition, childPosition);
+                        handleAccountCase(childPosition);
+                        break;
                     case 3:
-                        return handleHelpSupportCase(groupPosition, childPosition);
+                        handleHelpSupportCase(childPosition);
+                        break;
                     default:
                         return false;
                 }
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                return true;
             }
         });
     }
 
-    private boolean handleStoreCase(int groupPosition, int childPosition) {
+    private boolean handleStoreCase(int childPosition) {
         switch (childPosition) {
             case 4:
                 return true;
@@ -92,20 +97,35 @@ public class NavigationDrawerFragment extends Fragment {
         }
     }
 
-    private boolean handleAccountCase(int groupPosition, int childPosition) {
+    private boolean handleAccountCase(int childPosition) {
+        Intent intent = new Intent(getContext(), AccountActivity.class);
+
         switch (childPosition) {
             case 0:
-                // open profile fragment of account activity
-                
-            case 4:
-                logout();
-                return true;
+                // open profile fragment
+                intent.putExtra("openFragment", "profile");
+                break;
+            case 1:
+                // open orders fragment
+                intent.putExtra("openFragment", "orders");
+                break;
+            case 2:
+                // TODO: what happens here
+                return false;
+            case 3:
+                // open rejected products
+                intent.putExtra("openFragment", "rejectProducts");
+                break;
             default:
                 return false;
         }
+
+        startActivity(intent);
+
+        return true;
     }
 
-    private boolean handleHelpSupportCase(int groupPosition, int childPosition) {
+    private boolean handleHelpSupportCase(int childPosition) {
         switch (childPosition) {
             case 1:
                 return true;
