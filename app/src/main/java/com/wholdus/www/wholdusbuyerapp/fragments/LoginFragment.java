@@ -190,12 +190,12 @@ public class LoginFragment extends Fragment {
                                 if (output) {
                                     listener.loginSuccess();
                                 } else {
-                                    Toast.makeText(getContext(), "Somethine went wrong. Please try again", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), "Something went wrong. Please try again", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
                 loginHelperAsyncTask.setUpProgressDialog(true, getString(R.string.login_progress_message));
-                loginHelperAsyncTask.execute("login", buyerLogin.toString());
+                loginHelperAsyncTask.execute("logIn", buyerLogin.toString());
             }
 
         } catch (JSONException e) {
