@@ -22,6 +22,7 @@
         </activity>
         <activity android:name=".activities.LoginSignupActivity" />
         <activity android:name=".activities.IntroActivity" />
+        <activity android:name=".activities.AccountActivity"></activity>
     </application>
 
 </manifest>
