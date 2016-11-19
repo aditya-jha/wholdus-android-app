@@ -1,7 +1,6 @@
 package com.wholdus.www.wholdusbuyerapp.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,8 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
-import com.wholdus.www.wholdusbuyerapp.activities.HomeActivity;
-import com.wholdus.www.wholdusbuyerapp.activities.IntroActivity;
 
 /**
  * Created by aditya on 6/11/16.

@@ -1,11 +1,9 @@
 package com.wholdus.www.wholdusbuyerapp.aynctasks;
 
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.text.TextUtils;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 
@@ -48,21 +46,22 @@ public class LoginHelperAsyncTask extends AsyncTask<String, Void, Boolean> {
         SharedPreferences loginHelperSharedPreference;
         loginHelperSharedPreference = mContext.getSharedPreferences(LoginHelperSharedPreference, Context.MODE_PRIVATE);
 
-        if (params[0].equals("checkIfLoggedIn")) {
-            return checkIfLoggedIn(loginHelperSharedPreference);
-        } else if (params[0].equals("logIn")) {
-            try {
-                JSONObject data = new JSONObject(params[1]);
-                return logIn(loginHelperSharedPreference, data);
-            } catch (JSONException e) {
-                e.printStackTrace();
+        switch (params[0]) {
+            case "checkIfLoggedIn":
+                return checkIfLoggedIn(loginHelperSharedPreference);
+            case "logIn":
+                try {
+                    JSONObject data = new JSONObject(params[1]);
+                    return logIn(loginHelperSharedPreference, data);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            case "logout":
+                return logout(loginHelperSharedPreference);
+            default:
                 return false;
-            }
-        } else if (params[0].equals("logout")) {
-            return logout(loginHelperSharedPreference);
         }
-
-        return false;
     }
 
     @Override

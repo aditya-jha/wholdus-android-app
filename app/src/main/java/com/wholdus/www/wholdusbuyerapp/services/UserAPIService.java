@@ -1,7 +1,6 @@
 package com.wholdus.www.wholdusbuyerapp.services;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.Request;
