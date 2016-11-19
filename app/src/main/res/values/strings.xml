@@ -19,7 +19,8 @@
     <string name="login_fragment_header">Login</string>
     <string name="signup_button_on_login_fragment"><u>Create one</u></string>
     <string name="no_account">No account yet? </string>
-    <string name="login_progress_message">Credentials verified! Loggin you in..</string>
+    <string name="verifying_credentials">Verifying Credentials&#8230;</string>
+    <string name="login_progress_message">Logging you in&#8230;</string>
     <string name="login_error_message">Invalid Credentials! Please try again</string>
 
     <!-- ForgotPassword Fragment -->
