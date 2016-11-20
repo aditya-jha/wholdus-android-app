@@ -5,4 +5,7 @@
     <string name="login_url">users/buyer/login/</string>
     <string name="signup_url">leads/buyer/</string>
     <string name="forgot_password_url"></string>
+
+    <!-- buyer related apis -->
+    <string name="buyer_details_url">users/buyer/</string>
 </resources>

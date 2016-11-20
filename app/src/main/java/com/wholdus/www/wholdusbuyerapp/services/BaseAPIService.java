@@ -1,5 +1,6 @@
 package com.wholdus.www.wholdusbuyerapp.services;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
@@ -10,6 +11,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.WholdusApplication;
 import com.wholdus.www.wholdusbuyerapp.singletons.TokenSingleton;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
@@ -82,8 +84,14 @@ public class BaseAPIService {
     }
 
     private String getAccessToken() {
-        TokenSingleton tokenSingleton = TokenSingleton.getInstance();
-        String accessToken = tokenSingleton.getAccessToken();
+        WholdusApplication wholdusApplication = (WholdusApplication)((Activity) mContext).getApplication();
+        String accessToken = wholdusApplication.getAccessToken();
         return "access_token=" + accessToken;
+    }
+
+    private String getRefreshToken() {
+        WholdusApplication wholdusApplication = (WholdusApplication)((Activity) mContext).getApplication();
+        String accessToken = wholdusApplication.getRefreshToken();
+        return "refresh_token=" + accessToken;
     }
 }

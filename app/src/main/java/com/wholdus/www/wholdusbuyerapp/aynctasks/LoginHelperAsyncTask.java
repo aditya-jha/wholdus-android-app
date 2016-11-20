@@ -1,12 +1,14 @@
 package com.wholdus.www.wholdusbuyerapp.aynctasks;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
 import com.wholdus.www.wholdusbuyerapp.R;
-import com.wholdus.www.wholdusbuyerapp.singletons.TokenSingleton;
+import com.wholdus.www.wholdusbuyerapp.WholdusApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -96,6 +98,7 @@ public class LoginHelperAsyncTask extends AsyncTask<String, Void, Boolean> {
         return true;
     }
 
+    @NonNull
     private Boolean checkIfLoggedIn(SharedPreferences loginHelperSharedPreference) {
         String accessToken, refreshToken;
 
@@ -115,6 +118,7 @@ public class LoginHelperAsyncTask extends AsyncTask<String, Void, Boolean> {
         return false;
     }
 
+    @NonNull
     private Boolean logIn(SharedPreferences loginHelperSharedPreference, JSONObject apiResponse) {
         SharedPreferences.Editor editor = loginHelperSharedPreference.edit();
 
@@ -141,7 +145,7 @@ public class LoginHelperAsyncTask extends AsyncTask<String, Void, Boolean> {
     }
 
     private void setTokens(String aToken, String rToken) {
-        TokenSingleton tokenSingleton = TokenSingleton.getInstance();
-        tokenSingleton.setData(aToken, rToken);
+         WholdusApplication wholdusApplication = (WholdusApplication)((Activity) mContext).getApplication();
+         wholdusApplication.setTokens(aToken, rToken);
     }
 }
