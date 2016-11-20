@@ -29,4 +29,6 @@
     <string name="request_otp">REQUEST OTP</string>
     <string name="forgot_password_intro_text">We just need your registered mobile number help you reset your password</string>
 
+    <!-- Profile Fragment -->
+    <string name="personal_details">Personal Details</string>
 </resources>

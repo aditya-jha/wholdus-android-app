@@ -100,7 +100,8 @@ public class AccountActivity extends AppCompatActivity {
                 fragment = new ProductsGridFragment();
                 break;
             default:
-                return;
+                mTitle = "My Profile";
+                fragment = new ProfileFragment();
         }
 
         FragmentManager fragmentManager = getSupportFragmentManager();

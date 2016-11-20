@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.singletons.TokenSingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -96,17 +97,22 @@ public class LoginHelperAsyncTask extends AsyncTask<String, Void, Boolean> {
     }
 
     private Boolean checkIfLoggedIn(SharedPreferences loginHelperSharedPreference) {
-        String accessToken;
+        String accessToken, refreshToken;
 
         try {
             accessToken = loginHelperSharedPreference.getString(ACCESS_TOKEN_KEY, "");
+            refreshToken = loginHelperSharedPreference.getString(REFRESH_TOKEN_KEY, "");
         } catch (ClassCastException e) {
             e.printStackTrace();
             return false;
         }
 
-        // check access_token validity
-        return !accessToken.equals("");
+        if(!accessToken.equals("") && !refreshToken.equals("")) {
+            setTokens(accessToken, refreshToken);
+            return true;
+        }
+
+        return false;
     }
 
     private Boolean logIn(SharedPreferences loginHelperSharedPreference, JSONObject apiResponse) {
@@ -118,6 +124,8 @@ public class LoginHelperAsyncTask extends AsyncTask<String, Void, Boolean> {
 
             editor.putString(ACCESS_TOKEN_KEY, ACCESS_TOKEN);
             editor.putString(REFRESH_TOKEN_KEY, REFRESH_TOKEN);
+
+            setTokens(ACCESS_TOKEN, REFRESH_TOKEN);
         } catch (JSONException e) {
             return false;
         }
@@ -130,5 +138,10 @@ public class LoginHelperAsyncTask extends AsyncTask<String, Void, Boolean> {
         }
 
         return true;
+    }
+
+    private void setTokens(String aToken, String rToken) {
+        TokenSingleton tokenSingleton = TokenSingleton.getInstance();
+        tokenSingleton.setData(aToken, rToken);
     }
 }

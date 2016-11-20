@@ -21,7 +21,7 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.aynctasks.LoginHelperAsyncTask;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.LoginSignupListenerInterface;
-import com.wholdus.www.wholdusbuyerapp.services.UserAPIService;
+import com.wholdus.www.wholdusbuyerapp.services.LoginAPIService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,7 +38,7 @@ public class LoginFragment extends Fragment {
     private TextInputLayout mPasswordWrapper;
     private TextInputEditText mMobileNumberEditText;
     private TextInputEditText mPasswordEditText;
-    private UserAPIService mUserAPIService;
+    private LoginAPIService mLoginAPIService;
 
     private BroadcastReceiver mUserAPIServiceResponseReceiver;
 
@@ -171,14 +171,14 @@ public class LoginFragment extends Fragment {
 
         if (InputValidationHelper.isValidMobileNumber(mMobileNumberWrapper, mobileNumber)
                 && InputValidationHelper.isValidPassword(mPasswordWrapper, password)) {
-            mUserAPIService = new UserAPIService(getContext());
-            mUserAPIService.login(mobileNumber, password);
+            mLoginAPIService = new LoginAPIService(getContext());
+            mLoginAPIService.login(mobileNumber, password);
         }
     }
 
     private void handleLoginAPIResponse(String response) {
 
-        JSONObject data = mUserAPIService.parseLoginResponseData(response);
+        JSONObject data = mLoginAPIService.parseLoginResponseData(response);
         try {
             if (data != null) {
                 JSONObject buyerLogin = data.getJSONObject("buyer_login");

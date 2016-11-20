@@ -10,6 +10,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.singletons.TokenSingleton;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
 import java.io.UnsupportedEncodingException;
@@ -57,12 +58,12 @@ public class BaseAPIService {
                 }
                 Toast.makeText(mContext, error.toString(), Toast.LENGTH_LONG).show();
             }
-        }
-        ) {
+        }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 params.put("Accept", "version=1");
+                params.put("Authorization", getAccessToken());
                 return params;
             }
 
@@ -78,5 +79,11 @@ public class BaseAPIService {
         };
 
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest, REQUEST_TAG);
+    }
+
+    private String getAccessToken() {
+        TokenSingleton tokenSingleton = TokenSingleton.getInstance();
+        String accessToken = tokenSingleton.getAccessToken();
+        return "access_token=" + accessToken;
     }
 }

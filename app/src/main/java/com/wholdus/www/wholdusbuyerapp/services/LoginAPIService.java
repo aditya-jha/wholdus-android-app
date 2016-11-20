@@ -14,9 +14,9 @@ import org.json.JSONObject;
  * Created by aditya on 12/11/16.
  */
 
-public class UserAPIService extends BaseAPIService {
+public class LoginAPIService extends BaseAPIService {
 
-    private final String LOG_TAG = UserAPIService.class.getSimpleName();
+    private final String LOG_TAG = LoginAPIService.class.getSimpleName();
     private final String NAME_KEY = "name";
     private final String MOBILE_NUMBER_KEY = "mobile_number";
     private final String PASSWORD_KEY = "password";
@@ -24,7 +24,7 @@ public class UserAPIService extends BaseAPIService {
 
     private Context mContext;
 
-    public UserAPIService(Context context) {
+    public LoginAPIService(Context context) {
         mContext = context;
         REQUEST_TAG = mContext.getString(R.string.user_api_request_tag);
         super.setActivityCompat(mContext);
