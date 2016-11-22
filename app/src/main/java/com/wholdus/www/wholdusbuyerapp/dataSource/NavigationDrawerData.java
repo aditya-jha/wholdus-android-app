@@ -1,4 +1,4 @@
-package com.wholdus.www.wholdusbuyerapp.DataSource;
+package com.wholdus.www.wholdusbuyerapp.dataSource;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -16,6 +16,7 @@ public class NavigationDrawerData {
         data.put("Hand Picked For You", handPicked);
 
         ArrayList<String> store = new ArrayList<>();
+        store.add("Store Home");
         store.add("Store Products");
         store.add("Purchase Requests");
         data.put("My Store", store);
@@ -33,6 +34,8 @@ public class NavigationDrawerData {
         helpSupport.add("Policies");
         helpSupport.add("About Us");
         data.put("Help And Support", helpSupport);
+
+        data.put("Logout", new ArrayList<String>());
 
         return data;
     }

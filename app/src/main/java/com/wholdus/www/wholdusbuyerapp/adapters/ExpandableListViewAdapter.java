@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,8 +14,6 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-
-import static com.wholdus.www.wholdusbuyerapp.R.drawable.ic_expand_less_black_24dp;
 
 /**
  * Created by aditya on 16/11/16.
@@ -76,8 +73,6 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
             } else {
                 imageView.setImageResource(R.drawable.ic_expand_more_black_24dp);
             }
-        } else {
-            imageView.setVisibility(View.GONE);
         }
 
         return convertView;

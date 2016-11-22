@@ -1,9 +1,17 @@
 package com.wholdus.www.wholdusbuyerapp.aynctasks;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.text.TextUtils;
+import android.support.annotation.NonNull;
+
+import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.WholdusApplication;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by aditya on 2/11/16.
@@ -17,53 +25,114 @@ public class LoginHelperAsyncTask extends AsyncTask<String, Void, Boolean> {
     }
 
     private final String ACCESS_TOKEN_KEY = "com.wholdus.www.wholdusbuyerapp.ACCESS_TOKEN";
+    private final String REFRESH_TOKEN_KEY = "com.wholdus.www.wholdusbuyerapp.REFRESH_TOKEN";
     private Context mContext;
     private AsyncResponse mAsyncResponse;
+    private boolean mShowProgressDialog;
+    private String mProgressDialogMessage;
+    private ProgressDialog mProgressDialog;
 
     public LoginHelperAsyncTask(Context context, AsyncResponse asyncResponse) {
         mContext = context;
         mAsyncResponse = asyncResponse;
     }
 
+    public void setUpProgressDialog(boolean showProgress, String message) {
+        mShowProgressDialog = showProgress;
+        mProgressDialogMessage = message;
+    }
+
     @Override
     protected Boolean doInBackground(String... params) {
-        final String LoginHelperSharedPreference = "LoginHelperSharedPreference";
+        final String LoginHelperSharedPreference = mContext.getString(R.string.login_helper_shared_preference);
 
         SharedPreferences loginHelperSharedPreference;
         loginHelperSharedPreference = mContext.getSharedPreferences(LoginHelperSharedPreference, Context.MODE_PRIVATE);
 
-        if(params[0].equals("checkIfLoggedIn")) {
-            return checkIfLoggedIn(loginHelperSharedPreference);
-        } else if(params[0].equals("logIn") && !TextUtils.isEmpty(params[1])){
-            return logIn(loginHelperSharedPreference, params[1]);
+        switch (params[0]) {
+            case "checkIfLoggedIn":
+                return checkIfLoggedIn(loginHelperSharedPreference);
+            case "logIn":
+                try {
+                    JSONObject data = new JSONObject(params[1]);
+                    return logIn(loginHelperSharedPreference, data);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            case "logout":
+                return logout(loginHelperSharedPreference);
+            default:
+                return false;
         }
+    }
 
-        return false;
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        if (mShowProgressDialog) {
+            mProgressDialog = new ProgressDialog(mContext);
+            mProgressDialog.setMessage(mProgressDialogMessage);
+            mProgressDialog.show();
+        }
     }
 
     @Override
     protected void onPostExecute(Boolean result) {
+        if (mShowProgressDialog) {
+            mProgressDialog.dismiss();
+        }
         mAsyncResponse.processFinish(result);
     }
 
+    private boolean logout(SharedPreferences loginHelperSharedPreference) {
+        SharedPreferences.Editor editor = loginHelperSharedPreference.edit();
+        try {
+            editor.remove(ACCESS_TOKEN_KEY);
+            editor.remove(REFRESH_TOKEN_KEY);
+            editor.apply();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    @NonNull
     private Boolean checkIfLoggedIn(SharedPreferences loginHelperSharedPreference) {
-        String accessToken;
+        String accessToken, refreshToken;
 
         try {
             accessToken = loginHelperSharedPreference.getString(ACCESS_TOKEN_KEY, "");
+            refreshToken = loginHelperSharedPreference.getString(REFRESH_TOKEN_KEY, "");
         } catch (ClassCastException e) {
             e.printStackTrace();
             return false;
         }
 
-        // check access_token validity
-        return !accessToken.equals("");
+        if(!accessToken.equals("") && !refreshToken.equals("")) {
+            setTokens(accessToken, refreshToken);
+            return true;
+        }
+
+        return false;
     }
 
-    private Boolean logIn(SharedPreferences loginHelperSharedPreference, String accessToken) {
+    @NonNull
+    private Boolean logIn(SharedPreferences loginHelperSharedPreference, JSONObject apiResponse) {
         SharedPreferences.Editor editor = loginHelperSharedPreference.edit();
 
-        editor.putString(ACCESS_TOKEN_KEY, accessToken);
+        try {
+            final String ACCESS_TOKEN = (String) apiResponse.get("access_token");
+            final String REFRESH_TOKEN = (String) apiResponse.get("refresh_token");
+
+            editor.putString(ACCESS_TOKEN_KEY, ACCESS_TOKEN);
+            editor.putString(REFRESH_TOKEN_KEY, REFRESH_TOKEN);
+
+            setTokens(ACCESS_TOKEN, REFRESH_TOKEN);
+        } catch (JSONException e) {
+            return false;
+        }
 
         try {
             editor.apply();
@@ -73,5 +142,10 @@ public class LoginHelperAsyncTask extends AsyncTask<String, Void, Boolean> {
         }
 
         return true;
+    }
+
+    private void setTokens(String aToken, String rToken) {
+         WholdusApplication wholdusApplication = (WholdusApplication)((Activity) mContext).getApplication();
+         wholdusApplication.setTokens(aToken, rToken);
     }
 }

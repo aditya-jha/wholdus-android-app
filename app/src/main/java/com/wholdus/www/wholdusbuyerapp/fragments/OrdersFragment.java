@@ -10,19 +10,17 @@ import android.view.ViewGroup;
 import com.wholdus.www.wholdusbuyerapp.R;
 
 /**
- * Created by aditya on 16/11/16.
+ * Created by aditya on 19/11/16.
  */
 
-public class HomeFragment extends Fragment {
+public class OrdersFragment extends Fragment {
 
-    public HomeFragment() {
-    }
+    public OrdersFragment() {}
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_home, container, false);
-
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_orders, container, false);
         return rootView;
     }
 }

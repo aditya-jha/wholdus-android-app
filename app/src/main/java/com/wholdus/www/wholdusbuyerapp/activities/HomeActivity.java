@@ -1,10 +1,13 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.fragments.HomeFragment;
@@ -12,20 +15,26 @@ import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
 
 public class HomeActivity extends AppCompatActivity {
 
+    private DrawerLayout mDrawerLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        // set default toolbar as the action bar for this activity
-        Toolbar toolbar = (Toolbar) findViewById(R.id.default_toolbar);
-        setSupportActionBar(toolbar);
+        // initialize the toolbar
+        initToolbar();
 
         // initialize the navigation drawer
         initNavigationDrawer();
 
         // initialize the activity elements
         initActivityElements();
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
     }
 
     @Override
@@ -48,6 +57,22 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onOptionsMenuClosed(Menu menu) {
         super.onOptionsMenuClosed(menu);
+    }
+
+    private void initToolbar() {
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        // set default toolbar as the action bar for this activity
+        Toolbar toolbar = (Toolbar) findViewById(R.id.default_toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
+        setSupportActionBar(toolbar);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
     }
 
     private void initNavigationDrawer() {

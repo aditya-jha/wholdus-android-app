@@ -1,9 +1,6 @@
 <resources>
     <string name="app_name">Wholdus</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
     <!-- INTRODUCTION page texts -->
     <string name="intro_page_1">Buy best products from manufacturers and brands at factory prices</string>
     <string name="intro_page_2">Get them delivered to your doorstep, hassle free</string>
@@ -13,4 +10,25 @@
     <!-- ACTION BAR items -->
     <string name="action_bar_store_home">Go to your Store</string>
     <string name="action_bar_checkout">Proceed to Checkout</string>
+
+    <!-- Mobile Number and Password helper layout -->
+    <string name="hint_mobile_number">Mobile Number</string>
+    <string name="hint_password">Password</string>
+
+    <!-- Login Fragment -->
+    <string name="login_fragment_header">Login</string>
+    <string name="signup_button_on_login_fragment"><u>Create one</u></string>
+    <string name="no_account">No account yet? </string>
+    <string name="verifying_credentials">Verifying Credentials&#8230;</string>
+    <string name="login_progress_message">Logging you in&#8230;</string>
+    <string name="login_error_message">Invalid Credentials! Please try again</string>
+
+    <!-- ForgotPassword Fragment -->
+    <string name="forgot_password_fragment_header">Forgot Password</string>
+    <string name="back_button_fragment">BACK</string>
+    <string name="request_otp">REQUEST OTP</string>
+    <string name="forgot_password_intro_text">We just need your registered mobile number help you reset your password</string>
+
+    <!-- Profile Fragment -->
+    <string name="personal_details">Personal Details</string>
 </resources>

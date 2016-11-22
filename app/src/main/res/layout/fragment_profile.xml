@@ -4,4 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <include layout="@layout/layout_card_view_profile" />
+
+    <include layout="@layout/layout_card_view_address" />
 </LinearLayout>

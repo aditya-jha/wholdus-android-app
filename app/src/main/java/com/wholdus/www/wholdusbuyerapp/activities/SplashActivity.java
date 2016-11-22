@@ -1,17 +1,12 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.content.Intent;
-import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 
-import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.aynctasks.LoginHelperAsyncTask;
 
 public class SplashActivity extends AppCompatActivity {
-
-    private final String LOG_TAG = "SplashActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +28,10 @@ public class SplashActivity extends AppCompatActivity {
         LoginHelperAsyncTask loginHelperAsyncTask = new LoginHelperAsyncTask(this, new LoginHelperAsyncTask.AsyncResponse() {
             @Override
             public void processFinish(Boolean result) {
-
-                final Boolean output = result;
-
-                if(output) {
-                    Log.v(LOG_TAG, "user already logged in");
+                if (result) {
+                    startLoginSignupActivity(HomeActivity.class);
                 } else {
-                    startLoginSignupActivity();
+                    startLoginSignupActivity(LoginSignupActivity.class);
                 }
             }
         });
@@ -47,9 +39,9 @@ public class SplashActivity extends AppCompatActivity {
         loginHelperAsyncTask.execute("checkIfLoggedIn");
     }
 
-    private void startLoginSignupActivity() {
-        Intent intent = new Intent(this, IntroActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+    private void startLoginSignupActivity(Class classToStart) {
+        Intent intent = new Intent(this, classToStart);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
         overridePendingTransition(0, 0);
