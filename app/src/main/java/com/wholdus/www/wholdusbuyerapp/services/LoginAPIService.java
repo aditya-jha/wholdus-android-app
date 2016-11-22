@@ -20,14 +20,12 @@ public class LoginAPIService extends BaseAPIService {
     private final String NAME_KEY = "name";
     private final String MOBILE_NUMBER_KEY = "mobile_number";
     private final String PASSWORD_KEY = "password";
-    private String REQUEST_TAG;
 
     private Context mContext;
 
     public LoginAPIService(Context context) {
+        super(context, context.getString(R.string.login_api_request_tag));
         mContext = context;
-        REQUEST_TAG = mContext.getString(R.string.user_api_request_tag);
-        super.setActivityCompat(mContext);
     }
 
     public void signup(String name, String mobileNumber, String password) {
@@ -39,7 +37,7 @@ public class LoginAPIService extends BaseAPIService {
             userData.put(MOBILE_NUMBER_KEY, mobileNumber);
             userData.put(PASSWORD_KEY, password);
 
-            super.volleyStringRequest(Request.Method.POST, endPoint, userData.toString(), REQUEST_TAG);
+            super.volleyStringRequest(Request.Method.POST, endPoint, userData.toString());
         } catch (Exception e) {
             Toast.makeText(mContext, e.toString(), Toast.LENGTH_SHORT).show();
         }
@@ -53,7 +51,7 @@ public class LoginAPIService extends BaseAPIService {
             loginData.put(MOBILE_NUMBER_KEY, mobileNumber);
             loginData.put(PASSWORD_KEY, password);
 
-            super.volleyStringRequest(Request.Method.POST, endPoint, loginData.toString(), REQUEST_TAG);
+            super.volleyStringRequest(Request.Method.POST, endPoint, loginData.toString());
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_SHORT).show();
@@ -66,7 +64,7 @@ public class LoginAPIService extends BaseAPIService {
         try {
             JSONObject forgotPasswordData = new JSONObject();
             forgotPasswordData.put(MOBILE_NUMBER_KEY, mobileNumber);
-            super.volleyStringRequest(Request.Method.POST, endPoint, forgotPasswordData.toString(), REQUEST_TAG);
+            super.volleyStringRequest(Request.Method.POST, endPoint, forgotPasswordData.toString());
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_SHORT).show();
@@ -74,7 +72,7 @@ public class LoginAPIService extends BaseAPIService {
     }
 
     public void cancelRequests() {
-        VolleySingleton.getInstance(mContext).cancelPendingRequests(REQUEST_TAG);
+        super.cancelRequests();
     }
 
     public JSONObject parseLoginResponseData(String response) {

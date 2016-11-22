@@ -3,6 +3,8 @@ package com.wholdus.www.wholdusbuyerapp.services;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -12,12 +14,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.WholdusApplication;
-import com.wholdus.www.wholdusbuyerapp.singletons.TokenSingleton;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static android.R.string.cancel;
 
 /**
  * Created by aditya on 12/11/16.
@@ -26,19 +29,22 @@ import java.util.Map;
 public class BaseAPIService {
 
     private Context mContext;
+    private String REQUEST_TAG;
 
-    public BaseAPIService() {
-    }
-
-    public void setActivityCompat(Context context) {
+    public BaseAPIService(Context context, String tag) {
         mContext = context;
+        REQUEST_TAG = tag;
     }
 
     public String generateUrl(String endPoint) {
         return mContext.getString(R.string.api_base) + endPoint;
     }
 
-    public void volleyStringRequest(int method, String endPoint, final String jsonData, final String REQUEST_TAG) {
+    public void cancelRequests() {
+        VolleySingleton.getInstance(mContext).cancelPendingRequests(REQUEST_TAG);
+    }
+
+    public void volleyStringRequest(int method, String endPoint, final String jsonData) {
 
         StringRequest stringRequest = new StringRequest(method, endPoint,
                 new Response.Listener<String>() {
@@ -46,7 +52,7 @@ public class BaseAPIService {
                     public void onResponse(String response) {
                         Intent intent = new Intent(mContext.getString(R.string.api_response));
                         intent.putExtra(mContext.getString(R.string.api_response_data_key), response);
-                        mContext.sendBroadcast(intent);
+                        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -69,6 +75,7 @@ public class BaseAPIService {
                 return params;
             }
 
+            @Nullable
             @Override
             public byte[] getBody() throws AuthFailureError {
                 try {

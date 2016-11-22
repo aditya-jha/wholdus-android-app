@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +41,7 @@ public class LoginFragment extends Fragment {
     private TextInputEditText mPasswordEditText;
     private LoginAPIService mLoginAPIService;
 
-    private BroadcastReceiver mUserAPIServiceResponseReceiver;
+    private BroadcastReceiver mLoginAPIServiceResponseReceiver;
 
     public LoginFragment() {
     }
@@ -60,7 +61,7 @@ public class LoginFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_login, container, false);
 
-        mUserAPIServiceResponseReceiver = new BroadcastReceiver() {
+        mLoginAPIServiceResponseReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String data = intent.getStringExtra(getString(R.string.api_response_data_key));
@@ -90,7 +91,7 @@ public class LoginFragment extends Fragment {
         super.onStart();
 
         IntentFilter intentFilter = new IntentFilter(getString(R.string.api_response));
-        getContext().registerReceiver(mUserAPIServiceResponseReceiver, intentFilter);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mLoginAPIServiceResponseReceiver, intentFilter);
     }
 
     @Override
@@ -101,7 +102,7 @@ public class LoginFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        getContext().unregisterReceiver(mUserAPIServiceResponseReceiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mLoginAPIServiceResponseReceiver);
     }
 
     private void initFragment(ViewGroup rootView) {
