@@ -15,7 +15,7 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.AccountActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.LoginSignupActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.ExpandableListViewAdapter;
-import com.wholdus.www.wholdusbuyerapp.aynctasks.LoginHelperAsyncTask;
+import com.wholdus.www.wholdusbuyerapp.asynctasks.LoginHelperAsyncTask;
 import com.wholdus.www.wholdusbuyerapp.dataSource.NavigationDrawerData;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.wholdus.www.wholdusbuyerapp.aynctasks;
+package com.wholdus.www.wholdusbuyerapp.asynctasks;
 
 import android.app.Activity;
 import android.app.ProgressDialog;

@@ -20,8 +20,8 @@ import java.util.ArrayList;
 
 public class BuyerPersonalDetailsAdapter extends ArrayAdapter<BuyerPersonalDetails> {
 
-    public BuyerPersonalDetailsAdapter(Context context, ArrayList<BuyerPersonalDetails> buyerPersonalDetailses) {
-        super(context, 0, buyerPersonalDetailses);
+    public BuyerPersonalDetailsAdapter(Context context, ArrayList<BuyerPersonalDetails> buyerPersonalDetails) {
+        super(context, 0, buyerPersonalDetails);
     }
 
     @NonNull
