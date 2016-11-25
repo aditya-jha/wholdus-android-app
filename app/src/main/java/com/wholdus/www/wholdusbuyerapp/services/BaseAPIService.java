@@ -20,8 +20,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static android.R.string.cancel;
-
 /**
  * Created by aditya on 12/11/16.
  */

@@ -9,12 +9,12 @@ import com.wholdus.www.wholdusbuyerapp.R;
  * Created by aditya on 20/11/16.
  */
 
-public class UserAPIService extends BaseAPIService {
+public class UserService extends BaseAPIService {
     private String REQUEST_TAG;
 
     private Context mContext;
 
-    public UserAPIService(Context context) {
+    public UserService(Context context) {
         super(context, context.getString(R.string.user_api_request_tag));
         mContext = context;
     }
