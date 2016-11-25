@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,17 +16,13 @@ import android.widget.ListView;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.BuyerPersonalDetailsAdapter;
 import com.wholdus.www.wholdusbuyerapp.models.BuyerPersonalDetails;
-import com.wholdus.www.wholdusbuyerapp.services.UserAPIService;
+import com.wholdus.www.wholdusbuyerapp.services.UserService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-
-import static android.R.attr.handle;
-import static android.R.attr.priority;
-import static android.R.attr.track;
 
 /**
  * Created by aditya on 19/11/16.
@@ -37,8 +32,8 @@ public class ProfileFragment extends Fragment {
 
     private ListView mPersonalDetailsListView;
     private ListView mAddressListView;
-    private BroadcastReceiver mUserAPIServiceResponseReceiver;
-    private UserAPIService mUserAPIService;
+    private BroadcastReceiver mUserServiceResponseReceiver;
+    private UserService mUserService;
 
     public ProfileFragment() {}
 
@@ -47,7 +42,7 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_profile, container, false);
 
-        mUserAPIServiceResponseReceiver = new BroadcastReceiver() {
+        mUserServiceResponseReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String response = intent.getStringExtra(getString(R.string.api_response_data_key));
@@ -65,7 +60,7 @@ public class ProfileFragment extends Fragment {
         super.onStart();
 
         IntentFilter intentFilter = new IntentFilter(getString(R.string.api_response));
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mUserAPIServiceResponseReceiver, intentFilter);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mUserServiceResponseReceiver, intentFilter);
     }
 
     @Override
@@ -76,7 +71,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mUserAPIServiceResponseReceiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mUserServiceResponseReceiver);
     }
 
     private void initReferences(ViewGroup rootView) {
@@ -84,8 +79,8 @@ public class ProfileFragment extends Fragment {
     }
 
     private void fetchUserData() {
-        mUserAPIService = new UserAPIService(getContext());
-        mUserAPIService.getUserDetails();
+        mUserService = new UserService(getContext());
+        mUserService.getUserDetails();
     }
 
     private void handleAPIResponse(String response) {
