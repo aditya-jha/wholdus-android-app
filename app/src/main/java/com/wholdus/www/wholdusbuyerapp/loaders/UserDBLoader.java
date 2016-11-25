@@ -1,9 +1,11 @@
 package com.wholdus.www.wholdusbuyerapp.loaders;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.content.CursorLoader;
 
+import com.wholdus.www.wholdusbuyerapp.WholdusApplication;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
 
 /**
@@ -22,6 +24,7 @@ public class UserDBLoader extends CursorLoader {
     @Override
     public Cursor loadInBackground() {
         UserDBHelper userDBHelper = new UserDBHelper(mContext);
-        return userDBHelper.getUserData();
+        WholdusApplication wholdusApplication = (WholdusApplication) ((Activity) mContext).getApplication();
+        return userDBHelper.getUserData(wholdusApplication.getBuyerID());
     }
 }

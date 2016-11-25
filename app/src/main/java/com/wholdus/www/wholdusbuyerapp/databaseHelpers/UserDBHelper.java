@@ -77,7 +77,10 @@ public class UserDBHelper extends SQLiteOpenHelper {
         onUpgrade(db, oldVersion, newVersion);
     }
 
-    public Cursor getUserData() {
-        return null;
+    public Cursor getUserData(String buyerID) {
+        SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT * FROM " + UserTable.TABLE_NAME + " WHERE " + UserTable.COLUMN_BUYER_ID + "= " + buyerID + ";";
+
+        return db.rawQuery(query, null);
     }
 }
