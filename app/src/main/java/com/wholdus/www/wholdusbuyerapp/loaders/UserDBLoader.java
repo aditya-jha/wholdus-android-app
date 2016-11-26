@@ -23,7 +23,7 @@ public class UserDBLoader extends CursorLoader {
 
     @Override
     public Cursor loadInBackground() {
-        UserDBHelper userDBHelper = new UserDBHelper(mContext);
+        UserDBHelper userDBHelper = UserDBHelper.getInstance(mContext);
         WholdusApplication wholdusApplication = (WholdusApplication) ((Activity) mContext).getApplication();
         return userDBHelper.getUserData(wholdusApplication.getBuyerID());
     }

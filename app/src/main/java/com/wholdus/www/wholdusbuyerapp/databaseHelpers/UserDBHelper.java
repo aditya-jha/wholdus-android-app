@@ -18,6 +18,8 @@ import org.json.JSONObject;
 
 public class UserDBHelper extends SQLiteOpenHelper {
 
+    private static UserDBHelper mInstance = null;
+
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "users";
 
@@ -57,7 +59,17 @@ public class UserDBHelper extends SQLiteOpenHelper {
     private static final String SQL_DROP_USER_ADDRESS_TABLE =
             "DROP TABLE IF EXISTS " + UserAddressTable.TABLE_NAME;
 
-    public UserDBHelper(Context context) {
+
+    public static UserDBHelper getInstance(Context context) {
+        // Use the application context, which will ensure that you
+        // don't accidentally leak an Activity's context. http://bit.ly/6LRzfx
+        if (mInstance == null) {
+            mInstance = new UserDBHelper(context.getApplicationContext());
+        }
+        return mInstance;
+    }
+
+    private UserDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -101,25 +113,23 @@ public class UserDBHelper extends SQLiteOpenHelper {
         user.put(UserTable.COLUMN_BUSINESS_TYPE, businessType);
 
         String buyerID = data.getString(UserTable.COLUMN_BUYER_ID);
+        long rows;
+        SQLiteDatabase db = getWritableDatabase();
 
         if (getUserData(buyerID).getCount() == 0) {
             user.put(UserTable.COLUMN_BUYER_ID, buyerID);
-            SQLiteDatabase db = getWritableDatabase();
-            long id = db.insert(UserTable.TABLE_NAME, null, user);
-            db.close();
-            return id;
+            rows = db.insert(UserTable.TABLE_NAME, null, user);
         } else {
-            SQLiteDatabase db = getWritableDatabase();
             String selection = UserTable.COLUMN_BUYER_ID + "=" + buyerID;
-            long rows = db.update(
+            rows = db.update(
                     UserTable.TABLE_NAME,
                     user,
                     selection,
                     null
             );
-            db.close();
-            return rows;
         }
+        db.close();
+        return rows;
     }
 
     public static JSONObject getJSONDataFromCursor(Cursor cursor, int position) {

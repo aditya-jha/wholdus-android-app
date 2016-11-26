@@ -106,14 +106,14 @@ public class UserService extends IntentService {
     }
 
     private void saveToDB(JSONObject response) throws JSONException {
-        UserDBHelper userDBHelper = new UserDBHelper(getApplicationContext());
+        UserDBHelper userDBHelper = UserDBHelper.getInstance(this);
 
         // update userData
         boolean saved = userDBHelper.updateUserData(response) > 0 ? true : false;
 
         if (saved) {
             Intent intent = new Intent(getString(R.string.user_data_updated));
-            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         }
     }
 }
