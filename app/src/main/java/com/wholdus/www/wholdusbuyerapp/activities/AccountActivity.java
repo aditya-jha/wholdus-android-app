@@ -8,6 +8,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,6 +52,12 @@ public class AccountActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+    }
+
     private void initToolbar() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -77,6 +85,10 @@ public class AccountActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             openFragment = extras.getString("openFragment");
+            if(TextUtils.isEmpty(openFragment)) {
+                openFragment = "profile";
+            }
+            Log.d("openfragment", openFragment);
         } else {
             openFragment = (String) savedInstanceState.getSerializable("openFragment");
         }

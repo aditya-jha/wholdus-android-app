@@ -44,6 +44,6 @@ public class BuyerPersonalDetailsAdapter extends ArrayAdapter<BuyerPersonalDetai
         ImageView iconImageView = (ImageView) convertView.findViewById(R.id.icon_iamge_view);
         iconImageView.setImageResource(currentBuyerPersonalDetails.getIconResource());
 
-        return super.getView(position, convertView, parent);
+        return convertView;
     }
 }
