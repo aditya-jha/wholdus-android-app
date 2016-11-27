@@ -15,12 +15,14 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.fragments.EditProfileDetailsFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.OrdersFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProductsGridFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProfileFragment;
+import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 
-public class AccountActivity extends AppCompatActivity {
+public class AccountActivity extends AppCompatActivity implements ProfileListenerInterface {
 
     private DrawerLayout mDrawerLayout;
     private String mTitle;
@@ -60,11 +62,18 @@ public class AccountActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            getSupportFragmentManager().popBackStack();
+        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+            finish();
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void editPersonalDetails() {
+        // load edit profile details fragment
+        // don't add it to backstack
+        openToFragment("editPersonalDetails");
     }
 
     private void initToolbar() {
@@ -94,7 +103,7 @@ public class AccountActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             openFragment = extras.getString("openFragment");
-            if(TextUtils.isEmpty(openFragment)) {
+            if (TextUtils.isEmpty(openFragment)) {
                 openFragment = "profile";
             }
             Log.d("openfragment", openFragment);
@@ -120,14 +129,24 @@ public class AccountActivity extends AppCompatActivity {
                 mTitle = "Rejected Products";
                 fragment = new ProductsGridFragment();
                 break;
+            case "editPersonalDetails":
+                mTitle = "Edit Details";
+                fragment = new EditProfileDetailsFragment();
+                break;
             default:
                 mTitle = "My Profile";
                 fragment = new ProfileFragment();
         }
 
+        String backStateName = fragment.getClass().getName();
         FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
-        fragmentTransaction.commit();
+        boolean fragmentPopped = fragmentManager.popBackStackImmediate (backStateName, 0);
+
+        if(!fragmentPopped) { // fragment not in backstack create it
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
+            fragmentTransaction.addToBackStack(backStateName);
+            fragmentTransaction.commit();
+        }
     }
 }

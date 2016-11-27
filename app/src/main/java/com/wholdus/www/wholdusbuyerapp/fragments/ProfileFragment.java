@@ -26,6 +26,7 @@ import com.wholdus.www.wholdusbuyerapp.adapters.BuyerPersonalDetailsAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserTable;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
+import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.models.BuyerPersonalDetails;
 import com.wholdus.www.wholdusbuyerapp.services.UserService;
 
@@ -45,10 +46,22 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     private TextView mNoAddressTextView;
     private ListView mPersonalDetailsListView;
     private ListView mAddressListView;
+    private TextView mEditPersonalDetailsTextView;
     private BroadcastReceiver mUserServiceResponseReceiver;
     private UserDBHelper mUserDBHelper, mUserAddressDBHelper;
+    private ProfileListenerInterface listener;
 
     public ProfileFragment() {
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            listener = (ProfileListenerInterface) context;
+        } catch (ClassCastException cee) {
+            cee.printStackTrace();
+        }
     }
 
     @Override
@@ -103,6 +116,12 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     public void onDestroy() {
         super.onDestroy();
         mUserServiceResponseReceiver = null;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
     }
 
     @Override
@@ -162,6 +181,14 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         mPersonalDetailsListView = (ListView) rootView.findViewById(R.id.personal_details_list_view);
         mAddressListView = (ListView) rootView.findViewById(R.id.address_list_view);
         mNoAddressTextView = (TextView) rootView.findViewById(R.id.no_address_text_view);
+
+        mEditPersonalDetailsTextView = (TextView) rootView.findViewById(R.id.edit_personal_details_text_view);
+        mEditPersonalDetailsTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.editPersonalDetails();
+            }
+        });
     }
 
     private void handleAPIResponse() {
