@@ -24,8 +24,9 @@ public class LoginHelperAsyncTask extends AsyncTask<String, Void, Boolean> {
         void processFinish(Boolean output);
     }
 
-    private final String ACCESS_TOKEN_KEY = "com.wholdus.www.wholdusbuyerapp.ACCESS_TOKEN";
-    private final String REFRESH_TOKEN_KEY = "com.wholdus.www.wholdusbuyerapp.REFRESH_TOKEN";
+    private static final String ACCESS_TOKEN_KEY = "com.wholdus.www.wholdusbuyerapp.ACCESS_TOKEN";
+    private static final String REFRESH_TOKEN_KEY = "com.wholdus.www.wholdusbuyerapp.REFRESH_TOKEN";
+    private static final String BUYER_ID_KEY = "com.wholdus.www.wholdusbuyerapp.BUYER_ID";
     private Context mContext;
     private AsyncResponse mAsyncResponse;
     private boolean mShowProgressDialog;
@@ -90,6 +91,7 @@ public class LoginHelperAsyncTask extends AsyncTask<String, Void, Boolean> {
         try {
             editor.remove(ACCESS_TOKEN_KEY);
             editor.remove(REFRESH_TOKEN_KEY);
+            editor.remove(BUYER_ID_KEY);
             editor.apply();
         } catch (Exception e) {
             e.printStackTrace();
@@ -100,18 +102,19 @@ public class LoginHelperAsyncTask extends AsyncTask<String, Void, Boolean> {
 
     @NonNull
     private Boolean checkIfLoggedIn(SharedPreferences loginHelperSharedPreference) {
-        String accessToken, refreshToken;
+        String accessToken, refreshToken, buyerID;
 
         try {
             accessToken = loginHelperSharedPreference.getString(ACCESS_TOKEN_KEY, "");
             refreshToken = loginHelperSharedPreference.getString(REFRESH_TOKEN_KEY, "");
+            buyerID = loginHelperSharedPreference.getString(BUYER_ID_KEY, "");
         } catch (ClassCastException e) {
             e.printStackTrace();
             return false;
         }
 
-        if(!accessToken.equals("") && !refreshToken.equals("")) {
-            setTokens(accessToken, refreshToken);
+        if(!accessToken.equals("") && !refreshToken.equals("") && !buyerID.equals("")) {
+            setTokens(accessToken, refreshToken, buyerID);
             return true;
         }
 
@@ -123,13 +126,14 @@ public class LoginHelperAsyncTask extends AsyncTask<String, Void, Boolean> {
         SharedPreferences.Editor editor = loginHelperSharedPreference.edit();
 
         try {
-            final String ACCESS_TOKEN = (String) apiResponse.get("access_token");
-            final String REFRESH_TOKEN = (String) apiResponse.get("refresh_token");
-
+            final String ACCESS_TOKEN = apiResponse.getString("access_token");
+            final String REFRESH_TOKEN = apiResponse.getString("refresh_token");
+            final String BUYER_ID = apiResponse.getJSONObject("buyer").getString("buyerID");
             editor.putString(ACCESS_TOKEN_KEY, ACCESS_TOKEN);
             editor.putString(REFRESH_TOKEN_KEY, REFRESH_TOKEN);
+            editor.putString(BUYER_ID_KEY, BUYER_ID);
 
-            setTokens(ACCESS_TOKEN, REFRESH_TOKEN);
+            setTokens(ACCESS_TOKEN, REFRESH_TOKEN, BUYER_ID);
         } catch (JSONException e) {
             return false;
         }
@@ -144,8 +148,8 @@ public class LoginHelperAsyncTask extends AsyncTask<String, Void, Boolean> {
         return true;
     }
 
-    private void setTokens(String aToken, String rToken) {
+    private void setTokens(String aToken, String rToken, String buyerID) {
          WholdusApplication wholdusApplication = (WholdusApplication)((Activity) mContext).getApplication();
-         wholdusApplication.setTokens(aToken, rToken);
+         wholdusApplication.setTokens(aToken, rToken, buyerID);
     }
 }

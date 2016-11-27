@@ -12,10 +12,10 @@ public class WholdusApplication extends Application {
     private String mRefreshToken;
     private String mBuyerID;
 
-    public void setTokens(String aToken, String rToken) {
+    public void setTokens(String aToken, String rToken, String buyerID) {
         mAccessToken = aToken;
         mRefreshToken = rToken;
-        mBuyerID = "1";
+        mBuyerID = buyerID;
     }
 
     public String getAccessToken() {

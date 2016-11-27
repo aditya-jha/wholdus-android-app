@@ -35,5 +35,6 @@ public final class UserProfileContract {
         public static final String COLUMN_ADDRESS = "address";
         public static final String COLUMN_CONTACT_NUMBER = "contact_number";
         public static final String COLUMN_PINCODE = "pincode";
+        public static final String COLUMN_ADDRESS_ALIAS = "alias";
     }
 }

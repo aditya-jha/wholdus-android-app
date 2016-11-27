@@ -9,21 +9,27 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.WholdusApplication;
+import com.wholdus.www.wholdusbuyerapp.adapters.AddressDisplayListViewAdapter;
 import com.wholdus.www.wholdusbuyerapp.adapters.BuyerPersonalDetailsAdapter;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserTable;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
-import com.wholdus.www.wholdusbuyerapp.loaders.UserDBLoader;
 import com.wholdus.www.wholdusbuyerapp.models.BuyerPersonalDetails;
 import com.wholdus.www.wholdusbuyerapp.services.UserService;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -31,14 +37,16 @@ import java.util.ArrayList;
 
 /**
  * Created by aditya on 19/11/16.
+ * fragment for CRUD operations on user profile
  */
 
 public class ProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private TextView mNoAddressTextView;
     private ListView mPersonalDetailsListView;
     private ListView mAddressListView;
     private BroadcastReceiver mUserServiceResponseReceiver;
-    private static final int USER_DB_LOADER = 0;
+    private UserDBHelper mUserDBHelper, mUserAddressDBHelper;
 
     public ProfileFragment() {
     }
@@ -59,7 +67,9 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                 handleAPIResponse();
             }
         };
-        getActivity().getSupportLoaderManager().initLoader(USER_DB_LOADER, null, this);
+
+        getActivity().getSupportLoaderManager().initLoader(R.integer.user_details_db_loader, null, this);
+        getActivity().getSupportLoaderManager().initLoader(R.integer.user_address_db_loader, null, this);
 
         initReferences(rootView);
 
@@ -95,61 +105,91 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         mUserServiceResponseReceiver = null;
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(final int id, Bundle args) {
+        return new CursorLoader(getContext()) {
+            @Override
+            public Cursor loadInBackground() {
+                WholdusApplication wholdusApplication = (WholdusApplication) getActivity().getApplication();
+
+                switch (id) {
+                    case R.integer.user_details_db_loader:
+                        mUserDBHelper = new UserDBHelper(getContext());
+                        return mUserDBHelper.getUserData(wholdusApplication.getBuyerID());
+                    case R.integer.user_address_db_loader:
+                        mUserAddressDBHelper = new UserDBHelper(getContext());
+                        return mUserAddressDBHelper.getUserAddress(wholdusApplication.getBuyerID(), null);
+                    default:
+                        return null;
+                }
+            }
+        };
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        try {
+            if (loader.getId() == R.integer.user_details_db_loader) {
+                if(data.getCount() == 1) {
+                    setViewForPersonalDetails(mUserDBHelper.getJSONDataFromCursor(UserTable.TABLE_NAME, data, 0));
+                }
+            } else if(loader.getId() == R.integer.user_address_db_loader) {
+                JSONObject address = mUserDBHelper.getJSONDataFromCursor(UserAddressTable.TABLE_NAME, data, -1);
+                setViewForAddressListView(address.getJSONArray("address"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        try {
+            if(loader.getId() == R.integer.user_address_db_loader) {
+                mUserAddressDBHelper.close();
+                mUserAddressDBHelper = null;
+            } else if(loader.getId() == R.integer.user_details_db_loader) {
+                mUserDBHelper.close();
+                mUserDBHelper = null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d("db close error", "eeeeeeeeeeeeee");
+        }
+    }
+
     private void initReferences(ViewGroup rootView) {
         mPersonalDetailsListView = (ListView) rootView.findViewById(R.id.personal_details_list_view);
+        mAddressListView = (ListView) rootView.findViewById(R.id.address_list_view);
+        mNoAddressTextView = (TextView) rootView.findViewById(R.id.no_address_text_view);
     }
 
     private void handleAPIResponse() {
-        getActivity().getSupportLoaderManager().restartLoader(USER_DB_LOADER, null, this);
+        getActivity().getSupportLoaderManager().restartLoader(R.integer.user_details_db_loader, null, this);
+        getActivity().getSupportLoaderManager().restartLoader(R.integer.user_address_db_loader, null, this);
     }
 
-    private void setViewForPersonalDetails(JSONObject buyer) {
+    private void setViewForPersonalDetails(JSONObject buyer) throws JSONException {
         if (buyer == null) return;
 
         ArrayList<BuyerPersonalDetails> items = new ArrayList<>();
-        try {
-            items.add(new BuyerPersonalDetails("Name", buyer.getString(UserTable.COLUMN_NAME), R.drawable.ic_person_black_24dp));
-            items.add(new BuyerPersonalDetails("Company Name", buyer.getString(UserTable.COLUMN_COMPANY_NAME), R.drawable.ic_store_mall_directory_black_24dp));
-            items.add(new BuyerPersonalDetails("Mobile Number", buyer.getString(UserTable.COLUMN_MOBILE_NUMBER), R.drawable.ic_phone_black_24dp));
-            items.add(new BuyerPersonalDetails("E-mail", buyer.getString(UserTable.COLUMN_EMAIL), R.drawable.ic_mail_outline_black_24dp));
-            items.add(new BuyerPersonalDetails("Whatsapp Number", buyer.getString(UserTable.COLUMN_WHATSAPP_NUMBER), R.drawable.ic_perm_phone_msg_black_24dp));
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return;
-        }
+        items.add(new BuyerPersonalDetails("Name", buyer.getString(UserTable.COLUMN_NAME), R.drawable.ic_person_black_24dp));
+        items.add(new BuyerPersonalDetails("Company Name", buyer.getString(UserTable.COLUMN_COMPANY_NAME), R.drawable.ic_store_mall_directory_black_24dp));
+        items.add(new BuyerPersonalDetails("Mobile Number", buyer.getString(UserTable.COLUMN_MOBILE_NUMBER), R.drawable.ic_phone_black_24dp));
+        items.add(new BuyerPersonalDetails("E-mail", buyer.getString(UserTable.COLUMN_EMAIL), R.drawable.ic_mail_outline_black_24dp));
+        items.add(new BuyerPersonalDetails("Whatsapp Number", buyer.getString(UserTable.COLUMN_WHATSAPP_NUMBER), R.drawable.ic_perm_phone_msg_black_24dp));
 
         BuyerPersonalDetailsAdapter adapter = new BuyerPersonalDetailsAdapter(getContext(), items);
         mPersonalDetailsListView.setAdapter(adapter);
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new UserDBLoader(getContext());
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        switch (data.getCount()) {
-            case 0:
-                // no data present.
-                // keep showing loader
-                break;
-            case 1:
-                // data present, update the UI
-                // stop the loader
-                // fetch latest data from server if present
-                setViewForPersonalDetails(UserDBHelper.getJSONDataFromCursor(data, 0));
-                break;
-            default:
-                // this should not happen
-                data.close();
-                return;
+    private void setViewForAddressListView(JSONArray address) {
+        if(address.length() == 0) {
+            mNoAddressTextView.setVisibility(View.VISIBLE);
+            return;
         }
-        data.close();
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
+        mNoAddressTextView.setVisibility(View.GONE);
+        AddressDisplayListViewAdapter adapter = new AddressDisplayListViewAdapter(getActivity().getApplicationContext(), address);
+        mAddressListView.setAdapter(adapter);
     }
 }

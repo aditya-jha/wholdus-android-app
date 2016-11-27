@@ -40,7 +40,6 @@ public class UserService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d(UserService.class.getSimpleName(), "user service started");
         switch (intent.getIntExtra("TODO", 0)) {
             case R.string.fetch_user_profile:
                 fetchUserProfile();
@@ -106,12 +105,13 @@ public class UserService extends IntentService {
     }
 
     private void saveToDB(JSONObject response) throws JSONException {
-        UserDBHelper userDBHelper = UserDBHelper.getInstance(this);
+        UserDBHelper userDBHelper = new UserDBHelper(this);
 
         // update userData
-        boolean saved = userDBHelper.updateUserData(response) > 0 ? true : false;
+        boolean savedUserData = userDBHelper.updateUserData(response) > 0 ? true : false;
+        boolean savedUserAddress = userDBHelper.updateUserAddressData(response) > 0 ? true : false;
 
-        if (saved) {
+        if (savedUserData) {
             Intent intent = new Intent(getString(R.string.user_data_updated));
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         }

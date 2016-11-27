@@ -5,10 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.Nullable;
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserTable;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,8 +19,6 @@ import org.json.JSONObject;
  */
 
 public class UserDBHelper extends SQLiteOpenHelper {
-
-    private static UserDBHelper mInstance = null;
 
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "users";
@@ -54,22 +54,14 @@ public class UserDBHelper extends SQLiteOpenHelper {
                     UserAddressTable.COLUMN_LANDMARK + TEXT_TYPE + COMMA_SEP +
                     UserAddressTable.COLUMN_ADDRESS + TEXT_TYPE + COMMA_SEP +
                     UserAddressTable.COLUMN_CONTACT_NUMBER + TEXT_TYPE + COMMA_SEP +
+                    UserAddressTable.COLUMN_ADDRESS_ALIAS + TEXT_TYPE + COMMA_SEP +
                     UserAddressTable.COLUMN_PINCODE + TEXT_TYPE + " )";
 
     private static final String SQL_DROP_USER_ADDRESS_TABLE =
             "DROP TABLE IF EXISTS " + UserAddressTable.TABLE_NAME;
 
 
-    public static UserDBHelper getInstance(Context context) {
-        // Use the application context, which will ensure that you
-        // don't accidentally leak an Activity's context. http://bit.ly/6LRzfx
-        if (mInstance == null) {
-            mInstance = new UserDBHelper(context.getApplicationContext());
-        }
-        return mInstance;
-    }
-
-    private UserDBHelper(Context context) {
+    public UserDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -93,10 +85,19 @@ public class UserDBHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getUserData(String buyerID) {
-        SQLiteDatabase db = getReadableDatabase();
         String query = "SELECT * FROM " + UserTable.TABLE_NAME + " WHERE " + UserTable.COLUMN_BUYER_ID + "= " + buyerID + ";";
 
-        return db.rawQuery(query, null);
+        return getReadableDatabase().rawQuery(query, null);
+    }
+
+    public Cursor getUserAddress(String buyerID, @Nullable String ID) {
+        String query = "SELECT * FROM " + UserAddressTable.TABLE_NAME + " WHERE " + UserAddressTable.COLUMN_BUYER_ID + " = " + buyerID;
+        if (ID != null) {
+            query += " AND " + UserAddressTable.COLUMN_ADDRESS_ID + " = " + ID + ";";
+        } else {
+            query += ";";
+        }
+        return getReadableDatabase().rawQuery(query, null);
     }
 
     public long updateUserData(JSONObject data) throws JSONException {
@@ -120,11 +121,10 @@ public class UserDBHelper extends SQLiteOpenHelper {
             user.put(UserTable.COLUMN_BUYER_ID, buyerID);
             rows = db.insert(UserTable.TABLE_NAME, null, user);
         } else {
-            String selection = UserTable.COLUMN_BUYER_ID + "=" + buyerID;
             rows = db.update(
                     UserTable.TABLE_NAME,
                     user,
-                    selection,
+                    UserTable.COLUMN_BUYER_ID + "=" + buyerID,
                     null
             );
         }
@@ -132,23 +132,107 @@ public class UserDBHelper extends SQLiteOpenHelper {
         return rows;
     }
 
-    public static JSONObject getJSONDataFromCursor(Cursor cursor, int position) {
+    public long updateUserAddressData(JSONObject data) throws JSONException {
+        SQLiteDatabase db = getWritableDatabase();
+        JSONArray address = data.getJSONArray("address");
+        String buyerID = data.getString(UserAddressTable.COLUMN_BUYER_ID);
 
-        if (cursor == null) {
+        for(int i=0; i<address.length(); i++) {
+            JSONObject currAddress = address.getJSONObject(i);
+            ContentValues values = new ContentValues();
+
+            String addressID = currAddress.getString(UserAddressTable.COLUMN_ADDRESS_ID);
+
+            values.put(UserAddressTable.COLUMN_BUYER_ID, buyerID);
+            values.put(UserAddressTable.COLUMN_ADDRESS, currAddress.getString(UserAddressTable.COLUMN_ADDRESS));
+            //values.put(UserAddressTable.COLUMN_ADDRESS_ALIAS, currAddress.getString(UserAddressTable.COLUMN_ADDRESS_ALIAS));
+            values.put(UserAddressTable.COLUMN_ADDRESS_ALIAS, "Home");
+            values.put(UserAddressTable.COLUMN_ADDRESS_ID, addressID);
+            values.put(UserAddressTable.COLUMN_CITY, currAddress.getString(UserAddressTable.COLUMN_CITY));
+            values.put(UserAddressTable.COLUMN_CONTACT_NUMBER, currAddress.getString(UserAddressTable.COLUMN_CONTACT_NUMBER));
+            values.put(UserAddressTable.COLUMN_LANDMARK, currAddress.getString(UserAddressTable.COLUMN_LANDMARK));
+            values.put(UserAddressTable.COLUMN_PINCODE_ID, currAddress.getString(UserAddressTable.COLUMN_PINCODE_ID));
+            values.put(UserAddressTable.COLUMN_PINCODE, currAddress.getString(UserAddressTable.COLUMN_PINCODE));
+            values.put(UserAddressTable.COLUMN_STATE, currAddress.getString(UserAddressTable.COLUMN_STATE));
+            values.put(UserAddressTable.COLUMN_PRIORITY, currAddress.getString(UserAddressTable.COLUMN_PRIORITY));
+
+            if(getUserAddress(buyerID, addressID).getCount() == 0) {
+                // insert
+                db.insert(UserAddressTable.TABLE_NAME, null, values);
+            } else {
+                db.update(
+                        UserAddressTable.TABLE_NAME,
+                        values,
+                        UserAddressTable.COLUMN_BUYER_ID + "=" + buyerID + " AND " + UserAddressTable.COLUMN_ADDRESS_ID + "=" + addressID,
+                        null
+                );
+            }
+        }
+
+        db.close();
+        return 1;
+    }
+
+    public JSONObject getJSONDataFromCursor(String tableName, Cursor cursor, int position) {
+
+        if (cursor != null) {
+            try {
+                switch (tableName) {
+                    case UserTable.TABLE_NAME:
+                        return getUserJSONDataFromCursor(cursor, position);
+                    case UserAddressTable.TABLE_NAME:
+                        return getUserAddressDataFromCursor(cursor, position);
+                    default:
+                        return null;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return null;
+            }
+
+        } else {
             return null;
         }
+    }
 
+    private JSONObject getUserJSONDataFromCursor(Cursor cursor, int position) throws JSONException {
         JSONObject data = new JSONObject();
-        try {
-            cursor.moveToPosition(position);
-            data.put(UserTable.COLUMN_NAME, cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_NAME)));
-            data.put(UserTable.COLUMN_COMPANY_NAME, cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_COMPANY_NAME)));
-            data.put(UserTable.COLUMN_MOBILE_NUMBER, cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_MOBILE_NUMBER)));
-            data.put(UserTable.COLUMN_WHATSAPP_NUMBER, cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_WHATSAPP_NUMBER)));
-            data.put(UserTable.COLUMN_EMAIL, cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_EMAIL)));
-        } catch (JSONException e) {
-            e.printStackTrace();
+
+        cursor.moveToPosition(position);
+        data.put(UserTable.COLUMN_NAME, cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_NAME)));
+        data.put(UserTable.COLUMN_COMPANY_NAME, cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_COMPANY_NAME)));
+        data.put(UserTable.COLUMN_MOBILE_NUMBER, cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_MOBILE_NUMBER)));
+        data.put(UserTable.COLUMN_WHATSAPP_NUMBER, cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_WHATSAPP_NUMBER)));
+        data.put(UserTable.COLUMN_EMAIL, cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_EMAIL)));
+
+        return data;
+    }
+
+    private JSONObject getUserAddressDataFromCursor(Cursor cursor, int position) throws JSONException {
+        JSONObject data = new JSONObject();
+        JSONArray address = new JSONArray();
+        if (position == -1) {
+            int count = 0;
+            while (cursor.moveToNext()) {
+                JSONObject currAddress = new JSONObject();
+
+                currAddress.put(UserAddressTable.COLUMN_ADDRESS, cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS)));
+                currAddress.put(UserAddressTable.COLUMN_ADDRESS_ALIAS, cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS_ALIAS)));
+                currAddress.put(UserAddressTable.COLUMN_ADDRESS_ID, cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS_ID)));
+                currAddress.put(UserAddressTable.COLUMN_BUYER_ID, cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_BUYER_ID)));
+                currAddress.put(UserAddressTable.COLUMN_CITY, cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_CITY)));
+                currAddress.put(UserAddressTable.COLUMN_CONTACT_NUMBER, cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_CONTACT_NUMBER)));
+                currAddress.put(UserAddressTable.COLUMN_LANDMARK, cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_LANDMARK)));
+                currAddress.put(UserAddressTable.COLUMN_PINCODE, cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_PINCODE)));
+                currAddress.put(UserAddressTable.COLUMN_PINCODE_ID, cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_PINCODE_ID)));
+                currAddress.put(UserAddressTable.COLUMN_PRIORITY, cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_PRIORITY)));
+                currAddress.put(UserAddressTable.COLUMN_STATE, cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_STATE)));
+                currAddress.put(UserAddressTable._ID, cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable._ID)));
+
+                address.put(count++, currAddress);
+            }
         }
+        data.put("address", address);
         return data;
     }
 }
