@@ -25,7 +25,7 @@ import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 public class AccountActivity extends AppCompatActivity implements ProfileListenerInterface {
 
     private DrawerLayout mDrawerLayout;
-    private String mTitle;
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +33,9 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
         setContentView(R.layout.activity_account);
 
         initNavigationDrawer();
-        fragmentToOpen(savedInstanceState);
         initToolbar();
 
+        fragmentToOpen(savedInstanceState);
     }
 
     @Override
@@ -57,7 +57,6 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
     }
 
     @Override
@@ -76,21 +75,40 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
         openToFragment("editPersonalDetails");
     }
 
+    @Override
+    public void fragmentCreated(String fragmentName, boolean backEnabled) {
+        modifyToolbar(fragmentName, backEnabled);
+    }
+
     private void initToolbar() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         // set default toolbar as the action bar for this activity
-        Toolbar toolbar = (Toolbar) findViewById(R.id.default_toolbar);
-        toolbar.setTitle(mTitle);
-        toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.default_toolbar);
+        setSupportActionBar(mToolbar);
+    }
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDrawerLayout.openDrawer(GravityCompat.START);
-            }
-        });
+    private void modifyToolbar(String title, boolean backEnabled) {
+        mToolbar.setTitle(title);
+        if(backEnabled && mToolbar.getNavigationContentDescription() != "backEnabled") {
+            mToolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_black_24dp);
+            mToolbar.setNavigationContentDescription("backEnabled");
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onBackPressed();
+                }
+            });
+        } else if(!backEnabled && mToolbar.getNavigationContentDescription() != "default") {
+            mToolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
+            mToolbar.setNavigationContentDescription("default");
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mDrawerLayout.openDrawer(GravityCompat.START);
+                }
+            });
+        }
     }
 
     private void initNavigationDrawer() {
@@ -118,31 +136,27 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
 
         switch (fragmentName) {
             case "profile":
-                mTitle = "My Profile";
                 fragment = new ProfileFragment();
                 break;
             case "orders":
-                mTitle = "My Orders";
                 fragment = new OrdersFragment();
                 break;
             case "rejectedProducts":
-                mTitle = "Rejected Products";
                 fragment = new ProductsGridFragment();
                 break;
             case "editPersonalDetails":
-                mTitle = "Edit Details";
                 fragment = new EditProfileDetailsFragment();
                 break;
             default:
-                mTitle = "My Profile";
                 fragment = new ProfileFragment();
         }
 
         String backStateName = fragment.getClass().getName();
         FragmentManager fragmentManager = getSupportFragmentManager();
-        boolean fragmentPopped = fragmentManager.popBackStackImmediate (backStateName, 0);
 
-        if(!fragmentPopped) { // fragment not in backstack create it
+        boolean fragmentPopped = fragmentManager.popBackStackImmediate(backStateName, 0);
+
+        if (!fragmentPopped) { // fragment not in backstack create it
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
             fragmentTransaction.addToBackStack(backStateName);

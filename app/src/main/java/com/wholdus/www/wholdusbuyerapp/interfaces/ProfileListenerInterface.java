@@ -6,4 +6,6 @@ package com.wholdus.www.wholdusbuyerapp.interfaces;
 
 public interface ProfileListenerInterface {
     void editPersonalDetails();
+
+    void fragmentCreated(String fragmentName, boolean backEnabled);
 }

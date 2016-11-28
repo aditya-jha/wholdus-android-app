@@ -46,10 +46,9 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     private TextView mNoAddressTextView;
     private ListView mPersonalDetailsListView;
     private ListView mAddressListView;
-    private TextView mEditPersonalDetailsTextView;
     private BroadcastReceiver mUserServiceResponseReceiver;
     private UserDBHelper mUserDBHelper, mUserAddressDBHelper;
-    private ProfileListenerInterface listener;
+    private ProfileListenerInterface mListener;
 
     public ProfileFragment() {
     }
@@ -58,7 +57,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            listener = (ProfileListenerInterface) context;
+            mListener = (ProfileListenerInterface) context;
         } catch (ClassCastException cee) {
             cee.printStackTrace();
         }
@@ -67,6 +66,12 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mUserServiceResponseReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                handleAPIResponse();
+            }
+        };
     }
 
     @Nullable
@@ -74,15 +79,8 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_profile, container, false);
 
-        mUserServiceResponseReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                handleAPIResponse();
-            }
-        };
-
-        getActivity().getSupportLoaderManager().initLoader(R.integer.user_details_db_loader, null, this);
-        getActivity().getSupportLoaderManager().initLoader(R.integer.user_address_db_loader, null, this);
+        getActivity().getSupportLoaderManager().restartLoader(R.integer.user_details_db_loader, null, this);
+        getActivity().getSupportLoaderManager().restartLoader(R.integer.user_address_db_loader, null, this);
 
         initReferences(rootView);
 
@@ -96,9 +94,12 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         IntentFilter intentFilter = new IntentFilter(getString(R.string.user_data_updated));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mUserServiceResponseReceiver, intentFilter);
 
+        mListener.fragmentCreated("My Profile", false);
+
         Intent intent = new Intent(getContext(), UserService.class);
         intent.putExtra("TODO", R.string.fetch_user_profile);
         getContext().startService(intent);
+
     }
 
     @Override
@@ -121,7 +122,12 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onDetach() {
         super.onDetach();
-        listener = null;
+        mListener = null;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -149,10 +155,10 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         try {
             if (loader.getId() == R.integer.user_details_db_loader) {
-                if(data.getCount() == 1) {
+                if (data.getCount() == 1) {
                     setViewForPersonalDetails(mUserDBHelper.getJSONDataFromCursor(UserTable.TABLE_NAME, data, 0));
                 }
-            } else if(loader.getId() == R.integer.user_address_db_loader) {
+            } else if (loader.getId() == R.integer.user_address_db_loader) {
                 JSONObject address = mUserDBHelper.getJSONDataFromCursor(UserAddressTable.TABLE_NAME, data, -1);
                 setViewForAddressListView(address.getJSONArray("address"));
             }
@@ -164,10 +170,10 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         try {
-            if(loader.getId() == R.integer.user_address_db_loader) {
+            if (loader.getId() == R.integer.user_address_db_loader) {
                 mUserAddressDBHelper.close();
                 mUserAddressDBHelper = null;
-            } else if(loader.getId() == R.integer.user_details_db_loader) {
+            } else if (loader.getId() == R.integer.user_details_db_loader) {
                 mUserDBHelper.close();
                 mUserDBHelper = null;
             }
@@ -182,11 +188,11 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         mAddressListView = (ListView) rootView.findViewById(R.id.address_list_view);
         mNoAddressTextView = (TextView) rootView.findViewById(R.id.no_address_text_view);
 
-        mEditPersonalDetailsTextView = (TextView) rootView.findViewById(R.id.edit_personal_details_text_view);
+        TextView mEditPersonalDetailsTextView = (TextView) rootView.findViewById(R.id.edit_personal_details_text_view);
         mEditPersonalDetailsTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.editPersonalDetails();
+                mListener.editPersonalDetails();
             }
         });
     }
@@ -211,7 +217,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     private void setViewForAddressListView(JSONArray address) {
-        if(address.length() == 0) {
+        if (address.length() == 0) {
             mNoAddressTextView.setVisibility(View.VISIBLE);
             return;
         }
