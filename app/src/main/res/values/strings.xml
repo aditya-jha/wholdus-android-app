@@ -29,6 +29,16 @@
     <string name="request_otp">REQUEST OTP</string>
     <string name="forgot_password_intro_text">We just need your registered mobile number help you reset your password</string>
 
+    <!-- Account Activity -->
+    <string-array name="account_activity_fragments">
+        <item>profile</item>
+        <item>orders</item>
+        <item>rejectedProducts</item>
+        <item>editPersonalDetails</item>
+    </string-array>
+
     <!-- Profile Fragment -->
     <string name="personal_details">Personal Details</string>
+    <string name="address">Address</string>
+    <string name="no_address">No address Saved</string>
 </resources>

@@ -8,20 +8,24 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.fragments.EditProfileDetailsFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.OrdersFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProductsGridFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProfileFragment;
+import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 
-public class AccountActivity extends AppCompatActivity {
+public class AccountActivity extends AppCompatActivity implements ProfileListenerInterface {
 
     private DrawerLayout mDrawerLayout;
-    private String mTitle;
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,9 +33,9 @@ public class AccountActivity extends AppCompatActivity {
         setContentView(R.layout.activity_account);
 
         initNavigationDrawer();
-        fragmentToOpen(savedInstanceState);
         initToolbar();
 
+        fragmentToOpen(savedInstanceState);
     }
 
     @Override
@@ -50,21 +54,61 @@ public class AccountActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+            finish();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void editPersonalDetails() {
+        // load edit profile details fragment
+        // don't add it to backstack
+        openToFragment("editPersonalDetails");
+    }
+
+    @Override
+    public void fragmentCreated(String fragmentName, boolean backEnabled) {
+        modifyToolbar(fragmentName, backEnabled);
+    }
+
     private void initToolbar() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         // set default toolbar as the action bar for this activity
-        Toolbar toolbar = (Toolbar) findViewById(R.id.default_toolbar);
-        toolbar.setTitle(mTitle);
-        toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.default_toolbar);
+        setSupportActionBar(mToolbar);
+    }
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDrawerLayout.openDrawer(GravityCompat.START);
-            }
-        });
+    private void modifyToolbar(String title, boolean backEnabled) {
+        mToolbar.setTitle(title);
+        if(backEnabled && mToolbar.getNavigationContentDescription() != "backEnabled") {
+            mToolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_black_24dp);
+            mToolbar.setNavigationContentDescription("backEnabled");
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onBackPressed();
+                }
+            });
+        } else if(!backEnabled && mToolbar.getNavigationContentDescription() != "default") {
+            mToolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
+            mToolbar.setNavigationContentDescription("default");
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mDrawerLayout.openDrawer(GravityCompat.START);
+                }
+            });
+        }
     }
 
     private void initNavigationDrawer() {
@@ -77,6 +121,10 @@ public class AccountActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             openFragment = extras.getString("openFragment");
+            if (TextUtils.isEmpty(openFragment)) {
+                openFragment = "profile";
+            }
+            Log.d("openfragment", openFragment);
         } else {
             openFragment = (String) savedInstanceState.getSerializable("openFragment");
         }
@@ -88,25 +136,31 @@ public class AccountActivity extends AppCompatActivity {
 
         switch (fragmentName) {
             case "profile":
-                mTitle = "My Profile";
                 fragment = new ProfileFragment();
                 break;
             case "orders":
-                mTitle = "My Orders";
                 fragment = new OrdersFragment();
                 break;
             case "rejectedProducts":
-                mTitle = "Rejected Products";
                 fragment = new ProductsGridFragment();
                 break;
+            case "editPersonalDetails":
+                fragment = new EditProfileDetailsFragment();
+                break;
             default:
-                mTitle = "My Profile";
                 fragment = new ProfileFragment();
         }
 
+        String backStateName = fragment.getClass().getName();
         FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
-        fragmentTransaction.commit();
+
+        boolean fragmentPopped = fragmentManager.popBackStackImmediate(backStateName, 0);
+
+        if (!fragmentPopped) { // fragment not in backstack create it
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
+            fragmentTransaction.addToBackStack(backStateName);
+            fragmentTransaction.commit();
+        }
     }
 }

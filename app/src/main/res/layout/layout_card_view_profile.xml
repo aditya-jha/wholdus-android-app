@@ -14,26 +14,14 @@
             android:orientation="vertical"
             android:padding="@dimen/card_margin_vertical">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/edit_personal_details_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="@dimen/card_margin_vertical">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
-                    android:text="@string/personal_details" />
-
-                <ImageView
-                    android:id="@+id/edit_profile_image_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_mode_edit_black_24dp" />
-            </LinearLayout>
+                android:layout_gravity="center_vertical"
+                android:drawableEnd="@drawable/ic_mode_edit_black_24dp"
+                android:drawableRight="@drawable/ic_mode_edit_black_24dp"
+                android:text="@string/personal_details" />
 
             <View
                 android:layout_width="match_parent"
