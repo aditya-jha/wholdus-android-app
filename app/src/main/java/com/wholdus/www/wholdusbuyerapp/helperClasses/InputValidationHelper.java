@@ -17,10 +17,8 @@ public class InputValidationHelper {
         Matcher phoneMatcher = phonePattern.matcher(inputValue);
         String error = null;
 
-        if (inputValue.isEmpty()) {
-            error = "Please enter your mobile number";
-        } else if (!phoneMatcher.matches()) {
-            error = "Please check your number";
+        if (inputValue.isEmpty() || !phoneMatcher.matches()) {
+            error = "Please enter valid mobile number";
         } else if (inputValue.length() < 9) {
             error = "Mobile number has to be 10 digits";
         }

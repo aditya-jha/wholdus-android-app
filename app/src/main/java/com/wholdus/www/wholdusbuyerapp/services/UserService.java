@@ -42,33 +42,69 @@ public class UserService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         switch (intent.getIntExtra("TODO", 0)) {
             case R.string.fetch_user_profile:
-                fetchUserProfile();
+                fetchUserProfile(R.string.fetch_user_profile);
                 break;
+            case R.string.update_user_profile:
+                // update user profile
+                try {
+                    JSONObject data = new JSONObject();
+                    data.put("test", "test");
+                    updateUserProfile(R.string.update_user_profile, data);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            case R.string.fetch_business_types:
+                // fetch business types and update db
+                fetchBusinessTypes(R.string.fetch_business_types);
             default:
                 return;
         }
     }
 
-    private void fetchUserProfile() {
+    private void fetchUserProfile(int todo) {
         String url = GlobalAccessHelper.generateUrl(getApplicationContext(), getString(R.string.buyer_details_url), null);
-        volleyStringRequest(Request.Method.GET, url, null);
+        volleyStringRequest(todo, Request.Method.GET, url, null);
     }
 
-    public void volleyStringRequest(int method, String endPoint, final String jsonData) {
+    private void updateUserProfile(int todo, JSONObject data) {
+        Log.d("updating", "user profile dude");
+        Intent broadcastIntent = new Intent(getString(R.string.user_data_updated));
+        LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
+    }
+
+    private void fetchBusinessTypes(int todo) {
+        String url = GlobalAccessHelper.generateUrl(getApplicationContext(), getString(R.string.business_types_url), null);
+        volleyStringRequest(todo, Request.Method.GET, url, null);
+    }
+
+    private void onResponseHandler(final int todo, String response) {
+        try {
+            JSONObject data = new JSONObject(response);
+            switch (todo) {
+                case R.string.fetch_user_profile:
+                    JSONArray buyers = data.getJSONArray("buyers");
+                    if (buyers.length() == 1) {
+                        saveToDB(buyers.getJSONObject(0));
+                    }
+                    break;
+                case R.string.update_user_profile:
+                    break;
+                case R.string.fetch_business_types:
+                    handleBusinessTypesResponse(data);
+                    break;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void volleyStringRequest(final int todo, int method, String endPoint, final String jsonData) {
 
         StringRequest stringRequest = new StringRequest(method, endPoint,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        try {
-                            JSONObject data = new JSONObject(response);
-                            JSONArray buyers = data.getJSONArray("buyers");
-                            if (buyers.length() == 1) {
-                                saveToDB(buyers.getJSONObject(0));
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        onResponseHandler(todo, response);
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -112,8 +148,24 @@ public class UserService extends IntentService {
         boolean savedUserAddress = userDBHelper.updateUserAddressData(response) > 0 ? true : false;
 
         if (savedUserData) {
-            Intent intent = new Intent(getString(R.string.user_data_updated));
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+            sendUserDataUpdatedBroadCast(null);
         }
+    }
+
+    private void handleBusinessTypesResponse(JSONObject data) throws JSONException {
+        UserDBHelper userDBHelper = new UserDBHelper(this);
+
+        boolean savedBusinessTypesData = userDBHelper.updateBusinessTypesData(data) > 0 ? true : false;
+        if (savedBusinessTypesData) {
+            sendUserDataUpdatedBroadCast("business_types_updated");
+        }
+    }
+
+    private void sendUserDataUpdatedBroadCast(@Nullable String extra) {
+        Intent intent = new Intent(getString(R.string.user_data_updated));
+        if (extra != null) {
+            intent.putExtra("extra", extra);
+        }
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

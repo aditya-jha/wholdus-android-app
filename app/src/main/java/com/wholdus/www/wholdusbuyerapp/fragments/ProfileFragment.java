@@ -49,6 +49,8 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     private BroadcastReceiver mUserServiceResponseReceiver;
     private UserDBHelper mUserDBHelper, mUserAddressDBHelper;
     private ProfileListenerInterface mListener;
+    private final int USER_DETAILS_DB_LOADER = 0;
+    private final int USER_ADDRESS_DB_LOADER = 1;
 
     public ProfileFragment() {
     }
@@ -79,10 +81,9 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_profile, container, false);
 
-        getActivity().getSupportLoaderManager().restartLoader(R.integer.user_details_db_loader, null, this);
-        getActivity().getSupportLoaderManager().restartLoader(R.integer.user_address_db_loader, null, this);
-
         initReferences(rootView);
+        getActivity().getSupportLoaderManager().restartLoader(USER_DETAILS_DB_LOADER, null, this);
+        getActivity().getSupportLoaderManager().restartLoader(USER_ADDRESS_DB_LOADER, null, this);
 
         return rootView;
     }
@@ -99,7 +100,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         Intent intent = new Intent(getContext(), UserService.class);
         intent.putExtra("TODO", R.string.fetch_user_profile);
         getContext().startService(intent);
-
     }
 
     @Override
@@ -138,10 +138,10 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                 WholdusApplication wholdusApplication = (WholdusApplication) getActivity().getApplication();
 
                 switch (id) {
-                    case R.integer.user_details_db_loader:
+                    case USER_DETAILS_DB_LOADER:
                         mUserDBHelper = new UserDBHelper(getContext());
                         return mUserDBHelper.getUserData(wholdusApplication.getBuyerID());
-                    case R.integer.user_address_db_loader:
+                    case USER_ADDRESS_DB_LOADER:
                         mUserAddressDBHelper = new UserDBHelper(getContext());
                         return mUserAddressDBHelper.getUserAddress(wholdusApplication.getBuyerID(), null);
                     default:
@@ -154,11 +154,11 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         try {
-            if (loader.getId() == R.integer.user_details_db_loader) {
+            if (loader.getId() == USER_DETAILS_DB_LOADER) {
                 if (data.getCount() == 1) {
                     setViewForPersonalDetails(mUserDBHelper.getJSONDataFromCursor(UserTable.TABLE_NAME, data, 0));
                 }
-            } else if (loader.getId() == R.integer.user_address_db_loader) {
+            } else if (loader.getId() == USER_ADDRESS_DB_LOADER) {
                 JSONObject address = mUserDBHelper.getJSONDataFromCursor(UserAddressTable.TABLE_NAME, data, -1);
                 setViewForAddressListView(address.getJSONArray("address"));
             }
@@ -170,10 +170,10 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         try {
-            if (loader.getId() == R.integer.user_address_db_loader) {
+            if (loader.getId() == USER_ADDRESS_DB_LOADER) {
                 mUserAddressDBHelper.close();
                 mUserAddressDBHelper = null;
-            } else if (loader.getId() == R.integer.user_details_db_loader) {
+            } else if (loader.getId() == USER_DETAILS_DB_LOADER) {
                 mUserDBHelper.close();
                 mUserDBHelper = null;
             }
@@ -198,19 +198,19 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     private void handleAPIResponse() {
-        getActivity().getSupportLoaderManager().restartLoader(R.integer.user_details_db_loader, null, this);
-        getActivity().getSupportLoaderManager().restartLoader(R.integer.user_address_db_loader, null, this);
+        getActivity().getSupportLoaderManager().restartLoader(USER_DETAILS_DB_LOADER, null, this);
+        getActivity().getSupportLoaderManager().restartLoader(USER_ADDRESS_DB_LOADER, null, this);
     }
 
     private void setViewForPersonalDetails(JSONObject buyer) throws JSONException {
         if (buyer == null) return;
 
         ArrayList<BuyerPersonalDetails> items = new ArrayList<>();
-        items.add(new BuyerPersonalDetails("Name", buyer.getString(UserTable.COLUMN_NAME), R.drawable.ic_person_black_24dp));
-        items.add(new BuyerPersonalDetails("Company Name", buyer.getString(UserTable.COLUMN_COMPANY_NAME), R.drawable.ic_store_mall_directory_black_24dp));
-        items.add(new BuyerPersonalDetails("Mobile Number", buyer.getString(UserTable.COLUMN_MOBILE_NUMBER), R.drawable.ic_phone_black_24dp));
-        items.add(new BuyerPersonalDetails("E-mail", buyer.getString(UserTable.COLUMN_EMAIL), R.drawable.ic_mail_outline_black_24dp));
-        items.add(new BuyerPersonalDetails("Whatsapp Number", buyer.getString(UserTable.COLUMN_WHATSAPP_NUMBER), R.drawable.ic_perm_phone_msg_black_24dp));
+        items.add(new BuyerPersonalDetails(getString(R.string.name_key), buyer.getString(UserTable.COLUMN_NAME), R.drawable.ic_person_black_24dp));
+        items.add(new BuyerPersonalDetails(getString(R.string.company_name_key), buyer.getString(UserTable.COLUMN_COMPANY_NAME), R.drawable.ic_store_mall_directory_black_24dp));
+        items.add(new BuyerPersonalDetails(getString(R.string.mobile_number_key), buyer.getString(UserTable.COLUMN_MOBILE_NUMBER), R.drawable.ic_phone_black_24dp));
+        items.add(new BuyerPersonalDetails(getString(R.string.email_key), buyer.getString(UserTable.COLUMN_EMAIL), R.drawable.ic_mail_outline_black_24dp));
+        items.add(new BuyerPersonalDetails(getString(R.string.whatsapp_number_key), buyer.getString(UserTable.COLUMN_WHATSAPP_NUMBER), R.drawable.ic_perm_phone_msg_black_24dp));
 
         BuyerPersonalDetailsAdapter adapter = new BuyerPersonalDetailsAdapter(getContext(), items);
         mPersonalDetailsListView.setAdapter(adapter);

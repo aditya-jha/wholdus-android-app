@@ -8,4 +8,6 @@ public interface ProfileListenerInterface {
     void editPersonalDetails();
 
     void fragmentCreated(String fragmentName, boolean backEnabled);
+
+    void openProfileFragment();
 }

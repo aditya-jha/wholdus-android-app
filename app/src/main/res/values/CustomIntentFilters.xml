@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="api_response">intentFilter.API_RESPONSE</string>
-    <string name="user_data_updated">intentFiler.USER_DATA_UPDATED</string>
+    <string name="user_data_updated">intentFilter.USER_DATA_UPDATED</string>
+    <string name="business_types_data_updated">intentFilter.BUSINESS_TYPES_UPDATED</string>
 </resources>

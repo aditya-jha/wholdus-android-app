@@ -80,6 +80,11 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
         modifyToolbar(fragmentName, backEnabled);
     }
 
+    @Override
+    public void openProfileFragment() {
+        onBackPressed();
+    }
+
     private void initToolbar() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -90,7 +95,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
 
     private void modifyToolbar(String title, boolean backEnabled) {
         mToolbar.setTitle(title);
-        if(backEnabled && mToolbar.getNavigationContentDescription() != "backEnabled") {
+        if (backEnabled && mToolbar.getNavigationContentDescription() != "backEnabled") {
             mToolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_black_24dp);
             mToolbar.setNavigationContentDescription("backEnabled");
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -99,7 +104,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
                     onBackPressed();
                 }
             });
-        } else if(!backEnabled && mToolbar.getNavigationContentDescription() != "default") {
+        } else if (!backEnabled && mToolbar.getNavigationContentDescription() != "default") {
             mToolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
             mToolbar.setNavigationContentDescription("default");
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {

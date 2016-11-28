@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.Nullable;
 
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.BusinessTypesTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserTable;
 
@@ -60,6 +61,15 @@ public class UserDBHelper extends SQLiteOpenHelper {
     private static final String SQL_DROP_USER_ADDRESS_TABLE =
             "DROP TABLE IF EXISTS " + UserAddressTable.TABLE_NAME;
 
+    private static final String SQL_CREATE_BUSINESS_TYPES_TABLE =
+            "CREATE TABLE " + BusinessTypesTable.TABLE_NAME + " (" +
+                    BusinessTypesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
+                    BusinessTypesTable.COLUMN_BUSINESS_TYPE + TEXT_TYPE + COMMA_SEP +
+                    BusinessTypesTable.COLUMN_BUSINESS_TYPE_ID + TEXT_TYPE + COMMA_SEP +
+                    BusinessTypesTable.COLUMN_DESCRIPTION + TEXT_TYPE + " )";
+
+    private static final String SQL_DROP_BUSINESS_TYPES_TABLE =
+            "DROP TABLE IF EXISTS " + BusinessTypesTable.TABLE_NAME;
 
     public UserDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -69,12 +79,14 @@ public class UserDBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(SQL_CREATE_USER_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_USER_ADDRESS_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_BUSINESS_TYPES_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         sqLiteDatabase.execSQL(SQL_DROP_USER_TABLE);
         sqLiteDatabase.execSQL(SQL_DROP_USER_ADDRESS_TABLE);
+        sqLiteDatabase.execSQL(SQL_DROP_BUSINESS_TYPES_TABLE);
 
         onCreate(sqLiteDatabase);
     }
@@ -96,6 +108,14 @@ public class UserDBHelper extends SQLiteOpenHelper {
             query += " AND " + UserAddressTable.COLUMN_ADDRESS_ID + " = " + ID + ";";
         } else {
             query += ";";
+        }
+        return getReadableDatabase().rawQuery(query, null);
+    }
+
+    public Cursor getBusinessTypes(@Nullable String businessTypeID) {
+        String query = "SELECT * FROM " + BusinessTypesTable.TABLE_NAME;
+        if (businessTypeID != null) {
+            query += " WHERE " + BusinessTypesTable.COLUMN_BUSINESS_TYPE_ID + " = " + businessTypeID;
         }
         return getReadableDatabase().rawQuery(query, null);
     }
@@ -137,7 +157,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
         JSONArray address = data.getJSONArray("address");
         String buyerID = data.getString(UserAddressTable.COLUMN_BUYER_ID);
 
-        for(int i=0; i<address.length(); i++) {
+        for (int i = 0; i < address.length(); i++) {
             JSONObject currAddress = address.getJSONObject(i);
             ContentValues values = new ContentValues();
 
@@ -156,7 +176,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
             values.put(UserAddressTable.COLUMN_STATE, currAddress.getString(UserAddressTable.COLUMN_STATE));
             values.put(UserAddressTable.COLUMN_PRIORITY, currAddress.getString(UserAddressTable.COLUMN_PRIORITY));
 
-            if(getUserAddress(buyerID, addressID).getCount() == 0) {
+            if (getUserAddress(buyerID, addressID).getCount() == 0) {
                 // insert
                 db.insert(UserAddressTable.TABLE_NAME, null, values);
             } else {
@@ -173,6 +193,30 @@ public class UserDBHelper extends SQLiteOpenHelper {
         return 1;
     }
 
+    public int updateBusinessTypesData(JSONObject data) throws JSONException {
+        JSONArray businessTypes = data.getJSONArray(BusinessTypesTable.TABLE_NAME);
+        SQLiteDatabase db = getWritableDatabase();
+
+        for (int i = 0; i < businessTypes.length(); i++) {
+            JSONObject bt = businessTypes.getJSONObject(i);
+            ContentValues values = new ContentValues();
+            String businessTypeID = bt.getString(BusinessTypesTable.COLUMN_BUSINESS_TYPE_ID);
+            values.put(BusinessTypesTable.COLUMN_BUSINESS_TYPE_ID, businessTypeID);
+            values.put(BusinessTypesTable.COLUMN_BUSINESS_TYPE, bt.getString(BusinessTypesTable.COLUMN_BUSINESS_TYPE));
+            values.put(BusinessTypesTable.COLUMN_DESCRIPTION, bt.getString(BusinessTypesTable.COLUMN_DESCRIPTION));
+
+            if (getBusinessTypes(businessTypeID).getCount() == 0) { // insert
+                db.insert(BusinessTypesTable.TABLE_NAME, null, values);
+            } else { // update
+                db.update(BusinessTypesTable.TABLE_NAME,
+                        values,
+                        BusinessTypesTable.COLUMN_BUSINESS_TYPE_ID + "=" + businessTypeID,
+                        null);
+            }
+        }
+        return businessTypes.length();
+    }
+
     public JSONObject getJSONDataFromCursor(String tableName, Cursor cursor, int position) {
 
         if (cursor != null) {
@@ -182,6 +226,8 @@ public class UserDBHelper extends SQLiteOpenHelper {
                         return getUserJSONDataFromCursor(cursor, position);
                     case UserAddressTable.TABLE_NAME:
                         return getUserAddressDataFromCursor(cursor, position);
+                    case BusinessTypesTable.TABLE_NAME:
+                        return getBusinessTypesDataFromCursor(cursor, position);
                     default:
                         return null;
                 }
@@ -204,6 +250,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
         data.put(UserTable.COLUMN_MOBILE_NUMBER, cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_MOBILE_NUMBER)));
         data.put(UserTable.COLUMN_WHATSAPP_NUMBER, cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_WHATSAPP_NUMBER)));
         data.put(UserTable.COLUMN_EMAIL, cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_EMAIL)));
+        data.put(UserTable.COLUMN_BUSINESS_TYPE, cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_BUSINESS_TYPE)));
 
         return data;
     }
@@ -233,6 +280,26 @@ public class UserDBHelper extends SQLiteOpenHelper {
             }
         }
         data.put("address", address);
+        return data;
+    }
+
+    private JSONObject getBusinessTypesDataFromCursor(Cursor cursor, int position) throws JSONException {
+        JSONObject data = new JSONObject();
+        JSONArray businessTypes = new JSONArray();
+
+        if (position == -1) {
+            int count = 0;
+            while (cursor.moveToNext()) {
+                JSONObject currBusinessType = new JSONObject();
+
+                currBusinessType.put(BusinessTypesTable.COLUMN_BUSINESS_TYPE_ID, cursor.getString(cursor.getColumnIndexOrThrow(BusinessTypesTable.COLUMN_BUSINESS_TYPE_ID)));
+                currBusinessType.put(BusinessTypesTable.COLUMN_BUSINESS_TYPE, cursor.getString(cursor.getColumnIndexOrThrow(BusinessTypesTable.COLUMN_BUSINESS_TYPE)));
+                currBusinessType.put(BusinessTypesTable.COLUMN_DESCRIPTION, cursor.getString(cursor.getColumnIndexOrThrow(BusinessTypesTable.COLUMN_DESCRIPTION)));
+
+                businessTypes.put(count++, currBusinessType);
+            }
+        }
+        data.put(BusinessTypesTable.TABLE_NAME, businessTypes);
         return data;
     }
 }

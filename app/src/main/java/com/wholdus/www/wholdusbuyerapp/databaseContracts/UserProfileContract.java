@@ -2,6 +2,8 @@ package com.wholdus.www.wholdusbuyerapp.databaseContracts;
 
 import android.provider.BaseColumns;
 
+import static android.R.attr.description;
+
 /**
  * Created by aditya on 25/11/16.
  */
@@ -36,5 +38,12 @@ public final class UserProfileContract {
         public static final String COLUMN_CONTACT_NUMBER = "contact_number";
         public static final String COLUMN_PINCODE = "pincode";
         public static final String COLUMN_ADDRESS_ALIAS = "alias";
+    }
+
+    public static final class BusinessTypesTable implements BaseColumns {
+        public static final String TABLE_NAME = "business_types";
+        public static final String COLUMN_BUSINESS_TYPE = "business_type";
+        public static final String COLUMN_BUSINESS_TYPE_ID = "businesstypeID";
+        public static final String COLUMN_DESCRIPTION = "description";
     }
 }

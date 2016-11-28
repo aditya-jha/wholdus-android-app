@@ -41,4 +41,15 @@
     <string name="personal_details">Personal Details</string>
     <string name="address">Address</string>
     <string name="no_address">No address Saved</string>
+
+    <!-- Edit Profile Fragment -->
+    <string name="business_type_title">My Business Type</string>
+
+    <!-- keys -->
+    <string name="name_key">name</string>
+    <string name="mobile_number_key">Mobile Number</string>
+    <string name="whatsapp_number_key">Whatsapp Number</string>
+    <string name="company_name_key">Company Name</string>
+    <string name="email_key">E-mail</string>
+    <string name="save_text">Save</string>
 </resources>

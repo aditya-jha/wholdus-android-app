@@ -8,4 +8,7 @@
 
     <!-- buyer related apis -->
     <string name="buyer_details_url">users/buyer/</string>
+
+    <!-- business types api -->
+    <string name="business_types_url">users/businesstype/</string>
 </resources>
