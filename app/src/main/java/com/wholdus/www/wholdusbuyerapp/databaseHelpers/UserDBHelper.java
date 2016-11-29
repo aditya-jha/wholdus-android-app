@@ -216,6 +216,9 @@ public class UserDBHelper extends SQLiteOpenHelper {
             while (cursor.moveToNext()) {
                 JSONObject currAddress = new JSONObject();
 
+
+
+                
                 currAddress.put(UserAddressTable.COLUMN_ADDRESS, cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS)));
                 currAddress.put(UserAddressTable.COLUMN_ADDRESS_ALIAS, cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS_ALIAS)));
                 currAddress.put(UserAddressTable.COLUMN_ADDRESS_ID, cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS_ID)));
