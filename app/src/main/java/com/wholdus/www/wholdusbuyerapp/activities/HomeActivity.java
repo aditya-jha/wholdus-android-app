@@ -1,6 +1,7 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.fragments.HomeFragment;
@@ -42,9 +44,18 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if(!mDoublePressToExit) {
+            mDoublePressToExit = true;
+            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
 
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mDoublePressToExit = false;
+                }
+            }, 2000);
+        } else {
+            finish();
         }
-        super.onBackPressed();
     }
 
     @Override
