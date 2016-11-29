@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.fragments.HomeFragment;
@@ -16,6 +17,7 @@ import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
 public class HomeActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
+    private int backpress = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,12 @@ public class HomeActivity extends AppCompatActivity {
 
         // initialize the activity elements
         initActivityElements();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        backpress = 0;
     }
 
     @Override
@@ -84,5 +92,18 @@ public class HomeActivity extends AppCompatActivity {
         // add fragment
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new HomeFragment()).commit();
+    }
+
+    @Override
+    public void onBackPressed(){
+        if (backpress == 0) {
+            backpress = (backpress + 1);
+            Toast.makeText(getApplicationContext(), " Press Back again to Exit ", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (backpress >= 1) {
+            super.onBackPressed();
+            return;
+        }
     }
 }
