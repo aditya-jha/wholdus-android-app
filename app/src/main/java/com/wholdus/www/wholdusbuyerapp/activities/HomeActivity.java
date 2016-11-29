@@ -16,6 +16,7 @@ import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
 public class HomeActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
+    private boolean mDoublePressToExit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +34,14 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
+    protected void onResume() {
+        super.onResume();
+        mDoublePressToExit = false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     @Override
