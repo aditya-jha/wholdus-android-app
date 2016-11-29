@@ -41,6 +41,9 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if(!mDoublePressToExit) {
+            
+        }
         super.onBackPressed();
     }
 
