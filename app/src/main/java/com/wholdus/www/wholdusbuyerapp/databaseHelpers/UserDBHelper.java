@@ -152,6 +152,20 @@ public class UserDBHelper extends SQLiteOpenHelper {
         return rows;
     }
 
+    public long updateUserData(String buyerID, ContentValues values) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        long rows = db.update(
+                UserTable.TABLE_NAME,
+                values,
+                UserTable.COLUMN_BUYER_ID + "=" + buyerID,
+                null
+        );
+
+        db.close();
+        return rows;
+    }
+
     public long updateUserAddressData(JSONObject data) throws JSONException {
         SQLiteDatabase db = getWritableDatabase();
         JSONArray address = data.getJSONArray("address");

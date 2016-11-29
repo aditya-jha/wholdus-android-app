@@ -43,14 +43,7 @@ public class BusinessTypesAdapter extends BaseAdapter implements SpinnerAdapter 
     }
 
     @Override
-    public long getItemId(int i) {
-        try {
-            JSONObject currItem = mData.getJSONObject(i);
-            return (long) Integer.parseInt(currItem.getString(UserProfileContract.BusinessTypesTable.COLUMN_BUSINESS_TYPE_ID));
-        } catch (JSONException e) {
-        }
-        return 0;
-    }
+    public long getItemId(int i) { return 0; }
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
@@ -63,6 +56,7 @@ public class BusinessTypesAdapter extends BaseAdapter implements SpinnerAdapter 
             TextView dataTextView = (TextView) view.findViewById(android.R.id.text1);
             dataTextView.setText(currentData.getString(UserProfileContract.BusinessTypesTable.COLUMN_BUSINESS_TYPE));
 
+            view.setTag(currentData.getString(UserProfileContract.BusinessTypesTable.COLUMN_BUSINESS_TYPE_ID));
         } catch (JSONException e) {
             e.printStackTrace();
         }

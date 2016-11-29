@@ -3,4 +3,5 @@
     <string name="api_response">intentFilter.API_RESPONSE</string>
     <string name="user_data_updated">intentFilter.USER_DATA_UPDATED</string>
     <string name="business_types_data_updated">intentFilter.BUSINESS_TYPES_UPDATED</string>
+    <string name="user_data_modified">intentFilter.USER_DATA_MODIFIED</string>
 </resources>

@@ -14,7 +14,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +46,6 @@ public class EditProfileDetailsFragment extends Fragment implements LoaderManage
     private TextInputLayout mNameWrapper, mWhatsappNumberWrapper;
     private TextInputEditText mNameEditText, mCompanyNameEditText, mWhatsappNumberEditText;
     private Spinner mBusinessTypeSpinner;
-    private Button mSaveButton;
     private BusinessTypesAdapter mBusinessTypeAdapter;
     private BroadcastReceiver mUserServiceResponseReceiver;
     private final int USER_DETAILS_DB_LOADER = 0;
@@ -73,7 +71,7 @@ public class EditProfileDetailsFragment extends Fragment implements LoaderManage
         mUserServiceResponseReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                handleAPIResponse(intent);
+                handleReceiverResponse(intent);
             }
         };
     }
@@ -170,16 +168,20 @@ public class EditProfileDetailsFragment extends Fragment implements LoaderManage
         try {
             switch (loader.getId()) {
                 case USER_DETAILS_DB_LOADER:
-                    mUserDBHelper.close();
-                    mUserDBHelper = null;
+                    if (mUserDBHelper != null) {
+                        mUserDBHelper.close();
+                        mUserDBHelper = null;
+                    }
                     break;
                 case BUSINESS_TYPES_DB_LOADER:
-                    mBusinessTypesDBHelper.close();
-                    mBusinessTypesDBHelper = null;
+                    if (mBusinessTypesDBHelper != null) {
+                        mBusinessTypesDBHelper.close();
+                        mBusinessTypesDBHelper = null;
+                    }
+                    break;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d("db close error", "eeeeeeeeeeeeee");
         }
     }
 
@@ -193,30 +195,36 @@ public class EditProfileDetailsFragment extends Fragment implements LoaderManage
 
         mBusinessTypeSpinner = (Spinner) rootView.findViewById(R.id.business_type_spinner);
 
-        mSaveButton = (Button) rootView.findViewById(R.id.submit_button);
+        Button mSaveButton = (Button) rootView.findViewById(R.id.submit_button);
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // update local and send to server through userservice
-                String name = getStringFromView(R.string.name_key);
-                String companyName = getStringFromView(R.string.company_name_key);
-                String whatsappNumber = getStringFromView(R.string.whatsapp_number_key);
+                try {
+                    String name = getStringFromView(R.string.name_key);
+                    String companyName = getStringFromView(R.string.company_name_key);
+                    String whatsappNumber = getStringFromView(R.string.whatsapp_number_key);
+                    String businessTypeID = getStringFromView(R.string.business_type_key);
 
-                if (InputValidationHelper.isValidMobileNumber(mWhatsappNumberWrapper, whatsappNumber) &&
-                        InputValidationHelper.isNameValid(mNameWrapper, name)) {
-                    Intent intent = new Intent(getContext(), UserService.class);
-                    intent.putExtra("TODO", R.string.update_user_profile);
-                    intent.putExtra(getString(R.string.name_key), name);
-                    intent.putExtra(getString(R.string.whatsapp_number_key), whatsappNumber);
-                    intent.putExtra(getString(R.string.company_name_key), companyName);
+                    if (InputValidationHelper.isValidMobileNumber(mWhatsappNumberWrapper, whatsappNumber) &&
+                            InputValidationHelper.isNameValid(mNameWrapper, name)) {
+                        Intent intent = new Intent(getContext(), UserService.class);
+                        intent.putExtra("TODO", R.string.update_user_profile);
+                        intent.putExtra(getString(R.string.name_key), name);
+                        intent.putExtra(getString(R.string.whatsapp_number_key), whatsappNumber);
+                        intent.putExtra(getString(R.string.company_name_key), companyName);
+                        intent.putExtra(getString(R.string.business_type_key), businessTypeID);
 
-                    getContext().startService(intent);
+                        getContext().startService(intent);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
         });
     }
 
-    private String getStringFromView(int key) {
+    private String getStringFromView(int key) throws JSONException {
         switch (key) {
             case R.string.name_key:
                 return mNameEditText.getText().toString();
@@ -224,6 +232,8 @@ public class EditProfileDetailsFragment extends Fragment implements LoaderManage
                 return mWhatsappNumberEditText.getText().toString();
             case R.string.company_name_key:
                 return mCompanyNameEditText.getText().toString();
+            case R.string.business_type_key:
+                return ((JSONObject) mBusinessTypeSpinner.getSelectedItem()).getString(BusinessTypesTable.COLUMN_BUSINESS_TYPE_ID);
         }
         return "";
     }
@@ -250,9 +260,15 @@ public class EditProfileDetailsFragment extends Fragment implements LoaderManage
         }
     }
 
-    private void handleAPIResponse(Intent intent) {
-        if (intent.getStringExtra("extra") != null) {
-            getActivity().getSupportLoaderManager().restartLoader(BUSINESS_TYPES_DB_LOADER, null, this);
+    private void handleReceiverResponse(Intent intent) {
+        String extra = intent.getStringExtra("extra");
+        if (extra != null) {
+            if (extra.equals(getString(R.string.business_types_data_updated))) {
+                getActivity().getSupportLoaderManager().restartLoader(USER_DETAILS_DB_LOADER, null, this);
+            } else if (extra.equals(getString(R.string.user_data_modified))) {
+                // close fragment
+                mListener.openProfileFragment();
+            }
         } else {
             mListener.openProfileFragment();
         }

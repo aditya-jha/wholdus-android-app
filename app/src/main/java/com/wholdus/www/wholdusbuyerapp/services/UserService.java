@@ -1,10 +1,10 @@
 package com.wholdus.www.wholdusbuyerapp.services;
 
 import android.app.IntentService;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -13,6 +13,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserTable;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
@@ -48,14 +49,23 @@ public class UserService extends IntentService {
                 // update user profile
                 try {
                     JSONObject data = new JSONObject();
-                    data.put("test", "test");
+                    data.put(UserTable.COLUMN_COMPANY_NAME, intent.getStringExtra(getString(R.string.company_name_key)));
+                    data.put(UserTable.COLUMN_WHATSAPP_NUMBER, intent.getStringExtra(getString(R.string.whatsapp_number_key)));
+                    data.put(UserTable.COLUMN_NAME, intent.getStringExtra(getString(R.string.name_key)));
+
+                    JSONObject details = new JSONObject();
+                    details.put("buyertypeID", intent.getStringExtra(getString(R.string.business_type_key)));
+                    data.put("details", details);
+
                     updateUserProfile(R.string.update_user_profile, data);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                break;
             case R.string.fetch_business_types:
                 // fetch business types and update db
                 fetchBusinessTypes(R.string.fetch_business_types);
+                break;
             default:
                 return;
         }
@@ -66,14 +76,25 @@ public class UserService extends IntentService {
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }
 
-    private void updateUserProfile(int todo, JSONObject data) {
-        Log.d("updating", "user profile dude");
-        Intent broadcastIntent = new Intent(getString(R.string.user_data_updated));
-        LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
+    private void updateUserProfile(int todo, JSONObject data) throws JSONException {
+        ContentValues cv = new ContentValues();
+        cv.put(UserTable.COLUMN_WHATSAPP_NUMBER, data.getString(UserTable.COLUMN_WHATSAPP_NUMBER));
+        cv.put(UserTable.COLUMN_COMPANY_NAME, data.getString(UserTable.COLUMN_COMPANY_NAME));
+        cv.put(UserTable.COLUMN_NAME, data.getString(UserTable.COLUMN_NAME));
+        cv.put(UserTable.COLUMN_BUSINESS_TYPE, data.getJSONObject("details").getString("buyertypeID"));
+
+        UserDBHelper userDBHelper = new UserDBHelper(this);
+        userDBHelper.updateUserData(GlobalAccessHelper.getBuyerID(getApplication()), cv);
+
+        sendUserDataUpdatedBroadCast(getString(R.string.user_data_modified));
+
+        // send to server
+        String url = GlobalAccessHelper.generateUrl(this, getString(R.string.buyer_details_url), null);
+        volleyStringRequest(todo, Request.Method.PUT, url, data.toString());
     }
 
     private void fetchBusinessTypes(int todo) {
-        String url = GlobalAccessHelper.generateUrl(getApplicationContext(), getString(R.string.business_types_url), null);
+        String url = GlobalAccessHelper.generateUrl(this, getString(R.string.business_types_url), null);
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }
 
@@ -84,10 +105,11 @@ public class UserService extends IntentService {
                 case R.string.fetch_user_profile:
                     JSONArray buyers = data.getJSONArray("buyers");
                     if (buyers.length() == 1) {
-                        saveToDB(buyers.getJSONObject(0));
+                        saveResponseToDB(buyers.getJSONObject(0));
                     }
                     break;
                 case R.string.update_user_profile:
+                    //saveResponseToDB(data.getJSONObject("buyers"));
                     break;
                 case R.string.fetch_business_types:
                     handleBusinessTypesResponse(data);
@@ -140,12 +162,12 @@ public class UserService extends IntentService {
         VolleySingleton.getInstance(getApplicationContext()).cancelPendingRequests(REQUEST_TAG);
     }
 
-    private void saveToDB(JSONObject response) throws JSONException {
+    private void saveResponseToDB(JSONObject response) throws JSONException {
         UserDBHelper userDBHelper = new UserDBHelper(this);
 
         // update userData
-        boolean savedUserData = userDBHelper.updateUserData(response) > 0 ? true : false;
-        boolean savedUserAddress = userDBHelper.updateUserAddressData(response) > 0 ? true : false;
+        boolean savedUserData = userDBHelper.updateUserData(response) > 0;
+        boolean savedUserAddress = userDBHelper.updateUserAddressData(response) > 0;
 
         if (savedUserData) {
             sendUserDataUpdatedBroadCast(null);
@@ -155,9 +177,9 @@ public class UserService extends IntentService {
     private void handleBusinessTypesResponse(JSONObject data) throws JSONException {
         UserDBHelper userDBHelper = new UserDBHelper(this);
 
-        boolean savedBusinessTypesData = userDBHelper.updateBusinessTypesData(data) > 0 ? true : false;
+        boolean savedBusinessTypesData = userDBHelper.updateBusinessTypesData(data) > 0;
         if (savedBusinessTypesData) {
-            sendUserDataUpdatedBroadCast("business_types_updated");
+            sendUserDataUpdatedBroadCast(getString(R.string.business_types_data_updated));
         }
     }
 

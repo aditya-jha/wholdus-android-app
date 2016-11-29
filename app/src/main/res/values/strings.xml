@@ -50,6 +50,7 @@
     <string name="mobile_number_key">Mobile Number</string>
     <string name="whatsapp_number_key">Whatsapp Number</string>
     <string name="company_name_key">Company Name</string>
+    <string name="business_type_key">Business Type</string>
     <string name="email_key">E-mail</string>
     <string name="save_text">Save</string>
 </resources>

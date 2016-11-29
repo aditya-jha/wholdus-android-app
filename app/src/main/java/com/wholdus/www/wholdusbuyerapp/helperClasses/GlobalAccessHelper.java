@@ -3,6 +3,7 @@ package com.wholdus.www.wholdusbuyerapp.helperClasses;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.wholdus.www.wholdusbuyerapp.R;
@@ -23,12 +24,16 @@ public class GlobalAccessHelper {
     }
 
     public static String getRefreshToken(Application context) {
-        WholdusApplication wholdusApplication = (WholdusApplication) (WholdusApplication)context;
+        WholdusApplication wholdusApplication = (WholdusApplication)context;
         String refreshToken = wholdusApplication.getRefreshToken();
         return "refresh_token=" + refreshToken;
     }
 
-    public static String generateUrl(Context context, String endPoint, JSONObject params) {
+    public static String generateUrl(Context context, String endPoint, @Nullable JSONObject params) {
         return context.getString(R.string.api_base) + endPoint;
+    }
+
+    public static String getBuyerID(Application context) {
+        return ((WholdusApplication)context).getBuyerID();
     }
 }
