@@ -1,6 +1,7 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -17,7 +18,7 @@ import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
 public class HomeActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
-    private int backpress = 0;
+    private boolean mDoublePressToExit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,14 +36,26 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onResume(){
+    protected void onResume() {
         super.onResume();
-        backpress = 0;
+        mDoublePressToExit = false;
     }
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
+    public void onBackPressed() {
+        if(!mDoublePressToExit) {
+            mDoublePressToExit = true;
+            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mDoublePressToExit = false;
+                }
+            }, 2000);
+        } else {
+            finish();
+        }
     }
 
     @Override
@@ -92,18 +105,5 @@ public class HomeActivity extends AppCompatActivity {
         // add fragment
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new HomeFragment()).commit();
-    }
-
-    @Override
-    public void onBackPressed(){
-        if (backpress == 0) {
-            backpress = (backpress + 1);
-            Toast.makeText(getApplicationContext(), " Press Back again to Exit ", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (backpress >= 1) {
-            super.onBackPressed();
-            return;
-        }
     }
 }
