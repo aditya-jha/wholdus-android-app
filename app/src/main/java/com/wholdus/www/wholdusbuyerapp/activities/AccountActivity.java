@@ -1,6 +1,7 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -9,12 +10,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.fragments.EditAddressFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.EditProfileDetailsFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.OrdersFragment;
@@ -72,7 +73,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
     public void editPersonalDetails() {
         // load edit profile details fragment
         // don't add it to backstack
-        openToFragment("editPersonalDetails");
+        openToFragment("editPersonalDetails", null);
     }
 
     @Override
@@ -83,6 +84,13 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
     @Override
     public void openProfileFragment() {
         onBackPressed();
+    }
+
+    @Override
+    public void editAddress(@Nullable String addressID) {
+        Bundle bundle = new Bundle();
+        bundle.putString("addressID", addressID);
+        openToFragment("editAddress", bundle);
     }
 
     private void initToolbar() {
@@ -129,14 +137,13 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
             if (TextUtils.isEmpty(openFragment)) {
                 openFragment = "profile";
             }
-            Log.d("openfragment", openFragment);
         } else {
             openFragment = (String) savedInstanceState.getSerializable("openFragment");
         }
-        openToFragment(openFragment);
+        openToFragment(openFragment, null);
     }
 
-    private void openToFragment(String fragmentName) {
+    private void openToFragment(String fragmentName, @Nullable Bundle bundle) {
         Fragment fragment;
 
         switch (fragmentName) {
@@ -152,20 +159,24 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
             case "editPersonalDetails":
                 fragment = new EditProfileDetailsFragment();
                 break;
+            case "editAddress":
+                fragment = new EditAddressFragment();
+                break;
             default:
                 fragment = new ProfileFragment();
         }
 
+        fragment.setArguments(bundle);
         String backStateName = fragment.getClass().getName();
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fm = getSupportFragmentManager();
 
-        boolean fragmentPopped = fragmentManager.popBackStackImmediate(backStateName, 0);
+        boolean fragmentPopped = fm.popBackStackImmediate(backStateName, 0);
 
         if (!fragmentPopped) { // fragment not in backstack create it
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
-            fragmentTransaction.addToBackStack(backStateName);
-            fragmentTransaction.commit();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
+            ft.addToBackStack(backStateName);
+            ft.commit();
         }
     }
 }

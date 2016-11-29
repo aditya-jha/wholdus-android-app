@@ -195,6 +195,14 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                 mListener.editPersonalDetails();
             }
         });
+
+        TextView mAddAddressTextView = (TextView) rootView.findViewById(R.id.add_address_text_view);
+        mAddAddressTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.editAddress(null);
+            }
+        });
     }
 
     private void handleAPIResponse() {

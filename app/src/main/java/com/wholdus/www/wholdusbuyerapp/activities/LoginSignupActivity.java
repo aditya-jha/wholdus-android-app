@@ -2,16 +2,20 @@ package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.fragments.LoginFragment;
 import com.wholdus.www.wholdusbuyerapp.interfaces.LoginSignupListenerInterface;
 
 public class LoginSignupActivity extends AppCompatActivity implements LoginSignupListenerInterface {
+
+    private boolean mDoublePressToExit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +24,29 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
 
         LoginFragment loginFragment = new LoginFragment();
         openFragment(loginFragment);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mDoublePressToExit = false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(!mDoublePressToExit) {
+            mDoublePressToExit = true;
+            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mDoublePressToExit = false;
+                }
+            }, 2000);
+        } else {
+            finish();
+        }
     }
 
     private void openFragment(Fragment fragment) {

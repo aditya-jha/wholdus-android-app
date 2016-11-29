@@ -41,9 +41,11 @@
     <string name="personal_details">Personal Details</string>
     <string name="address">Address</string>
     <string name="no_address">No address Saved</string>
+    <string name="add_key">ADD</string>
 
     <!-- Edit Profile Fragment -->
     <string name="business_type_title">My Business Type</string>
+    <string name="save_text">Save</string>
 
     <!-- keys -->
     <string name="name_key">name</string>
@@ -52,5 +54,4 @@
     <string name="company_name_key">Company Name</string>
     <string name="business_type_key">Business Type</string>
     <string name="email_key">E-mail</string>
-    <string name="save_text">Save</string>
 </resources>
