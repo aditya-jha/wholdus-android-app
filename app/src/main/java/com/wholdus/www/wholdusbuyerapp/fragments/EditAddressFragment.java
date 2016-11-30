@@ -96,7 +96,7 @@ public class EditAddressFragment extends Fragment implements LoaderManager.Loade
             @Override
             public Cursor loadInBackground() {
                 mUserAddressDBHelper = new UserDBHelper(getContext());
-                return mUserAddressDBHelper.getUserAddress(mAddressID);
+                return mUserAddressDBHelper.getUserAddress("1", mAddressID);
             }
         };
     }
@@ -111,7 +111,7 @@ public class EditAddressFragment extends Fragment implements LoaderManager.Loade
         switch (loader.getId()) {
             case USER_ADDRESS_LOADER:
                 if(mUserAddressDBHelper != null) {
-                    mUserAddressDBHelper.close;
+                    mUserAddressDBHelper.close();
                     mUserAddressDBHelper = null;
                 }
                 break;
