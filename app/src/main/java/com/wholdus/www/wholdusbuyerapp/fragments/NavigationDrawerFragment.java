@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -100,6 +101,12 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean handleAccountCase(int childPosition) {
         Intent intent = new Intent(getContext(), AccountActivity.class);
 
+        Bundle bundle = getArguments();
+        String openFragmentName = "";
+        if (!(bundle == null)) {
+            openFragmentName = bundle.getString("openFragment", "none");
+        }
+
         switch (childPosition) {
             case 0:
                 // open profile fragment
@@ -118,6 +125,10 @@ public class NavigationDrawerFragment extends Fragment {
                 break;
             default:
                 return false;
+        }
+
+        if (intent.getExtras().getString("openFragment", "no").equals(openFragmentName)){
+            return false;
         }
 
         startActivity(intent);
