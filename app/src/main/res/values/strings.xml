@@ -45,7 +45,12 @@
 
     <!-- Edit Profile Fragment -->
     <string name="business_type_title">My Business Type</string>
-    <string name="save_text">Save</string>
+    <string name="save_text">SAVE</string>
+
+    <!-- Edit Address Fragment -->
+    <string name="save_current_address_text">Use My Current Location</string>
+    <string name="cancel_text">CANCEL</string>
+    <string name="address_alias_key">Address Nickname</string>
 
     <!-- keys -->
     <string name="name_key">name</string>
@@ -54,4 +59,8 @@
     <string name="company_name_key">Company Name</string>
     <string name="business_type_key">Business Type</string>
     <string name="email_key">E-mail</string>
+    <string name="pincode_key">Pincode</string>
+    <string name="landmark_key">Landmark</string>
+    <string name="city_key">City</string>
+    <string name="state_key">State</string>
 </resources>

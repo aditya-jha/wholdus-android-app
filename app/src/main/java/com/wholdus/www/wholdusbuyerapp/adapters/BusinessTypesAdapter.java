@@ -48,7 +48,7 @@ public class BusinessTypesAdapter extends BaseAdapter implements SpinnerAdapter 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         if (view == null) {
-            view = LayoutInflater.from(mContext).inflate(android.R.layout.simple_spinner_item, viewGroup, false);
+            view = LayoutInflater.from(mContext).inflate(android.R.layout.simple_spinner_dropdown_item, viewGroup, false);
         }
         try {
             JSONObject currentData = mData.getJSONObject(i);

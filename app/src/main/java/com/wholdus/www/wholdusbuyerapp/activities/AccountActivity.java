@@ -10,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,12 +29,14 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolbar;
 
+    private String OPEN_FRAGMENT_KEY = "openFragment";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
 
-        initNavigationDrawer();
+        initNavigationDrawer(savedInstanceState);
         initToolbar();
 
         fragmentToOpen(savedInstanceState);
@@ -124,22 +127,34 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
         }
     }
 
-    private void initNavigationDrawer() {
+    private void initNavigationDrawer(Bundle savedInstanceState) {
+        Fragment navDrawerFragment = new NavigationDrawerFragment();
+
+        Bundle args = new Bundle();
+        args.putSerializable(OPEN_FRAGMENT_KEY, getFragmenttoOpenName(savedInstanceState));
+        navDrawerFragment.setArguments(args);
+
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.navigation_drawer_fragment, new NavigationDrawerFragment()).commit();
+                .replace(R.id.navigation_drawer_fragment, navDrawerFragment).commit();
     }
 
-    private void fragmentToOpen(Bundle savedInstanceState) {
+    private String getFragmenttoOpenName(Bundle savedInstanceState){
         String openFragment;
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
-            openFragment = extras.getString("openFragment");
+            openFragment = extras.getString(OPEN_FRAGMENT_KEY);
             if (TextUtils.isEmpty(openFragment)) {
                 openFragment = "profile";
             }
         } else {
-            openFragment = (String) savedInstanceState.getSerializable("openFragment");
+            openFragment = (String) savedInstanceState.getSerializable(OPEN_FRAGMENT_KEY);
         }
+        return openFragment;
+    }
+
+    private void fragmentToOpen(Bundle savedInstanceState) {
+        String openFragment = getFragmenttoOpenName(savedInstanceState);
+
         openToFragment(openFragment, null);
     }
 
@@ -178,5 +193,6 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
             ft.addToBackStack(backStateName);
             ft.commit();
         }
+
     }
 }
