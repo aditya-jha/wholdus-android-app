@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -26,6 +27,7 @@ import com.wholdus.www.wholdusbuyerapp.adapters.BuyerPersonalDetailsAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserTable;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.models.BuyerPersonalDetails;
 import com.wholdus.www.wholdusbuyerapp.services.UserService;
@@ -143,7 +145,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                         return mUserDBHelper.getUserData(wholdusApplication.getBuyerID());
                     case USER_ADDRESS_DB_LOADER:
                         mUserAddressDBHelper = new UserDBHelper(getContext());
-                        return mUserAddressDBHelper.getUserAddress(wholdusApplication.getBuyerID(), null);
+                        return mUserAddressDBHelper.getUserAddress(wholdusApplication.getBuyerID(), null, -1);
                     default:
                         return null;
                 }
@@ -159,7 +161,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                     setViewForPersonalDetails(mUserDBHelper.getJSONDataFromCursor(UserTable.TABLE_NAME, data, 0));
                 }
             } else if (loader.getId() == USER_ADDRESS_DB_LOADER) {
-                JSONObject address = mUserDBHelper.getJSONDataFromCursor(UserAddressTable.TABLE_NAME, data, -1);
+                JSONObject address = mUserAddressDBHelper.getJSONDataFromCursor(UserAddressTable.TABLE_NAME, data, -1);
                 setViewForAddressListView(address.getJSONArray("address"));
             }
         } catch (JSONException e) {
@@ -200,7 +202,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         mAddAddressTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.editAddress(null);
+                mListener.editAddress(null, -1);
             }
         });
     }
@@ -214,14 +216,20 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         if (buyer == null) return;
 
         ArrayList<BuyerPersonalDetails> items = new ArrayList<>();
-        items.add(new BuyerPersonalDetails(getString(R.string.name_key), buyer.getString(UserTable.COLUMN_NAME), R.drawable.ic_person_black_24dp));
-        items.add(new BuyerPersonalDetails(getString(R.string.company_name_key), buyer.getString(UserTable.COLUMN_COMPANY_NAME), R.drawable.ic_store_mall_directory_black_24dp));
-        items.add(new BuyerPersonalDetails(getString(R.string.mobile_number_key), buyer.getString(UserTable.COLUMN_MOBILE_NUMBER), R.drawable.ic_phone_black_24dp));
-        items.add(new BuyerPersonalDetails(getString(R.string.email_key), buyer.getString(UserTable.COLUMN_EMAIL), R.drawable.ic_mail_outline_black_24dp));
-        items.add(new BuyerPersonalDetails(getString(R.string.whatsapp_number_key), buyer.getString(UserTable.COLUMN_WHATSAPP_NUMBER), R.drawable.ic_perm_phone_msg_black_24dp));
+        items.add(new BuyerPersonalDetails(getString(R.string.name_key),
+                buyer.getString(UserTable.COLUMN_NAME), R.drawable.ic_person_black_24dp));
+        items.add(new BuyerPersonalDetails(getString(R.string.company_name_key),
+                buyer.getString(UserTable.COLUMN_COMPANY_NAME), R.drawable.ic_store_mall_directory_black_24dp));
+        items.add(new BuyerPersonalDetails(getString(R.string.mobile_number_key),
+                buyer.getString(UserTable.COLUMN_MOBILE_NUMBER), R.drawable.ic_phone_black_24dp));
+        items.add(new BuyerPersonalDetails(getString(R.string.email_key),
+                buyer.getString(UserTable.COLUMN_EMAIL), R.drawable.ic_mail_outline_black_24dp));
+        items.add(new BuyerPersonalDetails(getString(R.string.whatsapp_number_key),
+                buyer.getString(UserTable.COLUMN_WHATSAPP_NUMBER), R.drawable.ic_perm_phone_msg_black_24dp));
 
         BuyerPersonalDetailsAdapter adapter = new BuyerPersonalDetailsAdapter(getContext(), items);
         mPersonalDetailsListView.setAdapter(adapter);
+        GlobalAccessHelper.setListViewHeightBasedOnChildren(mPersonalDetailsListView);
     }
 
     private void setViewForAddressListView(JSONArray address) {
@@ -232,5 +240,16 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         mNoAddressTextView.setVisibility(View.GONE);
         AddressDisplayListViewAdapter adapter = new AddressDisplayListViewAdapter(getActivity().getApplicationContext(), address);
         mAddressListView.setAdapter(adapter);
+        GlobalAccessHelper.setListViewHeightBasedOnChildren(mAddressListView);
+
+        mAddressListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                int _ID = (Integer) view.getTag(R.integer._ID);
+                String addressID = (String) view.getTag(R.integer.addressID);
+
+                mListener.editAddress(addressID, _ID);
+            }
+        });
     }
 }

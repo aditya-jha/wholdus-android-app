@@ -66,6 +66,10 @@ public class AddressDisplayListViewAdapter extends BaseAdapter {
 
             TextView cityStatePincodeTextView = (TextView) view.findViewById(R.id.city_state_pincode_text_view);
             cityStatePincodeTextView.setText(getCityStatePincodeTextView(currentData));
+
+            view.setTag(R.integer.addressID, currentData.getString(UserAddressTable.COLUMN_ADDRESS_ID));
+            view.setTag(R.integer._ID, currentData.getInt(UserAddressTable._ID));
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
