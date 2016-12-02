@@ -42,7 +42,19 @@ public class InputValidationHelper {
         String error = null;
 
         if (inputValue.isEmpty()) {
-            error = "Please Enter your name";
+            error = "Please enter your name";
+        }
+
+        return returnHelper(wrapper, error);
+    }
+
+    public static boolean isValidPincode(@Nullable TextInputLayout wrapper, String inputValue) {
+        String error = null;
+
+        if (inputValue.isEmpty()) {
+            error = "Please enter your pincode";
+        } else if (inputValue.length() != 6) {
+            error = "Please check your pincode";
         }
 
         return returnHelper(wrapper, error);
