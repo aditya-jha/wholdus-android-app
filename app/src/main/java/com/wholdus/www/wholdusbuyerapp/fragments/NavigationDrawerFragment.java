@@ -103,7 +103,7 @@ public class NavigationDrawerFragment extends Fragment {
 
         Bundle bundle = getArguments();
         String openFragmentName = "";
-        if (!(bundle == null)) {
+        if (bundle != null) {
             openFragmentName = bundle.getString("openFragment", "none");
         }
 
