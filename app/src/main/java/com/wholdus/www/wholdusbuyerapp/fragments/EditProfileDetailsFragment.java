@@ -48,8 +48,8 @@ public class EditProfileDetailsFragment extends Fragment implements LoaderManage
     private Spinner mBusinessTypeSpinner;
     private BusinessTypesAdapter mBusinessTypeAdapter;
     private BroadcastReceiver mUserServiceResponseReceiver;
-    private final int USER_DETAILS_DB_LOADER = 0;
-    private final int BUSINESS_TYPES_DB_LOADER = 1;
+    private static final int USER_DETAILS_DB_LOADER = 0;
+    private static final int BUSINESS_TYPES_DB_LOADER = 1;
     private String mSelectedBusinessType;
 
     public EditProfileDetailsFragment() {
@@ -199,29 +199,33 @@ public class EditProfileDetailsFragment extends Fragment implements LoaderManage
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // update local and send to server through userservice
-                try {
-                    String name = getStringFromView(R.string.name_key);
-                    String companyName = getStringFromView(R.string.company_name_key);
-                    String whatsappNumber = getStringFromView(R.string.whatsapp_number_key);
-                    String businessTypeID = getStringFromView(R.string.business_type_key);
-
-                    if (InputValidationHelper.isValidMobileNumber(mWhatsappNumberWrapper, whatsappNumber) &&
-                            InputValidationHelper.isNameValid(mNameWrapper, name)) {
-                        Intent intent = new Intent(getContext(), UserService.class);
-                        intent.putExtra("TODO", R.string.update_user_profile);
-                        intent.putExtra(getString(R.string.name_key), name);
-                        intent.putExtra(getString(R.string.whatsapp_number_key), whatsappNumber);
-                        intent.putExtra(getString(R.string.company_name_key), companyName);
-                        intent.putExtra(getString(R.string.business_type_key), businessTypeID);
-
-                        getContext().startService(intent);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                saveDetails();
             }
         });
+    }
+
+    private void saveDetails() {
+        // update local and send to server through userservice
+        try {
+            String name = getStringFromView(R.string.name_key);
+            String companyName = getStringFromView(R.string.company_name_key);
+            String whatsappNumber = getStringFromView(R.string.whatsapp_number_key);
+            String businessTypeID = getStringFromView(R.string.business_type_key);
+
+            if (InputValidationHelper.isValidMobileNumber(mWhatsappNumberWrapper, whatsappNumber) &&
+                    InputValidationHelper.isNameValid(mNameWrapper, name)) {
+                Intent intent = new Intent(getContext(), UserService.class);
+                intent.putExtra("TODO", R.string.update_user_profile);
+                intent.putExtra(getString(R.string.name_key), name);
+                intent.putExtra(getString(R.string.whatsapp_number_key), whatsappNumber);
+                intent.putExtra(getString(R.string.company_name_key), companyName);
+                intent.putExtra(getString(R.string.business_type_key), businessTypeID);
+
+                getContext().startService(intent);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private String getStringFromView(int key) throws JSONException {

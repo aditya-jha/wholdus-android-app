@@ -10,7 +10,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,7 +28,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolbar;
 
-    private String OPEN_FRAGMENT_KEY = "openFragment";
+    private static final String OPEN_FRAGMENT_KEY = "openFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,9 +89,10 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
     }
 
     @Override
-    public void editAddress(@Nullable String addressID) {
+    public void editAddress(@Nullable String addressID, int _ID) {
         Bundle bundle = new Bundle();
         bundle.putString("addressID", addressID);
+        bundle.putInt("_ID", _ID);
         openToFragment("editAddress", bundle);
     }
 
@@ -131,14 +131,14 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
         Fragment navDrawerFragment = new NavigationDrawerFragment();
 
         Bundle args = new Bundle();
-        args.putSerializable(OPEN_FRAGMENT_KEY, getFragmenttoOpenName(savedInstanceState));
+        args.putSerializable(OPEN_FRAGMENT_KEY, getFragmentToOpenName(savedInstanceState));
         navDrawerFragment.setArguments(args);
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.navigation_drawer_fragment, navDrawerFragment).commit();
     }
 
-    private String getFragmenttoOpenName(Bundle savedInstanceState){
+    private String getFragmentToOpenName(Bundle savedInstanceState){
         String openFragment;
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
@@ -153,7 +153,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
     }
 
     private void fragmentToOpen(Bundle savedInstanceState) {
-        String openFragment = getFragmenttoOpenName(savedInstanceState);
+        String openFragment = getFragmentToOpenName(savedInstanceState);
 
         openToFragment(openFragment, null);
     }

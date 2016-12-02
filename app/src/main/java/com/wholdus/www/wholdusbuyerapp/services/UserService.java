@@ -13,6 +13,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserTable;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
@@ -66,9 +67,25 @@ public class UserService extends IntentService {
                 // fetch business types and update db
                 fetchBusinessTypes(R.string.fetch_business_types);
                 break;
+            case R.string.update_user_address:
+                try {
+                    JSONObject address = new JSONObject(intent.getStringExtra(UserAddressTable.TABLE_NAME));
+                    updateUserAddress(R.string.update_user_address, address);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             default:
                 return;
         }
+    }
+
+    private void updateUserAddress(int todo, JSONObject address) throws JSONException {
+        UserDBHelper userDBHelper = new UserDBHelper(this);
+        userDBHelper.updateUserAddressData(address);
+
+        sendUserDataUpdatedBroadCast(getString(R.string.user_data_modified));
+        // send to server
+
     }
 
     private void fetchUserProfile(int todo) {
