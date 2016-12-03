@@ -117,7 +117,7 @@ public class NavigationDrawerFragment extends Fragment {
                 intent.putExtra("openFragment", "orders");
                 break;
             case 2:
-                // TODO: what happens here
+                intent.putExtra("openFragment", "buyerInterests");
                 return false;
             case 3:
                 // open rejected products
@@ -127,7 +127,7 @@ public class NavigationDrawerFragment extends Fragment {
                 return false;
         }
 
-        if (intent.getExtras().getString("openFragment", "no").equals(openFragmentName)){
+        if (intent.getExtras().getString("openFragment", "none").equals(openFragmentName)){
             return false;
         }
 
