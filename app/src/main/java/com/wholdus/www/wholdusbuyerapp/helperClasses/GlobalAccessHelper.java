@@ -67,4 +67,10 @@ public class GlobalAccessHelper {
         listView.setLayoutParams(params);
         listView.requestLayout();
     }
+
+    public static int getIntFromBooleanString(String value) {
+        if(value == "true") {
+            return 1;
+        } else return 0;
+    }
 }
