@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -118,7 +117,7 @@ public class NavigationDrawerFragment extends Fragment {
                 break;
             case 2:
                 intent.putExtra("openFragment", "buyerInterests");
-                return false;
+                break;
             case 3:
                 // open rejected products
                 intent.putExtra("openFragment", "rejectProducts");
@@ -127,7 +126,7 @@ public class NavigationDrawerFragment extends Fragment {
                 return false;
         }
 
-        if (intent.getExtras().getString("openFragment", "none").equals(openFragmentName)){
+        if (intent.getExtras().getString("openFragment", "none").equals(openFragmentName)) {
             return false;
         }
 

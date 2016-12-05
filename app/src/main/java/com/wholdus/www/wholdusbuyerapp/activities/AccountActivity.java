@@ -139,7 +139,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
                 .replace(R.id.navigation_drawer_fragment, navDrawerFragment).commit();
     }
 
-    private String getFragmentToOpenName(Bundle savedInstanceState){
+    private String getFragmentToOpenName(Bundle savedInstanceState) {
         String openFragment;
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
