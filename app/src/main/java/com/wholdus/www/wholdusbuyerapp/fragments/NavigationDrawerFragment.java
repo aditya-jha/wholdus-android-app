@@ -150,7 +150,9 @@ public class NavigationDrawerFragment extends Fragment {
                     @Override
                     public void processFinish(Boolean output) {
                         if (output) {
-                            startActivity(new Intent(getContext(), LoginSignupActivity.class));
+                            Intent intent = new Intent(getContext(), LoginSignupActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
                             getActivity().finish();
                         }
                     }

@@ -52,6 +52,9 @@
     <string name="cancel_text">CANCEL</string>
     <string name="address_alias_key">Address Nickname</string>
 
+    <!-- Buyer Interest Fragment -->
+    <string name="buyer_interest_fragment_title">My Preferences</string>
+
     <!-- keys -->
     <string name="name_key">name</string>
     <string name="mobile_number_key">Mobile Number</string>

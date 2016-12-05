@@ -68,7 +68,7 @@ public class BuyerInterestFragment extends Fragment implements LoaderManager.Loa
     @Override
     public void onResume() {
         super.onResume();
-        mListener.fragmentCreated("buyerInterests", false);
+        mListener.fragmentCreated(getString(R.string.buyer_interest_fragment_title), false);
     }
 
     @Override
