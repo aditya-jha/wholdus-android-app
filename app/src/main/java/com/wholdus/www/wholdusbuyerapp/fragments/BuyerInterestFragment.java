@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserInterestsTable;
@@ -31,6 +32,7 @@ public class BuyerInterestFragment extends Fragment implements LoaderManager.Loa
 
     private ProfileListenerInterface mListener;
     private UserDBHelper mUserDBHelper;
+    private TextView textView;
 
     private static final int BUYER_INTERESTS_DB_LOADER = 0;
 
@@ -120,10 +122,11 @@ public class BuyerInterestFragment extends Fragment implements LoaderManager.Loa
     }
 
     private void initReferences(ViewGroup rootView) {
-
+        textView = (TextView) rootView.findViewById(R.id.temp);
     }
 
     private void setViewFromData(JSONArray interests) throws JSONException {
         Log.d(this.getClass().getSimpleName(), interests.toString());
+        textView.setText(interests.toString());
     }
 }
