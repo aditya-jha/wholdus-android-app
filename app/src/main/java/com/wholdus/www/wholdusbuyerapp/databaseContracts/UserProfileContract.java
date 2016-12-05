@@ -40,6 +40,18 @@ public final class UserProfileContract {
         public static final String COLUMN_ADDRESS_ALIAS = "alias";
     }
 
+    public static final class UserInterestsTable implements BaseColumns {
+        public static final String TABLE_NAME = "buyer_interests";
+        public static final String COLUMN_BUYER_ID = "buyerID";
+        public static final String COLUMN_BUYER_INTEREST_ID = "buyerinterestID";
+        public static final String COLUMN_CATEGORY_ID = "categoryID";
+        public static final String COLUMN_CATEGORY_NAME = "display_name";
+        public static final String COLUMN_PRICE_FILTER_APPLIED = "price_filter_applied";
+        public static final String COLUMN_MIN_PRICE_PER_UNIT = "min_price_per_unit";
+        public static final String COLUMN_FABRIC_FILTER_TEXT = "fabric_filter_text";
+        public static final String COLUMN_MAX_PRICE_PER_UNIT = "max_price_per_unit";
+    }
+
     public static final class BusinessTypesTable implements BaseColumns {
         public static final String TABLE_NAME = "business_types";
         public static final String COLUMN_BUSINESS_TYPE = "business_type";

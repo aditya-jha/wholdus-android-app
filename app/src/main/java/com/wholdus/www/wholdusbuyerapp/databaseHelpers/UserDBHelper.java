@@ -10,7 +10,9 @@ import android.text.TextUtils;
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.BusinessTypesTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserInterestsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserTable;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,6 +28,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "users";
 
     private static final String TEXT_TYPE = " TEXT";
+    private static final String INT_TYPE = " INTEGER";
     private static final String COMMA_SEP = ",";
     private static final String NOT_NULL = " NOT NULL";
 
@@ -72,6 +75,21 @@ public class UserDBHelper extends SQLiteOpenHelper {
     private static final String SQL_DROP_BUSINESS_TYPES_TABLE =
             "DROP TABLE IF EXISTS " + BusinessTypesTable.TABLE_NAME;
 
+    private static final String SQL_CREATE_USER_INTERESTS_TABLE =
+            "CREATE TABLE " + UserInterestsTable.TABLE_NAME + " (" +
+                    UserInterestsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
+                    UserInterestsTable.COLUMN_BUYER_ID + TEXT_TYPE + COMMA_SEP +
+                    UserInterestsTable.COLUMN_BUYER_INTEREST_ID + TEXT_TYPE + COMMA_SEP +
+                    UserInterestsTable.COLUMN_CATEGORY_ID + TEXT_TYPE + COMMA_SEP +
+                    UserInterestsTable.COLUMN_CATEGORY_NAME + TEXT_TYPE + COMMA_SEP +
+                    UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT + TEXT_TYPE + COMMA_SEP +
+                    UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT + TEXT_TYPE + COMMA_SEP +
+                    UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT + TEXT_TYPE + COMMA_SEP +
+                    UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED + INT_TYPE + " )";
+
+    private static final String SQL_DROP_USER_INTERESTS_TABLE =
+            "DROP TABLE IF EXISTS " + BusinessTypesTable.TABLE_NAME;
+
     public UserDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -81,6 +99,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_USER_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_USER_ADDRESS_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_BUSINESS_TYPES_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_USER_INTERESTS_TABLE);
     }
 
     @Override
@@ -88,6 +107,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_DROP_USER_TABLE);
         sqLiteDatabase.execSQL(SQL_DROP_USER_ADDRESS_TABLE);
         sqLiteDatabase.execSQL(SQL_DROP_BUSINESS_TYPES_TABLE);
+        sqLiteDatabase.execSQL(SQL_DROP_USER_INTERESTS_TABLE);
 
         onCreate(sqLiteDatabase);
     }
@@ -107,8 +127,19 @@ public class UserDBHelper extends SQLiteOpenHelper {
         String query = "SELECT * FROM " + UserAddressTable.TABLE_NAME + " WHERE " + UserAddressTable.COLUMN_BUYER_ID + " = " + buyerID;
         if (addressID != null && !TextUtils.isEmpty(addressID)) {
             query += " AND " + UserAddressTable.COLUMN_ADDRESS_ID + " = " + addressID;
-        } else if(_ID != -1) {
+        } else if (_ID != -1) {
             query += " AND " + UserAddressTable._ID + " = " + _ID;
+        }
+        return getReadableDatabase().rawQuery(query, null);
+    }
+
+    public Cursor getUserInterests(String buyerID, @Nullable String buyerInterestID, int _ID) {
+        String query = "SELECT * FROM " + UserInterestsTable.TABLE_NAME + " WHERE " +
+                UserInterestsTable.COLUMN_BUYER_ID + "=" + buyerID;
+        if (buyerInterestID != null) {
+            query += " AND " + UserInterestsTable.COLUMN_BUYER_INTEREST_ID + "=" + buyerInterestID;
+        } else if (_ID != -1) {
+            query += " AND " + UserInterestsTable._ID + "=" + _ID;
         }
         return getReadableDatabase().rawQuery(query, null);
     }
@@ -171,7 +202,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         JSONArray address = new JSONArray();
-        
+
         try {
             address = data.getJSONArray("address");
         } catch (Exception e) {
@@ -186,7 +217,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
 
             String addressID = currAddress.getString(UserAddressTable.COLUMN_ADDRESS_ID);
             int _ID = -1;
-            if(currAddress.has(UserAddressTable._ID)) {
+            if (currAddress.has(UserAddressTable._ID)) {
                 _ID = currAddress.getInt(UserAddressTable._ID);
             }
 
@@ -208,7 +239,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
                 db.insert(UserAddressTable.TABLE_NAME, null, values);
             } else {
                 String selection = UserAddressTable.COLUMN_BUYER_ID + "=" + buyerID;
-                if(_ID != -1) {
+                if (_ID != -1) {
                     selection += " AND " + UserAddressTable._ID + "=" + _ID;
                 } else {
                     selection += " AND " + UserAddressTable.COLUMN_ADDRESS_ID + "=" + addressID;
@@ -247,7 +278,47 @@ public class UserDBHelper extends SQLiteOpenHelper {
                         null);
             }
         }
+
+        db.close();
         return businessTypes.length();
+    }
+
+    public int updateUserInterestsData(JSONObject data) throws JSONException {
+        JSONArray interests = data.getJSONArray(UserInterestsTable.TABLE_NAME);
+        String buyerID = data.getString(UserInterestsTable.COLUMN_BUYER_ID);
+
+        SQLiteDatabase db = getWritableDatabase();
+
+        for (int i = 0; i < interests.length(); i++) {
+            JSONObject currInterest = interests.getJSONObject(i);
+            ContentValues values = new ContentValues();
+
+            JSONObject category = currInterest.getJSONObject("category");
+            String buyerInterestID = currInterest.getString(UserInterestsTable.COLUMN_BUYER_INTEREST_ID);
+
+            int priceFilterApplied = GlobalAccessHelper.getIntFromBooleanString(currInterest.getString(
+                    UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED));
+            values.put(UserInterestsTable.COLUMN_BUYER_ID, buyerID);
+            values.put(UserInterestsTable.COLUMN_BUYER_INTEREST_ID, buyerInterestID);
+            values.put(UserInterestsTable.COLUMN_CATEGORY_ID, category.getString(UserInterestsTable.COLUMN_CATEGORY_ID));
+            values.put(UserInterestsTable.COLUMN_CATEGORY_NAME, category.getString(UserInterestsTable.COLUMN_CATEGORY_NAME));
+            values.put(UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT, currInterest.getString(UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT));
+            values.put(UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT, currInterest.getString(UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT));
+            values.put(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED, priceFilterApplied);
+            values.put(UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT, currInterest.getString(UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT));
+
+            if (getUserInterests(buyerID, buyerInterestID, -1).getCount() == 0) { // insert
+                db.insert(UserInterestsTable.TABLE_NAME, null, values);
+            } else {
+                db.update(UserInterestsTable.TABLE_NAME,
+                        values,
+                        UserInterestsTable.COLUMN_BUYER_ID + "=" + buyerID + " AND " + UserInterestsTable.COLUMN_BUYER_INTEREST_ID + "=" + buyerInterestID,
+                        null);
+            }
+        }
+
+        db.close();
+        return 0;
     }
 
     public JSONObject getJSONDataFromCursor(String tableName, Cursor cursor, int position) {
@@ -261,6 +332,8 @@ public class UserDBHelper extends SQLiteOpenHelper {
                         return getUserAddressDataFromCursor(cursor, position);
                     case BusinessTypesTable.TABLE_NAME:
                         return getBusinessTypesDataFromCursor(cursor, position);
+                    case UserInterestsTable.TABLE_NAME:
+                        return getUserInterestsDataFromCursor(cursor, position);
                     default:
                         return null;
                 }
@@ -342,6 +415,31 @@ public class UserDBHelper extends SQLiteOpenHelper {
             }
         }
         data.put(BusinessTypesTable.TABLE_NAME, businessTypes);
+        return data;
+    }
+
+    private JSONObject getUserInterestsDataFromCursor(Cursor cursor, int position) throws JSONException {
+        JSONObject data = new JSONObject();
+        JSONArray interests = new JSONArray();
+
+        if (position == -1) {
+            int count = 0;
+            while (cursor.moveToNext()) {
+                JSONObject currInterest = new JSONObject();
+
+                currInterest.put(UserInterestsTable._ID, cursor.getInt(cursor.getColumnIndexOrThrow(UserInterestsTable._ID)));
+                currInterest.put(UserInterestsTable.COLUMN_BUYER_INTEREST_ID, cursor.getString(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_BUYER_INTEREST_ID)));
+                currInterest.put(UserInterestsTable.COLUMN_CATEGORY_ID, cursor.getString(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_CATEGORY_ID)));
+                currInterest.put(UserInterestsTable.COLUMN_CATEGORY_NAME, cursor.getString(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_CATEGORY_NAME)));
+                currInterest.put(UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT, cursor.getString(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT)));
+                currInterest.put(UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT, cursor.getString(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT)));
+                currInterest.put(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED, cursor.getInt(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED)));
+                currInterest.put(UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT, cursor.getString(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT)));
+
+                interests.put(count++, currInterest);
+            }
+        }
+        data.put(UserInterestsTable.TABLE_NAME, interests);
         return data;
     }
 }

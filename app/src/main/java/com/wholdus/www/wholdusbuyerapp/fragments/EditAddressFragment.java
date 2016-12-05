@@ -1,16 +1,22 @@
 package com.wholdus.www.wholdusbuyerapp.fragments;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
@@ -20,7 +26,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
@@ -48,6 +58,9 @@ public class EditAddressFragment extends Fragment implements LoaderManager.Loade
     private TextInputLayout mPincodeWrapper, mMobileNumberWrapper, mAddressWrapper;
     private TextInputEditText mPincodeEditText, mMobileNumberEditText,
             mAddressEditText, mCityEditText, mStateEditText, mLandmarkEditText, mAliasEditText;
+    private GoogleApiClient mGoogleApiClient;
+
+    private static final int PERMISSION_ACCESS_COARSE_LOCATION = 0;
 
     public EditAddressFragment() {
     }
@@ -74,6 +87,28 @@ public class EditAddressFragment extends Fragment implements LoaderManager.Loade
                 handleReceiverResponse(intent);
             }
         };
+        mGoogleApiClient = new GoogleApiClient.Builder(getContext(), new GoogleApiClient.ConnectionCallbacks() {
+            @Override
+            public void onConnected(@Nullable Bundle bundle) {
+                if (ContextCompat.checkSelfPermission(getContext(),
+                        Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                    double lat = location.getLatitude(),
+                            lng = location.getLongitude();
+                    Toast.makeText(getContext(), lat + " , " + lng, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onConnectionSuspended(int i) {
+
+            }
+        }, new GoogleApiClient.OnConnectionFailedListener() {
+            @Override
+            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                Toast.makeText(getContext(), "Error google", Toast.LENGTH_SHORT).show();
+            }
+        }).addApi(LocationServices.API).build();
     }
 
     @Nullable
@@ -83,7 +118,7 @@ public class EditAddressFragment extends Fragment implements LoaderManager.Loade
 
         initReferences(rootView);
 
-        if(!TextUtils.isEmpty(mAddressID) || m_ID != -1) {
+        if (!TextUtils.isEmpty(mAddressID) || m_ID != -1) {
             getActivity().getSupportLoaderManager().restartLoader(USER_ADDRESS_LOADER, null, this);
         }
 
@@ -114,6 +149,12 @@ public class EditAddressFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        mGoogleApiClient.disconnect();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         mUserServiceResponseReceiver = null;
@@ -138,7 +179,7 @@ public class EditAddressFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if(data.getCount() == 1) {
+        if (data.getCount() == 1) {
             try {
                 JSONObject address = mUserAddressDBHelper.getJSONDataFromCursor(UserAddressTable.TABLE_NAME, data, 0);
                 setViewFromData(address);
@@ -153,6 +194,20 @@ public class EditAddressFragment extends Fragment implements LoaderManager.Loade
         if (mUserAddressDBHelper != null) {
             mUserAddressDBHelper.close();
             mUserAddressDBHelper = null;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_ACCESS_COARSE_LOCATION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (mGoogleApiClient != null) {
+                        mGoogleApiClient.connect();
+                    }
+                } else {
+                    Toast.makeText(getContext(), "Need your location!", Toast.LENGTH_SHORT).show();
+                }
         }
     }
 
@@ -182,6 +237,22 @@ public class EditAddressFragment extends Fragment implements LoaderManager.Loade
             @Override
             public void onClick(View view) {
                 saveAddress();
+            }
+        });
+
+        Button mCurrentLocationButton = (Button) rootView.findViewById(R.id.current_location_button);
+        mCurrentLocationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (ContextCompat.checkSelfPermission(getContext(),
+                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                            PERMISSION_ACCESS_COARSE_LOCATION);
+                } else {
+                    if (mGoogleApiClient != null) {
+                        mGoogleApiClient.connect();
+                    }
+                }
             }
         });
     }
@@ -243,7 +314,7 @@ public class EditAddressFragment extends Fragment implements LoaderManager.Loade
         }
     }
 
-    private void setViewFromData(JSONObject address) throws JSONException{
+    private void setViewFromData(JSONObject address) throws JSONException {
         mMobileNumberEditText.setText(address.getString(UserAddressTable.COLUMN_CONTACT_NUMBER));
         mLandmarkEditText.setText(address.getString(UserAddressTable.COLUMN_LANDMARK));
         mCityEditText.setText(address.getString(UserAddressTable.COLUMN_CITY));
