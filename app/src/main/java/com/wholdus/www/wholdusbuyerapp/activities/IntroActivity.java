@@ -20,7 +20,7 @@ public class IntroActivity extends FragmentActivity implements IntroSlideFragmen
     private LinearLayout mIntroPagerDots;
     private ViewPager mViewPager;
     private PagerAdapter mPagerAdapter;
-    private final int TOTAL_DOTS = 3;
+    private static final int TOTAL_DOTS = 3;
     private ImageView[] mDots;
     private int mLastIntroPagerPosition;
 
