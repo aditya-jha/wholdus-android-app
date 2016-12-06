@@ -31,7 +31,7 @@ public class SplashActivity extends AppCompatActivity {
                 if (result) {
                     startLoginSignupActivity(HomeActivity.class);
                 } else {
-                    startLoginSignupActivity(LoginSignupActivity.class);
+                    startLoginSignupActivity(IntroActivity.class);
                 }
             }
         });
