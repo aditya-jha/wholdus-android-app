@@ -36,7 +36,7 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
     public void onBackPressed() {
         if(!mDoublePressToExit) {
             mDoublePressToExit = true;
-            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Press back again to exit wholdus", Toast.LENGTH_SHORT).show();
 
             new Handler().postDelayed(new Runnable() {
                 @Override
