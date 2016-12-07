@@ -10,12 +10,15 @@ import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
+import com.wholdus.www.wholdusbuyerapp.models.BuyerAddress;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import static android.R.attr.data;
 
 /**
  * Created by aditya on 27/11/16.
@@ -24,21 +27,21 @@ import java.util.ArrayList;
 public class AddressDisplayListViewAdapter extends BaseAdapter {
 
     private Context mContext;
-    private JSONArray mData;
+    private ArrayList<BuyerAddress> mData;
 
-    public AddressDisplayListViewAdapter(Context context, JSONArray data) {
+    public AddressDisplayListViewAdapter(Context context, ArrayList<BuyerAddress> data) {
         mContext = context;
         mData = data;
     }
 
     @Override
     public int getCount() {
-        return mData.length();
+        return mData.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return null;
+        return mData.get(i);
     }
 
     @Override
@@ -52,44 +55,39 @@ public class AddressDisplayListViewAdapter extends BaseAdapter {
             view = LayoutInflater.from(mContext).inflate(R.layout.address_display_list_view, viewGroup, false);
         }
 
-        try {
-            JSONObject currentData = mData.getJSONObject(i);
+        BuyerAddress address = (BuyerAddress) getItem(i);
 
-            TextView aliasTextView = (TextView) view.findViewById(R.id.alias_text_view);
-            aliasTextView.setText(currentData.getString(UserAddressTable.COLUMN_ADDRESS_ALIAS));
+        TextView aliasTextView = (TextView) view.findViewById(R.id.alias_text_view);
+        aliasTextView.setText(address.getAlias());
 
-            TextView contactNumberTextView = (TextView) view.findViewById(R.id.contact_number_text_view);
-            contactNumberTextView.setText(currentData.getString(UserAddressTable.COLUMN_CONTACT_NUMBER));
+        TextView contactNumberTextView = (TextView) view.findViewById(R.id.contact_number_text_view);
+        contactNumberTextView.setText(address.getContactNumber());
 
-            TextView addressTextView = (TextView) view.findViewById(R.id.address_text_view);
-            addressTextView.setText(getAddressTextView(currentData));
+        TextView addressTextView = (TextView) view.findViewById(R.id.address_text_view);
+        addressTextView.setText(getAddressTextView(address));
 
-            TextView cityStatePincodeTextView = (TextView) view.findViewById(R.id.city_state_pincode_text_view);
-            cityStatePincodeTextView.setText(getCityStatePincodeTextView(currentData));
+        TextView cityStatePincodeTextView = (TextView) view.findViewById(R.id.city_state_pincode_text_view);
+        cityStatePincodeTextView.setText(getCityStatePincodeTextView(address));
 
-            view.setTag(R.integer.addressID, currentData.getString(UserAddressTable.COLUMN_ADDRESS_ID));
-            view.setTag(R.integer._ID, currentData.getInt(UserAddressTable._ID));
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        view.setTag(R.integer.addressID, address.getAddressID());
+        view.setTag(R.integer._ID, address.get_ID());
 
         return view;
     }
 
-    private String getAddressTextView(JSONObject data) throws JSONException {
-        String address = data.getString(UserAddressTable.COLUMN_ADDRESS);
-        String landmark = data.getString(UserAddressTable.COLUMN_LANDMARK);
+    private String getAddressTextView(BuyerAddress data) {
+        String address = data.getAddress();
+        String landmark = data.getLandmark();
 
         if (landmark.isEmpty()) return address;
         else if (address.isEmpty()) return landmark;
         else return address + " " + landmark;
     }
 
-    private String getCityStatePincodeTextView(JSONObject data) throws JSONException {
-        String city = data.getString(UserAddressTable.COLUMN_CITY);
-        String state = data.getString(UserAddressTable.COLUMN_STATE);
-        String pincode = data.getString(UserAddressTable.COLUMN_PINCODE);
+    private String getCityStatePincodeTextView(BuyerAddress data) {
+        String city = data.getCity();
+        String state = data.getState();
+        String pincode = data.getPincode();
 
         ArrayList<String> value = new ArrayList<>();
 

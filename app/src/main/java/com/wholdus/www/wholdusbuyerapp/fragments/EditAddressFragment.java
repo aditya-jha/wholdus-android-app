@@ -46,7 +46,7 @@ import org.json.JSONObject;
  * Created by aditya on 29/11/16.
  */
 
-public class EditAddressFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class EditAddressFragment extends Fragment {
 
     private ProfileListenerInterface mListener;
     private String mAddressID;
@@ -119,7 +119,7 @@ public class EditAddressFragment extends Fragment implements LoaderManager.Loade
         initReferences(rootView);
 
         if (!TextUtils.isEmpty(mAddressID) || m_ID != -1) {
-            getActivity().getSupportLoaderManager().restartLoader(USER_ADDRESS_LOADER, null, this);
+            // getActivity().getSupportLoaderManager().restartLoader(USER_ADDRESS_LOADER, null, this);
         }
 
         return rootView;
@@ -164,37 +164,6 @@ public class EditAddressFragment extends Fragment implements LoaderManager.Loade
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(final int id, Bundle args) {
-        return new CursorLoader(getContext()) {
-            @Override
-            public Cursor loadInBackground() {
-                mUserAddressDBHelper = new UserDBHelper(getContext());
-                return mUserAddressDBHelper.getUserAddress(GlobalAccessHelper.getBuyerID(getActivity().getApplication()), mAddressID, m_ID);
-            }
-        };
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (data.getCount() == 1) {
-            try {
-                JSONObject address = mUserAddressDBHelper.getJSONDataFromCursor(UserAddressTable.TABLE_NAME, data, 0);
-                setViewFromData(address);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        if (mUserAddressDBHelper != null) {
-            mUserAddressDBHelper.close();
-            mUserAddressDBHelper = null;
-        }
     }
 
     @Override
