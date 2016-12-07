@@ -2,7 +2,7 @@ package com.wholdus.www.wholdusbuyerapp.models;
 
 import android.database.Cursor;
 
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserInterestsTable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,20 +22,22 @@ public class BuyerInterest {
     private double mMinPricePerUnit;
     private double mMaxPricePerUnit;
 
-    public BuyerInterest() {}
+    public BuyerInterest() {
+    }
 
-    public BuyerInterest(JSONObject json) throws JSONException {}
+    public BuyerInterest(JSONObject json) throws JSONException {
+    }
 
     public BuyerInterest(Cursor cursor) {
-        m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(UserProfileContract.UserInterestsTable._ID));
-        mBuyerID = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserInterestsTable.COLUMN_BUYER_ID));
-        mBuyerInterestID = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserInterestsTable.COLUMN_BUYER_INTEREST_ID));
-        mCategoryID = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserInterestsTable.COLUMN_CATEGORY_ID));
-        mCategoryName = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserInterestsTable.COLUMN_CATEGORY_NAME));
-        mFabricFilter = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT));
-        mPriceFilterApplied = cursor.getInt(cursor.getColumnIndexOrThrow(UserProfileContract.UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED)) == 1;
-        mMinPricePerUnit = cursor.getDouble(cursor.getColumnIndexOrThrow(UserProfileContract.UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT));
-        mMaxPricePerUnit = cursor.getDouble(cursor.getColumnIndexOrThrow(UserProfileContract.UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT));
+        m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(UserInterestsTable._ID));
+        mBuyerID = cursor.getString(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_BUYER_ID));
+        mBuyerInterestID = cursor.getString(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_BUYER_INTEREST_ID));
+        mCategoryID = cursor.getString(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_CATEGORY_ID));
+        mCategoryName = cursor.getString(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_CATEGORY_NAME));
+        mFabricFilter = cursor.getString(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT));
+        mPriceFilterApplied = cursor.getInt(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED)) == 1;
+        mMinPricePerUnit = cursor.getDouble(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT));
+        mMaxPricePerUnit = cursor.getDouble(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT));
     }
 
     public int get_ID() {

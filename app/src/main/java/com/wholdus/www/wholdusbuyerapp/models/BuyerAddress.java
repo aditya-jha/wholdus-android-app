@@ -2,7 +2,7 @@ package com.wholdus.www.wholdusbuyerapp.models;
 
 import android.database.Cursor;
 
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,23 +25,25 @@ public class BuyerAddress {
     private String mAlias;
     private int mPriority;
 
-    public BuyerAddress() {}
+    public BuyerAddress() {
+    }
 
-    public BuyerAddress(JSONObject json) throws JSONException {}
+    public BuyerAddress(JSONObject json) throws JSONException {
+    }
 
     public BuyerAddress(Cursor cursor) {
-        m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(UserProfileContract.UserAddressTable._ID));
-        mBuyerID = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserAddressTable.COLUMN_BUYER_ID));
-        mAddressID = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserAddressTable.COLUMN_ADDRESS_ID));
-        mPincodeID = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserAddressTable.COLUMN_PINCODE_ID));
-        mAddress = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserAddressTable.COLUMN_ADDRESS));
-        mCity = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserAddressTable.COLUMN_CITY));
-        mState = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserAddressTable.COLUMN_STATE));
-        mLandmark = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserAddressTable.COLUMN_LANDMARK));
-        mContactNumber = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserAddressTable.COLUMN_CONTACT_NUMBER));
-        mPincode = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserAddressTable.COLUMN_PINCODE));
-        mAlias = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserAddressTable.COLUMN_ADDRESS_ALIAS));
-        mPriority = cursor.getInt(cursor.getColumnIndexOrThrow(UserProfileContract.UserAddressTable.COLUMN_PRIORITY));
+        m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(UserAddressTable._ID));
+        mBuyerID = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_BUYER_ID));
+        mAddressID = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS_ID));
+        mPincodeID = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_PINCODE_ID));
+        mAddress = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS));
+        mCity = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_CITY));
+        mState = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_STATE));
+        mLandmark = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_LANDMARK));
+        mContactNumber = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_CONTACT_NUMBER));
+        mPincode = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_PINCODE));
+        mAlias = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS_ALIAS));
+        mPriority = cursor.getInt(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_PRIORITY));
     }
 
     public int get_ID() {
