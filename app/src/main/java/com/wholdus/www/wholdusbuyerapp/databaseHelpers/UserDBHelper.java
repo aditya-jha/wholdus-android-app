@@ -95,28 +95,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
     private static final String SQL_DROP_USER_INTERESTS_TABLE =
             "DROP TABLE IF EXISTS " + BusinessTypesTable.TABLE_NAME;
 
-    private static final String SQL_CREATE_ORDERS_TABLE =
-            "CREATE TABLE " + OrdersTable.TABLE_NAME + " (" +
-                    OrdersTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
-                    OrdersTable.COLUMN_ORDER_ID + TEXT_TYPE + COMMA_SEP +
-                    OrdersTable.COLUMN_DISPLAY_NUMBER + TEXT_TYPE + COMMA_SEP +
-                    OrdersTable.COLUMN_BUYER_ADDRESS_ID + TEXT_TYPE + COMMA_SEP +
-                    OrdersTable.COLUMN_PRODUCT_COUNT + INT_TYPE + COMMA_SEP +
-                    OrdersTable.COLUMN_RETAIL_PRICE + REAL_TYPE + COMMA_SEP +
-                    OrdersTable.COLUMN_CALCULATED_PRICE + REAL_TYPE + COMMA_SEP +
-                    OrdersTable.COLUMN_EDITED_PRICE + REAL_TYPE + COMMA_SEP +
-                    OrdersTable.COLUMN_SHIPPING_CHARGE + REAL_TYPE + COMMA_SEP +
-                    OrdersTable.COLUMN_COD_CHARGE + REAL_TYPE + COMMA_SEP +
-                    OrdersTable.COLUMN_FINAL_PRICE + REAL_TYPE + COMMA_SEP +
-                    OrdersTable.COLUMN_ORDER_STATUS_VALUE + INT_TYPE + COMMA_SEP +
-                    OrdersTable.COLUMN_ORDER_STATUS_DISPLAY + TEXT_TYPE + COMMA_SEP +
-                    OrdersTable.COLUMN_PAYMENT_STATUS_VALUE + INT_TYPE + COMMA_SEP +
-                    OrdersTable.COLUMN_PAYMENT_STATUS_DISPLAY + TEXT_TYPE + COMMA_SEP +
-                    OrdersTable.CREATED_AT + TEXT_TYPE + COMMA_SEP +
-                    OrdersTable.COLUMN_REMARKS + TEXT_TYPE + " )";
 
-    private static final String SQL_DROP_ORDERS_TABLE =
-            "DROP TABLE IF EXISTS " + OrdersTable.TABLE_NAME;
 
     public UserDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -128,7 +107,6 @@ public class UserDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_USER_ADDRESS_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_BUSINESS_TYPES_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_USER_INTERESTS_TABLE);
-        sqLiteDatabase.execSQL(SQL_CREATE_ORDERS_TABLE);
     }
 
     @Override
@@ -137,7 +115,6 @@ public class UserDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_DROP_USER_ADDRESS_TABLE);
         sqLiteDatabase.execSQL(SQL_DROP_BUSINESS_TYPES_TABLE);
         sqLiteDatabase.execSQL(SQL_DROP_USER_INTERESTS_TABLE);
-        sqLiteDatabase.execSQL(SQL_DROP_ORDERS_TABLE);
 
         onCreate(sqLiteDatabase);
     }
