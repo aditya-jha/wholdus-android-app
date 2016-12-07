@@ -19,7 +19,7 @@ public class ProductsContract {
         public static final String COLUMN_PRODUCT_DETAILS_ID = "detailsID";
 
         public static final String COLUMN_PRICE_PER_UNIT = "price_per_unit";
-        public static final String COLUMN_PRICE_LOT_SIZE = "lot_size";
+        public static final String COLUMN_LOT_SIZE = "lot_size";
         public static final String COLUMN_PRICE_PER_LOT = "price_per_lot";
         public static final String COLUMN_MIN_PRICE_PER_UNIT = "min_price_per_unit";
         public static final String COLUMN_MARGIN = "margin";

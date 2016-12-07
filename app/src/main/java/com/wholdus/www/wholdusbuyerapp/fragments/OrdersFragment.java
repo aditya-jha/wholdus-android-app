@@ -69,8 +69,12 @@ public class OrdersFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_orders, container, false);
         initReferences(rootView);
+
         mOrderLoader = new OrderLoader();
         getActivity().getSupportLoaderManager().restartLoader(ORDERS_DB_LOADER, null, mOrderLoader);
+
+        fetchDataFromServer();
+
         return rootView;
     }
 
@@ -82,11 +86,6 @@ public class OrdersFragment extends Fragment {
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mOrderServiceResponseReceiver, intentFilter);
 
         mListener.fragmentCreated("My Orders", true);
-
-        //Intent intent = new Intent(getContext(), OrderService.class);
-        //intent.putExtra("TODO", R.string.fetch_orders);
-        //getContext().startService(intent);
-
     }
 
     @Override
@@ -109,29 +108,25 @@ public class OrdersFragment extends Fragment {
         mOrdersListView = (ListView) rootView.findViewById(R.id.orders_list_view);
     }
 
+    private void setViewForOrders(){
+
+    }
+
+    private void fetchDataFromServer(){
+        Intent intent = new Intent(getContext(), OrderService.class);
+        intent.putExtra("TODO", R.string.fetch_orders);
+        getContext().startService(intent);
+    }
+
     private class OrderLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
-            try {
-                if (loader.getId() == ORDERS_DB_LOADER) {
-                    mUserDBHelper.close();
-                    mUserDBHelper = null;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            /*try {
-                if (loader.getId() == ORDERS_DB_LOADER) {
-                    setViewForOrders();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }*/
+            setViewForOrders(data);
         }
 
 
@@ -151,9 +146,5 @@ public class OrdersFragment extends Fragment {
                 }
             };
         }
-   }
-
-   public void setViewForOrders(){
-
    }
 }

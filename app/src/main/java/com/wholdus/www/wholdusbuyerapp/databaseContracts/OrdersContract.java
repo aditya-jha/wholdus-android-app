@@ -30,7 +30,7 @@ public final class OrdersContract {
         public static final String COLUMN_PAYMENT_STATUS_VALUE = "payment_status_value";
         public static final String COLUMN_PAYMENT_STATUS_DISPLAY = "payment_status_display";
 
-        public static final String CREATED_AT = "created_at";
+        public static final String COLUMN_CREATED_AT = "created_at";
 
         public static final String COLUMN_REMARKS = "remarks";
     }
@@ -57,7 +57,7 @@ public final class OrdersContract {
         public static final String COLUMN_PAYMENT_STATUS_VALUE = "payment_status_value";
         public static final String COLUMN_PAYMENT_STATUS_DISPLAY = "payment_status_display";
 
-        public static final String CREATED_AT = "created_at";
+        public static final String COLUMN_CREATED_AT = "created_at";
     }
 
     public static final class OrderItemsTable implements BaseColumns {
@@ -66,9 +66,6 @@ public final class OrdersContract {
         public static final String COLUMN_SUBORDER_ID = "suborderID";
         public static final String COLUMN_PRODUCT_ID = "productID";
         public static final String COLUMN_ORDER_SHIPMENT_ID = "ordershipmentID";
-        public static final String COLUMN_DISPLAY_NUMBER = "display_number";
-        public static final String COLUMN_SELLER_ID = "sellerID";
-        public static final String COLUMN_SELLER_ADDRESS_ID = "selleraddressID";
 
         public static final String COLUMN_LOTS = "lots";
         public static final String COLUMN_LOT_SIZE = "lot_size";
@@ -82,7 +79,7 @@ public final class OrdersContract {
         public static final String COLUMN_ORDER_ITEM_STATUS_DISPLAY = "order_item_status_display";
         public static final String COLUMN_TRACKING_URL = "tracking_url";
 
-        public static final String CREATED_AT = "created_at";
+        public static final String COLUMN_CREATED_AT = "created_at";
 
         public static final String COLUMN_REMARKS = "remarks";
     }
