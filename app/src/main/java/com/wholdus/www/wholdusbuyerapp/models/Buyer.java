@@ -2,8 +2,7 @@ package com.wholdus.www.wholdusbuyerapp.models;
 
 import android.database.Cursor;
 
-import com.google.android.gms.identity.intents.model.UserAddress;
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserTable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,14 +28,19 @@ public class Buyer {
 
     private ArrayList<BuyerInterest> mBuyerInterest;
 
-    public Buyer() {}
+    public Buyer() {
+    }
 
-    public Buyer(JSONObject json) throws JSONException {}
+    public Buyer(JSONObject json) throws JSONException {
+    }
 
-    public Buyer(Cursor cursor) {}
+    public Buyer(Cursor cursor) {
+    }
 
     public void setBuyerData(Cursor cursor) {
-        if(cursor.getCount() == 0) { return; }
+        if (cursor.getCount() == 0) {
+            return;
+        }
         if (cursor.getCount() > 1) { /* TODO: multiple buyer with same ID, should not exist, handle the case */
             try {
                 throw new Exception("multiple buyer with same ID");
@@ -45,15 +49,15 @@ public class Buyer {
             }
         }
         cursor.moveToFirst();
-        m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(UserProfileContract.UserTable._ID));
-        mBuyerID = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserTable.COLUMN_BUYER_ID));
-        mName = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserTable.COLUMN_NAME));
-        mEmail = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserTable.COLUMN_EMAIL));
-        mMobileNumber = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER));
-        mWhatsappNumber = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserTable.COLUMN_WHATSAPP_NUMBER));
-        mCompanyName = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserTable.COLUMN_COMPANY_NAME));
-        mBusinessType = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserTable.COLUMN_BUSINESS_TYPE));
-        mGender = cursor.getString(cursor.getColumnIndexOrThrow(UserProfileContract.UserTable.COLUMN_GENDER));
+        m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(UserTable._ID));
+        mBuyerID = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_BUYER_ID));
+        mName = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_NAME));
+        mEmail = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_EMAIL));
+        mMobileNumber = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_MOBILE_NUMBER));
+        mWhatsappNumber = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_WHATSAPP_NUMBER));
+        mCompanyName = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_COMPANY_NAME));
+        mBusinessType = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_BUSINESS_TYPE));
+        mGender = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_GENDER));
     }
 
     public void setAddressData(Cursor cursor) {

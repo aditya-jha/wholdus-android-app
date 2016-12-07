@@ -1,7 +1,6 @@
 package com.wholdus.www.wholdusbuyerapp.loaders;
 
 import android.content.Context;
-import android.database.Cursor;
 
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
