@@ -20,6 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by aditya on 25/11/16.
@@ -32,7 +33,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
 
     private static final String TEXT_TYPE = " TEXT";
     private static final String INT_TYPE = " INTEGER";
-    private static final String TYPE_REAL = " REAL ";
+    private static final String REAL_TYPE = " REAL ";
     private static final String COMMA_SEP = ",";
     private static final String NOT_NULL = " NOT NULL";
 
@@ -101,15 +102,15 @@ public class UserDBHelper extends SQLiteOpenHelper {
                     OrdersTable.COLUMN_DISPLAY_NUMBER + TEXT_TYPE + COMMA_SEP +
                     OrdersTable.COLUMN_BUYER_ADDRESS_ID + TEXT_TYPE + COMMA_SEP +
                     OrdersTable.COLUMN_PRODUCT_COUNT + INT_TYPE + COMMA_SEP +
-                    OrdersTable.COLUMN_RETAIL_PRICE + TYPE_REAL + COMMA_SEP +
-                    OrdersTable.COLUMN_CALCULATED_PRICE + TYPE_REAL + COMMA_SEP +
-                    OrdersTable.COLUMN_EDITED_PRICE + TYPE_REAL + COMMA_SEP +
-                    OrdersTable.COLUMN_SHIPPING_CHARGE + TYPE_REAL + COMMA_SEP +
-                    OrdersTable.COLUMN_COD_CHARGE + TYPE_REAL + COMMA_SEP +
-                    OrdersTable.COLUMN_FINAL_PRICE + TYPE_REAL + COMMA_SEP +
-                    OrdersTable.COLUMN_ORDER_STATUS_VALUE + TEXT_TYPE + COMMA_SEP +
+                    OrdersTable.COLUMN_RETAIL_PRICE + REAL_TYPE + COMMA_SEP +
+                    OrdersTable.COLUMN_CALCULATED_PRICE + REAL_TYPE + COMMA_SEP +
+                    OrdersTable.COLUMN_EDITED_PRICE + REAL_TYPE + COMMA_SEP +
+                    OrdersTable.COLUMN_SHIPPING_CHARGE + REAL_TYPE + COMMA_SEP +
+                    OrdersTable.COLUMN_COD_CHARGE + REAL_TYPE + COMMA_SEP +
+                    OrdersTable.COLUMN_FINAL_PRICE + REAL_TYPE + COMMA_SEP +
+                    OrdersTable.COLUMN_ORDER_STATUS_VALUE + INT_TYPE + COMMA_SEP +
                     OrdersTable.COLUMN_ORDER_STATUS_DISPLAY + TEXT_TYPE + COMMA_SEP +
-                    OrdersTable.COLUMN_PAYMENT_STATUS_VALUE + TEXT_TYPE + COMMA_SEP +
+                    OrdersTable.COLUMN_PAYMENT_STATUS_VALUE + INT_TYPE + COMMA_SEP +
                     OrdersTable.COLUMN_PAYMENT_STATUS_DISPLAY + TEXT_TYPE + COMMA_SEP +
                     OrdersTable.CREATED_AT + TEXT_TYPE + COMMA_SEP +
                     OrdersTable.COLUMN_REMARKS + TEXT_TYPE + " )";
@@ -127,7 +128,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_USER_ADDRESS_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_BUSINESS_TYPES_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_USER_INTERESTS_TABLE);
-        sqLiteDatabase.execSQL(SQL_CREATE_USER_INTERESTS_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_ORDERS_TABLE);
     }
 
     @Override
@@ -135,7 +136,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_DROP_USER_TABLE);
         sqLiteDatabase.execSQL(SQL_DROP_USER_ADDRESS_TABLE);
         sqLiteDatabase.execSQL(SQL_DROP_BUSINESS_TYPES_TABLE);
-        sqLiteDatabase.execSQL(SQL_CREATE_ORDERS_TABLE);
+        sqLiteDatabase.execSQL(SQL_DROP_USER_INTERESTS_TABLE);
         sqLiteDatabase.execSQL(SQL_DROP_ORDERS_TABLE);
 
         onCreate(sqLiteDatabase);
@@ -152,8 +153,22 @@ public class UserDBHelper extends SQLiteOpenHelper {
         return getReadableDatabase().rawQuery(query, null);
     }
 
-    public Cursor getOrdersData(String buyerID, ArrayList) {
-        String query = "SELECT * FROM " + UserTable.TABLE_NAME + " WHERE " + UserTable.COLUMN_BUYER_ID + "= " + buyerID + ";";
+    public Cursor getOrdersData(@Nullable List<Integer> orderStatusValues, @Nullable String orderID) {
+        String query = "SELECT * FROM " + OrdersTable.TABLE_NAME;
+        boolean whereApplied = false;
+        if (orderID!= null && !TextUtils.isEmpty(orderID)){
+            query += "WHERE " + OrdersTable.COLUMN_ORDER_ID + " = " + orderID;
+            whereApplied = true;
+        }
+        if (!orderStatusValues.isEmpty()){
+            if (whereApplied == true){
+                query += " AND ";
+            }
+            else {
+                query += " WHERE ";
+            }
+            query += OrdersTable.COLUMN_ORDER_STATUS_VALUE + " IN " + TextUtils.join(", ", orderStatusValues);
+        }
 
         return getReadableDatabase().rawQuery(query, null);
     }

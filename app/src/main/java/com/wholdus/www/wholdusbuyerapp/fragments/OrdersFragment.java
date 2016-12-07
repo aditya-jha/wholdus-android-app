@@ -19,9 +19,12 @@ import android.widget.ListView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.WholdusApplication;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.services.UserService;
+
+import org.json.JSONException;
 
 /**
  * Created by aditya on 19/11/16.
@@ -73,8 +76,28 @@ public class OrdersFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        IntentFilter intentFilter = new IntentFilter(getString(R.string.order_data_updated));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mOrderServiceResponseReceiver, intentFilter);
+
         mListener.fragmentCreated("My Orders", true);
 
+        Intent intent = new Intent(getContext(), OrderService.class);
+        intent.putExtra("TODO", R.string.fetch_orders);
+        getContext().startService(intent);
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mOrderServiceResponseReceiver);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mOrderServiceResponseReceiver = null;
     }
 
     private void handleAPIResponse() {
@@ -94,6 +117,15 @@ public class OrdersFragment extends Fragment {
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            try {
+                if (loader.getId() == ORDERS_DB_LOADER) {
+                    if (data.getCount() == 1) {
+                        setViewForPersonalDetails(mUserDBHelper.getJSONDataFromCursor(UserProfileContract.UserTable.TABLE_NAME, data, 0));
+                    }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
         }
 
@@ -102,12 +134,11 @@ public class OrdersFragment extends Fragment {
             return new CursorLoader(getContext()) {
                 @Override
                 public Cursor loadInBackground() {
-                    WholdusApplication wholdusApplication = (WholdusApplication) getActivity().getApplication();
 
                     switch (id) {
                         case ORDERS_DB_LOADER:
                             mUserDBHelper = new UserDBHelper(getContext());
-                            return mUserDBHelper.getOrdersData(wholdusApplication.getBuyerID());
+                            return mUserDBHelper.getOrdersData(null, null);
                         default:
                             return null;
                     }
