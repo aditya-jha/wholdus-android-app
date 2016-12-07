@@ -1,11 +1,9 @@
 package com.wholdus.www.wholdusbuyerapp.models;
 
 import android.database.Cursor;
+import android.util.Log;
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserTable;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -31,22 +29,16 @@ public class Buyer {
     public Buyer() {
     }
 
-    public Buyer(JSONObject json) throws JSONException {
-    }
-
     public Buyer(Cursor cursor) {
     }
 
     public void setBuyerData(Cursor cursor) {
         if (cursor.getCount() == 0) {
             return;
-        }
-        if (cursor.getCount() > 1) { /* TODO: multiple buyer with same ID, should not exist, handle the case */
-            try {
-                throw new Exception("multiple buyer with same ID");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        } else if (cursor.getCount() > 1) {
+            /* TODO: multiple buyer with same ID, should not exist, handle the case */
+            Log.e(this.getClass().getSimpleName(), "multiple buyer with same ID");
+            return;
         }
         cursor.moveToFirst();
         m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(UserTable._ID));

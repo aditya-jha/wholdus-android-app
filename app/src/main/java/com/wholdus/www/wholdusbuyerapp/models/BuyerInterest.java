@@ -4,9 +4,6 @@ import android.database.Cursor;
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserInterestsTable;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
  * Created by aditya on 7/12/16.
  */
@@ -23,9 +20,6 @@ public class BuyerInterest {
     private double mMaxPricePerUnit;
 
     public BuyerInterest() {
-    }
-
-    public BuyerInterest(JSONObject json) throws JSONException {
     }
 
     public BuyerInterest(Cursor cursor) {
