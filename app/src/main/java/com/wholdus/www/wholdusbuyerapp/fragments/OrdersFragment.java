@@ -12,6 +12,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,12 +21,17 @@ import android.widget.ListView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.WholdusApplication;
+import com.wholdus.www.wholdusbuyerapp.adapters.OrdersAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
+import com.wholdus.www.wholdusbuyerapp.loaders.OrdersLoader;
+import com.wholdus.www.wholdusbuyerapp.models.Order;
 import com.wholdus.www.wholdusbuyerapp.services.UserService;
 
 import org.json.JSONException;
+
+import java.util.ArrayList;
 
 /**
  * Created by aditya on 19/11/16.
@@ -34,11 +40,11 @@ import org.json.JSONException;
 public class OrdersFragment extends Fragment {
 
     private ProfileListenerInterface mListener;
-    private ListView mOrdersListView;
+    private RecyclerView mOrdersListView;
     private UserDBHelper mUserDBHelper;
     private final int ORDERS_DB_LOADER = 10;
     private BroadcastReceiver mOrderServiceResponseReceiver;
-    private OrderLoader mOrderLoader;
+    private OrderLoaderManager mOrderLoader;
 
     public OrdersFragment() {
     }
@@ -70,7 +76,7 @@ public class OrdersFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_orders, container, false);
         initReferences(rootView);
 
-        mOrderLoader = new OrderLoader();
+        mOrderLoader = new OrderLoaderManager();
         getActivity().getSupportLoaderManager().restartLoader(ORDERS_DB_LOADER, null, mOrderLoader);
 
         fetchDataFromServer();
@@ -100,51 +106,47 @@ public class OrdersFragment extends Fragment {
         mOrderServiceResponseReceiver = null;
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
     private void handleAPIResponse() {
         getActivity().getSupportLoaderManager().restartLoader(ORDERS_DB_LOADER, null, mOrderLoader);
     }
 
     private void initReferences(ViewGroup rootView){
-        mOrdersListView = (ListView) rootView.findViewById(R.id.orders_list_view);
+        mOrdersListView = (RecyclerView) rootView.findViewById(R.id.orders_recycler_view);
     }
 
-    private void setViewForOrders(){
-
+    private void setViewForOrders(ArrayList<Order> orders){
+        //TODO: If empty list, handle case
+        OrdersAdapter adapter = new OrdersAdapter(getContext(), orders);
+        mOrdersListView.setAdapter(adapter);
     }
 
     private void fetchDataFromServer(){
-        Intent intent = new Intent(getContext(), OrderService.class);
+        /*Intent intent = new Intent(getContext(), OrderService.class);
         intent.putExtra("TODO", R.string.fetch_orders);
-        getContext().startService(intent);
+        getContext().startService(intent);*/
     }
 
-    private class OrderLoader implements LoaderManager.LoaderCallbacks<Cursor> {
+    private class OrderLoaderManager implements LoaderManager.LoaderCallbacks<ArrayList<Order>> {
 
         @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
+        public void onLoaderReset(Loader<ArrayList<Order>> loader) {
         }
 
         @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        public void onLoadFinished(Loader<ArrayList<Order>> loader, ArrayList<Order> data) {
             setViewForOrders(data);
         }
 
 
         @Override
-        public Loader<Cursor> onCreateLoader(final int id, Bundle args) {
-            return new CursorLoader(getContext()) {
-                @Override
-                public Cursor loadInBackground() {
-
-                    switch (id) {
-                        case ORDERS_DB_LOADER:
-                            mUserDBHelper = new UserDBHelper(getContext());
-                            return mUserDBHelper.getOrdersData(null, null);
-                        default:
-                            return null;
-                    }
-                }
-            };
+        public Loader<ArrayList<Order>> onCreateLoader(final int id, Bundle args) {
+            return new OrdersLoader(getContext());
         }
    }
 }

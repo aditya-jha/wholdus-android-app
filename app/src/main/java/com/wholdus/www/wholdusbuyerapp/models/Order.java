@@ -1,5 +1,9 @@
 package com.wholdus.www.wholdusbuyerapp.models;
 
+import android.database.Cursor;
+
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract;
+
 import java.util.ArrayList;
 
 /**
@@ -31,6 +35,30 @@ public class Order {
 
     public Order(){}
 
+    public Order(Cursor cursor){
+    }
+
+    public void setDataFromCursor(Cursor cursor){
+        ID = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable._ID));
+        orderID = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_ORDER_ID));
+        displayNumber = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_DISPLAY_NUMBER));
+        buyerAddressID = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_BUYER_ADDRESS_ID));
+        productCount = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_PRODUCT_COUNT));
+        pieces = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_PIECES));
+        retailPrice = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_RETAIL_PRICE));
+        calculatedPrice = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_CALCULATED_PRICE));
+        editedPrice = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_EDITED_PRICE));
+        shippingCharge = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_SHIPPING_CHARGE));
+        CODCharge = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_COD_CHARGE));
+        finalPrice = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_FINAL_PRICE));
+        orderStatusValue = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_ORDER_STATUS_VALUE));
+        orderStatusDisplay = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_ORDER_STATUS_DISPLAY));
+        paymentStatusValue = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_PAYMENT_STATUS_VALUE));
+        paymentStatusDisplay = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_PAYMENT_STATUS_DISPLAY));
+        createdAt = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_CREATED_AT));
+        remarks = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_REMARKS));
+    }
+
     public int getID(){return ID;}
 
     public String getOrderID(){return orderID;}
@@ -54,6 +82,8 @@ public class Order {
     public float getShippingCharge(){return shippingCharge;}
 
     public float getCODCharge(){return CODCharge;}
+
+    public float getFinalPrice(){return finalPrice;}
 
     public int getOrderStatusValue(){return orderStatusValue;}
 
