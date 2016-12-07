@@ -39,7 +39,7 @@ import org.json.JSONObject;
  * Created by aditya on 28/11/16.
  */
 
-public class EditProfileDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class EditProfileDetailsFragment extends Fragment {
 
     private ProfileListenerInterface mListener;
     private UserDBHelper mUserDBHelper, mBusinessTypesDBHelper;
@@ -82,8 +82,7 @@ public class EditProfileDetailsFragment extends Fragment implements LoaderManage
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_edit_profile_details, container, false);
 
         initReferences(rootView);
-        getActivity().getSupportLoaderManager().restartLoader(USER_DETAILS_DB_LOADER, null, this);
-        getActivity().getSupportLoaderManager().restartLoader(BUSINESS_TYPES_DB_LOADER, null, this);
+        // getActivity().getSupportLoaderManager().restartLoader(USER_DETAILS_DB_LOADER, null, this);
 
         return rootView;
     }
@@ -117,72 +116,6 @@ public class EditProfileDetailsFragment extends Fragment implements LoaderManage
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(final int id, Bundle args) {
-
-        return new CursorLoader(getContext()) {
-            @Override
-            public Cursor loadInBackground() {
-                if (id == USER_DETAILS_DB_LOADER) {
-                    WholdusApplication wholdusApplication = (WholdusApplication) getActivity().getApplication();
-                    mUserDBHelper = new UserDBHelper(getContext());
-                    return mUserDBHelper.getUserData(wholdusApplication.getBuyerID());
-                } else if (id == BUSINESS_TYPES_DB_LOADER) {
-                    mBusinessTypesDBHelper = new UserDBHelper(getContext());
-                    return mBusinessTypesDBHelper.getBusinessTypes(null);
-                }
-                return super.loadInBackground();
-            }
-        };
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        try {
-            switch (loader.getId()) {
-                case USER_DETAILS_DB_LOADER:
-                    setViewForPersonalDetails(mUserDBHelper.getJSONDataFromCursor(UserProfileContract.UserTable.TABLE_NAME, data, 0));
-                    break;
-                case BUSINESS_TYPES_DB_LOADER:
-                    if (data.getCount() == 0) {
-                        // fetch from server
-                        Intent intent = new Intent(getContext(), UserService.class);
-                        intent.putExtra("TODO", R.string.fetch_business_types);
-                        getContext().startService(intent);
-                    } else {
-                        // update UI
-                        setViewForBusinessTypes(mBusinessTypesDBHelper.getJSONDataFromCursor(BusinessTypesTable.TABLE_NAME, data, -1));
-                    }
-                    break;
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        mSelectedBusinessType = null;
-        try {
-            switch (loader.getId()) {
-                case USER_DETAILS_DB_LOADER:
-                    if (mUserDBHelper != null) {
-                        mUserDBHelper.close();
-                        mUserDBHelper = null;
-                    }
-                    break;
-                case BUSINESS_TYPES_DB_LOADER:
-                    if (mBusinessTypesDBHelper != null) {
-                        mBusinessTypesDBHelper.close();
-                        mBusinessTypesDBHelper = null;
-                    }
-                    break;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void initReferences(ViewGroup rootView) {
@@ -268,7 +201,7 @@ public class EditProfileDetailsFragment extends Fragment implements LoaderManage
         String extra = intent.getStringExtra("extra");
         if (extra != null) {
             if (extra.equals(getString(R.string.business_types_data_updated))) {
-                getActivity().getSupportLoaderManager().restartLoader(USER_DETAILS_DB_LOADER, null, this);
+                // getActivity().getSupportLoaderManager().restartLoader(USER_DETAILS_DB_LOADER, null, this);
             } else if (extra.equals(getString(R.string.user_data_modified))) {
                 // close fragment
                 mListener.openProfileFragment();

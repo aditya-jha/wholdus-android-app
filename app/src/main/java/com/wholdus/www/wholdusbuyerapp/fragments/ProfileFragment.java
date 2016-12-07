@@ -4,15 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,14 +18,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
-import com.wholdus.www.wholdusbuyerapp.WholdusApplication;
 import com.wholdus.www.wholdusbuyerapp.adapters.AddressDisplayListViewAdapter;
 import com.wholdus.www.wholdusbuyerapp.adapters.BuyerPersonalDetailsAdapter;
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserTable;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
+import com.wholdus.www.wholdusbuyerapp.loaders.ProfileLoader;
+import com.wholdus.www.wholdusbuyerapp.models.Buyer;
+import com.wholdus.www.wholdusbuyerapp.models.BuyerAddress;
 import com.wholdus.www.wholdusbuyerapp.models.BuyerPersonalDetails;
 import com.wholdus.www.wholdusbuyerapp.services.UserService;
 
@@ -38,21 +37,22 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static com.wholdus.www.wholdusbuyerapp.R.string.address;
+import static com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions.setListViewHeightBasedOnChildren;
+
 /**
  * Created by aditya on 19/11/16.
  * fragment for CRUD operations on user profile
  */
 
-public class ProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<Buyer> {
 
     private TextView mNoAddressTextView;
     private ListView mPersonalDetailsListView;
     private ListView mAddressListView;
     private BroadcastReceiver mUserServiceResponseReceiver;
-    private UserDBHelper mUserDBHelper, mUserAddressDBHelper;
     private ProfileListenerInterface mListener;
-    private final int USER_DETAILS_DB_LOADER = 0;
-    private final int USER_ADDRESS_DB_LOADER = 1;
+    private final int USER_DB_LOADER = 0;
 
     public ProfileFragment() {
     }
@@ -84,8 +84,9 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_profile, container, false);
 
         initReferences(rootView);
-        getActivity().getSupportLoaderManager().restartLoader(USER_DETAILS_DB_LOADER, null, this);
-        getActivity().getSupportLoaderManager().restartLoader(USER_ADDRESS_DB_LOADER, null, this);
+        getActivity().getSupportLoaderManager().restartLoader(USER_DB_LOADER, null, this);
+
+        fetchDataFromServer();
 
         return rootView;
     }
@@ -98,10 +99,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mUserServiceResponseReceiver, intentFilter);
 
         mListener.fragmentCreated("My Profile", false);
-
-        Intent intent = new Intent(getContext(), UserService.class);
-        intent.putExtra("TODO", R.string.fetch_user_profile);
-        getContext().startService(intent);
     }
 
     @Override
@@ -133,56 +130,19 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(final int id, Bundle args) {
-        return new CursorLoader(getContext()) {
-            @Override
-            public Cursor loadInBackground() {
-                WholdusApplication wholdusApplication = (WholdusApplication) getActivity().getApplication();
-
-                switch (id) {
-                    case USER_DETAILS_DB_LOADER:
-                        mUserDBHelper = new UserDBHelper(getContext());
-                        return mUserDBHelper.getUserData(wholdusApplication.getBuyerID());
-                    case USER_ADDRESS_DB_LOADER:
-                        mUserAddressDBHelper = new UserDBHelper(getContext());
-                        return mUserAddressDBHelper.getUserAddress(wholdusApplication.getBuyerID(), null, -1);
-                    default:
-                        return null;
-                }
-            }
-        };
+    public Loader<Buyer> onCreateLoader(int id, Bundle args) {
+        return new ProfileLoader(getContext());
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        try {
-            if (loader.getId() == USER_DETAILS_DB_LOADER) {
-                if (data.getCount() == 1) {
-                    setViewForPersonalDetails(mUserDBHelper.getJSONDataFromCursor(UserTable.TABLE_NAME, data, 0));
-                }
-            } else if (loader.getId() == USER_ADDRESS_DB_LOADER) {
-                JSONObject address = mUserAddressDBHelper.getJSONDataFromCursor(UserAddressTable.TABLE_NAME, data, -1);
-                setViewForAddressListView(address.getJSONArray("address"));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public void onLoadFinished(Loader<Buyer> loader, Buyer data) {
+        setViewForPersonalDetails(data);
+        setViewForAddressListView(data.getBuyerAddress());
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        try {
-            if (loader.getId() == USER_ADDRESS_DB_LOADER) {
-                mUserAddressDBHelper.close();
-                mUserAddressDBHelper = null;
-            } else if (loader.getId() == USER_DETAILS_DB_LOADER) {
-                mUserDBHelper.close();
-                mUserDBHelper = null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.d("db close error", "eeeeeeeeeeeeee");
-        }
+    public void onLoaderReset(Loader<Buyer> loader) {
+
     }
 
     private void initReferences(ViewGroup rootView) {
@@ -208,48 +168,53 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     private void handleAPIResponse() {
-        getActivity().getSupportLoaderManager().restartLoader(USER_DETAILS_DB_LOADER, null, this);
-        getActivity().getSupportLoaderManager().restartLoader(USER_ADDRESS_DB_LOADER, null, this);
+        getActivity().getSupportLoaderManager().restartLoader(USER_DB_LOADER, null, this);
     }
 
-    private void setViewForPersonalDetails(JSONObject buyer) throws JSONException {
+    private void setViewForPersonalDetails(Buyer buyer) {
         if (buyer == null) return;
 
         ArrayList<BuyerPersonalDetails> items = new ArrayList<>();
         items.add(new BuyerPersonalDetails(getString(R.string.name_key),
-                buyer.getString(UserTable.COLUMN_NAME), R.drawable.ic_person_black_24dp));
+                buyer.getName(), R.drawable.ic_person_black_24dp));
         items.add(new BuyerPersonalDetails(getString(R.string.company_name_key),
-                buyer.getString(UserTable.COLUMN_COMPANY_NAME), R.drawable.ic_store_mall_directory_black_24dp));
+                buyer.getCompanyName(), R.drawable.ic_store_mall_directory_black_24dp));
         items.add(new BuyerPersonalDetails(getString(R.string.mobile_number_key),
-                buyer.getString(UserTable.COLUMN_MOBILE_NUMBER), R.drawable.ic_phone_black_24dp));
+                buyer.getMobileNumber(), R.drawable.ic_phone_black_24dp));
         items.add(new BuyerPersonalDetails(getString(R.string.email_key),
-                buyer.getString(UserTable.COLUMN_EMAIL), R.drawable.ic_mail_outline_black_24dp));
+                buyer.getEmail(), R.drawable.ic_mail_outline_black_24dp));
         items.add(new BuyerPersonalDetails(getString(R.string.whatsapp_number_key),
-                buyer.getString(UserTable.COLUMN_WHATSAPP_NUMBER), R.drawable.ic_perm_phone_msg_black_24dp));
+                buyer.getWhatsappNumber(), R.drawable.ic_perm_phone_msg_black_24dp));
 
         BuyerPersonalDetailsAdapter adapter = new BuyerPersonalDetailsAdapter(getContext(), items);
         mPersonalDetailsListView.setAdapter(adapter);
-        GlobalAccessHelper.setListViewHeightBasedOnChildren(mPersonalDetailsListView);
+        HelperFunctions.setListViewHeightBasedOnChildren(mPersonalDetailsListView);
     }
 
-    private void setViewForAddressListView(JSONArray address) {
-        if (address.length() == 0) {
+    private void setViewForAddressListView(ArrayList<BuyerAddress> address) {
+        if (address.isEmpty()) {
             mNoAddressTextView.setVisibility(View.VISIBLE);
-            return;
+        } else {
+            mNoAddressTextView.setVisibility(View.GONE);
+            AddressDisplayListViewAdapter adapter = new AddressDisplayListViewAdapter(getActivity().getApplicationContext(), address);
+            mAddressListView.setAdapter(adapter);
+            HelperFunctions.setListViewHeightBasedOnChildren(mAddressListView);
+
+            mAddressListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    int _ID = (Integer) view.getTag(R.integer._ID);
+                    String addressID = (String) view.getTag(R.integer.addressID);
+
+                    mListener.editAddress(addressID, _ID);
+                }
+            });
         }
-        mNoAddressTextView.setVisibility(View.GONE);
-        AddressDisplayListViewAdapter adapter = new AddressDisplayListViewAdapter(getActivity().getApplicationContext(), address);
-        mAddressListView.setAdapter(adapter);
-        GlobalAccessHelper.setListViewHeightBasedOnChildren(mAddressListView);
+    }
 
-        mAddressListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                int _ID = (Integer) view.getTag(R.integer._ID);
-                String addressID = (String) view.getTag(R.integer.addressID);
-
-                mListener.editAddress(addressID, _ID);
-            }
-        });
+    private void fetchDataFromServer() {
+        Intent intent = new Intent(getContext(), UserService.class);
+        intent.putExtra("TODO", R.string.fetch_user_profile);
+        getContext().startService(intent);
     }
 }

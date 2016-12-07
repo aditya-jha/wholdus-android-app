@@ -28,7 +28,7 @@ import org.json.JSONObject;
  * Created by aditya on 3/12/16.
  */
 
-public class BuyerInterestFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class BuyerInterestFragment extends Fragment {
 
     private ProfileListenerInterface mListener;
     private UserDBHelper mUserDBHelper;
@@ -58,7 +58,7 @@ public class BuyerInterestFragment extends Fragment implements LoaderManager.Loa
 
         initReferences(rootView);
 
-        getActivity().getSupportLoaderManager().restartLoader(BUYER_INTERESTS_DB_LOADER, null, this);
+        // getActivity().getSupportLoaderManager().restartLoader(BUYER_INTERESTS_DB_LOADER, null, this);
         return rootView;
     }
 
@@ -91,34 +91,6 @@ public class BuyerInterestFragment extends Fragment implements LoaderManager.Loa
     @Override
     public void onDestroy() {
         super.onDestroy();
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getContext()) {
-            @Override
-            public Cursor loadInBackground() {
-                mUserDBHelper = new UserDBHelper(getContext());
-                return mUserDBHelper.getUserInterests(GlobalAccessHelper.getBuyerID(getActivity().getApplication()), null, -1);
-            }
-        };
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        try {
-            JSONObject interests = mUserDBHelper.getJSONDataFromCursor(UserInterestsTable.TABLE_NAME, data, -1);
-            setViewFromData(interests.getJSONArray(UserInterestsTable.TABLE_NAME));
-        } catch (JSONException e) {
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        if (mUserDBHelper != null) {
-            mUserDBHelper.close();
-            mUserDBHelper = null;
-        }
     }
 
     private void initReferences(ViewGroup rootView) {
