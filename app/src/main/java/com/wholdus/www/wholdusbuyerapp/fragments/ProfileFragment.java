@@ -32,7 +32,7 @@ import java.util.ArrayList;
 
 /**
  * Created by aditya on 19/11/16.
- * fragment for CRUD operations on user profile
+ * fragment for Displaying user profile
  */
 
 public class ProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<Buyer> {

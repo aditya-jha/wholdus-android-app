@@ -4,9 +4,6 @@ import android.database.Cursor;
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
  * Created by aditya on 7/12/16.
  */
@@ -26,9 +23,6 @@ public class BuyerAddress {
     private int mPriority;
 
     public BuyerAddress() {
-    }
-
-    public BuyerAddress(JSONObject json) throws JSONException {
     }
 
     public BuyerAddress(Cursor cursor) {
