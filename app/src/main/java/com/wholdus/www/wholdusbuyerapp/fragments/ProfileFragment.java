@@ -20,9 +20,6 @@ import android.widget.TextView;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.AddressDisplayListViewAdapter;
 import com.wholdus.www.wholdusbuyerapp.adapters.BuyerPersonalDetailsAdapter;
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserTable;
-import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProfileLoader;
@@ -31,18 +28,11 @@ import com.wholdus.www.wholdusbuyerapp.models.BuyerAddress;
 import com.wholdus.www.wholdusbuyerapp.models.BuyerPersonalDetails;
 import com.wholdus.www.wholdusbuyerapp.services.UserService;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-
-import static com.wholdus.www.wholdusbuyerapp.R.string.address;
-import static com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions.setListViewHeightBasedOnChildren;
 
 /**
  * Created by aditya on 19/11/16.
- * fragment for CRUD operations on user profile
+ * fragment for Displaying user profile
  */
 
 public class ProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<Buyer> {
