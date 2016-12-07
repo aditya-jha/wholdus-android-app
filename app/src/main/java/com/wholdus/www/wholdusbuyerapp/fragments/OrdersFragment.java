@@ -12,6 +12,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,9 +83,9 @@ public class OrdersFragment extends Fragment {
 
         mListener.fragmentCreated("My Orders", true);
 
-        Intent intent = new Intent(getContext(), OrderService.class);
-        intent.putExtra("TODO", R.string.fetch_orders);
-        getContext().startService(intent);
+        //Intent intent = new Intent(getContext(), OrderService.class);
+        //intent.putExtra("TODO", R.string.fetch_orders);
+        //getContext().startService(intent);
 
     }
 
@@ -105,29 +106,34 @@ public class OrdersFragment extends Fragment {
     }
 
     private void initReferences(ViewGroup rootView){
-        mOrdersListView = (ListView) rootView.findViewById(R.id.personal_details_list_view);
+        mOrdersListView = (ListView) rootView.findViewById(R.id.orders_list_view);
     }
 
     private class OrderLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
-
+            try {
+                if (loader.getId() == ORDERS_DB_LOADER) {
+                    mUserDBHelper.close();
+                    mUserDBHelper = null;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            try {
+            /*try {
                 if (loader.getId() == ORDERS_DB_LOADER) {
-                    if (data.getCount() == 1) {
-                        setViewForPersonalDetails(mUserDBHelper.getJSONDataFromCursor(UserProfileContract.UserTable.TABLE_NAME, data, 0));
-                    }
-
+                    setViewForOrders();
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
-            }
-
+            }*/
         }
+
 
         @Override
         public Loader<Cursor> onCreateLoader(final int id, Bundle args) {
@@ -145,5 +151,9 @@ public class OrdersFragment extends Fragment {
                 }
             };
         }
-}
+   }
+
+   public void setViewForOrders(){
+
+   }
 }
