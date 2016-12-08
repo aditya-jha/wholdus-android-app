@@ -121,7 +121,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public Loader<Buyer> onCreateLoader(int id, Bundle args) {
-        return new ProfileLoader(getContext());
+        return new ProfileLoader(getContext(), true, true, false);
     }
 
     @Override
