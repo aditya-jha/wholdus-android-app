@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.wholdus.www.wholdusbuyerapp.R;
-import com.wholdus.www.wholdusbuyerapp.adapters.ViewPagerAdapter;
+import com.wholdus.www.wholdusbuyerapp.adapters.IntroViewPagerAdapter;
 import com.wholdus.www.wholdusbuyerapp.fragments.IntroSlideFragment;
 
 public class IntroActivity extends FragmentActivity implements IntroSlideFragment.OnIntroSlideListener {
@@ -46,7 +46,7 @@ public class IntroActivity extends FragmentActivity implements IntroSlideFragmen
 
     private void initViewPagerSettings() {
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
-        mPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), TOTAL_DOTS, this);
+        mPagerAdapter = new IntroViewPagerAdapter(getSupportFragmentManager(), TOTAL_DOTS, this);
         mViewPager.setAdapter(mPagerAdapter);
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

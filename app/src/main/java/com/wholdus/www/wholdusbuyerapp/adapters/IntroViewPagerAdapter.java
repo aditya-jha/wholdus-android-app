@@ -13,12 +13,12 @@ import com.wholdus.www.wholdusbuyerapp.fragments.IntroSlideFragment;
  * Created by aditya on 6/11/16.
  */
 
-public class ViewPagerAdapter extends FragmentStatePagerAdapter {
+public class IntroViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private Context mContext;
     private int mTotalPages;
 
-    public ViewPagerAdapter(FragmentManager fm, int totalPages, Context context) {
+    public IntroViewPagerAdapter(FragmentManager fm, int totalPages, Context context) {
         super(fm);
         mTotalPages = totalPages;
         mContext = context;

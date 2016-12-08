@@ -20,7 +20,7 @@ import com.wholdus.www.wholdusbuyerapp.fragments.EditAddressFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.EditProfileDetailsFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.OrdersFragment;
-import com.wholdus.www.wholdusbuyerapp.fragments.ProductsGridFragment;
+import com.wholdus.www.wholdusbuyerapp.fragments.ProductGridCategoryTabFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProfileFragment;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 
@@ -170,7 +170,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
                 fragment = new OrdersFragment();
                 break;
             case "rejectedProducts":
-                fragment = new ProductsGridFragment();
+                fragment = new ProductGridCategoryTabFragment();
                 break;
             case "editPersonalDetails":
                 fragment = new EditProfileDetailsFragment();
