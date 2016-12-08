@@ -1,65 +1,98 @@
 package com.wholdus.www.wholdusbuyerapp.models;
 
-import java.util.ArrayList;
-
 /**
  * Created by kaustubh on 8/12/16.
  */
 
 public class OrderItem {
 
-    private int ID;
-    private String orderItemID;
-    private String suborderID;
-    private String productID;
-    private Product product;
-    private String orderShipmentID;
-    private int lots;
-    private int lotSize;
-    private int pieces;
-    private float retailPricePerPiece;
-    private float calculatedPricePerPiece;
-    private float editedPricePerPiece;
-    private float finalPrice;
-    private int orderItemStatusValue;
-    private String orderItemStatusDisplay;
-    private String trackingUrl;
-    private String createdAt;
-    private String remarks;
+    private int m_ID;
+    private String mOrderItemID;
+    private String mSuborderID;
+    private String mProductID;
+    private Product mProduct;
+    private String mOrderShipmentID;
+    private int mLots;
+    private int mLotSize;
+    private int mPieces;
+    private float mRetailPricePerPiece;
+    private float mCalculatedPricePerPiece;
+    private float mEditedPricePerPiece;
+    private float mFinalPrice;
+    private int mOrderItemStatusValue;
+    private String mOrderItemStatusDisplay;
+    private String mTrackingUrl;
+    private String mCreatedAt;
+    private String mRemarks;
 
-    public OrderItem(){}
+    public OrderItem() {
+    }
 
-    public int getID(){return ID;}
+    public int get_ID() {
+        return m_ID;
+    }
 
-    public String getOrderItemID(){return orderItemID;}
+    public String getOrderItemID() {
+        return mOrderItemID;
+    }
 
-    public String getSuborderID(){return suborderID;}
+    public String getSuborderID() {
+        return mSuborderID;
+    }
 
-    public String getProductID(){return productID;}
+    public String getProductID() {
+        return mProductID;
+    }
 
-    public Product getProduct(){return product;}
+    public Product getProduct() {
+        return mProduct;
+    }
 
-    public String getOrderShipmentID(){return orderShipmentID;}
+    public String getOrderShipmentID() {
+        return mOrderShipmentID;
+    }
 
-    public int getLots(){return lots;}
+    public int getLots() {
+        return mLots;
+    }
 
-    public int getLotSize(){return lotSize;}
+    public int getLotSize() {
+        return mLotSize;
+    }
 
-    public int getPieces(){return pieces;}
+    public int getPieces() {
+        return mPieces;
+    }
 
-    public float getRetailPricePerPiece(){return retailPricePerPiece;}
+    public float getRetailPricePerPiece() {
+        return mRetailPricePerPiece;
+    }
 
-    public float getCalculatedPricePerPiece(){return calculatedPricePerPiece;}
+    public float getCalculatedPricePerPiece() {
+        return mCalculatedPricePerPiece;
+    }
 
-    public float getEditedPricePerPiece(){return editedPricePerPiece;}
+    public float getEditedPricePerPiece() {
+        return mEditedPricePerPiece;
+    }
 
-    public int getOrderItemStatusValue(){return orderItemStatusValue;}
+    public int getOrderItemStatusValue() {
+        return mOrderItemStatusValue;
+    }
 
-    public String getOrderItemStatusDisplay(){return orderItemStatusDisplay;}
+    public String getOrderItemStatusDisplay() {
+        return mOrderItemStatusDisplay;
+    }
 
-    public String getTrackingUrl(){return trackingUrl;}
+    public String getTrackingUrl() {
+        return mTrackingUrl;
+    }
 
-    public String getCreatedAt(){return createdAt;}
+    public String getCreatedAt() {
+        return mCreatedAt;
+    }
 
-    public String getRemarks(){return remarks;}
+    public String getRemarks() {
+        return mRemarks;
+    }
 }

@@ -11,91 +11,132 @@ import java.util.ArrayList;
  */
 
 public class Order {
-    private int ID;
-    private String orderID;
-    private String displayNumber;
-    private String buyerAddressID;
-    private BuyerAddress buyerAddress;
-    private int productCount;
-    private int pieces;
-    private float retailPrice;
-    private float calculatedPrice;
-    private float editedPrice;
-    private float shippingCharge;
-    private float CODCharge;
-    private float finalPrice;
-    private int orderStatusValue;
-    private String orderStatusDisplay;
-    private int paymentStatusValue;
-    private String paymentStatusDisplay;
-    private String createdAt;
-    private String remarks;
+    private int m_ID;
+    private String mOrderID;
+    private String mDisplayNumber;
+    private String mBuyerAddressID;
+    private BuyerAddress mBuyerAddress;
+    private int mProductCount;
+    private int mPieces;
+    private float mRetailPrice;
+    private float mCalculatedPrice;
+    private float mEditedPrice;
+    private float mShippingCharge;
+    private float mCODCharge;
+    private float mFinalPrice;
+    private int mOrderStatusValue;
+    private String mOrderStatusDisplay;
+    private int mPaymentStatusValue;
+    private String mPaymentStatusDisplay;
+    private String mCreatedAt;
+    private String mRemarks;
 
-    private ArrayList<Suborder> suborders;
+    private ArrayList<Suborder> mSuborders;
 
-    public Order(){}
-
-    public Order(Cursor cursor){
+    public Order() {
     }
 
-    public void setDataFromCursor(Cursor cursor){
-        ID = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable._ID));
-        orderID = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_ORDER_ID));
-        displayNumber = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_DISPLAY_NUMBER));
-        buyerAddressID = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_BUYER_ADDRESS_ID));
-        productCount = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_PRODUCT_COUNT));
-        pieces = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_PIECES));
-        retailPrice = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_RETAIL_PRICE));
-        calculatedPrice = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_CALCULATED_PRICE));
-        editedPrice = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_EDITED_PRICE));
-        shippingCharge = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_SHIPPING_CHARGE));
-        CODCharge = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_COD_CHARGE));
-        finalPrice = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_FINAL_PRICE));
-        orderStatusValue = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_ORDER_STATUS_VALUE));
-        orderStatusDisplay = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_ORDER_STATUS_DISPLAY));
-        paymentStatusValue = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_PAYMENT_STATUS_VALUE));
-        paymentStatusDisplay = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_PAYMENT_STATUS_DISPLAY));
-        createdAt = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_CREATED_AT));
-        remarks = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_REMARKS));
+    public Order(Cursor cursor) {
     }
 
-    public int getID(){return ID;}
+    public void setDataFromCursor(Cursor cursor) {
+        m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable._ID));
+        mOrderID = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_ORDER_ID));
+        mDisplayNumber = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_DISPLAY_NUMBER));
+        mBuyerAddressID = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_BUYER_ADDRESS_ID));
+        mProductCount = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_PRODUCT_COUNT));
+        mPieces = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_PIECES));
+        mRetailPrice = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_RETAIL_PRICE));
+        mCalculatedPrice = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_CALCULATED_PRICE));
+        mEditedPrice = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_EDITED_PRICE));
+        mShippingCharge = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_SHIPPING_CHARGE));
+        mCODCharge = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_COD_CHARGE));
+        mFinalPrice = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_FINAL_PRICE));
+        mOrderStatusValue = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_ORDER_STATUS_VALUE));
+        mOrderStatusDisplay = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_ORDER_STATUS_DISPLAY));
+        mPaymentStatusValue = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_PAYMENT_STATUS_VALUE));
+        mPaymentStatusDisplay = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_PAYMENT_STATUS_DISPLAY));
+        mCreatedAt = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_CREATED_AT));
+        mRemarks = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_REMARKS));
+    }
 
-    public String getOrderID(){return orderID;}
+    public int get_ID() {
+        return m_ID;
+    }
 
-    public String getDisplayNumber(){return displayNumber;}
+    public String getOrderID() {
+        return mOrderID;
+    }
 
-    public String getBuyerAddressID(){return buyerAddressID;}
+    public String getDisplayNumber() {
+        return mDisplayNumber;
+    }
 
-    public BuyerAddress getBuyerAddress(){return buyerAddress;}
+    public String getBuyerAddressID() {
+        return mBuyerAddressID;
+    }
 
-    public int getProductCount(){return productCount;}
+    public BuyerAddress getBuyerAddress() {
+        return mBuyerAddress;
+    }
 
-    public int getPieces(){return pieces;}
+    public int getProductCount() {
+        return mProductCount;
+    }
 
-    public float getRetailPrice(){return retailPrice;}
+    public int getPieces() {
+        return mPieces;
+    }
 
-    public float getCalculatedPrice(){return calculatedPrice;}
+    public float getRetailPrice() {
+        return mRetailPrice;
+    }
 
-    public float getEditedPrice(){return editedPrice;}
+    public float getCalculatedPrice() {
+        return mCalculatedPrice;
+    }
 
-    public float getShippingCharge(){return shippingCharge;}
+    public float getEditedPrice() {
+        return mEditedPrice;
+    }
 
-    public float getCODCharge(){return CODCharge;}
+    public float getShippingCharge() {
+        return mShippingCharge;
+    }
 
-    public float getFinalPrice(){return finalPrice;}
+    public float getCODCharge() {
+        return mCODCharge;
+    }
 
-    public int getOrderStatusValue(){return orderStatusValue;}
+    public float getFinalPrice() {
+        return mFinalPrice;
+    }
 
-    public String getOrderStatusDisplay(){return orderStatusDisplay;}
+    public int getOrderStatusValue() {
+        return mOrderStatusValue;
+    }
 
-    public int getPaymentStatusValue(){return paymentStatusValue;}
+    public String getOrderStatusDisplay() {
+        return mOrderStatusDisplay;
+    }
 
-    public String getPaymentStatusDisplay(){return paymentStatusDisplay;}
+    public int getPaymentStatusValue() {
+        return mPaymentStatusValue;
+    }
 
-    public String getCreatedAt(){return createdAt;}
+    public String getPaymentStatusDisplay() {
+        return mPaymentStatusDisplay;
+    }
 
-    public String getRemarks(){return remarks;}
+    public String getCreatedAt() {
+        return mCreatedAt;
+    }
 
-    public ArrayList<Suborder> getSuborders(){return suborders;}
+    public String getRemarks() {
+        return mRemarks;
+    }
+
+    public ArrayList<Suborder> getSuborders() {
+        return mSuborders;
+    }
 }

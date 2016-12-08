@@ -8,72 +8,115 @@ import java.util.ArrayList;
 
 public class Suborder {
 
-    private int ID;
-    private String orderID;
-    private String suborderID;
-    private String displayNumber;
-    private String sellerID;
-    private Seller seller;
-    private String sellerAddressID;
-    private SellerAddress sellerAddress;
-    private int productCount;
-    private int pieces;
-    private float retailPrice;
-    private float calculatedPrice;
-    private float editedPrice;
-    private float shippingCharge;
-    private float CODCharge;
-    private float finalPrice;
-    private int suborderStatusValue;
-    private String suborderStatusDisplay;
-    private int paymentStatusValue;
-    private String paymentStatusDisplay;
-    private String createdAt;
+    private int m_ID;
+    private String mOrderID;
+    private String mSuborderID;
+    private String mDisplayNumber;
+    private String mSellerID;
+    private Seller mSeller;
+    private String mSellerAddressID;
+    private SellerAddress mSellerAddress;
+    private int mProductCount;
+    private int mPieces;
+    private float mRetailPrice;
+    private float mCalculatedPrice;
+    private float mEditedPrice;
+    private float mShippingCharge;
+    private float mCODCharge;
+    private float mFinalPrice;
+    private int mSuborderStatusValue;
+    private String mSuborderStatusDisplay;
+    private int mPaymentStatusValue;
+    private String mPaymentStatusDisplay;
+    private String mCreatedAt;
 
-    private ArrayList<OrderItem> orderItems;
+    private ArrayList<OrderItem> mOrderItems;
 
-    public Suborder(){}
+    public Suborder() {
+    }
 
-    public int getID(){return ID;}
+    public int getID() {
+        return m_ID;
+    }
 
-    public String getOrderID(){return orderID;}
+    public String getOrderID() {
+        return mOrderID;
+    }
 
-    public String getSuborderID(){return suborderID;}
+    public String getSuborderID() {
+        return mSuborderID;
+    }
 
-    public String getDisplayNumber(){return displayNumber;}
+    public String getDisplayNumber() {
+        return mDisplayNumber;
+    }
 
-    public String getSellerID(){return sellerID;}
+    public String getSellerID() {
+        return mSellerID;
+    }
 
-    public Seller getSeller(){return seller;}
+    public Seller getSeller() {
+        return mSeller;
+    }
 
-    public String getSellerAddressID(){return sellerAddressID;}
+    public String getSellerAddressID() {
+        return mSellerAddressID;
+    }
 
-    public SellerAddress getSellerAddress(){return sellerAddress;}
+    public SellerAddress getSellerAddress() {
+        return mSellerAddress;
+    }
 
-    public int getProductCount(){return productCount;}
+    public int getProductCount() {
+        return mProductCount;
+    }
 
-    public int getPieces(){return pieces;}
+    public int getPieces() {
+        return mPieces;
+    }
 
-    public float getRetailPrice(){return retailPrice;}
+    public float getRetailPrice() {
+        return mRetailPrice;
+    }
 
-    public float getCalculatedPrice(){return calculatedPrice;}
+    public float getCalculatedPrice() {
+        return mCalculatedPrice;
+    }
 
-    public float getEditedPrice(){return editedPrice;}
+    public float getEditedPrice() {
+        return mEditedPrice;
+    }
 
-    public float getShippingCharge(){return shippingCharge;}
+    public float getShippingCharge() {
+        return mShippingCharge;
+    }
 
-    public float getCODCharge(){return CODCharge;}
+    public float getCODCharge() {
+        return mCODCharge;
+    }
 
-    public int getSuborderStatusValue(){return suborderStatusValue;}
+    public int getSuborderStatusValue() {
+        return mSuborderStatusValue;
+    }
 
-    public String getSuborderStatusDisplay(){return suborderStatusDisplay;}
+    public String getSuborderStatusDisplay() {
+        return mSuborderStatusDisplay;
+    }
 
-    public int getPaymentStatusValue(){return paymentStatusValue;}
+    public int getPaymentStatusValue() {
+        return mPaymentStatusValue;
+    }
 
-    public String getPaymentStatusDisplay(){return paymentStatusDisplay;}
+    public String getPaymentStatusDisplay() {
+        return mPaymentStatusDisplay;
+    }
 
-    public String getCreatedAt(){return createdAt;}
+    public String getCreatedAt() {
+        return mCreatedAt;
+    }
 
-    public ArrayList<OrderItem> getOrderItems(){return orderItems;}
+    public ArrayList<OrderItem> getOrderItems() {
+        return mOrderItems;
+    }
 
 }

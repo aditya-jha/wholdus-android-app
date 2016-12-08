@@ -10,7 +10,6 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.models.Order;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by kaustubh on 8/12/16.
@@ -18,19 +17,19 @@ import java.util.List;
 
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHolder> {
 
-    private ArrayList<Order> listData;
-    private LayoutInflater layoutInflater;
-    private Context context;
+    private ArrayList<Order> mListData;
+    private LayoutInflater mLayoutInflater;
+    private Context mContext;
 
     public OrdersAdapter(Context context, ArrayList<Order> listData){
-        this.context = context;
-        this.listData = listData;
-        layoutInflater = LayoutInflater.from(context);
+        mContext = context;
+        mListData = listData;
+        mLayoutInflater = LayoutInflater.from(context);
     }
 
     @Override
     public int getItemCount() {
-        return listData.size();
+        return mListData.size();
     }
 
     @Override
@@ -40,7 +39,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = layoutInflater.inflate(R.layout.list_item_layout_orders, parent, false);
+        View view = mLayoutInflater.inflate(R.layout.list_item_layout_orders, parent, false);
         MyViewHolder holder = new MyViewHolder(view);
         return holder;
     }
