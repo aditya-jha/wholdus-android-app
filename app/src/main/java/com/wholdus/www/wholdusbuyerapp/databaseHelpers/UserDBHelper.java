@@ -54,7 +54,7 @@ public class UserDBHelper {
             query += "WHERE " + OrdersTable.COLUMN_ORDER_ID + " = " + orderID;
             whereApplied = true;
         }
-        if (!orderStatusValues.isEmpty()){
+        if (orderStatusValues!= null && !orderStatusValues.isEmpty()){
             if (whereApplied == true){
                 query += " AND ";
             }
@@ -262,5 +262,34 @@ public class UserDBHelper {
 
         mDatabaseHelper.closeDatabase();
         return 0;
+    }
+
+    public void saveOrdersData(JSONArray ordersArray) throws JSONException{
+        for (int i = 0; i < ordersArray.length(); i++){
+            JSONObject order = ordersArray.getJSONObject(i);
+            ContentValues values = new ContentValues();
+            values.put(OrdersTable.COLUMN_ORDER_ID, order.getString(OrdersTable.COLUMN_ORDER_ID));
+            values.put(OrdersTable.COLUMN_DISPLAY_NUMBER, order.getString(OrdersTable.COLUMN_DISPLAY_NUMBER));
+            JSONObject buyerAddress = order.getJSONObject("buyer_address");
+            //TODO:Save buyer address if not exists
+            values.put(OrdersTable.COLUMN_BUYER_ADDRESS_ID, buyerAddress.getString(OrdersTable.COLUMN_BUYER_ADDRESS_ID));
+            values.put(OrdersTable.COLUMN_PRODUCT_COUNT, order.getInt(OrdersTable.COLUMN_PRODUCT_COUNT));
+            values.put(OrdersTable.COLUMN_PIECES, order.getInt(OrdersTable.COLUMN_PIECES));
+            values.put(OrdersTable.COLUMN_RETAIL_PRICE, order.getDouble(OrdersTable.COLUMN_RETAIL_PRICE));
+            values.put(OrdersTable.COLUMN_CALCULATED_PRICE, order.getDouble(OrdersTable.COLUMN_CALCULATED_PRICE));
+            values.put(OrdersTable.COLUMN_EDITED_PRICE, order.getDouble(OrdersTable.COLUMN_EDITED_PRICE));
+            values.put(OrdersTable.COLUMN_SHIPPING_CHARGE, order.getDouble(OrdersTable.COLUMN_SHIPPING_CHARGE));
+            values.put(OrdersTable.COLUMN_COD_CHARGE, order.getDouble(OrdersTable.COLUMN_COD_CHARGE));
+            values.put(OrdersTable.COLUMN_FINAL_PRICE, order.getDouble(OrdersTable.COLUMN_FINAL_PRICE));
+            JSONObject orderStatus = order.getJSONObject("order_status");
+            values.put(OrdersTable.COLUMN_ORDER_STATUS_VALUE, orderStatus.getInt("value"));
+            values.put(OrdersTable.COLUMN_ORDER_STATUS_DISPLAY, orderStatus.getString("display_value"));
+            JSONObject paymentStatus = order.getJSONObject("order_payment_status");
+            values.put(OrdersTable.COLUMN_PAYMENT_STATUS_VALUE, paymentStatus.getInt("value"));
+            values.put(OrdersTable.COLUMN_PAYMENT_STATUS_DISPLAY, paymentStatus.getString("display_value"));
+            values.put(OrdersTable.COLUMN_CREATED_AT, order.getString(OrdersTable.COLUMN_CREATED_AT));
+            values.put(OrdersTable.COLUMN_REMARKS, order.getString(OrdersTable.COLUMN_REMARKS));
+
+        }
     }
 }

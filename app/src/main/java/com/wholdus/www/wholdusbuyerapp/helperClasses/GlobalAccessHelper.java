@@ -13,7 +13,12 @@ import android.widget.ListView;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.WholdusApplication;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * Created by aditya on 26/11/16.
@@ -33,8 +38,15 @@ public class GlobalAccessHelper {
         return "refresh_token=" + refreshToken;
     }
 
-    public static String generateUrl(Context context, String endPoint, @Nullable JSONObject params) {
-        return context.getString(R.string.api_base) + endPoint;
+    public static String generateUrl(Context context, String endPoint, @Nullable HashMap<String,Object> params) {
+        String url = context.getString(R.string.api_base) + endPoint;
+        if (params!= null){
+            url += "?";
+            for (HashMap.Entry<String, Object> entry : params.entrySet()) {
+                url += "&" + entry.getKey() + "=" + String.valueOf(entry.getValue());
+            }
+        }
+        return url;
     }
 
     public static String getBuyerID(Context context) {

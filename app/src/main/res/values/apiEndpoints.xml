@@ -11,4 +11,7 @@
 
     <!-- business types api -->
     <string name="business_types_url">users/businesstype/</string>
+
+    <!-- orders api -->
+    <string name="orders_url">orders/</string>
 </resources>
