@@ -4,14 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
@@ -21,35 +19,30 @@ import android.widget.Button;
 import android.widget.Spinner;
 
 import com.wholdus.www.wholdusbuyerapp.R;
-import com.wholdus.www.wholdusbuyerapp.WholdusApplication;
 import com.wholdus.www.wholdusbuyerapp.adapters.BusinessTypesAdapter;
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.BusinessTypesTable;
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserTable;
-import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
+import com.wholdus.www.wholdusbuyerapp.loaders.EditProfileFragmentLoader;
+import com.wholdus.www.wholdusbuyerapp.models.BusinessTypes;
+import com.wholdus.www.wholdusbuyerapp.models.Buyer;
+import com.wholdus.www.wholdusbuyerapp.models.EditProfileData;
 import com.wholdus.www.wholdusbuyerapp.services.UserService;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.ArrayList;
 
 /**
  * Created by aditya on 28/11/16.
  */
 
-public class EditProfileDetailsFragment extends Fragment {
+public class EditProfileDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<EditProfileData> {
 
     private ProfileListenerInterface mListener;
-    private UserDBHelper mUserDBHelper, mBusinessTypesDBHelper;
     private TextInputLayout mNameWrapper, mWhatsappNumberWrapper;
     private TextInputEditText mNameEditText, mCompanyNameEditText, mWhatsappNumberEditText;
     private Spinner mBusinessTypeSpinner;
     private BusinessTypesAdapter mBusinessTypeAdapter;
     private BroadcastReceiver mUserServiceResponseReceiver;
-    private static final int USER_DETAILS_DB_LOADER = 0;
-    private static final int BUSINESS_TYPES_DB_LOADER = 1;
+    private static final int EDIT_PROFILE_FRAGMENT_LOADER = 0;
     private String mSelectedBusinessType;
 
     public EditProfileDetailsFragment() {
@@ -74,6 +67,7 @@ public class EditProfileDetailsFragment extends Fragment {
                 handleReceiverResponse(intent);
             }
         };
+        fetchBusinessTypesDataFromServer();
     }
 
     @Nullable
@@ -82,7 +76,7 @@ public class EditProfileDetailsFragment extends Fragment {
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_edit_profile_details, container, false);
 
         initReferences(rootView);
-        // getActivity().getSupportLoaderManager().restartLoader(USER_DETAILS_DB_LOADER, null, this);
+        getActivity().getSupportLoaderManager().restartLoader(EDIT_PROFILE_FRAGMENT_LOADER, null, this);
 
         return rootView;
     }
@@ -118,6 +112,22 @@ public class EditProfileDetailsFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public Loader<EditProfileData> onCreateLoader(int id, Bundle args) {
+        return new EditProfileFragmentLoader(getContext());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<EditProfileData> loader, EditProfileData data) {
+        setViewForPersonalDetails(data.getBuyer());
+        setViewForBusinessTypes(data.getBusinessType());
+    }
+
+    @Override
+    public void onLoaderReset(Loader<EditProfileData> loader) {
+
+    }
+
     private void initReferences(ViewGroup rootView) {
         mNameWrapper = (TextInputLayout) rootView.findViewById(R.id.name_wrapper);
         mWhatsappNumberWrapper = (TextInputLayout) rootView.findViewById(R.id.whatsapp_number_wrapper);
@@ -139,29 +149,25 @@ public class EditProfileDetailsFragment extends Fragment {
 
     private void saveDetails() {
         // update local and send to server through userservice
-        try {
-            String name = getStringFromView(R.string.name_key);
-            String companyName = getStringFromView(R.string.company_name_key);
-            String whatsappNumber = getStringFromView(R.string.whatsapp_number_key);
-            String businessTypeID = getStringFromView(R.string.business_type_key);
+        String name = getStringFromView(R.string.name_key);
+        String companyName = getStringFromView(R.string.company_name_key);
+        String whatsappNumber = getStringFromView(R.string.whatsapp_number_key);
+        String businessTypeID = getStringFromView(R.string.business_type_key);
 
-            if (InputValidationHelper.isValidMobileNumber(mWhatsappNumberWrapper, whatsappNumber) &&
-                    InputValidationHelper.isNameValid(mNameWrapper, name)) {
-                Intent intent = new Intent(getContext(), UserService.class);
-                intent.putExtra("TODO", R.string.update_user_profile);
-                intent.putExtra(getString(R.string.name_key), name);
-                intent.putExtra(getString(R.string.whatsapp_number_key), whatsappNumber);
-                intent.putExtra(getString(R.string.company_name_key), companyName);
-                intent.putExtra(getString(R.string.business_type_key), businessTypeID);
+        if (InputValidationHelper.isValidMobileNumber(mWhatsappNumberWrapper, whatsappNumber) &&
+                InputValidationHelper.isNameValid(mNameWrapper, name)) {
+            Intent intent = new Intent(getContext(), UserService.class);
+            intent.putExtra("TODO", R.string.update_user_profile);
+            intent.putExtra(getString(R.string.name_key), name);
+            intent.putExtra(getString(R.string.whatsapp_number_key), whatsappNumber);
+            intent.putExtra(getString(R.string.company_name_key), companyName);
+            intent.putExtra(getString(R.string.business_type_key), businessTypeID);
 
-                getContext().startService(intent);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+            getContext().startService(intent);
         }
     }
 
-    private String getStringFromView(int key) throws JSONException {
+    private String getStringFromView(int key) {
         switch (key) {
             case R.string.name_key:
                 return mNameEditText.getText().toString();
@@ -170,23 +176,22 @@ public class EditProfileDetailsFragment extends Fragment {
             case R.string.company_name_key:
                 return mCompanyNameEditText.getText().toString();
             case R.string.business_type_key:
-                return ((JSONObject) mBusinessTypeSpinner.getSelectedItem()).getString(BusinessTypesTable.COLUMN_BUSINESS_TYPE_ID);
+                BusinessTypes businessTypes = (BusinessTypes) mBusinessTypeSpinner.getSelectedItem();
+                return businessTypes.getBusinessTypeID();
         }
         return "";
     }
 
-    private void setViewForPersonalDetails(JSONObject data) throws JSONException {
-        mNameEditText.setText(data.getString(UserTable.COLUMN_NAME));
-        mCompanyNameEditText.setText(data.getString(UserTable.COLUMN_COMPANY_NAME));
-        mWhatsappNumberEditText.setText(data.getString(UserTable.COLUMN_WHATSAPP_NUMBER));
-
-        mSelectedBusinessType = data.getString(UserTable.COLUMN_BUSINESS_TYPE);
+    private void setViewForPersonalDetails(Buyer buyer) {
+        mNameEditText.setText(buyer.getName());
+        mCompanyNameEditText.setText(buyer.getCompanyName());
+        mWhatsappNumberEditText.setText(buyer.getWhatsappNumber());
+        mSelectedBusinessType = buyer.getBusinessType();
         setSelectionForBusinessType();
     }
 
-    private void setViewForBusinessTypes(JSONObject data) throws JSONException {
-        JSONArray businessTypes = data.getJSONArray(BusinessTypesTable.TABLE_NAME);
-        mBusinessTypeAdapter = new BusinessTypesAdapter(getContext(), businessTypes);
+    private void setViewForBusinessTypes(ArrayList<BusinessTypes> data) {
+        mBusinessTypeAdapter = new BusinessTypesAdapter(getContext(), data);
         mBusinessTypeSpinner.setAdapter(mBusinessTypeAdapter);
         setSelectionForBusinessType();
     }
@@ -201,7 +206,7 @@ public class EditProfileDetailsFragment extends Fragment {
         String extra = intent.getStringExtra("extra");
         if (extra != null) {
             if (extra.equals(getString(R.string.business_types_data_updated))) {
-                // getActivity().getSupportLoaderManager().restartLoader(USER_DETAILS_DB_LOADER, null, this);
+                getActivity().getSupportLoaderManager().restartLoader(EDIT_PROFILE_FRAGMENT_LOADER, null, this);
             } else if (extra.equals(getString(R.string.user_data_modified))) {
                 // close fragment
                 mListener.openProfileFragment();
@@ -209,5 +214,11 @@ public class EditProfileDetailsFragment extends Fragment {
         } else {
             mListener.openProfileFragment();
         }
+    }
+
+    private void fetchBusinessTypesDataFromServer() {
+        Intent intent = new Intent(getContext(), UserService.class);
+        intent.putExtra("TODO", R.string.fetch_business_types);
+        getContext().startService(intent);
     }
 }
