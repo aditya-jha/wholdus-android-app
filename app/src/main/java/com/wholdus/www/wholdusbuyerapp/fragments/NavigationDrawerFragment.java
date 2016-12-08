@@ -120,7 +120,7 @@ public class NavigationDrawerFragment extends Fragment {
                 break;
             case 3:
                 // open rejected products
-                intent.putExtra("openFragment", "rejectProducts");
+                intent.putExtra("openFragment", "rejectedProducts");
                 break;
             default:
                 return false;
