@@ -11,10 +11,14 @@ import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.Bus
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserInterestsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserTable;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract.OrdersTable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by aditya on 25/11/16.
@@ -40,6 +44,26 @@ public class UserDBHelper {
 
     public Cursor getUserData(String buyerID) {
         String query = "SELECT * FROM " + UserTable.TABLE_NAME + " WHERE " + UserTable.COLUMN_BUYER_ID + "= " + buyerID + ";";
+        return getCursor(query);
+    }
+
+    public Cursor getOrdersData(@Nullable List<Integer> orderStatusValues, @Nullable String orderID) {
+        String query = "SELECT * FROM " + OrdersTable.TABLE_NAME;
+        boolean whereApplied = false;
+        if (orderID!= null && !TextUtils.isEmpty(orderID)){
+            query += "WHERE " + OrdersTable.COLUMN_ORDER_ID + " = " + orderID;
+            whereApplied = true;
+        }
+        if (!orderStatusValues.isEmpty()){
+            if (whereApplied == true){
+                query += " AND ";
+            }
+            else {
+                query += " WHERE ";
+            }
+            query += OrdersTable.COLUMN_ORDER_STATUS_VALUE + " IN " + TextUtils.join(", ", orderStatusValues);
+        }
+
         return getCursor(query);
     }
 
