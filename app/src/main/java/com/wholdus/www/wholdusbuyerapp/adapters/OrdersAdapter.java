@@ -18,13 +18,11 @@ import java.util.ArrayList;
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHolder> {
 
     private ArrayList<Order> mListData;
-    private LayoutInflater mLayoutInflater;
     private Context mContext;
 
     public OrdersAdapter(Context context, ArrayList<Order> listData){
         mContext = context;
         mListData = listData;
-        mLayoutInflater = LayoutInflater.from(context);
     }
 
     @Override
@@ -39,7 +37,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mLayoutInflater.inflate(R.layout.list_item_layout_orders, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.list_item_layout_orders, parent, false);
         MyViewHolder holder = new MyViewHolder(view);
         return holder;
     }
