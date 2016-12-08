@@ -74,8 +74,6 @@ public class UserService extends IntentService {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            default:
-                return;
         }
     }
 
