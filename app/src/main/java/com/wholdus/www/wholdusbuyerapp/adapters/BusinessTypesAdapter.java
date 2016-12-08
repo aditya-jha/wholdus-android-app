@@ -9,10 +9,13 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
+import com.wholdus.www.wholdusbuyerapp.models.BusinessTypes;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * Created by aditya on 28/11/16.
@@ -21,56 +24,48 @@ import org.json.JSONObject;
 public class BusinessTypesAdapter extends BaseAdapter implements SpinnerAdapter {
 
     private Context mContext;
-    private JSONArray mData;
+    private ArrayList<BusinessTypes> mData;
 
-    public BusinessTypesAdapter(Context context, JSONArray data) {
+    public BusinessTypesAdapter(Context context, ArrayList<BusinessTypes> data) {
         mContext = context;
         mData = data;
     }
 
     @Override
     public int getCount() {
-        return mData.length();
+        return mData.size();
     }
 
     @Override
     public Object getItem(int i) {
-        try {
-            return mData.getJSONObject(i);
-        } catch (JSONException e) {
-        }
-        return null;
+        return mData.get(i);
     }
 
     @Override
-    public long getItemId(int i) { return 0; }
+    public long getItemId(int i) {
+        return 0;
+    }
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         if (view == null) {
             view = LayoutInflater.from(mContext).inflate(android.R.layout.simple_spinner_dropdown_item, viewGroup, false);
         }
-        try {
-            JSONObject currentData = mData.getJSONObject(i);
+        BusinessTypes businessType = mData.get(i);
 
-            TextView dataTextView = (TextView) view.findViewById(android.R.id.text1);
-            dataTextView.setText(currentData.getString(UserProfileContract.BusinessTypesTable.COLUMN_BUSINESS_TYPE));
+        TextView dataTextView = (TextView) view.findViewById(android.R.id.text1);
+        dataTextView.setText(businessType.getBusinessType());
 
-            view.setTag(currentData.getString(UserProfileContract.BusinessTypesTable.COLUMN_BUSINESS_TYPE_ID));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        view.setTag(businessType.getBusinessTypeID());
+
         return view;
     }
 
     public int getSelectedItemIndex(String businessType) {
-        try {
-            for (int i = 0; i < mData.length(); i++) {
-                if (mData.getJSONObject(i).getString(UserProfileContract.BusinessTypesTable.COLUMN_BUSINESS_TYPE).equals(businessType)) {
-                    return i;
-                }
+        for (int i=0; i<mData.size(); i++) {
+            if (mData.get(i).getBusinessType().equals(businessType)) {
+                return i;
             }
-        } catch (JSONException e) {
         }
         return 0;
     }

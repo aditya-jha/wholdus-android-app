@@ -30,6 +30,7 @@ public class Buyer {
     }
 
     public Buyer(Cursor cursor) {
+        setBuyerData(cursor);
     }
 
     public void setBuyerData(Cursor cursor) {

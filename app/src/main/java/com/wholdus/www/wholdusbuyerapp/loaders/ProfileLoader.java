@@ -12,8 +12,13 @@ import com.wholdus.www.wholdusbuyerapp.models.Buyer;
 
 public class ProfileLoader extends AbstractLoader<Buyer> {
 
-    public ProfileLoader(Context context) {
+    private Boolean mLoadAddress, mLoadInterest, mLoadProfile;
+
+    public ProfileLoader(Context context, Boolean profile, Boolean address, Boolean interest) {
         super(context);
+        mLoadProfile = profile;
+        mLoadAddress = address;
+        mLoadInterest = interest;
     }
 
     @Override
@@ -24,8 +29,15 @@ public class ProfileLoader extends AbstractLoader<Buyer> {
         UserDBHelper userDBHelper = new UserDBHelper(getContext());
         Buyer buyer = new Buyer();
 
-        buyer.setBuyerData(userDBHelper.getUserData(buyerID));
-        buyer.setAddressData(userDBHelper.getUserAddress(buyerID, null, -1));
+        if (mLoadProfile) {
+            buyer.setBuyerData(userDBHelper.getUserData(buyerID));
+        }
+        if (mLoadAddress) {
+            buyer.setAddressData(userDBHelper.getUserAddress(buyerID, null, -1));
+        }
+        if (mLoadInterest) {
+            buyer.setInterestData(userDBHelper.getUserInterests(buyerID, null, -1));
+        }
 
         return buyer;
     }
