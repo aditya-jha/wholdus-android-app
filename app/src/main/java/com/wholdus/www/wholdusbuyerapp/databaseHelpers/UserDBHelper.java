@@ -140,7 +140,6 @@ public class UserDBHelper {
 
     public void updateUserAddressDataFromJSONObject(JSONObject currAddress) throws JSONException{
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
-        ContentValues values = new ContentValues();
 
         String addressID = currAddress.getString(UserAddressTable.COLUMN_ADDRESS_ID);
         int _ID = -1;
@@ -148,7 +147,7 @@ public class UserDBHelper {
             _ID = currAddress.getInt(UserAddressTable._ID);
         }
 
-        values = getBuyerAddressContentValues(values, currAddress);
+        ContentValues values = getBuyerAddressContentValues(currAddress);
         values.put(UserAddressTable.COLUMN_ADDRESS_ID, addressID);
 
         if ((TextUtils.isEmpty(addressID) && _ID == -1) || getUserAddress(addressID, -1).getCount() == 0) {
@@ -167,7 +166,8 @@ public class UserDBHelper {
         mDatabaseHelper.closeDatabase();
     }
 
-    public ContentValues getBuyerAddressContentValues(ContentValues values, JSONObject currAddress) throws JSONException{
+    public ContentValues getBuyerAddressContentValues(JSONObject currAddress) throws JSONException{
+        ContentValues values = new ContentValues();
         values.put(UserAddressTable.COLUMN_ADDRESS_ID, currAddress.getString(UserAddressTable.COLUMN_ADDRESS_ID));
         values.put(UserAddressTable.COLUMN_ADDRESS, currAddress.getString(UserAddressTable.COLUMN_ADDRESS));
         values.put(UserAddressTable.COLUMN_ADDRESS_ALIAS, currAddress.getString(UserAddressTable.COLUMN_ADDRESS_ALIAS));
