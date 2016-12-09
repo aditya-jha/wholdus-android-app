@@ -23,6 +23,7 @@ public class OrderItem {
     private String mOrderItemStatusDisplay;
     private String mTrackingUrl;
     private String mCreatedAt;
+    private String mUpdatedAt;
     private String mRemarks;
 
     public OrderItem() {
@@ -90,6 +91,10 @@ public class OrderItem {
 
     public String getCreatedAt() {
         return mCreatedAt;
+    }
+
+    public String getUpdatedAt() {
+        return mUpdatedAt;
     }
 
     public String getRemarks() {

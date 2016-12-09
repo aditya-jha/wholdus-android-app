@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -28,9 +29,9 @@ public class OrderDBHelper extends BaseDBHelper {
     }
 
     public Cursor getOrdersData(@Nullable List<Integer> orderStatusValues,
-                                @Nullable String orderID, @Nullable List<String> columns) {
+                                @Nullable String orderID, @Nullable String[] columns) {
         String columnNames;
-        if (columns!= null && !columns.isEmpty()){
+        if (columns!= null && !(columns.length==0)){
             columnNames = TextUtils.join(", ", columns);
         } else {columnNames = "*";}
 
@@ -49,13 +50,13 @@ public class OrderDBHelper extends BaseDBHelper {
         return getCursor(query);
     }
 
-    public ArrayList<String> getPresentOrderIDs(){
-        ArrayList<String> columns = new ArrayList<>();
-        columns.add(OrdersContract.OrdersTable.COLUMN_ORDER_ID);
+    public HashMap<String, String> getPresentOrderIDs(){
+        String[] columns = new String[] {OrdersContract.OrdersTable.COLUMN_ORDER_ID,OrdersContract.OrdersTable.COLUMN_UPDATED_AT};
         Cursor cursor = getOrdersData(null, null, columns);
-        ArrayList<String> orderIDs = new ArrayList<>();
+        HashMap<String, String> orderIDs = new HashMap<>();
         while (cursor.moveToNext()){
-            orderIDs.add(cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_ORDER_ID)));
+            orderIDs.put(cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_ORDER_ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_UPDATED_AT)));
         }
         return orderIDs;
     }
@@ -66,29 +67,40 @@ public class OrderDBHelper extends BaseDBHelper {
         try {
 
             UserDBHelper userDBHelper = new UserDBHelper(mContext);
-            List<String> presentBuyerAddressIDs = userDBHelper.getPresentBuyerAddressIDs();
-            List<String> presentOrderIDs = getPresentOrderIDs();
+            HashMap<String, String> presentBuyerAddressIDs= userDBHelper.getPresentBuyerAddressIDs();
+            HashMap<String, String> presentOrderIDs = getPresentOrderIDs();
 
             db.beginTransaction();
             for (int i = 0; i < ordersArray.length(); i++) {
                 JSONObject order = ordersArray.getJSONObject(i);
-                ContentValues values = getOrderContentValues(order);
-                JSONObject buyerAddress = order.getJSONObject("buyer_address");
-                userDBHelper.updateUserAddressDataFromJSONObject(buyerAddress,
-                        db, presentBuyerAddressIDs.contains(buyerAddress.getString(OrdersContract.OrdersTable.COLUMN_BUYER_ADDRESS_ID)));
-                String orderID = order.getString(OrdersContract.OrdersTable.COLUMN_ORDER_ID);
 
-                if (!presentOrderIDs.contains(orderID)) { // insert
+                String orderID = order.getString(OrdersContract.OrdersTable.COLUMN_ORDER_ID);
+                String orderUpdatedAtLocal = presentOrderIDs.get(orderID);
+                String orderUpdatedAtServer = order.getString(OrdersContract.OrdersTable.COLUMN_UPDATED_AT);
+                if (orderUpdatedAtLocal==null) { // insert
+                    ContentValues values = getOrderContentValues(order);
                     db.insert(OrdersContract.OrdersTable.TABLE_NAME, null, values);
-                } else {
+                } else if (!orderUpdatedAtLocal.equals(orderUpdatedAtServer)){
+                    ContentValues values = getOrderContentValues(order);
                     String selection = OrdersContract.OrdersTable.COLUMN_ORDER_ID + " = " + orderID;
                     db.update(OrdersContract.OrdersTable.TABLE_NAME, values, selection, null);
+                }
+
+                JSONObject buyerAddress = order.getJSONObject("buyer_address");
+                String buyerAddressID = buyerAddress.getString(UserProfileContract.UserAddressTable.COLUMN_ADDRESS_ID);
+                String buyerAddressUpdatedAtLocal = presentBuyerAddressIDs.get(buyerAddressID);
+                String buyerAddressUpdatedAtServer = buyerAddress.getString(UserProfileContract.UserAddressTable.COLUMN_UPDATED_AT);
+                if (buyerAddressUpdatedAtLocal==null) {
+                    userDBHelper.updateUserAddressDataFromJSONObject(buyerAddress, false);
+                } else if (!buyerAddressUpdatedAtLocal.equals(buyerAddressUpdatedAtServer)){
+                    userDBHelper.updateUserAddressDataFromJSONObject(buyerAddress, true);
                 }
 
             }
 
             db.setTransactionSuccessful();
         }catch (Exception e) {
+            e.printStackTrace();
         }
         finally {
             db.endTransaction();
@@ -102,7 +114,7 @@ public class OrderDBHelper extends BaseDBHelper {
         values.put(OrdersContract.OrdersTable.COLUMN_ORDER_ID, order.getString(OrdersContract.OrdersTable.COLUMN_ORDER_ID));
         values.put(OrdersContract.OrdersTable.COLUMN_DISPLAY_NUMBER, order.getString(OrdersContract.OrdersTable.COLUMN_DISPLAY_NUMBER));
         JSONObject buyerAddress = order.getJSONObject("buyer_address");
-        values.put(OrdersContract.OrdersTable.COLUMN_BUYER_ADDRESS_ID, buyerAddress.getString(OrdersContract.OrdersTable.COLUMN_BUYER_ADDRESS_ID));
+        values.put(OrdersContract.OrdersTable.COLUMN_BUYER_ADDRESS_ID, buyerAddress.getString(UserProfileContract.UserAddressTable.COLUMN_ADDRESS_ID));
         values.put(OrdersContract.OrdersTable.COLUMN_PRODUCT_COUNT, order.getInt(OrdersContract.OrdersTable.COLUMN_PRODUCT_COUNT));
         values.put(OrdersContract.OrdersTable.COLUMN_PIECES, order.getInt(OrdersContract.OrdersTable.COLUMN_PIECES));
         values.put(OrdersContract.OrdersTable.COLUMN_RETAIL_PRICE, order.getDouble(OrdersContract.OrdersTable.COLUMN_RETAIL_PRICE));
@@ -118,6 +130,7 @@ public class OrderDBHelper extends BaseDBHelper {
         values.put(OrdersContract.OrdersTable.COLUMN_PAYMENT_STATUS_VALUE, paymentStatus.getInt("value"));
         values.put(OrdersContract.OrdersTable.COLUMN_PAYMENT_STATUS_DISPLAY, paymentStatus.getString("display_value"));
         values.put(OrdersContract.OrdersTable.COLUMN_CREATED_AT, order.getString(OrdersContract.OrdersTable.COLUMN_CREATED_AT));
+        values.put(OrdersContract.OrdersTable.COLUMN_UPDATED_AT, order.getString(OrdersContract.OrdersTable.COLUMN_UPDATED_AT));
         values.put(OrdersContract.OrdersTable.COLUMN_REMARKS, order.getString(OrdersContract.OrdersTable.COLUMN_REMARKS));
         return values;
     }

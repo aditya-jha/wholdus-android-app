@@ -23,6 +23,9 @@ public final class UserProfileContract {
         public static final String COLUMN_COMPANY_NAME = "company_name";
         public static final String COLUMN_BUSINESS_TYPE = "business_type";
         public static final String COLUMN_GENDER = "gender";
+
+        public static final String COLUMN_CREATED_AT = "created_at";
+        public static final String COLUMN_UPDATED_AT = "updated_at";
     }
 
     public static final class UserAddressTable implements BaseColumns {
@@ -37,6 +40,9 @@ public final class UserProfileContract {
         public static final String COLUMN_CONTACT_NUMBER = "contact_number";
         public static final String COLUMN_PINCODE = "pincode";
         public static final String COLUMN_ADDRESS_ALIAS = "alias";
+
+        public static final String COLUMN_CREATED_AT = "created_at";
+        public static final String COLUMN_UPDATED_AT = "updated_at";
     }
 
     public static final class UserInterestsTable implements BaseColumns {
@@ -48,6 +54,9 @@ public final class UserProfileContract {
         public static final String COLUMN_MIN_PRICE_PER_UNIT = "min_price_per_unit";
         public static final String COLUMN_FABRIC_FILTER_TEXT = "fabric_filter_text";
         public static final String COLUMN_MAX_PRICE_PER_UNIT = "max_price_per_unit";
+
+        public static final String COLUMN_CREATED_AT = "created_at";
+        public static final String COLUMN_UPDATED_AT = "updated_at";
     }
 
     public static final class BusinessTypesTable implements BaseColumns {

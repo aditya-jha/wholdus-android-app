@@ -31,6 +31,7 @@ public final class OrdersContract {
         public static final String COLUMN_PAYMENT_STATUS_DISPLAY = "payment_status_display";
 
         public static final String COLUMN_CREATED_AT = "created_at";
+        public static final String COLUMN_UPDATED_AT = "updated_at";
 
         public static final String COLUMN_REMARKS = "remarks";
     }
@@ -58,6 +59,7 @@ public final class OrdersContract {
         public static final String COLUMN_PAYMENT_STATUS_DISPLAY = "payment_status_display";
 
         public static final String COLUMN_CREATED_AT = "created_at";
+        public static final String COLUMN_UPDATED_AT = "updated_at";
     }
 
     public static final class OrderItemsTable implements BaseColumns {
@@ -80,6 +82,7 @@ public final class OrdersContract {
         public static final String COLUMN_TRACKING_URL = "tracking_url";
 
         public static final String COLUMN_CREATED_AT = "created_at";
+        public static final String COLUMN_UPDATED_AT = "updated_at";
 
         public static final String COLUMN_REMARKS = "remarks";
     }

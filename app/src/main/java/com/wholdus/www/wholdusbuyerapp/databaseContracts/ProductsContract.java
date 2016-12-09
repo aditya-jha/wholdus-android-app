@@ -38,7 +38,7 @@ public class ProductsContract {
 
         public static final String COLUMN_WARRANTY = "warranty";
         public static final String COLUMN_SPECIAL_FEATURE = "special_feature";
-        public static final String COLUMN_AVAILABLITY = "availability";
+        public static final String COLUMN_AVAILABILITY = "availability";
         public static final String COLUMN_STYLE = "style";
         public static final String COLUMN_MANUFACTURED_CITY = "manufactured_city";
         public static final String COLUMN_PATTERN = "pattern";
@@ -59,6 +59,7 @@ public class ProductsContract {
         public static final String COLUMN_LENGTH = "length";
 
         public static final String COLUMN_CREATED_AT = "created_at";
+        public static final String COLUMN_UPDATED_AT = "updated_at";
     }
 
     public static final class CategoriesTable implements BaseColumns {
@@ -68,6 +69,9 @@ public class ProductsContract {
         public static final String COLUMN_DISPLAY_NAME = "display_name";
         public static final String COLUMN_URL = "url";
         public static final String COLUMN_SLUG = "slug";
+
+        public static final String COLUMN_CREATED_AT = "created_at";
+        public static final String COLUMN_UPDATED_AT = "updated_at";
     }
 
     public static final class SellersTable implements BaseColumns {
@@ -80,6 +84,9 @@ public class ProductsContract {
 
         public static final String COLUMN_SHOW_ONLINE = "show_online";
         public static final String COLUMN_DELETE_STATUS = "delete_status";
+
+        public static final String COLUMN_CREATED_AT = "created_at";
+        public static final String COLUMN_UPDATED_AT = "updated_at";
     }
 
     public static final class SellerAddressTable implements BaseColumns {
@@ -93,5 +100,8 @@ public class ProductsContract {
         public static final String COLUMN_ADDRESS = "address";
         public static final String COLUMN_CONTACT_NUMBER = "contact_number";
         public static final String COLUMN_PINCODE = "pincode";
+
+        public static final String COLUMN_CREATED_AT = "created_at";
+        public static final String COLUMN_UPDATED_AT = "updated_at";
     }
 }
