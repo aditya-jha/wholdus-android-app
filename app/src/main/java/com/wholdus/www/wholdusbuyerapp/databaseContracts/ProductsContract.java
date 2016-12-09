@@ -59,6 +59,7 @@ public class ProductsContract {
         public static final String COLUMN_LENGTH = "length";
 
         public static final String COLUMN_CREATED_AT = "created_at";
+        public static final String COLUMN_UPDATED_AT = "updated_at";
     }
 
     public static final class CategoriesTable implements BaseColumns {
