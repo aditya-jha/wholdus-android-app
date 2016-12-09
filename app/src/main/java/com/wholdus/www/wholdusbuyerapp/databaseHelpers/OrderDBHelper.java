@@ -20,24 +20,10 @@ import java.util.List;
  * Created by kaustubh on 8/12/16.
  */
 
-public class OrderDBHelper {
-
-    private DatabaseHelper mDatabaseHelper;
-    private Context mContext;
+public class OrderDBHelper extends BaseDBHelper {
 
     public OrderDBHelper(Context context) {
-        mDatabaseHelper = DatabaseHelper.getInstance(context);
-        mContext = context;
-    }
-
-    /*
-        Helper function to open & close database through DBHelper class and execute raw query
-     */
-    private Cursor getCursor(String query) {
-        SQLiteDatabase db = mDatabaseHelper.openDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        mDatabaseHelper.closeDatabase();
-        return cursor;
+        super(context);
     }
 
     public Cursor getOrdersData(@Nullable List<Integer> orderStatusValues, @Nullable String orderID) {

@@ -18,5 +18,6 @@ public class BuyerProductsContract {
         public static final String COLUMN_STORE_DISCOUNT = "store_discount";
         public static final String COLUMN_HAS_SWIPED = "has_swiped";
         public static final String COLUMN_RESPONSE_CODE = "response_code";
+        public static final String COLUMN_SYNCED = "synced";
     }
 }

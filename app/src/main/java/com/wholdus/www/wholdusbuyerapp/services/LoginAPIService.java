@@ -5,7 +5,6 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.wholdus.www.wholdusbuyerapp.R;
-import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
