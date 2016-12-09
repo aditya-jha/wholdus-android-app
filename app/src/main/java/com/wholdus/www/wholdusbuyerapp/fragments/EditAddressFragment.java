@@ -240,6 +240,7 @@ public class EditAddressFragment extends Fragment {
             address.put(UserAddressTable.COLUMN_ADDRESS_ID, mAddressID);
             address.put(UserAddressTable.COLUMN_PINCODE_ID, "");
             address.put(UserAddressTable.COLUMN_PRIORITY, "");
+            address.put(UserAddressTable._ID, m_ID);
 
             Intent intent = new Intent(getContext(), UserService.class);
             intent.putExtra(UserAddressTable.TABLE_NAME, address.toString());
