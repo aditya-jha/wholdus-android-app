@@ -27,6 +27,7 @@ import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.OrdersLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Order;
+import com.wholdus.www.wholdusbuyerapp.services.OrderService;
 import com.wholdus.www.wholdusbuyerapp.services.UserService;
 
 import org.json.JSONException;
@@ -127,9 +128,9 @@ public class OrdersFragment extends Fragment {
     }
 
     private void fetchDataFromServer(){
-        /*Intent intent = new Intent(getContext(), OrderService.class);
+        Intent intent = new Intent(getContext(), OrderService.class);
         intent.putExtra("TODO", R.string.fetch_orders);
-        getContext().startService(intent);*/
+        getContext().startService(intent);
     }
 
     private class OrderLoaderManager implements LoaderManager.LoaderCallbacks<ArrayList<Order>> {

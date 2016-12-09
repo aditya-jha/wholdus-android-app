@@ -14,7 +14,7 @@ public final class OrdersContract {
         public static final String TABLE_NAME = "orders";
         public static final String COLUMN_ORDER_ID = "orderID";
         public static final String COLUMN_DISPLAY_NUMBER = "display_number";
-        public static final String COLUMN_BUYER_ADDRESS_ID = "buyeraddressID";
+        public static final String COLUMN_BUYER_ADDRESS_ID = "addressID";
 
         public static final String COLUMN_PRODUCT_COUNT = "product_count";
         public static final String COLUMN_PIECES = "pieces";

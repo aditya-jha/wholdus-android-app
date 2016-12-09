@@ -42,7 +42,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_USER_ADDRESS_TABLE =
             "CREATE TABLE " + UserProfileContract.UserAddressTable.TABLE_NAME + " (" +
                     UserProfileContract.UserAddressTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
-                    UserProfileContract.UserAddressTable.COLUMN_BUYER_ID + TEXT_TYPE + COMMA_SEP +
                     UserProfileContract.UserAddressTable.COLUMN_PINCODE_ID + TEXT_TYPE + COMMA_SEP +
                     UserProfileContract.UserAddressTable.COLUMN_ADDRESS_ID + TEXT_TYPE + COMMA_SEP +
                     UserProfileContract.UserAddressTable.COLUMN_PRIORITY + TEXT_TYPE + COMMA_SEP +
@@ -70,7 +69,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_USER_INTERESTS_TABLE =
             "CREATE TABLE " + UserProfileContract.UserInterestsTable.TABLE_NAME + " (" +
                     UserProfileContract.UserInterestsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
-                    UserProfileContract.UserInterestsTable.COLUMN_BUYER_ID + TEXT_TYPE + COMMA_SEP +
                     UserProfileContract.UserInterestsTable.COLUMN_BUYER_INTEREST_ID + TEXT_TYPE + COMMA_SEP +
                     UserProfileContract.UserInterestsTable.COLUMN_CATEGORY_ID + TEXT_TYPE + COMMA_SEP +
                     UserProfileContract.UserInterestsTable.COLUMN_CATEGORY_NAME + TEXT_TYPE + COMMA_SEP +

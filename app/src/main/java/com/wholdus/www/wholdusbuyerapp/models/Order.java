@@ -37,6 +37,15 @@ public class Order {
     }
 
     public Order(Cursor cursor) {
+        setDataFromCursor(cursor);
+    }
+
+    public static ArrayList<Order> getOrdersFromCursor(Cursor cursor){
+        ArrayList<Order> orders = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            orders.add(new Order(cursor));
+        }
+        return orders;
     }
 
     public void setDataFromCursor(Cursor cursor) {

@@ -10,7 +10,6 @@ import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.Use
 
 public class BuyerAddress {
     private int m_ID;
-    private String mBuyerID;
     private String mAddressID;
     private String mPincodeID;
     private String mAddress;
@@ -27,7 +26,6 @@ public class BuyerAddress {
 
     public BuyerAddress(Cursor cursor) {
         m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(UserAddressTable._ID));
-        mBuyerID = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_BUYER_ID));
         mAddressID = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS_ID));
         mPincodeID = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_PINCODE_ID));
         mAddress = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS));
@@ -42,10 +40,6 @@ public class BuyerAddress {
 
     public int get_ID() {
         return m_ID;
-    }
-
-    public String getBuyerID() {
-        return mBuyerID;
     }
 
     public String getAddressID() {
