@@ -33,7 +33,7 @@ public class ProfileLoader extends AbstractLoader<Buyer> {
             buyer.setBuyerData(userDBHelper.getUserData(buyerID));
         }
         if (mLoadAddress) {
-            buyer.setAddressData(userDBHelper.getUserAddress(null, -1));
+            buyer.setAddressData(userDBHelper.getUserAddress(null, -1, null));
         }
         if (mLoadInterest) {
             buyer.setInterestData(userDBHelper.getUserInterests(null, -1));

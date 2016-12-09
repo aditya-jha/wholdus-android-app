@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.BusinessTypesTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserInterestsTable;
@@ -17,6 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,14 +48,30 @@ public class UserDBHelper {
         return getCursor(query);
     }
 
-    public Cursor getUserAddress(@Nullable String addressID, int _ID) {
-        String query = "SELECT * FROM " + UserAddressTable.TABLE_NAME;
+    public Cursor getUserAddress(@Nullable String addressID, int _ID, @Nullable List<String> columns) {
+        String columnNames;
+        if (columns!= null && !columns.isEmpty()){
+            columnNames = TextUtils.join(", ", columns);
+        } else {columnNames = "*";}
+
+        String query = "SELECT " + columnNames +" FROM " + UserAddressTable.TABLE_NAME;
         if (addressID != null && !TextUtils.isEmpty(addressID)) {
             query += " WHERE " + UserAddressTable.COLUMN_ADDRESS_ID + " = " + addressID;
         } else if (_ID != -1) {
             query += " WHERE " + UserAddressTable._ID + " = " + _ID;
         }
         return getCursor(query);
+    }
+
+    public ArrayList<String> getPresentBuyerAddressIDs(){
+        ArrayList<String> columns = new ArrayList<>();
+        columns.add(UserAddressTable.COLUMN_ADDRESS_ID);
+        Cursor cursor = getUserAddress(null, -1, columns);
+        ArrayList<String> buyerAddressIDs = new ArrayList<>();
+        while (cursor.moveToNext()){
+            buyerAddressIDs.add(cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS_ID)));
+        }
+        return buyerAddressIDs;
     }
 
     public Cursor getUserInterests(@Nullable String buyerInterestID, int _ID) {
@@ -131,39 +149,37 @@ public class UserDBHelper {
 
         for (int i = 0; i < address.length(); i++) {
             JSONObject currAddress = address.getJSONObject(i);
-            updateUserAddressDataFromJSONObject(currAddress);
+            updateUserAddressDataFromJSONObject(currAddress, null, null);
         }
 
         mDatabaseHelper.closeDatabase();
         return 1;
     }
 
-    public void updateUserAddressDataFromJSONObject(JSONObject currAddress) throws JSONException{
-        SQLiteDatabase db = mDatabaseHelper.openDatabase();
-
-        String addressID = currAddress.getString(UserAddressTable.COLUMN_ADDRESS_ID);
-        int _ID = -1;
-        if (currAddress.has(UserAddressTable._ID)) {
-            _ID = currAddress.getInt(UserAddressTable._ID);
+    public void updateUserAddressDataFromJSONObject(JSONObject currAddress,
+                                                    @Nullable SQLiteDatabase db, @Nullable Boolean addressPresent) throws JSONException{
+        boolean databaseOpened = false;
+        if (db== null) {
+            db = mDatabaseHelper.openDatabase();
+            databaseOpened = true;
         }
 
+        String addressID = currAddress.getString(UserAddressTable.COLUMN_ADDRESS_ID);
         ContentValues values = getBuyerAddressContentValues(currAddress);
         values.put(UserAddressTable.COLUMN_ADDRESS_ID, addressID);
 
-        if ((TextUtils.isEmpty(addressID) && _ID == -1) || getUserAddress(addressID, -1).getCount() == 0) {
+        if (addressPresent==null){
+            addressPresent = (getUserAddress(addressID, -1, null).getCount() != 0);
+        }
+
+        if (!addressPresent){
             // insert
             db.insert(UserAddressTable.TABLE_NAME, null, values);
         } else {
-            String selection;
-            if (_ID != -1) {
-                selection = UserAddressTable._ID + "=" + _ID;
-            } else {
-                selection = UserAddressTable.COLUMN_ADDRESS_ID + "=" + addressID;
-            }
+            String selection = UserAddressTable.COLUMN_ADDRESS_ID + "=" + addressID;
             db.update(UserAddressTable.TABLE_NAME, values, selection, null);
         }
-
-        mDatabaseHelper.closeDatabase();
+        if (databaseOpened) {mDatabaseHelper.closeDatabase();}
     }
 
     public ContentValues getBuyerAddressContentValues(JSONObject currAddress) throws JSONException{

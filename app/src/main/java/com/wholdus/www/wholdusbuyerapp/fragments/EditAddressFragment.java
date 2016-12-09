@@ -237,11 +237,9 @@ public class EditAddressFragment extends Fragment {
             address.put(UserAddressTable.COLUMN_LANDMARK, getDataFromView(UserAddressTable.COLUMN_LANDMARK));
             address.put(UserAddressTable.COLUMN_CONTACT_NUMBER, getDataFromView(UserAddressTable.COLUMN_CONTACT_NUMBER));
 
-            address.put(UserAddressTable.COLUMN_BUYER_ID, GlobalAccessHelper.getBuyerID(getActivity().getApplication()));
             address.put(UserAddressTable.COLUMN_ADDRESS_ID, mAddressID);
             address.put(UserAddressTable.COLUMN_PINCODE_ID, "");
             address.put(UserAddressTable.COLUMN_PRIORITY, "");
-            address.put(UserAddressTable._ID, m_ID);
 
             Intent intent = new Intent(getContext(), UserService.class);
             intent.putExtra(UserAddressTable.TABLE_NAME, address.toString());
