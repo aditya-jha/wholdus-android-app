@@ -10,7 +10,6 @@ import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.Use
 
 public class BuyerInterest {
     private int m_ID;
-    private String mBuyerID;
     private String mBuyerInterestID;
     private String mCategoryID;
     private String mCategoryName;
@@ -24,7 +23,6 @@ public class BuyerInterest {
 
     public BuyerInterest(Cursor cursor) {
         m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(UserInterestsTable._ID));
-        mBuyerID = cursor.getString(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_BUYER_ID));
         mBuyerInterestID = cursor.getString(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_BUYER_INTEREST_ID));
         mCategoryID = cursor.getString(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_CATEGORY_ID));
         mCategoryName = cursor.getString(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_CATEGORY_NAME));
@@ -36,10 +34,6 @@ public class BuyerInterest {
 
     public int get_ID() {
         return m_ID;
-    }
-
-    public String getBuyerID() {
-        return mBuyerID;
     }
 
     public String getBuyerInterestID() {

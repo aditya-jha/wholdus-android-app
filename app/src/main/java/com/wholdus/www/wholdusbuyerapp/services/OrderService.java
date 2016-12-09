@@ -11,6 +11,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.databaseHelpers.OrderDBHelper;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
@@ -110,8 +111,8 @@ public class OrderService extends IntentService {
     }
 
     private void saveOrderstoDB(JSONArray ordersArray) throws JSONException{
-        UserDBHelper userDBHelper = new UserDBHelper(this);
-        userDBHelper.saveOrdersData(ordersArray);
+        OrderDBHelper orderDBHelper = new OrderDBHelper(this);
+        orderDBHelper.saveOrdersData(ordersArray);
     }
 
     private void handlePagination(JSONObject data, int todo){

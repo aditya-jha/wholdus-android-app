@@ -3,6 +3,7 @@ package com.wholdus.www.wholdusbuyerapp.loaders;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.wholdus.www.wholdusbuyerapp.databaseHelpers.OrderDBHelper;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.models.Buyer;
@@ -24,8 +25,8 @@ public class OrdersLoader extends AbstractLoader<ArrayList<Order>>{
     public ArrayList<Order> loadInBackground() {
 
         // fetch data from DB
-        UserDBHelper userDBHelper = new UserDBHelper(getContext());
-        Cursor cursor = userDBHelper.getOrdersData(null, null);
+        OrderDBHelper orderDBHelper = new OrderDBHelper(getContext());
+        Cursor cursor = orderDBHelper.getOrdersData(null, null);
         ArrayList<Order> orders = Order.getOrdersFromCursor(cursor);
 
         return orders;
