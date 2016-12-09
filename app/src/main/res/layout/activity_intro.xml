@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_alignParentTop="true"></android.support.v4.view.ViewPager>
+        android:layout_alignParentTop="true" />
 
     <LinearLayout
         android:id="@+id/introPagerDots"
@@ -20,5 +20,5 @@
         android:layout_marginTop="@dimen/activity_horizontal_margin"
         android:layout_alignParentBottom="true"
         android:gravity="center"
-        android:orientation="horizontal"></LinearLayout>
+        android:orientation="horizontal" />
 </RelativeLayout>
