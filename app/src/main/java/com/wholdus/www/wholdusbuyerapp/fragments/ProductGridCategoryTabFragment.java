@@ -24,6 +24,8 @@ public class ProductGridCategoryTabFragment extends Fragment implements TabLayou
     private ViewPager mViewPager;
     private PagerAdapter mPagerAdapter;
 
+    private static final int CATEGORIES_LOADER = 0;
+
     public ProductGridCategoryTabFragment() {
     }
 

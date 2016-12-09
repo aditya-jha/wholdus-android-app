@@ -156,18 +156,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_PRODUCTS_TABLE =
             "CREATE TABLE " + ProductsContract.ProductsTable.TABLE_NAME + " (" +
                     ProductsContract.ProductsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
-                    ProductsContract.ProductsTable.COLUMN_PRODUCT_ID + TEXT_TYPE + COMMA_SEP +
-                    ProductsContract.ProductsTable.COLUMN_CATEGORY_ID + TEXT_TYPE + COMMA_SEP +
-                    ProductsContract.ProductsTable.COLUMN_SELLER_ID + TEXT_TYPE + COMMA_SEP +
-                    ProductsContract.ProductsTable.COLUMN_PRODUCT_DETAILS_ID + TEXT_TYPE + COMMA_SEP +
-                    ProductsContract.ProductsTable.COLUMN_PRICE_PER_UNIT + REAL_TYPE + COMMA_SEP +
+                    ProductsContract.ProductsTable.COLUMN_PRODUCT_ID + INT_TYPE + COMMA_SEP +
+                    ProductsContract.ProductsTable.COLUMN_CATEGORY_ID + INT_TYPE + COMMA_SEP +
+                    ProductsContract.ProductsTable.COLUMN_SELLER_ID + INT_TYPE + COMMA_SEP +
+                    ProductsContract.ProductsTable.COLUMN_PRODUCT_DETAILS_ID + INT_TYPE + COMMA_SEP +
+                    ProductsContract.ProductsTable.COLUMN_DISPLAY_NAME + TEXT_TYPE + COMMA_SEP +
+                    ProductsContract.ProductsTable.COLUMN_NAME + TEXT_TYPE + COMMA_SEP +
                     ProductsContract.ProductsTable.COLUMN_LOT_SIZE + INT_TYPE + COMMA_SEP +
+                    ProductsContract.ProductsTable.COLUMN_PRICE_PER_UNIT + REAL_TYPE + COMMA_SEP +
                     ProductsContract.ProductsTable.COLUMN_PRICE_PER_LOT + REAL_TYPE + COMMA_SEP +
                     ProductsContract.ProductsTable.COLUMN_MIN_PRICE_PER_UNIT + REAL_TYPE + COMMA_SEP +
                     ProductsContract.ProductsTable.COLUMN_MARGIN + REAL_TYPE + COMMA_SEP +
                     ProductsContract.ProductsTable.COLUMN_UNIT + TEXT_TYPE + COMMA_SEP +
-                    ProductsContract.ProductsTable.COLUMN_DISPLAY_NAME + TEXT_TYPE + COMMA_SEP +
-                    ProductsContract.ProductsTable.COLUMN_NAME + TEXT_TYPE + COMMA_SEP +
                     ProductsContract.ProductsTable.COLUMN_URL + TEXT_TYPE + COMMA_SEP +
                     ProductsContract.ProductsTable.COLUMN_SHOW_ONLINE + INT_TYPE + COMMA_SEP +
                     ProductsContract.ProductsTable.COLUMN_DELETE_STATUS + INT_TYPE + COMMA_SEP +
@@ -196,7 +196,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     ProductsContract.ProductsTable.COLUMN_WEIGHT_PER_UNIT + REAL_TYPE + COMMA_SEP +
                     ProductsContract.ProductsTable.COLUMN_PACKAGING_DETAILS + TEXT_TYPE + COMMA_SEP +
                     ProductsContract.ProductsTable.COLUMN_LENGTH + TEXT_TYPE + COMMA_SEP +
-                    ProductsContract.ProductsTable.COLUMN_CREATED_AT + TEXT_TYPE + " )";
+                    ProductsContract.ProductsTable.COLUMN_CREATED_AT + TEXT_TYPE + COMMA_SEP +
+                    ProductsContract.ProductsTable.COLUMN_UPDATED_AT + TEXT_TYPE + " )";
 
     private static final String SQL_DROP_PRODUCTS_TABLE =
             "DROP TABLE IF EXISTS " + ProductsContract.ProductsTable.TABLE_NAME;
@@ -204,7 +205,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_CATEGORIES_TABLE =
             "CREATE TABLE " + ProductsContract.CategoriesTable.TABLE_NAME + " (" +
                     ProductsContract.CategoriesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
-                    ProductsContract.CategoriesTable.COLUMN_CATEGORY_ID + TEXT_TYPE + COMMA_SEP +
+                    ProductsContract.CategoriesTable.COLUMN_CATEGORY_ID + INT_TYPE + COMMA_SEP +
                     ProductsContract.CategoriesTable.COLUMN_DISPLAY_NAME + TEXT_TYPE + COMMA_SEP +
                     ProductsContract.CategoriesTable.COLUMN_URL + TEXT_TYPE + COMMA_SEP +
                     ProductsContract.CategoriesTable.COLUMN_SLUG + TEXT_TYPE + " )";
