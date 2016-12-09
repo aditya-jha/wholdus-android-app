@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.BuyerProductsContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract;
@@ -239,6 +240,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SQL_DROP_SELLER_ADDRESS_TABLE =
             "DROP TABLE IF EXISTS " + ProductsContract.SellerAddressTable.TABLE_NAME;
 
+    private static final String SQL_CREATE_BUYER_PRODUCT_TABLE =
+            "CREATE TABLE " + BuyerProductsContract.BuyerProductTable.TABLE_NAME + " (" +
+                    BuyerProductsContract.BuyerProductTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
+                    BuyerProductsContract.BuyerProductTable.COLUMN_BUYER_PRODUCT_ID + INT_TYPE + COMMA_SEP +
+                    BuyerProductsContract.BuyerProductTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID + INT_TYPE + COMMA_SEP +
+                    BuyerProductsContract.BuyerProductTable.COLUMN_PRODUCT_ID + INT_TYPE + COMMA_SEP +
+                    BuyerProductsContract.BuyerProductTable.COLUMN_STORE_DISCOUNT + REAL_TYPE + COMMA_SEP +
+                    BuyerProductsContract.BuyerProductTable.COLUMN_HAS_SWIPED + INT_TYPE + COMMA_SEP +
+                    BuyerProductsContract.BuyerProductTable.COLUMN_RESPONSE_CODE + INT_TYPE + COMMA_SEP +
+                    BuyerProductsContract.BuyerProductTable.COLUMN_SYNCED + INT_TYPE + " )";
+
+    private static final String SQL_DROP_BUYER_PRODUCT_TABLE =
+            "DROP TABLE IF EXISTS " + BuyerProductsContract.BuyerProductTable.TABLE_NAME;
+
     private static DatabaseHelper instance;
 
     private DatabaseHelper(Context context) {
@@ -253,7 +268,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public synchronized SQLiteDatabase openDatabase() {
-        /* TODO: counting openings if error in logcat */
+        /* TODO: count openings if error in logcat */
         return instance.getWritableDatabase();
         /*
          *   writeable and readable are same, so does not matter
@@ -280,6 +295,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_CATEGORIES_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_SELLERS_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_SELLER_ADDRESS_TABLE);
+
+        sqLiteDatabase.execSQL(SQL_CREATE_BUYER_PRODUCT_TABLE);
     }
 
     @Override
@@ -297,6 +314,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_DROP_CATEGORIES_TABLE);
         sqLiteDatabase.execSQL(SQL_DROP_SELLERS_TABLE);
         sqLiteDatabase.execSQL(SQL_DROP_SELLER_ADDRESS_TABLE);
+
+        sqLiteDatabase.execSQL(SQL_DROP_BUYER_PRODUCT_TABLE);
 
         onCreate(sqLiteDatabase);
     }

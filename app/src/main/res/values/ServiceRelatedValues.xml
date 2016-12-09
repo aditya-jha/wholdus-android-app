@@ -15,4 +15,6 @@
     <string name="update_user_address">updateUserAddress</string>
 
     <string name="fetch_orders">fetchOrders</string>
+
+    <string name="fetch_buyer_products">fetchBuyerProducts</string>
 </resources>

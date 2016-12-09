@@ -25,22 +25,10 @@ import java.util.List;
  * Created by aditya on 25/11/16.
  */
 
-public class UserDBHelper {
-
-    private DatabaseHelper mDatabaseHelper;
+public class UserDBHelper extends BaseDBHelper {
 
     public UserDBHelper(Context context) {
-        mDatabaseHelper = DatabaseHelper.getInstance(context);
-    }
-
-    /*
-        Helper function to open & close database through DBHelper class and execute raw query
-     */
-    private Cursor getCursor(String query) {
-        SQLiteDatabase db = mDatabaseHelper.openDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        mDatabaseHelper.closeDatabase();
-        return cursor;
+        super(context);
     }
 
     public Cursor getUserData(String buyerID) {
@@ -182,7 +170,7 @@ public class UserDBHelper {
         if (databaseOpened) {mDatabaseHelper.closeDatabase();}
     }
 
-    public ContentValues getBuyerAddressContentValues(JSONObject currAddress) throws JSONException{
+    private ContentValues getBuyerAddressContentValues(JSONObject currAddress) throws JSONException{
         ContentValues values = new ContentValues();
         values.put(UserAddressTable.COLUMN_ADDRESS_ID, currAddress.getString(UserAddressTable.COLUMN_ADDRESS_ID));
         values.put(UserAddressTable.COLUMN_ADDRESS, currAddress.getString(UserAddressTable.COLUMN_ADDRESS));

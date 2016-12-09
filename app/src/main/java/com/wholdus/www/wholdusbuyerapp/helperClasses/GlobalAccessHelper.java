@@ -26,16 +26,12 @@ import java.util.Objects;
 
 public class GlobalAccessHelper {
 
-    public static String getAccessToken(Application context) {
-        WholdusApplication wholdusApplication = (WholdusApplication)context;
-        String accessToken = wholdusApplication.getAccessToken();
-        return "access_token=" + accessToken;
+    public static String getAccessToken(Context context) {
+        return "access_token=" + ((WholdusApplication)context).getAccessToken();
     }
 
     public static String getRefreshToken(Application context) {
-        WholdusApplication wholdusApplication = (WholdusApplication)context;
-        String refreshToken = wholdusApplication.getRefreshToken();
-        return "refresh_token=" + refreshToken;
+        return "refresh_token=" + ((WholdusApplication)context).getRefreshToken();
     }
 
     public static String generateUrl(Context context, String endPoint, @Nullable HashMap<String,Object> params) {
