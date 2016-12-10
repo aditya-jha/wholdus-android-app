@@ -103,30 +103,30 @@ public class NavigationDrawerFragment extends Fragment {
         Bundle bundle = getArguments();
         String openFragmentName = "";
         if (bundle != null) {
-            openFragmentName = bundle.getString("openFragment", "none");
+            openFragmentName = bundle.getString(getString(R.string.open_fragment_key), "none");
         }
 
         switch (childPosition) {
             case 0:
                 // open profile fragment
-                intent.putExtra("openFragment", "profile");
+                intent.putExtra(getString(R.string.open_fragment_key), "profile");
                 break;
             case 1:
                 // open orders fragment
-                intent.putExtra("openFragment", "orders");
+                intent.putExtra(getString(R.string.open_fragment_key), "orders");
                 break;
             case 2:
-                intent.putExtra("openFragment", "buyerInterests");
+                intent.putExtra(getString(R.string.open_fragment_key), "buyerInterests");
                 break;
             case 3:
                 // open rejected products
-                intent.putExtra("openFragment", "rejectedProducts");
+                intent.putExtra(getString(R.string.open_fragment_key), "rejectedProducts");
                 break;
             default:
                 return false;
         }
 
-        if (intent.getExtras().getString("openFragment", "none").equals(openFragmentName)) {
+        if (intent.getExtras().getString(getString(R.string.open_fragment_key), "none").equals(openFragmentName)) {
             return false;
         }
 

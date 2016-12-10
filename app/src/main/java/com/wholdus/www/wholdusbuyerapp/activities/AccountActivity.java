@@ -29,8 +29,6 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolbar;
 
-    private static final String OPEN_FRAGMENT_KEY = "openFragment";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +37,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
         initNavigationDrawer(savedInstanceState);
         initToolbar();
 
-        fragmentToOpen(savedInstanceState);
+        openToFragment(getFragmentToOpenName(savedInstanceState), null);
     }
 
     @Override
@@ -132,7 +130,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
         Fragment navDrawerFragment = new NavigationDrawerFragment();
 
         Bundle args = new Bundle();
-        args.putSerializable(OPEN_FRAGMENT_KEY, getFragmentToOpenName(savedInstanceState));
+        args.putSerializable(getString(R.string.open_fragment_key), getFragmentToOpenName(savedInstanceState));
         navDrawerFragment.setArguments(args);
 
         getSupportFragmentManager().beginTransaction()
@@ -143,20 +141,14 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
         String openFragment;
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
-            openFragment = extras.getString(OPEN_FRAGMENT_KEY);
+            openFragment = extras.getString(getString(R.string.open_fragment_key));
             if (TextUtils.isEmpty(openFragment)) {
                 openFragment = "profile";
             }
         } else {
-            openFragment = (String) savedInstanceState.getSerializable(OPEN_FRAGMENT_KEY);
+            openFragment = (String) savedInstanceState.getSerializable(getString(R.string.open_fragment_key));
         }
         return openFragment;
-    }
-
-    private void fragmentToOpen(Bundle savedInstanceState) {
-        String openFragment = getFragmentToOpenName(savedInstanceState);
-
-        openToFragment(openFragment, null);
     }
 
     private void openToFragment(String fragmentName, @Nullable Bundle bundle) {

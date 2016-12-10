@@ -7,7 +7,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
+
+import com.wholdus.www.wholdusbuyerapp.R;
 
 /**
  * Created by aditya on 10/12/16.
@@ -15,7 +16,8 @@ import android.view.animation.Animation;
 
 public class CategoryGridFragment extends Fragment {
 
-    public CategoryGridFragment() {}
+    public CategoryGridFragment() {
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -23,14 +25,15 @@ public class CategoryGridFragment extends Fragment {
     }
 
     @Override
-    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
-        return super.onCreateAnimation(transit, enter, nextAnim);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_categories_grid, container, false);
+        return rootView;
     }
 
     @Override
