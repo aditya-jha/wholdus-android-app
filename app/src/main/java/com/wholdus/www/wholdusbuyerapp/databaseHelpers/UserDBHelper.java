@@ -202,8 +202,8 @@ public class UserDBHelper extends BaseDBHelper {
         values.put(UserAddressTable.COLUMN_PINCODE, currAddress.getString(UserAddressTable.COLUMN_PINCODE));
         values.put(UserAddressTable.COLUMN_STATE, currAddress.getString(UserAddressTable.COLUMN_STATE));
         values.put(UserAddressTable.COLUMN_PRIORITY, currAddress.getString(UserAddressTable.COLUMN_PRIORITY));
-        values.put(UserAddressTable.COLUMN_CREATED_AT, currAddress.getString(UserAddressTable.COLUMN_CREATED_AT));
-        values.put(UserAddressTable.COLUMN_UPDATED_AT, currAddress.getString(UserAddressTable.COLUMN_UPDATED_AT));
+        //values.put(UserAddressTable.COLUMN_CREATED_AT, currAddress.getString(UserAddressTable.COLUMN_CREATED_AT));
+        //values.put(UserAddressTable.COLUMN_UPDATED_AT, currAddress.getString(UserAddressTable.COLUMN_UPDATED_AT));
         return values;
     }
 
