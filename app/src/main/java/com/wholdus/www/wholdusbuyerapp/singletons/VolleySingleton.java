@@ -24,6 +24,11 @@ public class VolleySingleton {
         mContext = context;
         mRequestQueue = getRequestQueue();
         VolleyLog.DEBUG = true;
+
+        /*
+         * TODO: Implement Disk Based Cache for Bitmap
+         * https://github.com/rdrobinson3/VolleyImageCacheExample/
+         */
         mImageLoader = new ImageLoader(mRequestQueue,
                 new ImageLoader.ImageCache() {
                     private final LruCache<String, Bitmap>
