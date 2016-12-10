@@ -2,6 +2,10 @@ package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -12,13 +16,17 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.fragments.CategoryGridFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.HomeFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
+import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements HomeListenerInterface {
 
     private DrawerLayout mDrawerLayout;
     private boolean mDoublePressToExit;
+
+    private static final String OPEN_FRAGMENT_KEY = "openFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +39,7 @@ public class HomeActivity extends AppCompatActivity {
         // initialize the navigation drawer
         initNavigationDrawer();
 
-        // initialize the activity elements
-        initActivityElements();
+        openToFragment(getFragmentToOpenName(savedInstanceState), null);
     }
 
     @Override
@@ -43,18 +50,22 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(!mDoublePressToExit) {
-            mDoublePressToExit = true;
-            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+            if (!mDoublePressToExit) {
+                mDoublePressToExit = true;
+                Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
 
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mDoublePressToExit = false;
-                }
-            }, 2000);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDoublePressToExit = false;
+                    }
+                }, 2000);
+            } else {
+                finish();
+            }
         } else {
-            finish();
+            super.onBackPressed();
         }
     }
 
@@ -80,6 +91,11 @@ public class HomeActivity extends AppCompatActivity {
         super.onOptionsMenuClosed(menu);
     }
 
+    @Override
+    public void openCategories() {
+        openToFragment("categories", null);
+    }
+
     private void initToolbar() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -101,9 +117,45 @@ public class HomeActivity extends AppCompatActivity {
                 .replace(R.id.navigation_drawer_fragment, new NavigationDrawerFragment()).commit();
     }
 
-    private void initActivityElements() {
-        // add fragment
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, new HomeFragment()).commit();
+    private String getFragmentToOpenName(Bundle savedInstanceState) {
+        String openFragment;
+        if (savedInstanceState == null) {
+            openFragment = getIntent().getStringExtra(getString(R.string.open_fragment_key));
+        } else {
+            openFragment = (String) savedInstanceState.getSerializable(getString(R.string.open_fragment_key));
+        }
+        if (openFragment == null) {
+            openFragment = "";
+        }
+        return openFragment;
+    }
+
+    private void openToFragment(String fragmentName, @Nullable Bundle bundle) {
+        Fragment fragment;
+
+        switch (fragmentName) {
+            case "home":
+                fragment = new HomeFragment();
+                break;
+            case "categories":
+                fragment = new CategoryGridFragment();
+                break;
+            default:
+                fragment = new HomeFragment();
+        }
+
+        fragment.setArguments(bundle);
+        String backStateName = fragment.getClass().getName();
+        FragmentManager fm = getSupportFragmentManager();
+
+        boolean fragmentPopped = fm.popBackStackImmediate(backStateName, 0);
+
+        if (!fragmentPopped) { // fragment not in backstack create it
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
+            ft.addToBackStack(backStateName);
+            ft.commit();
+        }
+
     }
 }

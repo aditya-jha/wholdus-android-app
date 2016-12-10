@@ -26,7 +26,6 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
     public OrdersAdapter(Context context, ArrayList<Order> listData){
         mContext = context;
         mListData = listData;
-        Log.w("Test", "Orders adapter created with list size " + listData.size());
     }
 
     @Override

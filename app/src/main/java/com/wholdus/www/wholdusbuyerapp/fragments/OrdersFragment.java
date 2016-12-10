@@ -12,6 +12,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -34,6 +36,8 @@ import com.wholdus.www.wholdusbuyerapp.services.UserService;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+
+import static android.support.v7.recyclerview.R.attr.layoutManager;
 
 /**
  * Created by aditya on 19/11/16.
@@ -121,6 +125,10 @@ public class OrdersFragment extends Fragment {
         mOrdersListView = (RecyclerView) rootView.findViewById(R.id.orders_recycler_view);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         mOrdersListView.setLayoutManager(mLayoutManager);
+        mOrdersListView.setItemAnimator(new DefaultItemAnimator());
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
+                DividerItemDecoration.VERTICAL);
+        mOrdersListView.addItemDecoration(dividerItemDecoration);
     }
 
     private void setViewForOrders(ArrayList<Order> orders){
@@ -144,7 +152,6 @@ public class OrdersFragment extends Fragment {
         @Override
         public void onLoadFinished(Loader<ArrayList<Order>> loader, ArrayList<Order> data) {
             setViewForOrders(data);
-            Log.w("Test", "Load finished list size is " + String.valueOf(data.size()));
         }
 
 

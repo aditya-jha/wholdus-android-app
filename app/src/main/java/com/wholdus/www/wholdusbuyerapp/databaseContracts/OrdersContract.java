@@ -8,7 +8,8 @@ import android.provider.BaseColumns;
 
 public final class OrdersContract {
 
-    private OrdersContract() {}
+    private OrdersContract() {
+    }
 
     public static final class OrdersTable implements BaseColumns {
         public static final String TABLE_NAME = "orders";

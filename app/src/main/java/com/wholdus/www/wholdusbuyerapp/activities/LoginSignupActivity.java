@@ -85,7 +85,9 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
     @Override
     public void loginSuccess() {
         // start HomeActivity and finish this activity
-        startActivity(new Intent(this, HomeActivity.class));
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.putExtra(getString(R.string.open_fragment_key), "home");
+        startActivity(intent);
         finish();
     }
 

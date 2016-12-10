@@ -119,7 +119,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String SQL_DROP_ORDERS_TABLE =
             "DROP TABLE IF EXISTS " + OrdersTable.TABLE_NAME;
-    
+
     private static final String SQL_CREATE_SUBORDERS_TABLE =
             "CREATE TABLE " + SubordersTable.TABLE_NAME + " (" +
                     SubordersTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +

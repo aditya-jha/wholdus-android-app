@@ -68,12 +68,11 @@ public class IntroActivity extends FragmentActivity implements IntroSlideFragmen
     }
 
     private int getPixelFromDPValue(int dpValue) {
-        int pixelValue = (int) TypedValue.applyDimension(
+        return (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
                 dpValue,
                 getResources().getDisplayMetrics()
         );
-        return pixelValue;
     }
 
     private void initIntroPagerDots() {
