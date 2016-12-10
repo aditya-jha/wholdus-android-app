@@ -38,6 +38,9 @@
         <service
             android:name=".services.UserService"
             android:exported="false" />
+        <service
+            android:name=".services.OrderService"
+            android:exported="false" />
     </application>
 
 </manifest>

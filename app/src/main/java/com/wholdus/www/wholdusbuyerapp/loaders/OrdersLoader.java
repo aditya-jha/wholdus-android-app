@@ -26,7 +26,7 @@ public class OrdersLoader extends AbstractLoader<ArrayList<Order>>{
 
         // fetch data from DB
         OrderDBHelper orderDBHelper = new OrderDBHelper(getContext());
-        Cursor cursor = orderDBHelper.getOrdersData(null, null);
+        Cursor cursor = orderDBHelper.getOrdersData(null, null, null);
         ArrayList<Order> orders = Order.getOrdersFromCursor(cursor);
 
         return orders;

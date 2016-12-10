@@ -3,6 +3,7 @@ package com.wholdus.www.wholdusbuyerapp.services;
 import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;

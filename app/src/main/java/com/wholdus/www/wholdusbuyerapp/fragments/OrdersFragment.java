@@ -12,6 +12,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,7 +43,6 @@ public class OrdersFragment extends Fragment {
 
     private ProfileListenerInterface mListener;
     private RecyclerView mOrdersListView;
-    private UserDBHelper mUserDBHelper;
     private final int ORDERS_DB_LOADER = 10;
     private BroadcastReceiver mOrderServiceResponseReceiver;
     private OrderLoaderManager mOrderLoader;
@@ -119,6 +119,8 @@ public class OrdersFragment extends Fragment {
 
     private void initReferences(ViewGroup rootView){
         mOrdersListView = (RecyclerView) rootView.findViewById(R.id.orders_recycler_view);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        mOrdersListView.setLayoutManager(mLayoutManager);
     }
 
     private void setViewForOrders(ArrayList<Order> orders){
@@ -142,6 +144,7 @@ public class OrdersFragment extends Fragment {
         @Override
         public void onLoadFinished(Loader<ArrayList<Order>> loader, ArrayList<Order> data) {
             setViewForOrders(data);
+            Log.w("Test", "Load finished list size is " + String.valueOf(data.size()));
         }
 
 
