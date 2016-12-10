@@ -29,6 +29,7 @@ public class Order {
     private int mPaymentStatusValue;
     private String mPaymentStatusDisplay;
     private String mCreatedAt;
+    private String mUpdatedAt;
     private String mRemarks;
 
     private ArrayList<Suborder> mSuborders;
@@ -66,6 +67,7 @@ public class Order {
         mPaymentStatusValue = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_PAYMENT_STATUS_VALUE));
         mPaymentStatusDisplay = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_PAYMENT_STATUS_DISPLAY));
         mCreatedAt = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_CREATED_AT));
+        mUpdatedAt = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_UPDATED_AT));
         mRemarks = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_REMARKS));
     }
 
@@ -139,6 +141,10 @@ public class Order {
 
     public String getCreatedAt() {
         return mCreatedAt;
+    }
+
+    public String getUpdatedAt() {
+        return mUpdatedAt;
     }
 
     public String getRemarks() {

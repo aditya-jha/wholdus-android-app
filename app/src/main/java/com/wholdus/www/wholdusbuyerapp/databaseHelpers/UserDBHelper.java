@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.BusinessTypesTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserInterestsTable;
@@ -17,6 +18,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -34,14 +37,30 @@ public class UserDBHelper extends BaseDBHelper {
         return getCursor(query);
     }
 
-    public Cursor getUserAddress(@Nullable String addressID, int _ID) {
-        String query = "SELECT * FROM " + UserAddressTable.TABLE_NAME;
+    public Cursor getUserAddress(@Nullable String addressID, int _ID, @Nullable String[] columns) {
+        String columnNames;
+        if (columns!= null && !(columns.length==0)){
+            columnNames = TextUtils.join(", ", columns);
+        } else {columnNames = "*";}
+
+        String query = "SELECT " + columnNames +" FROM " + UserAddressTable.TABLE_NAME;
         if (addressID != null && !TextUtils.isEmpty(addressID)) {
             query += " WHERE " + UserAddressTable.COLUMN_ADDRESS_ID + " = " + addressID;
         } else if (_ID != -1) {
             query += " WHERE " + UserAddressTable._ID + " = " + _ID;
         }
         return getCursor(query);
+    }
+
+    public HashMap<String, String> getPresentBuyerAddressIDs(){
+        String[] columns = new String[] {UserAddressTable.COLUMN_ADDRESS_ID,UserAddressTable.COLUMN_UPDATED_AT};
+        Cursor cursor = getUserAddress(null, -1, columns);
+        HashMap<String, String> buyerAddressIDs = new HashMap<>();
+        while (cursor.moveToNext()){
+            buyerAddressIDs.put(cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS_ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_UPDATED_AT)));
+        }
+        return buyerAddressIDs;
     }
 
     public Cursor getUserInterests(@Nullable String buyerInterestID, int _ID) {
@@ -130,15 +149,15 @@ public class UserDBHelper extends BaseDBHelper {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
 
         String addressID = currAddress.getString(UserAddressTable.COLUMN_ADDRESS_ID);
+        ContentValues values = getBuyerAddressContentValues(currAddress);
+        values.put(UserAddressTable.COLUMN_ADDRESS_ID, addressID);
+
         int _ID = -1;
         if (currAddress.has(UserAddressTable._ID)) {
             _ID = currAddress.getInt(UserAddressTable._ID);
         }
 
-        ContentValues values = getBuyerAddressContentValues(currAddress);
-        values.put(UserAddressTable.COLUMN_ADDRESS_ID, addressID);
-
-        if ((TextUtils.isEmpty(addressID) && _ID == -1) || getUserAddress(addressID, -1).getCount() == 0) {
+        if ((TextUtils.isEmpty(addressID) && _ID == -1) || getUserAddress(addressID, -1, null).getCount() == 0){
             // insert
             db.insert(UserAddressTable.TABLE_NAME, null, values);
         } else {
@@ -150,7 +169,26 @@ public class UserDBHelper extends BaseDBHelper {
             }
             db.update(UserAddressTable.TABLE_NAME, values, selection, null);
         }
+        mDatabaseHelper.closeDatabase();
+    }
 
+    public void updateUserAddressDataFromJSONObject(JSONObject currAddress, @Nullable Boolean addressPresent) throws JSONException{
+        SQLiteDatabase db = mDatabaseHelper.openDatabase();
+
+        String addressID = currAddress.getString(UserAddressTable.COLUMN_ADDRESS_ID);
+        ContentValues values = getBuyerAddressContentValues(currAddress);
+        values.put(UserAddressTable.COLUMN_ADDRESS_ID, addressID);
+
+        if (addressPresent==null){
+            addressPresent = (getUserAddress(addressID, -1, null).getCount() != 0);
+        }
+
+        if (!addressPresent){
+            db.insert(UserAddressTable.TABLE_NAME, null, values);
+        } else {
+            String selection = UserAddressTable.COLUMN_ADDRESS_ID + "=" + addressID;
+            db.update(UserAddressTable.TABLE_NAME, values, selection, null);
+        }
         mDatabaseHelper.closeDatabase();
     }
 
@@ -166,6 +204,8 @@ public class UserDBHelper extends BaseDBHelper {
         values.put(UserAddressTable.COLUMN_PINCODE, currAddress.getString(UserAddressTable.COLUMN_PINCODE));
         values.put(UserAddressTable.COLUMN_STATE, currAddress.getString(UserAddressTable.COLUMN_STATE));
         values.put(UserAddressTable.COLUMN_PRIORITY, currAddress.getString(UserAddressTable.COLUMN_PRIORITY));
+        values.put(UserAddressTable.COLUMN_CREATED_AT, currAddress.getString(UserAddressTable.COLUMN_CREATED_AT));
+        values.put(UserAddressTable.COLUMN_UPDATED_AT, currAddress.getString(UserAddressTable.COLUMN_UPDATED_AT));
         return values;
     }
 

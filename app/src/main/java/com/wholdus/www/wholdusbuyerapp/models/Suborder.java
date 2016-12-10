@@ -29,6 +29,7 @@ public class Suborder {
     private int mPaymentStatusValue;
     private String mPaymentStatusDisplay;
     private String mCreatedAt;
+    private String mUpdatedAt;
 
     private ArrayList<OrderItem> mOrderItems;
 
@@ -113,6 +114,10 @@ public class Suborder {
 
     public String getCreatedAt() {
         return mCreatedAt;
+    }
+
+    public String getUpdatedAt() {
+        return mUpdatedAt;
     }
 
     public ArrayList<OrderItem> getOrderItems() {

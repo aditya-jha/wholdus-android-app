@@ -43,6 +43,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     UserTable.COLUMN_WHATSAPP_NUMBER + TEXT_TYPE + COMMA_SEP +
                     UserTable.COLUMN_COMPANY_NAME + TEXT_TYPE + COMMA_SEP +
                     UserTable.COLUMN_BUSINESS_TYPE + TEXT_TYPE + COMMA_SEP +
+                    UserTable.COLUMN_CREATED_AT + TEXT_TYPE + COMMA_SEP +
+                    UserTable.COLUMN_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
                     UserTable.COLUMN_GENDER + TEXT_TYPE + " )";
 
     private static final String SQL_DROP_USER_TABLE =
@@ -60,6 +62,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     UserAddressTable.COLUMN_ADDRESS + TEXT_TYPE + COMMA_SEP +
                     UserAddressTable.COLUMN_CONTACT_NUMBER + TEXT_TYPE + COMMA_SEP +
                     UserAddressTable.COLUMN_ADDRESS_ALIAS + TEXT_TYPE + COMMA_SEP +
+                    UserAddressTable.COLUMN_CREATED_AT + TEXT_TYPE + COMMA_SEP +
+                    UserAddressTable.COLUMN_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
                     UserAddressTable.COLUMN_PINCODE + TEXT_TYPE + " )";
 
     private static final String SQL_DROP_USER_ADDRESS_TABLE =
@@ -84,6 +88,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT + TEXT_TYPE + COMMA_SEP +
                     UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT + TEXT_TYPE + COMMA_SEP +
                     UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT + TEXT_TYPE + COMMA_SEP +
+                    UserInterestsTable.COLUMN_CREATED_AT + TEXT_TYPE + COMMA_SEP +
+                    UserInterestsTable.COLUMN_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
                     UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED + INT_TYPE + " )";
 
     private static final String SQL_DROP_USER_INTERESTS_TABLE =
@@ -108,6 +114,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     OrdersTable.COLUMN_PAYMENT_STATUS_VALUE + INT_TYPE + COMMA_SEP +
                     OrdersTable.COLUMN_PAYMENT_STATUS_DISPLAY + TEXT_TYPE + COMMA_SEP +
                     OrdersTable.COLUMN_CREATED_AT + TEXT_TYPE + COMMA_SEP +
+                    OrdersTable.COLUMN_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
                     OrdersTable.COLUMN_REMARKS + TEXT_TYPE + " )";
 
     private static final String SQL_DROP_ORDERS_TABLE =
@@ -133,12 +140,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     SubordersTable.COLUMN_SUBORDER_STATUS_DISPLAY + TEXT_TYPE + COMMA_SEP +
                     SubordersTable.COLUMN_PAYMENT_STATUS_VALUE + INT_TYPE + COMMA_SEP +
                     SubordersTable.COLUMN_PAYMENT_STATUS_DISPLAY + TEXT_TYPE + COMMA_SEP +
+                    SubordersTable.COLUMN_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
                     SubordersTable.COLUMN_CREATED_AT + TEXT_TYPE + " )";
 
     private static final String SQL_DROP_SUBORDERS_TABLE =
             "DROP TABLE IF EXISTS " + SubordersTable.TABLE_NAME;
 
     private static final String SQL_CREATE_ORDER_ITEMS_TABLE =
+
             "CREATE TABLE " + OrderItemsTable.TABLE_NAME + " (" +
                     OrderItemsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
                     OrderItemsTable.COLUMN_ORDER_ITEM_ID + TEXT_TYPE + COMMA_SEP +
@@ -156,12 +165,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     OrderItemsTable.COLUMN_ORDER_ITEM_STATUS_DISPLAY + TEXT_TYPE + COMMA_SEP +
                     OrderItemsTable.COLUMN_TRACKING_URL + TEXT_TYPE + COMMA_SEP +
                     OrderItemsTable.COLUMN_CREATED_AT + TEXT_TYPE + COMMA_SEP +
+                    OrderItemsTable.COLUMN_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
                     OrderItemsTable.COLUMN_REMARKS + TEXT_TYPE + " )";
 
     private static final String SQL_DROP_ORDER_ITEMS_TABLE =
             "DROP TABLE IF EXISTS " + OrderItemsTable.TABLE_NAME;
 
     private static final String SQL_CREATE_PRODUCTS_TABLE =
+
             "CREATE TABLE " + ProductsTable.TABLE_NAME + " (" +
                     ProductsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
                     ProductsTable.COLUMN_PRODUCT_ID + INT_TYPE + COMMA_SEP +
@@ -185,7 +196,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     ProductsTable.COLUMN_IMAGE_PATH + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_WARRANTY + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_SPECIAL_FEATURE + TEXT_TYPE + COMMA_SEP +
-                    ProductsTable.COLUMN_AVAILABLITY + TEXT_TYPE + COMMA_SEP +
+                    ProductsTable.COLUMN_AVAILABILITY + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_STYLE + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_MANUFACTURED_CITY + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_PATTERN + TEXT_TYPE + COMMA_SEP +
@@ -211,12 +222,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "DROP TABLE IF EXISTS " + ProductsTable.TABLE_NAME;
 
     private static final String SQL_CREATE_CATEGORIES_TABLE =
+
             "CREATE TABLE " + CategoriesTable.TABLE_NAME + " (" +
                     CategoriesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
                     CategoriesTable.COLUMN_CATEGORY_ID + INT_TYPE + COMMA_SEP +
                     CategoriesTable.COLUMN_DISPLAY_NAME + TEXT_TYPE + COMMA_SEP +
                     CategoriesTable.COLUMN_URL + TEXT_TYPE + COMMA_SEP +
+                    CategoriesTable.COLUMN_CREATED_AT + TEXT_TYPE + COMMA_SEP +
+                    CategoriesTable.COLUMN_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
                     CategoriesTable.COLUMN_SLUG + TEXT_TYPE + " )";
+
 
     private static final String SQL_DROP_CATEGORIES_TABLE =
             "DROP TABLE IF EXISTS " + CategoriesTable.TABLE_NAME;
@@ -229,12 +244,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     SellersTable.COLUMN_NAME + TEXT_TYPE + COMMA_SEP +
                     SellersTable.COLUMN_COMPANY_PROFILE + TEXT_TYPE + COMMA_SEP +
                     SellersTable.COLUMN_SHOW_ONLINE + INT_TYPE + COMMA_SEP +
+                    SellersTable.COLUMN_CREATED_AT + TEXT_TYPE + COMMA_SEP +
+                    SellersTable.COLUMN_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
                     SellersTable.COLUMN_DELETE_STATUS + INT_TYPE + " )";
 
     private static final String SQL_DROP_SELLERS_TABLE =
             "DROP TABLE IF EXISTS " + SellersTable.TABLE_NAME;
 
     private static final String SQL_CREATE_SELLER_ADDRESS_TABLE =
+
             "CREATE TABLE " + SellerAddressTable.TABLE_NAME + " (" +
                     SellerAddressTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
                     SellerAddressTable.COLUMN_SELLER_ID + TEXT_TYPE + COMMA_SEP +
@@ -244,6 +262,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     SellerAddressTable.COLUMN_LANDMARK + TEXT_TYPE + COMMA_SEP +
                     SellerAddressTable.COLUMN_ADDRESS + TEXT_TYPE + COMMA_SEP +
                     SellerAddressTable.COLUMN_CONTACT_NUMBER + TEXT_TYPE + COMMA_SEP +
+                    SellerAddressTable.COLUMN_CREATED_AT + TEXT_TYPE + COMMA_SEP +
+                    SellerAddressTable.COLUMN_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
                     SellerAddressTable.COLUMN_PINCODE + TEXT_TYPE + " )";
 
     private static final String SQL_DROP_SELLER_ADDRESS_TABLE =
