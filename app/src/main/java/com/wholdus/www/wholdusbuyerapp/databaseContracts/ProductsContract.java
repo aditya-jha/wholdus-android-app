@@ -66,10 +66,11 @@ public class ProductsContract {
         public static final String TABLE_NAME = "categories";
         public static final String COLUMN_CATEGORY_ID = "categoryID";
 
-        public static final String COLUMN_DISPLAY_NAME = "display_name";
+        public static final String COLUMN_CATEGORY_NAME = "display_name";
         public static final String COLUMN_URL = "url";
         public static final String COLUMN_SLUG = "slug";
-
+        public static final String COLUMN_IMAGE_URL = "image_url";
+        public static final String COLUMN_PRODUCTS_COUNT = "product_count";
         public static final String COLUMN_CREATED_AT = "created_at";
         public static final String COLUMN_UPDATED_AT = "updated_at";
     }

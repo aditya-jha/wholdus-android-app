@@ -111,7 +111,7 @@ public class Buyer {
         return mBuyerInterest;
     }
 
-    public Boolean isEmpty() {
+    public boolean isEmpty() {
         return m_ID > 0;
     }
 }

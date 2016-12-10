@@ -13,7 +13,8 @@ public class BaseDBHelper {
     protected DatabaseHelper mDatabaseHelper;
     protected Context mContext;
 
-    public BaseDBHelper() {}
+    public BaseDBHelper() {
+    }
 
     public BaseDBHelper(Context context) {
         mDatabaseHelper = DatabaseHelper.getInstance(context);
@@ -29,4 +30,27 @@ public class BaseDBHelper {
         mDatabaseHelper.closeDatabase();
         return cursor;
     }
+
+    /*
+     * Cursor query (String table,
+                String[] columns,
+                String selection,
+                String[] selectionArgs,
+                String groupBy,
+                String having,
+                String orderBy,
+                String limit)
+
+    protected  Cursor getCursor(String table, @Nullable String[] cols, @Nullable String selection,
+                                @Nullable String[] selectionArgs, @Nullable String groupBy,
+                                @Nullable String having, @Nullable String orderBy,
+                                int limit, int offset) {
+        SQLiteDatabase db = mDatabaseHelper.openDatabase();
+        String limitOffset = offset + "," + limit;
+        Cursor cursor = db.query(table, cols, selection, selectionArgs, groupBy, having, orderBy, limitOffset);
+        mDatabaseHelper.closeDatabase();
+
+        return cursor;
+    }
+    */
 }

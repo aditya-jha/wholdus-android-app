@@ -17,10 +17,10 @@ public class BuyerProduct {
     private long mBuyerProductID;
     private long mBuyerProductResponseID;
     private Product mProduct;
-    private Boolean mHasSwiped;
+    private boolean mHasSwiped;
     private int mResponseCode;
     private double mStoreDiscount;
-    private Boolean mSynced;
+    private boolean mSynced;
 
     public BuyerProduct() {
     }
@@ -56,7 +56,7 @@ public class BuyerProduct {
         return mProduct;
     }
 
-    public Boolean getHasSwiped() {
+    public boolean getHasSwiped() {
         return mHasSwiped;
     }
 
@@ -68,7 +68,7 @@ public class BuyerProduct {
         return mBuyerProductResponseID;
     }
 
-    public Boolean getSynced() {
+    public boolean getSynced() {
         return mSynced;
     }
 

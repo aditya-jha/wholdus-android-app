@@ -7,4 +7,6 @@ package com.wholdus.www.wholdusbuyerapp.interfaces;
 public interface HomeListenerInterface {
 
     void openCategories();
+
+    void fragmentCreated(String fragmentName, boolean backEnabled);
 }
