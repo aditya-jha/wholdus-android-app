@@ -2,8 +2,6 @@ package com.wholdus.www.wholdusbuyerapp.databaseContracts;
 
 import android.provider.BaseColumns;
 
-import static android.R.attr.description;
-
 /**
  * Created by aditya on 25/11/16.
  */
@@ -11,7 +9,8 @@ import static android.R.attr.description;
 public final class UserProfileContract {
 
     // this class should not be instantiated, hence constructor private
-    private UserProfileContract() {}
+    private UserProfileContract() {
+    }
 
     public static final class UserTable implements BaseColumns {
         public static final String TABLE_NAME = "user";

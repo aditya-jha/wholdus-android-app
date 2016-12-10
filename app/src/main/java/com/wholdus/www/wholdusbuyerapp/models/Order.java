@@ -41,9 +41,9 @@ public class Order {
         setDataFromCursor(cursor);
     }
 
-    public static ArrayList<Order> getOrdersFromCursor(Cursor cursor){
+    public static ArrayList<Order> getOrdersFromCursor(Cursor cursor) {
         ArrayList<Order> orders = new ArrayList<>();
-        while(cursor.moveToNext()) {
+        while (cursor.moveToNext()) {
             orders.add(new Order(cursor));
         }
         return orders;
