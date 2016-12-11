@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="open_fragment_key">openFragment</string>
+    <string name="selected_category_id">selectedCategoryID</string>
 </resources>

@@ -41,6 +41,8 @@
         <service
             android:name=".services.CatalogService"
             android:exported="false" />
+
+        <activity android:name=".activities.CategoryProductActivity"></activity>
     </application>
 
 </manifest>

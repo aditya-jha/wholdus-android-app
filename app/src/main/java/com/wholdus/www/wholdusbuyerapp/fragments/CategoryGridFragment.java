@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.CategoriesGridAdapter;
@@ -41,6 +40,7 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
     private RecyclerView mRecyclerView;
     private CategoriesGridAdapter mCategoriesGridAdapter;
     private HomeListenerInterface mListener;
+    private List<Category> mCategoriesData;
 
     public CategoryGridFragment() {
     }
@@ -120,12 +120,24 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void itemClicked(int position, int id) {
-        Toast.makeText(getContext(), "click on " + position + " and id " + id, Toast.LENGTH_SHORT).show();
+        switch (id) {
+            case R.id.fav_icon_image_view:
+                // add the category at position to buyer interests
+                break;
+            default:
+                // open category clicked
+                mListener.openCategory(mCategoriesData.get(position).getCategoryID());
+        }
     }
 
     private void initReferences(ViewGroup rootView) {
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.categories_recycler_view);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        mRecyclerView.setHasFixedSize(true);
+
+        mCategoriesData = new ArrayList<>();
+        mCategoriesGridAdapter = new CategoriesGridAdapter(getContext(), mCategoriesData, this);
+        mRecyclerView.setAdapter(mCategoriesGridAdapter);
     }
 
     private void fetchDataFromServer() {
@@ -140,9 +152,10 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
         getActivity().getSupportLoaderManager().restartLoader(CATEGORIES_LOADER, null, this);
     }
 
-    private void setDataToView(List<Category> categories) {
-        mCategoriesGridAdapter = new CategoriesGridAdapter(getContext(), categories, this);
-        mRecyclerView.setAdapter(mCategoriesGridAdapter);
-        mRecyclerView.setHasFixedSize(true);
+    private void setDataToView(List<Category> data) {
+        if (mCategoriesData.size() == 0 && data.size() != 0) {
+            mCategoriesData.addAll(data);
+            mCategoriesGridAdapter.notifyItemRangeInserted(0, mCategoriesData.size());
+        }
     }
 }

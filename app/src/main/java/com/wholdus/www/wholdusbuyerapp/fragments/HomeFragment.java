@@ -48,7 +48,7 @@ public class HomeFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.openCategories();
+                mListener.openCategory(-1);
             }
         });
         return rootView;
