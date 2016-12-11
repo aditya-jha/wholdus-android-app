@@ -10,8 +10,8 @@ import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.Use
 
 public class BuyerAddress {
     private int m_ID;
-    private String mAddressID;
-    private String mPincodeID;
+    private int mAddressID;
+    private int mPincodeID;
     private String mAddress;
     private String mCity;
     private String mState;
@@ -26,8 +26,8 @@ public class BuyerAddress {
 
     public BuyerAddress(Cursor cursor) {
         m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(UserAddressTable._ID));
-        mAddressID = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS_ID));
-        mPincodeID = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_PINCODE_ID));
+        mAddressID = cursor.getInt(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS_ID));
+        mPincodeID = cursor.getInt(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_PINCODE_ID));
         mAddress = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS));
         mCity = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_CITY));
         mState = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_STATE));
@@ -42,11 +42,11 @@ public class BuyerAddress {
         return m_ID;
     }
 
-    public String getAddressID() {
+    public int getAddressID() {
         return mAddressID;
     }
 
-    public String getPincodeID() {
+    public int getPincodeID() {
         return mPincodeID;
     }
 

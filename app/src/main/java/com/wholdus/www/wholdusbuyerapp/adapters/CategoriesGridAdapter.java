@@ -18,6 +18,7 @@ import java.util.List;
 
 /**
  * Created by aditya on 11/12/16.
+ * RecyclerView Adapter to display products as grid
  */
 
 public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAdapter.ViewHolder> {
@@ -48,7 +49,10 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
         Category category = mCategories.get(position);
 
         holder.mNameTextView.setText(category.getCategoryName());
-        holder.mNameTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_favorite_border_black_24dp, 0);
+        if (!category.getLikeStatus()) {
+            holder.mNameTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_favorite_border_black_24dp, 0);
+        }
+
         holder.mIconImageView.setImageUrl(category.getImageURL(), mImageLoader);
         holder.mIconImageView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override

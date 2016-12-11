@@ -12,14 +12,14 @@ import java.util.ArrayList;
 
 public class BusinessTypes {
     private int m_ID;
+    private int mBusinessTypeID;
     private String mBusinessType;
-    private String mBusinessTypeID;
     private String mDescription;
 
     public BusinessTypes() {
     }
 
-    public BusinessTypes(int id, String bt, String btID, String desc) {
+    public BusinessTypes(int id, String bt, int btID, String desc) {
         m_ID = id;
         mBusinessType = bt;
         mBusinessTypeID = btID;
@@ -32,8 +32,8 @@ public class BusinessTypes {
 
     public void setBusinessTypesData(Cursor cursor) {
         m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(BusinessTypesTable._ID));
+        mBusinessTypeID = cursor.getInt(cursor.getColumnIndexOrThrow(BusinessTypesTable.COLUMN_BUSINESS_TYPE_ID));
         mBusinessType = cursor.getString(cursor.getColumnIndexOrThrow(BusinessTypesTable.COLUMN_BUSINESS_TYPE));
-        mBusinessTypeID = cursor.getString(cursor.getColumnIndexOrThrow(BusinessTypesTable.COLUMN_BUSINESS_TYPE_ID));
         mDescription = cursor.getString(cursor.getColumnIndexOrThrow(BusinessTypesTable.COLUMN_DESCRIPTION));
     }
 
@@ -49,12 +49,12 @@ public class BusinessTypes {
         return m_ID;
     }
 
-    public String getBusinessType() {
-        return mBusinessType;
+    public int getBusinessTypeID() {
+        return mBusinessTypeID;
     }
 
-    public String getBusinessTypeID() {
-        return mBusinessTypeID;
+    public String getBusinessType() {
+        return mBusinessType;
     }
 
     public String getDescription() {

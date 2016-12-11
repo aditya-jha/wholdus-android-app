@@ -24,10 +24,14 @@ public class CatalogDBHelper extends BaseDBHelper {
         super(context);
     }
 
-    public Cursor getAllCategories() {
-        String query = "SELECT C.*, " + "(SELECT COUNT(*) FROM " + ProductsTable.TABLE_NAME + " AS P " +
-                " WHERE C." + CategoriesTable.COLUMN_CATEGORY_ID + " = P." + ProductsTable.COLUMN_CATEGORY_ID + ") AS " +
-                CategoriesTable.COLUMN_PRODUCTS_COUNT + " FROM " + CategoriesTable.TABLE_NAME + " AS C";
+    public Cursor getAllCategories(boolean productsCount) {
+        String countQuery = "";
+        if (productsCount) {
+            countQuery = ", (SELECT COUNT(*) FROM " + ProductsTable.TABLE_NAME + " AS P " +
+                    " WHERE C." + CategoriesTable.COLUMN_CATEGORY_ID + " = P." + ProductsTable.COLUMN_CATEGORY_ID + ") AS " +
+                    CategoriesTable.COLUMN_PRODUCTS_COUNT;
+        }
+        String query = "SELECT C.*" + countQuery + " FROM " + CategoriesTable.TABLE_NAME + " AS C";;
         return getCursor(query);
     }
 

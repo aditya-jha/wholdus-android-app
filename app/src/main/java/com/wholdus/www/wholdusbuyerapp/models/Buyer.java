@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class Buyer {
     private int m_ID;
-    private String mBuyerID;
+    private int mBuyerID;
     private String mName;
     private String mEmail;
     private String mMobileNumber;
@@ -43,7 +43,7 @@ public class Buyer {
         }
         cursor.moveToFirst();
         m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(UserTable._ID));
-        mBuyerID = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_BUYER_ID));
+        mBuyerID = cursor.getInt(cursor.getColumnIndexOrThrow(UserTable.COLUMN_BUYER_ID));
         mName = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_NAME));
         mEmail = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_EMAIL));
         mMobileNumber = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_MOBILE_NUMBER));
@@ -71,7 +71,7 @@ public class Buyer {
         return m_ID;
     }
 
-    public String getBuyerID() {
+    public int getBuyerID() {
         return mBuyerID;
     }
 

@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.SparseArray;
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.BusinessTypesTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
@@ -17,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Created by aditya on 25/11/16.
@@ -28,7 +30,7 @@ public class UserDBHelper extends BaseDBHelper {
         super(context);
     }
 
-    public Cursor getUserData(String buyerID) {
+    public Cursor getUserData(int buyerID) {
         String query = "SELECT * FROM " + UserTable.TABLE_NAME + " WHERE " + UserTable.COLUMN_BUYER_ID + "= " + buyerID + ";";
         return getCursor(query);
     }
@@ -50,19 +52,12 @@ public class UserDBHelper extends BaseDBHelper {
         return getCursor(query);
     }
 
-    public HashMap<String, String> getPresentBuyerAddressIDs() {
-        String[] columns = new String[]{UserAddressTable.COLUMN_ADDRESS_ID, UserAddressTable.COLUMN_UPDATED_AT};
-        Cursor cursor = getUserAddress(null, -1, columns);
-        HashMap<String, String> buyerAddressIDs = new HashMap<>();
-        while (cursor.moveToNext()) {
-            buyerAddressIDs.put(cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS_ID)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_UPDATED_AT)));
-        }
-        return buyerAddressIDs;
-    }
+    public Cursor getUserInterests(@Nullable String buyerInterestID, int _ID, @Nullable String[] columns) {
+        String columnsToSelect;
+        if (columns != null) columnsToSelect = "*";
+        else columnsToSelect = TextUtils.join(",", columns);
 
-    public Cursor getUserInterests(@Nullable String buyerInterestID, int _ID) {
-        String query = "SELECT * FROM " + UserInterestsTable.TABLE_NAME;
+        String query = "SELECT " + columnsToSelect + " FROM " + UserInterestsTable.TABLE_NAME;
         if (buyerInterestID != null) {
             query += " WHERE " + UserInterestsTable.COLUMN_BUYER_INTEREST_ID + "=" + buyerInterestID;
         } else if (_ID != -1) {
@@ -79,7 +74,29 @@ public class UserDBHelper extends BaseDBHelper {
         return getCursor(query);
     }
 
-    public long updateUserData(JSONObject data) throws JSONException {
+    public SparseArray<String> getPresentBuyerAddressIDs() {
+        String[] columns = new String[]{UserAddressTable.COLUMN_ADDRESS_ID, UserAddressTable.COLUMN_UPDATED_AT};
+        Cursor cursor = getUserAddress(null, -1, columns);
+        SparseArray<String> buyerAddressIDs = new SparseArray<>();
+
+        while (cursor.moveToNext()) {
+            buyerAddressIDs.put(cursor.getInt(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS_ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_UPDATED_AT)));
+        }
+
+        return buyerAddressIDs;
+    }
+
+    public HashSet getAllUserInterestID() {
+        Cursor cursor = getUserInterests(null, -1, new String[]{UserInterestsTable.COLUMN_BUYER_INTEREST_ID});
+        HashSet ids = new HashSet();
+        while (cursor.moveToNext()) {
+            ids.add(cursor.getInt(0));
+        }
+        return ids;
+    }
+
+    public int updateUserData(JSONObject data) throws JSONException {
 
         ContentValues user = new ContentValues();
         user.put(UserTable.COLUMN_NAME, data.getString(UserTable.COLUMN_NAME));
@@ -92,26 +109,28 @@ public class UserDBHelper extends BaseDBHelper {
         String businessType = data.getJSONObject("details").getJSONObject("buyer_type").getString(UserTable.COLUMN_BUSINESS_TYPE);
         user.put(UserTable.COLUMN_BUSINESS_TYPE, businessType);
 
-        String buyerID = data.getString(UserTable.COLUMN_BUYER_ID);
-        long rows;
+        int buyerID = data.getInt(UserTable.COLUMN_BUYER_ID);
+        int insertedUpdated = 0;
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
 
         if (getUserData(buyerID).getCount() == 0) {
             user.put(UserTable.COLUMN_BUYER_ID, buyerID);
-            rows = db.insert(UserTable.TABLE_NAME, null, user);
+            db.insert(UserTable.TABLE_NAME, null, user);
+            insertedUpdated++;
         } else {
-            rows = db.update(
+            db.update(
                     UserTable.TABLE_NAME,
                     user,
                     UserTable.COLUMN_BUYER_ID + "=" + buyerID,
                     null
             );
+            insertedUpdated++;
         }
         mDatabaseHelper.closeDatabase();
-        return rows;
+        return insertedUpdated;
     }
 
-    public long updateUserData(String buyerID, ContentValues values) {
+    public long updateUserData(int buyerID, ContentValues values) {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
 
         long rows = db.update(
@@ -254,7 +273,7 @@ public class UserDBHelper extends BaseDBHelper {
             values.put(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED, priceFilterApplied);
             values.put(UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT, currInterest.getString(UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT));
 
-            if (getUserInterests(buyerInterestID, -1).getCount() == 0) { // insert
+            if (getUserInterests(buyerInterestID, -1, null).getCount() == 0) { // insert
                 db.insert(UserInterestsTable.TABLE_NAME, null, values);
             } else {
                 String selection = UserInterestsTable.COLUMN_BUYER_INTEREST_ID + "=" + buyerInterestID;
