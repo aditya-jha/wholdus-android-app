@@ -90,6 +90,7 @@ public class CategoryProductActivity extends AppCompatActivity {
         mToolbar = (Toolbar) findViewById(R.id.default_toolbar);
         setSupportActionBar(mToolbar);
 
+        mToolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -17,7 +17,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -35,7 +34,7 @@ public class UserDBHelper extends BaseDBHelper {
         return getCursor(query);
     }
 
-    public Cursor getUserAddress(@Nullable String addressID, int _ID, @Nullable String[] columns) {
+    public Cursor getUserAddress(int addressID, int _ID, @Nullable String[] columns) {
         String columnNames;
         if (columns != null && !(columns.length == 0)) {
             columnNames = TextUtils.join(", ", columns);
@@ -44,7 +43,7 @@ public class UserDBHelper extends BaseDBHelper {
         }
 
         String query = "SELECT " + columnNames + " FROM " + UserAddressTable.TABLE_NAME;
-        if (addressID != null && !TextUtils.isEmpty(addressID)) {
+        if (addressID != -1) {
             query += " WHERE " + UserAddressTable.COLUMN_ADDRESS_ID + " = " + addressID;
         } else if (_ID != -1) {
             query += " WHERE " + UserAddressTable._ID + " = " + _ID;
@@ -52,13 +51,13 @@ public class UserDBHelper extends BaseDBHelper {
         return getCursor(query);
     }
 
-    public Cursor getUserInterests(@Nullable String buyerInterestID, int _ID, @Nullable String[] columns) {
+    public Cursor getUserInterests(int buyerInterestID, int _ID, @Nullable String[] columns) {
         String columnsToSelect;
         if (columns != null) columnsToSelect = "*";
         else columnsToSelect = TextUtils.join(",", columns);
 
         String query = "SELECT " + columnsToSelect + " FROM " + UserInterestsTable.TABLE_NAME;
-        if (buyerInterestID != null) {
+        if (buyerInterestID != -1) {
             query += " WHERE " + UserInterestsTable.COLUMN_BUYER_INTEREST_ID + "=" + buyerInterestID;
         } else if (_ID != -1) {
             query += " WHERE " + UserInterestsTable._ID + "=" + _ID;
@@ -76,7 +75,7 @@ public class UserDBHelper extends BaseDBHelper {
 
     public SparseArray<String> getPresentBuyerAddressIDs() {
         String[] columns = new String[]{UserAddressTable.COLUMN_ADDRESS_ID, UserAddressTable.COLUMN_UPDATED_AT};
-        Cursor cursor = getUserAddress(null, -1, columns);
+        Cursor cursor = getUserAddress(-1, -1, columns);
         SparseArray<String> buyerAddressIDs = new SparseArray<>();
 
         while (cursor.moveToNext()) {
@@ -88,7 +87,7 @@ public class UserDBHelper extends BaseDBHelper {
     }
 
     public HashSet getAllUserInterestID() {
-        Cursor cursor = getUserInterests(null, -1, new String[]{UserInterestsTable.COLUMN_BUYER_INTEREST_ID});
+        Cursor cursor = getUserInterests(-1, -1, new String[]{UserInterestsTable.COLUMN_BUYER_INTEREST_ID});
         HashSet ids = new HashSet();
         while (cursor.moveToNext()) {
             ids.add(cursor.getInt(0));
@@ -165,16 +164,15 @@ public class UserDBHelper extends BaseDBHelper {
     public void updateUserAddressDataFromJSONObject(JSONObject currAddress) throws JSONException {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
 
-        String addressID = currAddress.getString(UserAddressTable.COLUMN_ADDRESS_ID);
         ContentValues values = getBuyerAddressContentValues(currAddress);
-        values.put(UserAddressTable.COLUMN_ADDRESS_ID, addressID);
+        int addressID = values.getAsInteger(UserAddressTable.COLUMN_ADDRESS_ID);
 
         int _ID = -1;
         if (currAddress.has(UserAddressTable._ID)) {
             _ID = currAddress.getInt(UserAddressTable._ID);
         }
 
-        if ((TextUtils.isEmpty(addressID) && _ID == -1) || getUserAddress(addressID, -1, null).getCount() == 0) {
+        if ((addressID == 0 && _ID == -1) || getUserAddress(addressID, -1, null).getCount() == 0) {
             // insert
             db.insert(UserAddressTable.TABLE_NAME, null, values);
         } else {
@@ -192,9 +190,8 @@ public class UserDBHelper extends BaseDBHelper {
     public void updateUserAddressDataFromJSONObject(JSONObject currAddress, @Nullable Boolean addressPresent) throws JSONException {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
 
-        String addressID = currAddress.getString(UserAddressTable.COLUMN_ADDRESS_ID);
         ContentValues values = getBuyerAddressContentValues(currAddress);
-        values.put(UserAddressTable.COLUMN_ADDRESS_ID, addressID);
+        int addressID = values.getAsInteger(UserAddressTable.COLUMN_ADDRESS_ID);
 
         if (addressPresent == null) {
             addressPresent = (getUserAddress(addressID, -1, null).getCount() != 0);
@@ -211,13 +208,17 @@ public class UserDBHelper extends BaseDBHelper {
 
     private ContentValues getBuyerAddressContentValues(JSONObject currAddress) throws JSONException {
         ContentValues values = new ContentValues();
-        values.put(UserAddressTable.COLUMN_ADDRESS_ID, currAddress.getString(UserAddressTable.COLUMN_ADDRESS_ID));
+        if (currAddress.has(UserAddressTable.COLUMN_ADDRESS_ID)) {
+            values.put(UserAddressTable.COLUMN_ADDRESS_ID, currAddress.getInt(UserAddressTable.COLUMN_ADDRESS_ID));
+        } else {
+            values.put(UserAddressTable.COLUMN_ADDRESS_ID, 0);
+        }
         values.put(UserAddressTable.COLUMN_ADDRESS, currAddress.getString(UserAddressTable.COLUMN_ADDRESS));
         values.put(UserAddressTable.COLUMN_ADDRESS_ALIAS, currAddress.getString(UserAddressTable.COLUMN_ADDRESS_ALIAS));
         values.put(UserAddressTable.COLUMN_CITY, currAddress.getString(UserAddressTable.COLUMN_CITY));
         values.put(UserAddressTable.COLUMN_CONTACT_NUMBER, currAddress.getString(UserAddressTable.COLUMN_CONTACT_NUMBER));
         values.put(UserAddressTable.COLUMN_LANDMARK, currAddress.getString(UserAddressTable.COLUMN_LANDMARK));
-        values.put(UserAddressTable.COLUMN_PINCODE_ID, currAddress.getString(UserAddressTable.COLUMN_PINCODE_ID));
+        values.put(UserAddressTable.COLUMN_PINCODE_ID, currAddress.getInt(UserAddressTable.COLUMN_PINCODE_ID));
         values.put(UserAddressTable.COLUMN_PINCODE, currAddress.getString(UserAddressTable.COLUMN_PINCODE));
         values.put(UserAddressTable.COLUMN_STATE, currAddress.getString(UserAddressTable.COLUMN_STATE));
         values.put(UserAddressTable.COLUMN_PRIORITY, currAddress.getString(UserAddressTable.COLUMN_PRIORITY));
@@ -262,11 +263,11 @@ public class UserDBHelper extends BaseDBHelper {
             ContentValues values = new ContentValues();
 
             JSONObject category = currInterest.getJSONObject("category");
-            String buyerInterestID = currInterest.getString(UserInterestsTable.COLUMN_BUYER_INTEREST_ID);
+            int buyerInterestID = currInterest.getInt(UserInterestsTable.COLUMN_BUYER_INTEREST_ID);
 
             int priceFilterApplied = currInterest.getBoolean(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED) ? 1 : 0;
             values.put(UserInterestsTable.COLUMN_BUYER_INTEREST_ID, buyerInterestID);
-            values.put(UserInterestsTable.COLUMN_CATEGORY_ID, category.getString(UserInterestsTable.COLUMN_CATEGORY_ID));
+            values.put(UserInterestsTable.COLUMN_CATEGORY_ID, category.getInt(UserInterestsTable.COLUMN_CATEGORY_ID));
             values.put(UserInterestsTable.COLUMN_CATEGORY_NAME, category.getString(UserInterestsTable.COLUMN_CATEGORY_NAME));
             values.put(UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT, currInterest.getString(UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT));
             values.put(UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT, currInterest.getString(UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT));
