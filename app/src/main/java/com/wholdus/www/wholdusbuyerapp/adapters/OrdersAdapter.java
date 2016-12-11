@@ -29,11 +29,6 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
         mListData = listData;
     }
 
-    public void changeOrdersList(ArrayList<Order> listData){
-        mListData = listData;
-        notifyDataSetChanged();
-    }
-
     @Override
     public int getItemCount() {
         return mListData.size();

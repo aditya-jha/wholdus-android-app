@@ -28,6 +28,7 @@ import com.wholdus.www.wholdusbuyerapp.WholdusApplication;
 import com.wholdus.www.wholdusbuyerapp.adapters.OrdersAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
+import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewVerticalSpaceItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.OrdersLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Order;
@@ -52,6 +53,7 @@ public class OrdersFragment extends Fragment {
     private BroadcastReceiver mOrderServiceResponseReceiver;
     private OrderLoaderManager mOrderLoader;
     OrdersAdapter ordersAdapter;
+    ArrayList<Order> orderArrayList;
 
     public OrdersFragment() {
     }
@@ -128,19 +130,21 @@ public class OrdersFragment extends Fragment {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         mOrdersListView.setLayoutManager(mLayoutManager);
         mOrdersListView.setItemAnimator(new DefaultItemAnimator());
-        VerticalSpaceItemDecoration dividerItemDecoration = new VerticalSpaceItemDecoration(40);
+        RecyclerViewVerticalSpaceItemDecoration dividerItemDecoration = new RecyclerViewVerticalSpaceItemDecoration(40);
         mOrdersListView.addItemDecoration(dividerItemDecoration);
     }
 
     private void setViewForOrders(ArrayList<Order> orders){
         //TODO: If empty list, handle case
+        orderArrayList = orders;
         if (ordersAdapter == null) {
             ordersAdapter = new OrdersAdapter(getContext(), orders);
+            mOrdersListView.setAdapter(ordersAdapter);
         }
         else {
-            ordersAdapter.changeOrdersList(orders);
+            ordersAdapter.notifyDataSetChanged();
         }
-        mOrdersListView.setAdapter(ordersAdapter);
+
     }
 
     private void fetchDataFromServer(){
@@ -167,20 +171,4 @@ public class OrdersFragment extends Fragment {
         }
    }
 
-    public class VerticalSpaceItemDecoration extends RecyclerView.ItemDecoration {
-
-        private final int verticalSpaceHeight;
-
-        public VerticalSpaceItemDecoration(int verticalSpaceHeight) {
-            this.verticalSpaceHeight = verticalSpaceHeight;
-        }
-
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
-                                   RecyclerView.State state) {
-            if (parent.getChildAdapterPosition(view) != parent.getAdapter().getItemCount() - 1) {
-                outRect.bottom = verticalSpaceHeight;
-            }
-        }
-    }
 }
