@@ -182,8 +182,8 @@ public class UserService extends IntentService {
 
         // update userData
         boolean savedUserData = userDBHelper.updateUserData(response) > 0;
-        boolean savedUserAddress = userDBHelper.updateUserAddressData(response) > 0;
-        boolean savedUserInterestData = userDBHelper.updateUserInterestsData(response) > 0;
+//        boolean savedUserAddress = userDBHelper.updateUserAddressData(response) > 0;
+//        boolean savedUserInterestData = userDBHelper.updateUserInterestsData(response) > 0;
 
         if (savedUserData) {
             sendUserDataUpdatedBroadCast(null);
