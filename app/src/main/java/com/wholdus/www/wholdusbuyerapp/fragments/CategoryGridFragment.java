@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -41,6 +42,7 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
     private CategoriesGridAdapter mCategoriesGridAdapter;
     private HomeListenerInterface mListener;
     private List<Category> mCategoriesData;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public CategoryGridFragment() {
     }
@@ -76,6 +78,14 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
 
         getActivity().getSupportLoaderManager().initLoader(CATEGORIES_LOADER, null, this);
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getActivity().getSupportLoaderManager().initLoader(CATEGORIES_LOADER, null, CategoryGridFragment.this);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
         return rootView;
     }
 
