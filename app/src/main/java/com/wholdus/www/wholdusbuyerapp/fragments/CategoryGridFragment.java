@@ -16,10 +16,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.CategoriesGridAdapter;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
+import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.CategoriesGridLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Category;
 import com.wholdus.www.wholdusbuyerapp.services.CatalogService;
@@ -32,7 +34,7 @@ import java.util.List;
  * Fragment to Display Categories present on wholdus
  */
 
-public class CategoryGridFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<Category>> {
+public class CategoryGridFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<Category>>, ItemClickListener {
 
     private static int CATEGORIES_LOADER = 0;
     private BroadcastReceiver mReceiver;
@@ -70,8 +72,7 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_categories_grid, container, false);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.categories_recycler_view);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        initReferences(rootView);
 
         getActivity().getSupportLoaderManager().initLoader(CATEGORIES_LOADER, null, this);
 
@@ -117,6 +118,16 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
 
     }
 
+    @Override
+    public void itemClicked(int position, int id) {
+        Toast.makeText(getContext(), "click on " + position + " and id " + id, Toast.LENGTH_SHORT).show();
+    }
+
+    private void initReferences(ViewGroup rootView) {
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.categories_recycler_view);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+    }
+
     private void fetchDataFromServer() {
         Intent intent = new Intent(getContext(), CatalogService.class);
         intent.putExtra("TODO", R.integer.fetch_categories);
@@ -130,7 +141,8 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
     }
 
     private void setDataToView(List<Category> categories) {
-        mCategoriesGridAdapter = new CategoriesGridAdapter(getContext(), categories);
+        mCategoriesGridAdapter = new CategoriesGridAdapter(getContext(), categories, this);
         mRecyclerView.setAdapter(mCategoriesGridAdapter);
+        mRecyclerView.setHasFixedSize(true);
     }
 }
