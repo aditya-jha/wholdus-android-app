@@ -14,7 +14,7 @@ public class BuyerInterest {
     private String mCategoryID;
     private String mCategoryName;
     private String mFabricFilter;
-    private Boolean mPriceFilterApplied;
+    private boolean mPriceFilterApplied;
     private double mMinPricePerUnit;
     private double mMaxPricePerUnit;
 
@@ -52,7 +52,7 @@ public class BuyerInterest {
         return mFabricFilter;
     }
 
-    public Boolean getPriceFilterApplied() {
+    public boolean getPriceFilterApplied() {
         return mPriceFilterApplied;
     }
 

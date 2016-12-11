@@ -7,4 +7,6 @@
 
     <dimen name="card_margin_vertical">8dp</dimen>
     <dimen name="card_margin_horizontal">8dp</dimen>
+
+    <dimen name="text_divider_gap">3dp</dimen>
 </resources>

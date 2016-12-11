@@ -55,6 +55,11 @@
     <!-- Buyer Interest Fragment -->
     <string name="buyer_interest_fragment_title">My Preferences</string>
 
+    <!-- Order Fragment -->
+    <string name="order_card_order_number">ORD-NO :&#160;</string>
+    <string name="order_card_date">Date :&#160;</string>
+    <string name="order_card_amount">Amount : Rs. </string>
+
     <!-- keys -->
     <string name="name_key">name</string>
     <string name="mobile_number_key">Mobile Number</string>
@@ -66,4 +71,7 @@
     <string name="landmark_key">Landmark</string>
     <string name="city_key">City</string>
     <string name="state_key">State</string>
+
+    <!-- messages -->
+    <string name="back_press_message">Press back again to exit</string>
 </resources>

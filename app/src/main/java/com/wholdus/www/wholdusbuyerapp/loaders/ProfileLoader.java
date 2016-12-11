@@ -12,9 +12,9 @@ import com.wholdus.www.wholdusbuyerapp.models.Buyer;
 
 public class ProfileLoader extends AbstractLoader<Buyer> {
 
-    private Boolean mLoadAddress, mLoadInterest, mLoadProfile;
+    private boolean mLoadAddress, mLoadInterest, mLoadProfile;
 
-    public ProfileLoader(Context context, Boolean profile, Boolean address, Boolean interest) {
+    public ProfileLoader(Context context, boolean profile, boolean address, boolean interest) {
         super(context);
         mLoadProfile = profile;
         mLoadAddress = address;

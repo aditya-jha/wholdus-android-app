@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -50,6 +51,7 @@ public class OrdersFragment extends Fragment {
     private final int ORDERS_DB_LOADER = 10;
     private BroadcastReceiver mOrderServiceResponseReceiver;
     private OrderLoaderManager mOrderLoader;
+    OrdersAdapter ordersAdapter;
 
     public OrdersFragment() {
     }
@@ -126,15 +128,19 @@ public class OrdersFragment extends Fragment {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         mOrdersListView.setLayoutManager(mLayoutManager);
         mOrdersListView.setItemAnimator(new DefaultItemAnimator());
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
-                DividerItemDecoration.VERTICAL);
+        VerticalSpaceItemDecoration dividerItemDecoration = new VerticalSpaceItemDecoration(40);
         mOrdersListView.addItemDecoration(dividerItemDecoration);
     }
 
     private void setViewForOrders(ArrayList<Order> orders){
         //TODO: If empty list, handle case
-        OrdersAdapter adapter = new OrdersAdapter(getContext(), orders);
-        mOrdersListView.setAdapter(adapter);
+        if (ordersAdapter == null) {
+            ordersAdapter = new OrdersAdapter(getContext(), orders);
+        }
+        else {
+            ordersAdapter.changeOrdersList(orders);
+        }
+        mOrdersListView.setAdapter(ordersAdapter);
     }
 
     private void fetchDataFromServer(){
@@ -160,4 +166,21 @@ public class OrdersFragment extends Fragment {
             return new OrdersLoader(getContext());
         }
    }
+
+    public class VerticalSpaceItemDecoration extends RecyclerView.ItemDecoration {
+
+        private final int verticalSpaceHeight;
+
+        public VerticalSpaceItemDecoration(int verticalSpaceHeight) {
+            this.verticalSpaceHeight = verticalSpaceHeight;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
+                                   RecyclerView.State state) {
+            if (parent.getChildAdapterPosition(view) != parent.getAdapter().getItemCount() - 1) {
+                outRect.bottom = verticalSpaceHeight;
+            }
+        }
+    }
 }

@@ -4,7 +4,7 @@
     android:id="@+id/splash_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
+    android:background="@color/primary_dark"
     android:orientation="vertical"
     tools:context="com.wholdus.www.wholdusbuyerapp.activities.SplashActivity">
 

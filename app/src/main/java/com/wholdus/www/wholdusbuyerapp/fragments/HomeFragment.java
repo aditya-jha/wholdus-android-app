@@ -53,4 +53,10 @@ public class HomeFragment extends Fragment {
         });
         return rootView;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mListener.fragmentCreated(getString(R.string.app_name), false);
+    }
 }

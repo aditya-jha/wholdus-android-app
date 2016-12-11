@@ -17,4 +17,7 @@
 
     <!-- buyer products api -->
     <string name="buyer_products">users/buyer/buyerproducts/response/</string>
+
+    <!-- catalog api -->
+    <string name="category_url">category/</string>
 </resources>

@@ -226,8 +226,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + CategoriesTable.TABLE_NAME + " (" +
                     CategoriesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
                     CategoriesTable.COLUMN_CATEGORY_ID + INT_TYPE + COMMA_SEP +
-                    CategoriesTable.COLUMN_DISPLAY_NAME + TEXT_TYPE + COMMA_SEP +
+                    CategoriesTable.COLUMN_CATEGORY_NAME + TEXT_TYPE + COMMA_SEP +
                     CategoriesTable.COLUMN_URL + TEXT_TYPE + COMMA_SEP +
+                    CategoriesTable.COLUMN_IMAGE_URL + TEXT_TYPE + COMMA_SEP +
                     CategoriesTable.COLUMN_CREATED_AT + TEXT_TYPE + COMMA_SEP +
                     CategoriesTable.COLUMN_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
                     CategoriesTable.COLUMN_SLUG + TEXT_TYPE + " )";

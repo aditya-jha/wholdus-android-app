@@ -41,6 +41,9 @@
         <service
             android:name=".services.OrderService"
             android:exported="false" />
+        <service
+            android:name=".services.CatalogService"
+            android:exported="false" />
     </application>
 
 </manifest>
