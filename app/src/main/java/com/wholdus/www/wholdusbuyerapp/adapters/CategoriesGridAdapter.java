@@ -44,14 +44,20 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
     }
 
     @Override
-    public void onBindViewHolder(CategoriesGridAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final CategoriesGridAdapter.ViewHolder holder, int position) {
         Category category = mCategories.get(position);
 
         holder.mNameTextView.setText(category.getCategoryName());
         holder.mNameTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_favorite_border_black_24dp, 0);
-
         holder.mIconImageView.setImageUrl(category.getImageURL(), mImageLoader);
-        holder.mProgressBar.setVisibility(View.GONE);
+        holder.mIconImageView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                if(holder.mIconImageView.getDrawable() != null) {
+                    holder.mProgressBar.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
