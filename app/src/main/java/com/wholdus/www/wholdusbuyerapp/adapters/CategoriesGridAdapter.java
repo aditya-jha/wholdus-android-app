@@ -5,12 +5,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.models.Category;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
@@ -26,11 +28,13 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
     private List<Category> mCategories;
     private Context mContext;
     private ImageLoader mImageLoader;
+    private ItemClickListener mListener;
 
-    public CategoriesGridAdapter(Context context, List<Category> categories) {
+    public CategoriesGridAdapter(Context context, List<Category> categories, final ItemClickListener listener) {
         mContext = context;
         mCategories = categories;
         mImageLoader = VolleySingleton.getInstance(context).getImageLoader();
+        mListener = listener;
     }
 
     @Override
@@ -49,8 +53,9 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
         Category category = mCategories.get(position);
 
         holder.mNameTextView.setText(category.getCategoryName());
-        if (!category.getLikeStatus()) {
-            holder.mNameTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_favorite_border_black_24dp, 0);
+
+        if (category.getLikeStatus()) {
+            holder.mFavIconimageView.setImageResource(R.drawable.ic_favorite_red_24dp);
         }
 
         holder.mIconImageView.setImageUrl(category.getImageURL(), mImageLoader);
@@ -62,13 +67,18 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
                 }
             }
         });
+
+        holder.mListener = mListener;
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView mNameTextView;
         NetworkImageView mIconImageView;
         ProgressBar mProgressBar;
+        ImageView mFavIconimageView;
+
+        private ItemClickListener mListener;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -76,6 +86,20 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
             mNameTextView = (TextView) itemView.findViewById(R.id.name_textView);
             mIconImageView = (NetworkImageView) itemView.findViewById(R.id.icon_imageView);
             mProgressBar = (ProgressBar) itemView.findViewById(R.id.loading_indicator);
+            mFavIconimageView = (ImageView) itemView.findViewById(R.id.fav_icon_image_view);
+
+            itemView.setOnClickListener(this);
+            mFavIconimageView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int position = getAdapterPosition();
+            if (position == RecyclerView.NO_POSITION) return;
+
+            if (mListener != null) {
+                mListener.itemClicked(position, view.getId());
+            }
         }
     }
 }
