@@ -11,7 +11,7 @@ public class WholdusApplication extends MultiDexApplication {
 
     private String mAccessToken;
     private String mRefreshToken;
-    private String mBuyerID;
+    private int mBuyerID;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -19,7 +19,7 @@ public class WholdusApplication extends MultiDexApplication {
         MultiDex.install(WholdusApplication.this);
     }
 
-    public void setTokens(String aToken, String rToken, String buyerID) {
+    public void setTokens(String aToken, String rToken, int buyerID) {
         mAccessToken = aToken;
         mRefreshToken = rToken;
         mBuyerID = buyerID;
@@ -33,7 +33,7 @@ public class WholdusApplication extends MultiDexApplication {
         return mRefreshToken;
     }
 
-    public String getBuyerID() {
+    public int getBuyerID() {
         return mBuyerID;
     }
 }

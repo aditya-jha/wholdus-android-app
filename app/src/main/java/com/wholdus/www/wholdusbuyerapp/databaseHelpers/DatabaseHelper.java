@@ -36,7 +36,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_USER_TABLE =
             "CREATE TABLE " + UserTable.TABLE_NAME + " (" +
                     UserTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
-                    UserTable.COLUMN_BUYER_ID + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    UserTable.COLUMN_BUYER_ID + INT_TYPE + NOT_NULL + COMMA_SEP +
                     UserTable.COLUMN_NAME + TEXT_TYPE + COMMA_SEP +
                     UserTable.COLUMN_EMAIL + TEXT_TYPE + COMMA_SEP +
                     UserTable.COLUMN_MOBILE_NUMBER + TEXT_TYPE + NOT_NULL + COMMA_SEP +
@@ -53,9 +53,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_USER_ADDRESS_TABLE =
             "CREATE TABLE " + UserAddressTable.TABLE_NAME + " (" +
                     UserAddressTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
-                    UserAddressTable.COLUMN_PINCODE_ID + TEXT_TYPE + COMMA_SEP +
-                    UserAddressTable.COLUMN_ADDRESS_ID + TEXT_TYPE + COMMA_SEP +
-                    UserAddressTable.COLUMN_PRIORITY + TEXT_TYPE + COMMA_SEP +
+                    UserAddressTable.COLUMN_PINCODE_ID + INT_TYPE + COMMA_SEP +
+                    UserAddressTable.COLUMN_ADDRESS_ID + INT_TYPE + COMMA_SEP +
+                    UserAddressTable.COLUMN_PRIORITY + INT_TYPE + COMMA_SEP +
                     UserAddressTable.COLUMN_CITY + TEXT_TYPE + COMMA_SEP +
                     UserAddressTable.COLUMN_STATE + TEXT_TYPE + COMMA_SEP +
                     UserAddressTable.COLUMN_LANDMARK + TEXT_TYPE + COMMA_SEP +
@@ -73,7 +73,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + BusinessTypesTable.TABLE_NAME + " (" +
                     BusinessTypesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
                     BusinessTypesTable.COLUMN_BUSINESS_TYPE + TEXT_TYPE + COMMA_SEP +
-                    BusinessTypesTable.COLUMN_BUSINESS_TYPE_ID + TEXT_TYPE + COMMA_SEP +
+                    BusinessTypesTable.COLUMN_BUSINESS_TYPE_ID + INT_TYPE + COMMA_SEP +
                     BusinessTypesTable.COLUMN_DESCRIPTION + TEXT_TYPE + " )";
 
     private static final String SQL_DROP_BUSINESS_TYPES_TABLE =
@@ -82,8 +82,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_USER_INTERESTS_TABLE =
             "CREATE TABLE " + UserInterestsTable.TABLE_NAME + " (" +
                     UserInterestsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
-                    UserInterestsTable.COLUMN_BUYER_INTEREST_ID + TEXT_TYPE + COMMA_SEP +
-                    UserInterestsTable.COLUMN_CATEGORY_ID + TEXT_TYPE + COMMA_SEP +
+                    UserInterestsTable.COLUMN_BUYER_INTEREST_ID + INT_TYPE + COMMA_SEP +
+                    UserInterestsTable.COLUMN_CATEGORY_ID + INT_TYPE + COMMA_SEP +
                     UserInterestsTable.COLUMN_CATEGORY_NAME + TEXT_TYPE + COMMA_SEP +
                     UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT + TEXT_TYPE + COMMA_SEP +
                     UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT + TEXT_TYPE + COMMA_SEP +

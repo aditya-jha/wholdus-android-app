@@ -177,7 +177,7 @@ public class EditProfileDetailsFragment extends Fragment implements LoaderManage
                 return mCompanyNameEditText.getText().toString();
             case R.string.business_type_key:
                 BusinessTypes businessTypes = (BusinessTypes) mBusinessTypeSpinner.getSelectedItem();
-                return businessTypes.getBusinessTypeID();
+                return String.valueOf(businessTypes.getBusinessTypeID());
         }
         return "";
     }

@@ -45,7 +45,7 @@ public class GlobalAccessHelper {
         return url;
     }
 
-    public static String getBuyerID(Context context) {
+    public static int getBuyerID(Context context) {
         return ((WholdusApplication)context).getBuyerID();
     }
 }

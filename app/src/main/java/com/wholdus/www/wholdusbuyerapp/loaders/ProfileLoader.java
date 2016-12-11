@@ -23,7 +23,7 @@ public class ProfileLoader extends AbstractLoader<Buyer> {
 
     @Override
     public Buyer loadInBackground() {
-        String buyerID = GlobalAccessHelper.getBuyerID(getContext());
+        int buyerID = GlobalAccessHelper.getBuyerID(getContext());
 
         // fetch data from DB
         UserDBHelper userDBHelper = new UserDBHelper(getContext());
@@ -36,7 +36,7 @@ public class ProfileLoader extends AbstractLoader<Buyer> {
             buyer.setAddressData(userDBHelper.getUserAddress(null, -1, null));
         }
         if (mLoadInterest) {
-            buyer.setInterestData(userDBHelper.getUserInterests(null, -1));
+            buyer.setInterestData(userDBHelper.getUserInterests(null, -1, null));
         }
 
         return buyer;

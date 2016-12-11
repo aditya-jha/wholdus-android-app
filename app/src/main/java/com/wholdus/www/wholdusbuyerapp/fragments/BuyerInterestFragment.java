@@ -31,7 +31,6 @@ import org.json.JSONObject;
 public class BuyerInterestFragment extends Fragment {
 
     private ProfileListenerInterface mListener;
-    private UserDBHelper mUserDBHelper;
     private TextView textView;
 
     private static final int BUYER_INTERESTS_DB_LOADER = 0;

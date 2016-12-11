@@ -102,18 +102,19 @@ public class LoginHelperAsyncTask extends AsyncTask<String, Void, Boolean> {
 
     @NonNull
     private Boolean checkIfLoggedIn(SharedPreferences loginHelperSharedPreference) {
-        String accessToken, refreshToken, buyerID;
+        String accessToken, refreshToken;
+        int buyerID;
 
         try {
             accessToken = loginHelperSharedPreference.getString(ACCESS_TOKEN_KEY, "");
             refreshToken = loginHelperSharedPreference.getString(REFRESH_TOKEN_KEY, "");
-            buyerID = loginHelperSharedPreference.getString(BUYER_ID_KEY, "");
+            buyerID = loginHelperSharedPreference.getInt(BUYER_ID_KEY, -1);
         } catch (ClassCastException e) {
             e.printStackTrace();
             return false;
         }
 
-        if(!accessToken.equals("") && !refreshToken.equals("") && !buyerID.equals("")) {
+        if(!accessToken.equals("") && !refreshToken.equals("") && buyerID != -1) {
             setTokens(accessToken, refreshToken, buyerID);
             return true;
         }
@@ -128,10 +129,11 @@ public class LoginHelperAsyncTask extends AsyncTask<String, Void, Boolean> {
         try {
             final String ACCESS_TOKEN = apiResponse.getString("access_token");
             final String REFRESH_TOKEN = apiResponse.getString("refresh_token");
-            final String BUYER_ID = apiResponse.getJSONObject("buyer").getString("buyerID");
+            final int BUYER_ID = apiResponse.getJSONObject("buyer").getInt("buyerID");
+
             editor.putString(ACCESS_TOKEN_KEY, ACCESS_TOKEN);
             editor.putString(REFRESH_TOKEN_KEY, REFRESH_TOKEN);
-            editor.putString(BUYER_ID_KEY, BUYER_ID);
+            editor.putInt(BUYER_ID_KEY, BUYER_ID);
 
             setTokens(ACCESS_TOKEN, REFRESH_TOKEN, BUYER_ID);
         } catch (JSONException e) {
@@ -148,7 +150,7 @@ public class LoginHelperAsyncTask extends AsyncTask<String, Void, Boolean> {
         return true;
     }
 
-    private void setTokens(String aToken, String rToken, String buyerID) {
+    private void setTokens(String aToken, String rToken, int buyerID) {
          WholdusApplication wholdusApplication = (WholdusApplication)((Activity) mContext).getApplication();
          wholdusApplication.setTokens(aToken, rToken, buyerID);
     }

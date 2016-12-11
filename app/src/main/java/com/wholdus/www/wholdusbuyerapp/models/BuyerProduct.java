@@ -14,8 +14,8 @@ import java.util.ArrayList;
 public class BuyerProduct {
 
     private int m_ID;
-    private long mBuyerProductID;
-    private long mBuyerProductResponseID;
+    private int mBuyerProductID;
+    private int mBuyerProductResponseID;
     private Product mProduct;
     private boolean mHasSwiped;
     private int mResponseCode;
@@ -48,7 +48,7 @@ public class BuyerProduct {
         return mStoreDiscount;
     }
 
-    public long getBuyerProductID() {
+    public int getBuyerProductID() {
         return mBuyerProductID;
     }
 
@@ -64,7 +64,7 @@ public class BuyerProduct {
         return mResponseCode;
     }
 
-    public long getBuyerProductResponseID() {
+    public int getBuyerProductResponseID() {
         return mBuyerProductResponseID;
     }
 
