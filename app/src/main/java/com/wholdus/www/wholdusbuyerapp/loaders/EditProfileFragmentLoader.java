@@ -20,7 +20,7 @@ public class EditProfileFragmentLoader extends AbstractLoader<EditProfileData> {
 
     @Override
     public EditProfileData loadInBackground() {
-        String buyerID = GlobalAccessHelper.getBuyerID(getContext());
+        int buyerID = GlobalAccessHelper.getBuyerID(getContext());
 
         // fetch data from DB
         UserDBHelper userDBHelper = new UserDBHelper(getContext());

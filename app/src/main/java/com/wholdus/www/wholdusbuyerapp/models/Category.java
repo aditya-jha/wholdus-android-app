@@ -13,10 +13,11 @@ import static com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract
 public class Category {
 
     private int m_ID;
-    private long mCategoryID;
+    private int mCategoryID;
     private String mCategoryName;
     private String mImageURL;
     private int mProductsCount;
+    private boolean mLikeStatus;
 
     public Category() {
     }
@@ -27,17 +28,26 @@ public class Category {
 
     private void setCategoryFromCursor(Cursor cursor) {
         m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(CategoriesTable._ID));
-        mCategoryID = cursor.getLong(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_CATEGORY_ID));
+        mCategoryID = cursor.getInt(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_CATEGORY_ID));
         mCategoryName = cursor.getString(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_CATEGORY_NAME));
         mImageURL = cursor.getString(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_IMAGE_URL));
+        mProductsCount = 0;
+        mLikeStatus = false;
+    }
+
+    public void setProductsCount(Cursor cursor) {
         mProductsCount = cursor.getInt(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_PRODUCTS_COUNT));
+    }
+
+    public void setLikeStatus(boolean status) {
+        mLikeStatus = status;
     }
 
     public int get_ID() {
         return m_ID;
     }
 
-    public long getCategoryID() {
+    public int getCategoryID() {
         return mCategoryID;
     }
 
@@ -51,6 +61,10 @@ public class Category {
 
     public int getProductsCount() {
         return mProductsCount;
+    }
+
+    public boolean getLikeStatus() {
+        return mLikeStatus;
     }
 
     public static ArrayList<Category> getCategoryArrayList(Cursor cursor) {

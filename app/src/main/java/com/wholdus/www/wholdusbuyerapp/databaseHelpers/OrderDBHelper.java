@@ -6,7 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
+import android.util.SparseArray;
+
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
@@ -68,13 +69,11 @@ public class OrderDBHelper extends BaseDBHelper {
 
     public void saveOrdersData(JSONArray ordersArray) throws JSONException {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
+        UserDBHelper userDBHelper = new UserDBHelper(mContext);
+        SparseArray<String> presentBuyerAddressIDs = userDBHelper.getPresentBuyerAddressIDs();
+        HashMap<String, String> presentOrderIDs = getPresentOrderIDs();
 
         try {
-
-            UserDBHelper userDBHelper = new UserDBHelper(mContext);
-            HashMap<String, String> presentBuyerAddressIDs = userDBHelper.getPresentBuyerAddressIDs();
-            HashMap<String, String> presentOrderIDs = getPresentOrderIDs();
-
             db.beginTransaction();
             for (int i = 0; i < ordersArray.length(); i++) {
                 JSONObject order = ordersArray.getJSONObject(i);
@@ -92,15 +91,15 @@ public class OrderDBHelper extends BaseDBHelper {
                 }
 
                 JSONObject buyerAddress = order.getJSONObject("buyer_address");
-                String buyerAddressID = buyerAddress.getString(UserProfileContract.UserAddressTable.COLUMN_ADDRESS_ID);
+                int buyerAddressID = buyerAddress.getInt(UserProfileContract.UserAddressTable.COLUMN_ADDRESS_ID);
                 String buyerAddressUpdatedAtLocal = presentBuyerAddressIDs.get(buyerAddressID);
                 String buyerAddressUpdatedAtServer = buyerAddress.getString(UserProfileContract.UserAddressTable.COLUMN_UPDATED_AT);
+
                 if (buyerAddressUpdatedAtLocal == null) {
                     userDBHelper.updateUserAddressDataFromJSONObject(buyerAddress, false);
                 } else if (!buyerAddressUpdatedAtLocal.equals(buyerAddressUpdatedAtServer)) {
                     userDBHelper.updateUserAddressDataFromJSONObject(buyerAddress, true);
                 }
-
             }
 
             db.setTransactionSuccessful();
@@ -138,5 +137,4 @@ public class OrderDBHelper extends BaseDBHelper {
         values.put(OrdersContract.OrdersTable.COLUMN_REMARKS, order.getString(OrdersContract.OrdersTable.COLUMN_REMARKS));
         return values;
     }
-
 }

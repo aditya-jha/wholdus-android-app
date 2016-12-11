@@ -10,8 +10,8 @@ import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.Use
 
 public class BuyerInterest {
     private int m_ID;
-    private String mBuyerInterestID;
-    private String mCategoryID;
+    private int mBuyerInterestID;
+    private int mCategoryID;
     private String mCategoryName;
     private String mFabricFilter;
     private boolean mPriceFilterApplied;
@@ -23,8 +23,8 @@ public class BuyerInterest {
 
     public BuyerInterest(Cursor cursor) {
         m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(UserInterestsTable._ID));
-        mBuyerInterestID = cursor.getString(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_BUYER_INTEREST_ID));
-        mCategoryID = cursor.getString(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_CATEGORY_ID));
+        mBuyerInterestID = cursor.getInt(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_BUYER_INTEREST_ID));
+        mCategoryID = cursor.getInt(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_CATEGORY_ID));
         mCategoryName = cursor.getString(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_CATEGORY_NAME));
         mFabricFilter = cursor.getString(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT));
         mPriceFilterApplied = cursor.getInt(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED)) == 1;
@@ -36,11 +36,11 @@ public class BuyerInterest {
         return m_ID;
     }
 
-    public String getBuyerInterestID() {
+    public int getBuyerInterestID() {
         return mBuyerInterestID;
     }
 
-    public String getCategoryID() {
+    public int getCategoryID() {
         return mCategoryID;
     }
 
