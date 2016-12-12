@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.models.BusinessTypes;
+import com.wholdus.www.wholdusbuyerapp.models.Category;
 
 import org.json.JSONArray;
 import org.json.JSONException;

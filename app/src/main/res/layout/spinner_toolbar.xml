@@ -3,7 +3,7 @@
     android:id="@+id/default_toolbar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorPrimaryDark"
+    android:background="@color/primary_dark"
     android:fitsSystemWindows="true"
     android:minHeight="?android:attr/actionBarSize"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
@@ -11,5 +11,5 @@
     <Spinner
         android:id="@+id/category_spinner"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
 </android.support.v7.widget.Toolbar>
