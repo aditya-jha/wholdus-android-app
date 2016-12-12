@@ -79,4 +79,7 @@
     <!-- products grid fragment -->
     <string name="sort_text">SORT</string>
     <string name="filter_text">FILTER</string>
+
+    <!-- filter fragment -->
+    <string name="filter_footer_title">Filter Products</string>
 </resources>
