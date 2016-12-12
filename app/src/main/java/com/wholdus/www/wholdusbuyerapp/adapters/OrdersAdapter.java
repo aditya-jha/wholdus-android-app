@@ -2,11 +2,15 @@ package com.wholdus.www.wholdusbuyerapp.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.google.android.gms.vision.text.Text;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.models.Order;
 
 import java.util.ArrayList;
@@ -32,7 +36,10 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-
+        Order order = mListData.get(position);
+        holder.orderID.setText(order.getDisplayNumber());
+        holder.orderDate.setText(HelperFunctions.getDateFromString(order.getCreatedAt()));
+        holder.orderAmount.setText(String.format("%.00f", order.getFinalPrice()));
     }
 
     @Override
@@ -42,9 +49,15 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
         return holder;
     }
 
-    static class MyViewHolder extends RecyclerView.ViewHolder{
+    class MyViewHolder extends RecyclerView.ViewHolder{
+        public TextView orderID;
+        public TextView orderDate;
+        public TextView orderAmount;
         public MyViewHolder(View itemView) {
             super(itemView);
+            orderID = (TextView) itemView.findViewById(R.id.order_id_text_view);
+            orderDate = (TextView) itemView.findViewById(R.id.order_date_text_view);
+            orderAmount = (TextView) itemView.findViewById(R.id.order_amount_text_view);
         }
     }
 
