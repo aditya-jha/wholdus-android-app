@@ -44,6 +44,14 @@ public class Suborder {
         setDataFromCursor(cursor);
     }
 
+    public static ArrayList<Suborder> getSubordersFromCursor(Cursor cursor) {
+        ArrayList<Suborder> suborders = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            suborders.add(new Suborder(cursor));
+        }
+        return suborders;
+    }
+
     public void setDataFromCursor(Cursor cursor) {
         m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable._ID));
         mOrderID = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_ORDER_ID));
@@ -153,6 +161,10 @@ public class Suborder {
 
     public ArrayList<OrderItem> getOrderItems() {
         return mOrderItems;
+    }
+
+    public void setSeller(Seller seller){
+        mSeller = seller;
     }
 
 }

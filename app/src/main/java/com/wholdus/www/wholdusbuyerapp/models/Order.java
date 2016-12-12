@@ -2,7 +2,9 @@ package com.wholdus.www.wholdusbuyerapp.models;
 
 import android.database.Cursor;
 
+import com.wholdus.www.wholdusbuyerapp.WholdusApplication;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract;
+import com.wholdus.www.wholdusbuyerapp.databaseHelpers.OrderDBHelper;
 
 import java.util.ArrayList;
 
@@ -152,9 +154,10 @@ public class Order {
     }
 
     public ArrayList<Suborder> getSuborders() {
-        if (mSuborders == null){
-
-        }
         return mSuborders;
+    }
+
+    public void setSuborders(Cursor cursor){
+        mSuborders = Suborder.getSubordersFromCursor(cursor);
     }
 }

@@ -1,5 +1,9 @@
 package com.wholdus.www.wholdusbuyerapp.models;
 
+import android.database.Cursor;
+
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract;
+
 /**
  * Created by kaustubh on 8/12/16.
  */
@@ -14,10 +18,23 @@ public class Seller {
     private int mShowOnline;
     private String mCreatedAt;
     private String mUpdatedAt;
-    private int mDeleteStatus;
 
     public Seller(){
+    }
 
+    public Seller(Cursor cursor){
+        setDataFromCursor(cursor);
+    }
+
+    public void setDataFromCursor(Cursor cursor){
+        m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsContract.SellersTable._ID));
+        mSellerID = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsContract.SellersTable.COLUMN_SELLER_ID));
+        mCompanyName = cursor.getString(cursor.getColumnIndexOrThrow(ProductsContract.SellersTable.COLUMN_COMPANY_NAME));
+        mName = cursor.getString(cursor.getColumnIndexOrThrow(ProductsContract.SellersTable.COLUMN_NAME));
+        mCompanyProfile = cursor.getString(cursor.getColumnIndexOrThrow(ProductsContract.SellersTable.COLUMN_COMPANY_PROFILE));
+        mShowOnline = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsContract.SellersTable.COLUMN_SHOW_ONLINE));
+        mCreatedAt = cursor.getString(cursor.getColumnIndexOrThrow(ProductsContract.SellersTable.COLUMN_CREATED_AT));
+        mUpdatedAt = cursor.getString(cursor.getColumnIndexOrThrow(ProductsContract.SellersTable.COLUMN_UPDATED_AT));
     }
 
     public int getID(){return m_ID;}
@@ -36,5 +53,4 @@ public class Seller {
 
     public String getUpdatedAt(){return mUpdatedAt;}
 
-    public int getDeleteStatus(){return mDeleteStatus;}
 }

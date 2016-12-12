@@ -167,7 +167,7 @@ public class OrdersFragment extends Fragment {
 
         @Override
         public Loader<ArrayList<Order>> onCreateLoader(final int id, Bundle args) {
-            return new OrdersLoader(getContext());
+            return new OrdersLoader(getContext(), true, false, true);
         }
    }
 

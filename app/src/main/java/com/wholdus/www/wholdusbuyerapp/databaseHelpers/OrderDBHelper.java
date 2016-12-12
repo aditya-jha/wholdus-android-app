@@ -31,17 +31,12 @@ public class OrderDBHelper extends BaseDBHelper {
     }
 
     public Cursor getOrdersData(@Nullable List<Integer> orderStatusValues,
-                                @Nullable String orderID, @Nullable String[] columns) {
-        String columnNames;
-        if (columns != null && !(columns.length == 0)) {
-            columnNames = TextUtils.join(", ", columns);
-        } else {
-            columnNames = "*";
-        }
+                                @Nullable Integer orderID, @Nullable String[] columns) {
+        String columnNames = getColumnNamesString(columns);
 
         String query = "SELECT " + columnNames + " FROM " + OrdersContract.OrdersTable.TABLE_NAME;
         boolean whereApplied = false;
-        if (orderID != null && !TextUtils.isEmpty(orderID)) {
+        if (orderID != null && orderID != -1) {
             query += "WHERE " + OrdersContract.OrdersTable.COLUMN_ORDER_ID + " = " + orderID;
             whereApplied = true;
         }
@@ -57,28 +52,73 @@ public class OrderDBHelper extends BaseDBHelper {
         return getCursor(query);
     }
 
-    private HashMap<String, String> getPresentOrderIDs() {
+    public Cursor getSubordersData(@Nullable List<Integer> subOrderStatusValues,
+                                @Nullable Integer suborderID, @Nullable Integer orderID, @Nullable String[] columns) {
+        String columnNames = getColumnNamesString(columns);
+
+        String query = "SELECT " + columnNames + " FROM " + OrdersContract.SubordersTable.TABLE_NAME;
+        boolean whereApplied = false;
+        if (suborderID != null && suborderID != -1) {
+            query += "WHERE " + OrdersContract.SubordersTable.COLUMN_SUBORDER_ID + " = " + suborderID;
+            whereApplied = true;
+        }
+        if (orderID != null && orderID != -1) {
+            if (whereApplied) {
+                query += " AND ";
+            } else {
+                query += " WHERE ";
+            }
+            query += OrdersContract.SubordersTable.COLUMN_ORDER_ID + " = " + orderID;
+            whereApplied = true;
+        }
+        if (subOrderStatusValues != null && !subOrderStatusValues.isEmpty()) {
+            if (whereApplied) {
+                query += " AND ";
+            } else {
+                query += " WHERE ";
+            }
+            query += OrdersContract.SubordersTable.COLUMN_SUBORDER_STATUS_VALUE + " IN " + TextUtils.join(", ", subOrderStatusValues);
+        }
+
+        return getCursor(query);
+    }
+
+    private SparseArray<String> getPresentOrderIDs() {
         String[] columns = new String[]{OrdersContract.OrdersTable.COLUMN_ORDER_ID, OrdersContract.OrdersTable.COLUMN_UPDATED_AT};
         Cursor cursor = getOrdersData(null, null, columns);
-        HashMap<String, String> orderIDs = new HashMap<>();
+        SparseArray<String> orderIDs = new SparseArray<>();
         while (cursor.moveToNext()) {
-            orderIDs.put(cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_ORDER_ID)),
+            orderIDs.put(cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_ORDER_ID)),
                     cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_UPDATED_AT)));
         }
         return orderIDs;
     }
 
+    private SparseArray<String> getPresentSuborderIDs() {
+        String[] columns = new String[]{OrdersContract.SubordersTable.COLUMN_SUBORDER_ID, OrdersContract.SubordersTable.COLUMN_UPDATED_AT};
+        Cursor cursor = getSubordersData(null, null, null,columns);
+        SparseArray<String> suborderIDs = new SparseArray<>();
+        while (cursor.moveToNext()) {
+            suborderIDs.put(cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_SUBORDER_ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_UPDATED_AT)));
+        }
+        return suborderIDs;
+    }
+
     public void saveOrdersData(JSONArray ordersArray) throws JSONException {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
         UserDBHelper userDBHelper = new UserDBHelper(mContext);
+        CatalogDBHelper catalogDBHelper = new CatalogDBHelper(mContext);
         SparseArray<String> presentBuyerAddressIDs = userDBHelper.getPresentBuyerAddressIDs();
-        HashMap<String, String> presentOrderIDs = getPresentOrderIDs();
+        SparseArray<String> presentOrderIDs = getPresentOrderIDs();
+        SparseArray<String> presentSuborderIDs = getPresentSuborderIDs();
+        SparseArray<String> presentSellerIDs = catalogDBHelper.getPresentSellerIDs();
 
         try {
             db.beginTransaction();
             for (int i = 0; i < ordersArray.length(); i++) {
                 JSONObject order = ordersArray.getJSONObject(i);
-                String orderID = order.getString(OrdersContract.OrdersTable.COLUMN_ORDER_ID);
+                int orderID = order.getInt(OrdersContract.OrdersTable.COLUMN_ORDER_ID);
                 saveOrderData(order, presentOrderIDs.get(orderID));
 
                 JSONObject buyerAddress = order.getJSONObject("buyer_address");
@@ -92,7 +132,10 @@ public class OrderDBHelper extends BaseDBHelper {
                     userDBHelper.updateUserAddressDataFromJSONObject(buyerAddress, true);
                 }
 
-                if 
+                if (order.has("sub_orders")){
+                    JSONArray subordersArray = order.getJSONArray("sub_orders");
+                    saveSubordersData(subordersArray, presentSuborderIDs, presentSellerIDs);
+                }
             }
 
             db.setTransactionSuccessful();
@@ -105,9 +148,28 @@ public class OrderDBHelper extends BaseDBHelper {
         mDatabaseHelper.closeDatabase();
     }
 
+    public void saveSubordersData(JSONArray subordersArray,
+                                  @Nullable SparseArray<String> presentSuborderIDs, @Nullable SparseArray<String> presentSellerIDs) throws JSONException{
+        if (presentSuborderIDs == null){
+            presentSuborderIDs = getPresentSuborderIDs();
+        }
+        CatalogDBHelper catalogDBHelper = new CatalogDBHelper(mContext);
+        for (int i = 0; i < subordersArray.length(); i++) {
+            JSONObject suborder = subordersArray.getJSONObject(i);
+            int suborderID = suborder.getInt(OrdersContract.SubordersTable.COLUMN_SUBORDER_ID);
+            saveSuborderData(suborder, presentSuborderIDs.get(suborderID));
+
+            if (suborder.has("seller")){
+                JSONObject seller = suborder.getJSONObject("seller");
+                int sellerID = seller.getInt(ProductsContract.SellersTable.COLUMN_SELLER_ID);
+                catalogDBHelper.saveSellerData(seller, presentSellerIDs.get(sellerID));
+            }
+        }
+    }
+
     public void saveOrderData(JSONObject order, @Nullable String orderUpdatedAtLocal) throws JSONException{
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
-        String orderID = order.getString(OrdersContract.OrdersTable.COLUMN_ORDER_ID);
+        int orderID = order.getInt(OrdersContract.OrdersTable.COLUMN_ORDER_ID);
         String orderUpdatedAtServer = order.getString(OrdersContract.OrdersTable.COLUMN_UPDATED_AT);
         if (orderUpdatedAtLocal == null) { // insert
             ContentValues values = getOrderContentValues(order);
@@ -116,6 +178,21 @@ public class OrderDBHelper extends BaseDBHelper {
             ContentValues values = getOrderContentValues(order);
             String selection = OrdersContract.OrdersTable.COLUMN_ORDER_ID + " = " + orderID;
             db.update(OrdersContract.OrdersTable.TABLE_NAME, values, selection, null);
+        }
+        mDatabaseHelper.closeDatabase();
+    }
+
+    public void saveSuborderData(JSONObject suborder, @Nullable String suborderUpdatedAtLocal) throws JSONException{
+        SQLiteDatabase db = mDatabaseHelper.openDatabase();
+        int suborderID = suborder.getInt(OrdersContract.SubordersTable.COLUMN_SUBORDER_ID);
+        String suborderUpdatedAtServer = suborder.getString(OrdersContract.SubordersTable.COLUMN_UPDATED_AT);
+        if (suborderUpdatedAtLocal == null) { // insert
+            ContentValues values = getSubOrderContentValues(suborder);
+            db.insert(OrdersContract.SubordersTable.TABLE_NAME, null, values);
+        } else if (!suborderUpdatedAtLocal.equals(suborderUpdatedAtServer)) {
+            ContentValues values = getOrderContentValues(suborder);
+            String selection = OrdersContract.SubordersTable.COLUMN_SUBORDER_ID + " = " + suborderID;
+            db.update(OrdersContract.SubordersTable.TABLE_NAME, values, selection, null);
         }
         mDatabaseHelper.closeDatabase();
     }

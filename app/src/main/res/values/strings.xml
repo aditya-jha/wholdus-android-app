@@ -60,6 +60,7 @@
     <string name="order_card_date">Date :&#160;</string>
     <string name="order_card_amount">Amount : Rs. </string>
     <string name="order_card_suborder_pieces">Pieces :&#160;</string>
+    <string name="order_card_sellers_in_order">Sellers in Order:</string>
 
     <!-- keys -->
     <string name="name_key">name</string>

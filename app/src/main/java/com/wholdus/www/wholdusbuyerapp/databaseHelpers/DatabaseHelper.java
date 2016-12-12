@@ -246,8 +246,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     SellersTable.COLUMN_COMPANY_PROFILE + TEXT_TYPE + COMMA_SEP +
                     SellersTable.COLUMN_SHOW_ONLINE + INT_TYPE + COMMA_SEP +
                     SellersTable.COLUMN_CREATED_AT + TEXT_TYPE + COMMA_SEP +
-                    SellersTable.COLUMN_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
-                    SellersTable.COLUMN_DELETE_STATUS + INT_TYPE + " )";
+                    SellersTable.COLUMN_UPDATED_AT + TEXT_TYPE + " )";
 
     private static final String SQL_DROP_SELLERS_TABLE =
             "DROP TABLE IF EXISTS " + SellersTable.TABLE_NAME;

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -48,6 +49,17 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
         ArrayList<Suborder> suborders = order.getSuborders();
         SuborderListViewAdapter suborderAdapter = new SuborderListViewAdapter(mContext, suborders);
         holder.suborderListView.setAdapter(suborderAdapter);
+        HelperFunctions.setListViewHeightBasedOnChildren(holder.suborderListView);
+        /*
+        final int adapterCount = suborderAdapter.getCount();
+        LinearLayout layout = new LinearLayout(mContext);
+        for (int i = 0; i < adapterCount; i++) {
+            View item = suborderAdapter.getView(i, null, null);
+            layout.addView(item);
+        }*/
+
+        //holder.suborderListView.addView(layout);
+
     }
 
     @Override
@@ -71,7 +83,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
         }
     }
 
-    class SuborderListViewAdapter extends BaseAdapter{
+    private class SuborderListViewAdapter extends BaseAdapter{
 
         private ArrayList<Suborder> mListData;
         private Context mContext;
@@ -80,6 +92,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
         public SuborderListViewAdapter(Context context, ArrayList<Suborder> listData){
             mContext = context;
             mListData = listData;
+            layoutInflater = LayoutInflater.from(context);
         }
 
         @Override
