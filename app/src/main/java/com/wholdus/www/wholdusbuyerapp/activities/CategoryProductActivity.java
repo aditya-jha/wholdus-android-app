@@ -132,14 +132,27 @@ public class CategoryProductActivity extends AppCompatActivity
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         // set default toolbar as the action bar for this activity
-        mToolbar = (Toolbar) findViewById(R.id.default_toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.spinner_toolbar);
         setSupportActionBar(mToolbar);
         try {
             getSupportActionBar().setTitle(null);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    private void showBackButtonInToolbar() {
+        mToolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_black_24dp);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+                showMenuButtonInToolbar();
+            }
+        });
+    }
+
+    private void showMenuButtonInToolbar() {
         mToolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,10 +183,12 @@ public class CategoryProductActivity extends AppCompatActivity
         switch (fragmentName) {
             case "filter":
                 mFilterFragmentActive = true;
+                showBackButtonInToolbar();
                 fragment = new FilterFragment();
                 break;
             default:
                 mFilterFragmentActive = false;
+                showMenuButtonInToolbar();
                 fragment = new ProductsGridFragment();
         }
 
