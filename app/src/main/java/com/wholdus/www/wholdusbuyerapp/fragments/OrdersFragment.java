@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,9 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +28,7 @@ import com.wholdus.www.wholdusbuyerapp.WholdusApplication;
 import com.wholdus.www.wholdusbuyerapp.adapters.OrdersAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
+import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewVerticalSpaceItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.OrdersLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Order;
@@ -34,6 +39,8 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
+import static android.support.v7.recyclerview.R.attr.layoutManager;
+
 /**
  * Created by aditya on 19/11/16.
  */
@@ -42,10 +49,11 @@ public class OrdersFragment extends Fragment {
 
     private ProfileListenerInterface mListener;
     private RecyclerView mOrdersListView;
-    private UserDBHelper mUserDBHelper;
     private final int ORDERS_DB_LOADER = 10;
     private BroadcastReceiver mOrderServiceResponseReceiver;
     private OrderLoaderManager mOrderLoader;
+    OrdersAdapter ordersAdapter;
+    ArrayList<Order> orderArrayList;
 
     public OrdersFragment() {
     }
@@ -119,12 +127,24 @@ public class OrdersFragment extends Fragment {
 
     private void initReferences(ViewGroup rootView){
         mOrdersListView = (RecyclerView) rootView.findViewById(R.id.orders_recycler_view);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        mOrdersListView.setLayoutManager(mLayoutManager);
+        mOrdersListView.setItemAnimator(new DefaultItemAnimator());
+        RecyclerViewVerticalSpaceItemDecoration dividerItemDecoration = new RecyclerViewVerticalSpaceItemDecoration(40);
+        mOrdersListView.addItemDecoration(dividerItemDecoration);
     }
 
     private void setViewForOrders(ArrayList<Order> orders){
         //TODO: If empty list, handle case
-        OrdersAdapter adapter = new OrdersAdapter(getContext(), orders);
-        mOrdersListView.setAdapter(adapter);
+        orderArrayList = orders;
+        if (ordersAdapter == null) {
+            ordersAdapter = new OrdersAdapter(getContext(), orders);
+            mOrdersListView.setAdapter(ordersAdapter);
+        }
+        else {
+            ordersAdapter.notifyDataSetChanged();
+        }
+
     }
 
     private void fetchDataFromServer(){
@@ -150,4 +170,5 @@ public class OrdersFragment extends Fragment {
             return new OrdersLoader(getContext());
         }
    }
+
 }

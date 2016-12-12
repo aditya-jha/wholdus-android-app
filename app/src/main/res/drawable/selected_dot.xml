@@ -8,6 +8,6 @@
         android:width="18dp"
         android:height="18dp"></size>
 
-    <solid android:color="@color/colorAccent"></solid>
+    <solid android:color="@color/accent"></solid>
 
 </shape>
