@@ -17,27 +17,27 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.CategorySpinnerAdapter;
+import com.wholdus.www.wholdusbuyerapp.fragments.FilterFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProductsGridFragment;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
+import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.CategoriesGridLoader;
-import com.wholdus.www.wholdusbuyerapp.loaders.ProfileLoader;
-import com.wholdus.www.wholdusbuyerapp.models.Buyer;
 import com.wholdus.www.wholdusbuyerapp.models.Category;
-import com.wholdus.www.wholdusbuyerapp.models.Product;
 
 import java.util.ArrayList;
 
-public class CategoryProductActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<Category>> {
+public class CategoryProductActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<ArrayList<Category>>, CategoryProductListenerInterface {
 
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolbar;
-    private int mSelectedCategoryID;
     private static final int CATEGORY_LOADER = 0;
     private Spinner mCategorySpinner;
+    private boolean mFilterFragmentActive;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,8 @@ public class CategoryProductActivity extends AppCompatActivity implements Loader
         setContentView(R.layout.activity_category_product);
 
         Intent intent = getIntent();
-        mSelectedCategoryID = intent.getIntExtra(getString(R.string.selected_category_id), 0);
+        FilterClass.setCategoryID(intent.getIntExtra(getString(R.string.selected_category_id), 0));
+        mFilterFragmentActive = false;
 
         // initialize the toolbar
         initToolbar();
@@ -58,6 +59,8 @@ public class CategoryProductActivity extends AppCompatActivity implements Loader
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 /* TODO: Implement what happens when category is changed from toolbar dropdown */
+                FilterClass.setCategoryID((int) mCategorySpinner.getSelectedItemId());
+                if (!mFilterFragmentActive) updateProducts();
             }
 
             @Override
@@ -68,7 +71,7 @@ public class CategoryProductActivity extends AppCompatActivity implements Loader
 
         getSupportLoaderManager().initLoader(CATEGORY_LOADER, null, this);
 
-        openToFragment("", null);
+        updateProducts();
     }
 
     @Override
@@ -97,25 +100,8 @@ public class CategoryProductActivity extends AppCompatActivity implements Loader
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.default_action_bar, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_bar_checkout:
-                break;
-            case R.id.action_bar_store_home:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onBackPressed() {
-        if(getSupportFragmentManager().getBackStackEntryCount() == 1) {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
             finish();
         } else {
             super.onBackPressed();
@@ -137,18 +123,36 @@ public class CategoryProductActivity extends AppCompatActivity implements Loader
 
     }
 
+    @Override
+    public void openFilter() {
+        openToFragment("filter", null);
+    }
+
     private void initToolbar() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         // set default toolbar as the action bar for this activity
-        mToolbar = (Toolbar) findViewById(R.id.default_toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.spinner_toolbar);
         setSupportActionBar(mToolbar);
         try {
             getSupportActionBar().setTitle(null);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    private void showBackButtonInToolbar() {
+        mToolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_black_24dp);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+                showMenuButtonInToolbar();
+            }
+        });
+    }
+
+    private void showMenuButtonInToolbar() {
         mToolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,14 +167,28 @@ public class CategoryProductActivity extends AppCompatActivity implements Loader
                 .replace(R.id.navigation_drawer_fragment, new NavigationDrawerFragment()).commit();
     }
 
+    private void updateProducts() {
+        ProductsGridFragment fragment = (ProductsGridFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (fragment != null) {
+            fragment.refreshData();
+        } else {
+            // fragment is not added yet
+            openToFragment("", null);
+        }
+    }
+
     private void openToFragment(String fragmentName, @Nullable Bundle bundle) {
         Fragment fragment;
 
         switch (fragmentName) {
-            case "home":
-                fragment = new ProductsGridFragment();
+            case "filter":
+                mFilterFragmentActive = true;
+                showBackButtonInToolbar();
+                fragment = new FilterFragment();
                 break;
             default:
+                mFilterFragmentActive = false;
+                showMenuButtonInToolbar();
                 fragment = new ProductsGridFragment();
         }
 
@@ -191,6 +209,6 @@ public class CategoryProductActivity extends AppCompatActivity implements Loader
     private void updateToolbarSpinner(ArrayList<Category> data) {
         CategorySpinnerAdapter adapter = new CategorySpinnerAdapter(this, data);
         mCategorySpinner.setAdapter(adapter);
-        mCategorySpinner.setSelection(adapter.getPositionFromID(mSelectedCategoryID));
+        mCategorySpinner.setSelection(adapter.getPositionFromID(FilterClass.getCategoryID()));
     }
 }

@@ -71,7 +71,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.default_action_bar, menu);
+        getMenuInflater().inflate(R.menu.default_action_buttons, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -79,8 +79,10 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_bar_checkout:
+                startActivity(new Intent(this, CheckoutActivity.class));
                 break;
             case R.id.action_bar_store_home:
+                startActivity(new Intent(this, StoreActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);

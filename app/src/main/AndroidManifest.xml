@@ -37,6 +37,12 @@
         <activity
             android:name=".activities.CategoryProductActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.CheckoutActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.StoreActivity"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".services.UserService"
@@ -47,7 +53,6 @@
         <service
             android:name=".services.CatalogService"
             android:exported="false" />
-
     </application>
 
 </manifest>

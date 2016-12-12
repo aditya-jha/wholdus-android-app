@@ -1,5 +1,6 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -49,8 +50,10 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_bar_checkout:
+                startActivity(new Intent(this, CheckoutActivity.class));
                 break;
             case R.id.action_bar_store_home:
+                startActivity(new Intent(this, StoreActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);
