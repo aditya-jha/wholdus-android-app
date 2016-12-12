@@ -10,6 +10,7 @@
     <!-- ACTION BAR items -->
     <string name="action_bar_store_home">Go to your Store</string>
     <string name="action_bar_checkout">Proceed to Checkout</string>
+    <string name="action_bar_clear">CLEAR</string>
 
     <!-- Mobile Number and Password helper layout -->
     <string name="hint_mobile_number">Mobile Number</string>
@@ -74,4 +75,8 @@
 
     <!-- messages -->
     <string name="back_press_message">Press again to exit Wholdus</string>
+
+    <!-- products grid fragment -->
+    <string name="sort_text">SORT</string>
+    <string name="filter_text">FILTER</string>
 </resources>

@@ -71,7 +71,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.default_action_bar, menu);
+        getMenuInflater().inflate(R.menu.default_action_buttons, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
