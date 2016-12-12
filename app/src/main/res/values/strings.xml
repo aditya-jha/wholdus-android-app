@@ -73,5 +73,5 @@
     <string name="state_key">State</string>
 
     <!-- messages -->
-    <string name="back_press_message">Press back again to exit</string>
+    <string name="back_press_message">Press again to exit Wholdus</string>
 </resources>

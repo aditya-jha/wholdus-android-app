@@ -1,5 +1,6 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -93,8 +94,14 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     }
 
     @Override
-    public void openCategories() {
-        openToFragment("categories", null);
+    public void openCategory(int categoryID) {
+        if (categoryID != -1) {
+            Intent intent = new Intent(this, CategoryProductActivity.class);
+            intent.putExtra(getString(R.string.selected_category_id), categoryID);
+            startActivity(intent);
+        } else {
+            openToFragment("categories", null);
+        }
     }
 
     @Override

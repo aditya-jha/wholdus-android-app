@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,6 +21,7 @@ import android.view.ViewGroup;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.CategoriesGridAdapter;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
+import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.CategoriesGridLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Category;
 import com.wholdus.www.wholdusbuyerapp.services.CatalogService;
@@ -32,13 +34,15 @@ import java.util.List;
  * Fragment to Display Categories present on wholdus
  */
 
-public class CategoryGridFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<Category>> {
+public class CategoryGridFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<Category>>, ItemClickListener {
 
     private static int CATEGORIES_LOADER = 0;
     private BroadcastReceiver mReceiver;
     private RecyclerView mRecyclerView;
     private CategoriesGridAdapter mCategoriesGridAdapter;
     private HomeListenerInterface mListener;
+    private List<Category> mCategoriesData;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public CategoryGridFragment() {
     }
@@ -70,11 +74,18 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_categories_grid, container, false);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.categories_recycler_view);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        initReferences(rootView);
 
         getActivity().getSupportLoaderManager().initLoader(CATEGORIES_LOADER, null, this);
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getActivity().getSupportLoaderManager().initLoader(CATEGORIES_LOADER, null, CategoryGridFragment.this);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
         return rootView;
     }
 
@@ -117,6 +128,28 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
 
     }
 
+    @Override
+    public void itemClicked(int position, int id) {
+        switch (id) {
+            case R.id.fav_icon_image_view:
+                // add the category at position to buyer interests
+                break;
+            default:
+                // open category clicked
+                mListener.openCategory(mCategoriesData.get(position).getCategoryID());
+        }
+    }
+
+    private void initReferences(ViewGroup rootView) {
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.categories_recycler_view);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        mRecyclerView.setHasFixedSize(true);
+
+        mCategoriesData = new ArrayList<>();
+        mCategoriesGridAdapter = new CategoriesGridAdapter(getContext(), mCategoriesData, this);
+        mRecyclerView.setAdapter(mCategoriesGridAdapter);
+    }
+
     private void fetchDataFromServer() {
         Intent intent = new Intent(getContext(), CatalogService.class);
         intent.putExtra("TODO", R.integer.fetch_categories);
@@ -129,8 +162,10 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
         getActivity().getSupportLoaderManager().restartLoader(CATEGORIES_LOADER, null, this);
     }
 
-    private void setDataToView(List<Category> categories) {
-        mCategoriesGridAdapter = new CategoriesGridAdapter(getContext(), categories);
-        mRecyclerView.setAdapter(mCategoriesGridAdapter);
+    private void setDataToView(List<Category> data) {
+        if (mCategoriesData.size() == 0 && data.size() != 0) {
+            mCategoriesData.addAll(data);
+            mCategoriesGridAdapter.notifyItemRangeInserted(0, mCategoriesData.size());
+        }
     }
 }
