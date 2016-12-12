@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primary_text"
+        android:fontFamily="@string/font_family_regular"
+        android:id="@+id/suborder_seller_name_text_view"
+        android:textSize="14sp"/>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primary_text"
+        android:fontFamily="@string/font_family_regular"
+        android:textSize="14sp"
+        android:text="@string/order_card_suborder_pieces"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primary_text"
+        android:fontFamily="@string/font_family_regular"
+        android:id="@+id/suborder_pieces_text_view"
+        android:textSize="14sp"/>
+
+</LinearLayout>

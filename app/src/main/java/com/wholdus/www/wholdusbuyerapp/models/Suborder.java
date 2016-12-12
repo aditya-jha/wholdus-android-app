@@ -1,5 +1,9 @@
 package com.wholdus.www.wholdusbuyerapp.models;
 
+import android.database.Cursor;
+
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract;
+
 import java.util.ArrayList;
 
 /**
@@ -9,12 +13,12 @@ import java.util.ArrayList;
 public class Suborder {
 
     private int m_ID;
-    private String mOrderID;
-    private String mSuborderID;
+    private int mOrderID;
+    private int mSuborderID;
     private String mDisplayNumber;
-    private String mSellerID;
+    private int mSellerID;
     private Seller mSeller;
-    private String mSellerAddressID;
+    private int mSellerAddressID;
     private SellerAddress mSellerAddress;
     private int mProductCount;
     private int mPieces;
@@ -35,16 +39,43 @@ public class Suborder {
 
     public Suborder() {
     }
+    
+    public Suborder(Cursor cursor){
+        setDataFromCursor(cursor);
+    }
+
+    public void setDataFromCursor(Cursor cursor) {
+        m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable._ID));
+        mOrderID = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_ORDER_ID));
+        mSuborderID = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_SUBORDER_ID));
+        mDisplayNumber = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_DISPLAY_NUMBER));
+        mSellerID = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_SELLER_ID));
+        mSellerAddressID = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_SELLER_ADDRESS_ID));
+        mProductCount = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_PRODUCT_COUNT));
+        mPieces = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_PIECES));
+        mRetailPrice = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_RETAIL_PRICE));
+        mCalculatedPrice = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_CALCULATED_PRICE));
+        mEditedPrice = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_EDITED_PRICE));
+        mShippingCharge = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_SHIPPING_CHARGE));
+        mCODCharge = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_COD_CHARGE));
+        mFinalPrice = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_FINAL_PRICE));
+        mSuborderStatusValue = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_SUBORDER_STATUS_VALUE));
+        mSuborderStatusDisplay = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_SUBORDER_STATUS_DISPLAY));
+        mPaymentStatusValue = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_PAYMENT_STATUS_VALUE));
+        mPaymentStatusDisplay = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_PAYMENT_STATUS_DISPLAY));
+        mCreatedAt = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_CREATED_AT));
+        mUpdatedAt = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.SubordersTable.COLUMN_UPDATED_AT));
+    }
 
     public int getID() {
         return m_ID;
     }
 
-    public String getOrderID() {
+    public int getOrderID() {
         return mOrderID;
     }
 
-    public String getSuborderID() {
+    public int getSuborderID() {
         return mSuborderID;
     }
 
@@ -52,7 +83,7 @@ public class Suborder {
         return mDisplayNumber;
     }
 
-    public String getSellerID() {
+    public int getSellerID() {
         return mSellerID;
     }
 
@@ -60,7 +91,7 @@ public class Suborder {
         return mSeller;
     }
 
-    public String getSellerAddressID() {
+    public int getSellerAddressID() {
         return mSellerAddressID;
     }
 

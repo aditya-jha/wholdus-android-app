@@ -49,7 +49,7 @@ import org.json.JSONObject;
 public class EditAddressFragment extends Fragment {
 
     private ProfileListenerInterface mListener;
-    private String mAddressID;
+    private int mAddressID;
     private int m_ID;
     private static final int USER_ADDRESS_LOADER = 0;
     private UserDBHelper mUserAddressDBHelper;
@@ -79,7 +79,7 @@ public class EditAddressFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle arguments = getArguments();
-        mAddressID = arguments.getString("addressID", "");
+        mAddressID = arguments.getInt("addressID", -1);
         m_ID = arguments.getInt("_ID", -1);
         mUserServiceResponseReceiver = new BroadcastReceiver() {
             @Override
@@ -118,7 +118,7 @@ public class EditAddressFragment extends Fragment {
 
         initReferences(rootView);
 
-        if (!TextUtils.isEmpty(mAddressID) || m_ID != -1) {
+        if (mAddressID != -1 || m_ID != -1) {
             // getActivity().getSupportLoaderManager().restartLoader(USER_ADDRESS_LOADER, null, this);
         }
 
@@ -133,7 +133,7 @@ public class EditAddressFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (!TextUtils.isEmpty(mAddressID) || m_ID != -1) {
+        if (mAddressID != -1 || m_ID != -1) {
             mListener.fragmentCreated("Edit Address", true);
         } else {
             mListener.fragmentCreated("Add New Address", true);

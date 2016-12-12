@@ -52,7 +52,7 @@ public class OrdersFragment extends Fragment {
     private final int ORDERS_DB_LOADER = 10;
     private BroadcastReceiver mOrderServiceResponseReceiver;
     private OrderLoaderManager mOrderLoader;
-    OrdersAdapter ordersAdapter;
+    private OrdersAdapter ordersAdapter;
     ArrayList<Order> orderArrayList;
 
     public OrdersFragment() {
