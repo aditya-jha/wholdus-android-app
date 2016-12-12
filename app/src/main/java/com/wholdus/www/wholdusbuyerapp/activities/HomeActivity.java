@@ -28,8 +28,6 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     private boolean mDoublePressToExit;
     private Toolbar mToolbar;
 
-    private static final String OPEN_FRAGMENT_KEY = "openFragment";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
