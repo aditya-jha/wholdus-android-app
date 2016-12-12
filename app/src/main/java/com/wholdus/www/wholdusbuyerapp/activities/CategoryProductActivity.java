@@ -57,7 +57,7 @@ public class CategoryProductActivity extends AppCompatActivity implements Loader
         mCategorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
+                /* TODO: Implement what happens when category is changed from toolbar dropdown */
             }
 
             @Override
