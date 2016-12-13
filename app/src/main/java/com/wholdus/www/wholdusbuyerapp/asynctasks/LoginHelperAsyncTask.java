@@ -89,6 +89,7 @@ public class LoginHelperAsyncTask extends AsyncTask<String, Void, Boolean> {
     private boolean logout(SharedPreferences loginHelperSharedPreference) {
         SharedPreferences.Editor editor = loginHelperSharedPreference.edit();
         try {
+            /* TODO remove all data, drop databse may be for now */
             editor.remove(ACCESS_TOKEN_KEY);
             editor.remove(REFRESH_TOKEN_KEY);
             editor.remove(BUYER_ID_KEY);
