@@ -12,8 +12,8 @@ public class NavigationDrawerData {
     public static LinkedHashMap<String, List<String>> getData() {
         LinkedHashMap<String, List<String>> data = new LinkedHashMap<>();
 
-        ArrayList<String> handPicked = new ArrayList<>();
-        data.put("Hand Picked For You", handPicked);
+        data.put("Home", new ArrayList<String>());
+        data.put("Hand Picked For You", new ArrayList<String>());
 
         ArrayList<String> store = new ArrayList<>();
         store.add("Store Home");
