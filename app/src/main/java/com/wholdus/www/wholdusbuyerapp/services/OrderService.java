@@ -57,6 +57,8 @@ public class OrderService extends IntentService {
         params.put("seller_details", "1");
         params.put("order_item_details", "1");
         params.put("product_details", "1");
+        params.put("product_details_details","1");
+        params.put("product_image_details", "1");
         String url = GlobalAccessHelper.generateUrl(getApplicationContext(), getString(R.string.orders_url), params);
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }

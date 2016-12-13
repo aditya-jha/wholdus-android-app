@@ -45,11 +45,7 @@ public class OrderDBHelper extends BaseDBHelper {
             whereApplied = true;
         }
         if (orderStatusValues != null && !orderStatusValues.isEmpty()) {
-            if (whereApplied) {
-                query += " AND ";
-            } else {
-                query += " WHERE ";
-            }
+            query = whereClauseHelper(query, whereApplied);
             query += OrdersContract.OrdersTable.COLUMN_ORDER_STATUS_VALUE + " IN " + TextUtils.join(", ", orderStatusValues);
         }
 
@@ -67,20 +63,12 @@ public class OrderDBHelper extends BaseDBHelper {
             whereApplied = true;
         }
         if (orderID != null && orderID != -1) {
-            if (whereApplied) {
-                query += " AND ";
-            } else {
-                query += " WHERE ";
-            }
+            query = whereClauseHelper(query, whereApplied);
             query += OrdersContract.SubordersTable.COLUMN_ORDER_ID + " = " + orderID;
             whereApplied = true;
         }
         if (subOrderStatusValues != null && !subOrderStatusValues.isEmpty()) {
-            if (whereApplied) {
-                query += " AND ";
-            } else {
-                query += " WHERE ";
-            }
+            query = whereClauseHelper(query, whereApplied);
             query += OrdersContract.SubordersTable.COLUMN_SUBORDER_STATUS_VALUE + " IN " + TextUtils.join(", ", subOrderStatusValues);
         }
 
@@ -98,20 +86,12 @@ public class OrderDBHelper extends BaseDBHelper {
             whereApplied = true;
         }
         if (suborderID != null && suborderID != -1) {
-            if (whereApplied) {
-                query += " AND ";
-            } else {
-                query += " WHERE ";
-            }
+            query = whereClauseHelper(query, whereApplied);
             query += OrdersContract.OrderItemsTable.COLUMN_SUBORDER_ID + " = " + suborderID;
             whereApplied = true;
         }
         if (orderItemStatusValues != null && !orderItemStatusValues.isEmpty()) {
-            if (whereApplied) {
-                query += " AND ";
-            } else {
-                query += " WHERE ";
-            }
+            query = whereClauseHelper(query, whereApplied);
             query += OrdersContract.OrderItemsTable.COLUMN_ORDER_ITEM_STATUS_VALUE + " IN " + TextUtils.join(", ", orderItemStatusValues);
         }
 
@@ -215,7 +195,7 @@ public class OrderDBHelper extends BaseDBHelper {
             saveOrderItemData(orderItem);
 
             if (orderItem.has("product")){
-                //catalogDBHelper.saveProductData(orderItem.getJSONObject("product"));
+                catalogDBHelper.saveProductData(orderItem.getJSONObject("product"));
             }
 
         }
@@ -249,7 +229,7 @@ public class OrderDBHelper extends BaseDBHelper {
             db.insert(OrdersContract.SubordersTable.TABLE_NAME, null, values);
             mPresentSuborderIDs.put(suborderID, suborderUpdatedAtServer);
         } else if (!suborderUpdatedAtLocal.equals(suborderUpdatedAtServer)) {
-            ContentValues values = getOrderContentValues(suborder);
+            ContentValues values = getSubOrderContentValues(suborder);
             String selection = OrdersContract.SubordersTable.COLUMN_SUBORDER_ID + " = " + suborderID;
             db.update(OrdersContract.SubordersTable.TABLE_NAME, values, selection, null);
             mPresentSuborderIDs.put(suborderID, suborderUpdatedAtServer);

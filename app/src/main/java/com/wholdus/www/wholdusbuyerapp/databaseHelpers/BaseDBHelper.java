@@ -44,6 +44,15 @@ public class BaseDBHelper {
         return columnNames;
     }
 
+    protected String whereClauseHelper(String query, boolean whereApplied){
+        if (whereApplied) {
+            query += " AND ";
+        } else {
+            query += " WHERE ";
+        }
+        return query;
+    }
+
     /*
      * Cursor query (String table,
                 String[] columns,
