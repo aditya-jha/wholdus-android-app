@@ -42,15 +42,21 @@ public final class FilterClass {
     }
 
     public static HashSet<String> getSelectedItems(String type) {
+        HashSet<String> returnValue;
         switch (type) {
             case "Fabric":
-                return mFabrics;
+                returnValue = mFabrics;
+                break;
             case "Colors":
-                return mColors;
+                returnValue = mColors;
+                break;
             case "Sizes":
-                return mSizes;
+                returnValue = mSizes;
+                break;
+            default:
+                returnValue = mSizes;
         }
-        return null;
+        return returnValue;
     }
 
     public static boolean isItemSelected(String type, String value) {
