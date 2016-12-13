@@ -29,6 +29,7 @@ import com.wholdus.www.wholdusbuyerapp.adapters.OrdersAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
 import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewVerticalSpaceItemDecoration;
+import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.OrdersLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Order;
@@ -45,7 +46,7 @@ import static android.support.v7.recyclerview.R.attr.layoutManager;
  * Created by aditya on 19/11/16.
  */
 
-public class OrdersFragment extends Fragment {
+public class OrdersFragment extends Fragment implements ItemClickListener {
 
     private ProfileListenerInterface mListener;
     private RecyclerView mOrdersListView;
@@ -53,7 +54,7 @@ public class OrdersFragment extends Fragment {
     private BroadcastReceiver mOrderServiceResponseReceiver;
     private OrderLoaderManager mOrderLoader;
     private OrdersAdapter ordersAdapter;
-    ArrayList<Order> orderArrayList;
+    ArrayList<Order> mOrderArrayList;
 
     public OrdersFragment() {
     }
@@ -85,11 +86,7 @@ public class OrdersFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_orders, container, false);
         initReferences(rootView);
 
-        mOrderLoader = new OrderLoaderManager();
-        getActivity().getSupportLoaderManager().restartLoader(ORDERS_DB_LOADER, null, mOrderLoader);
-
         fetchDataFromServer();
-
         return rootView;
     }
 
@@ -97,9 +94,11 @@ public class OrdersFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        mOrderLoader = new OrderLoaderManager();
+        getActivity().getSupportLoaderManager().restartLoader(ORDERS_DB_LOADER, null, mOrderLoader);
+
         IntentFilter intentFilter = new IntentFilter(getString(R.string.order_data_updated));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mOrderServiceResponseReceiver, intentFilter);
-
         mListener.fragmentCreated("My Orders", true);
     }
 
@@ -132,19 +131,17 @@ public class OrdersFragment extends Fragment {
         mOrdersListView.setItemAnimator(new DefaultItemAnimator());
         RecyclerViewVerticalSpaceItemDecoration dividerItemDecoration = new RecyclerViewVerticalSpaceItemDecoration(40);
         mOrdersListView.addItemDecoration(dividerItemDecoration);
+        mOrderArrayList = new ArrayList<>();
+        ordersAdapter = new OrdersAdapter(getContext(), mOrderArrayList, this);
+        mOrdersListView.setAdapter(ordersAdapter);
     }
 
     private void setViewForOrders(ArrayList<Order> orders){
         //TODO: If empty list, handle case
-        orderArrayList = orders;
-        if (ordersAdapter == null) {
-            ordersAdapter = new OrdersAdapter(getContext(), orders);
-            mOrdersListView.setAdapter(ordersAdapter);
-        }
-        else {
-            ordersAdapter.notifyDataSetChanged();
-        }
-
+        mOrderArrayList.clear();
+        mOrderArrayList.addAll(orders);
+        //TODO: More efficient way to implement clear and add
+        ordersAdapter.notifyDataSetChanged();
     }
 
     private void fetchDataFromServer(){
@@ -171,4 +168,8 @@ public class OrdersFragment extends Fragment {
         }
    }
 
+    @Override
+    public void itemClicked(int position, int id) {
+        mListener.openOrderDetails(mOrderArrayList.get(position).getOrderID());
+    }
 }

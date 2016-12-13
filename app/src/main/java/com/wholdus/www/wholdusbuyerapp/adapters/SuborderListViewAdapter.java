@@ -57,6 +57,11 @@ public class SuborderListViewAdapter extends BaseAdapter {
     }
 
     @Override
+    public boolean isEnabled(int position){
+        return false;
+    }
+
+    @Override
     public Object getItem(int i) {
         return mListData.get(i);
     }

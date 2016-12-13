@@ -2,6 +2,7 @@ package com.wholdus.www.wholdusbuyerapp.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
+import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.models.Order;
 import com.wholdus.www.wholdusbuyerapp.models.Suborder;
@@ -25,11 +27,12 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
 
     private ArrayList<Order> mListData;
     private Context mContext;
-    private ProfileListenerInterface mProfileListener;
+    private ItemClickListener mListener;
 
-    public OrdersAdapter(Context context, ArrayList<Order> listData){
+    public OrdersAdapter(Context context, ArrayList<Order> listData,final ItemClickListener listener){
         mContext = context;
         mListData = listData;
+        mListener = listener;
     }
 
     @Override
@@ -49,6 +52,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
         SuborderListViewAdapter suborderAdapter = new SuborderListViewAdapter(mContext, suborders);
         holder.suborderListView.setAdapter(suborderAdapter);
         HelperFunctions.setListViewHeightBasedOnChildren(holder.suborderListView);
+        //TODO:Handle on click behavior for the list view
         /*
         final int adapterCount = suborderAdapter.getCount();
         LinearLayout layout = new LinearLayout(mContext);
@@ -58,6 +62,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
         }*/
 
         //holder.suborderListView.addView(layout);
+        holder.mListener = mListener;
 
     }
 
@@ -74,6 +79,8 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
         private TextView orderDate;
         private TextView orderAmount;
         private ListView suborderListView;
+        private ItemClickListener mListener;
+
         private MyViewHolder(View itemView) {
             super(itemView);
             orderID = (TextView) itemView.findViewById(R.id.order_id_text_view);
@@ -81,15 +88,18 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
             orderDate = (TextView) itemView.findViewById(R.id.order_date_text_view);
             orderAmount = (TextView) itemView.findViewById(R.id.order_amount_text_view);
             suborderListView = (ListView) itemView.findViewById(R.id.suborder_list_view);
+
+            itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
 
-            int orderID = mListData.get(getAdapterPosition()).getOrderID();
+            int position = getAdapterPosition();
+            if (position == RecyclerView.NO_POSITION) return;
 
-            if (mProfileListener != null){
-                mProfileListener.openOrderDetails(orderID);
+            if (mListener != null) {
+                mListener.itemClicked(position, view.getId());
             }
 
         }

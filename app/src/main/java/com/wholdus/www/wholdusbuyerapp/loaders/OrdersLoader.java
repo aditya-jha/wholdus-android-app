@@ -3,10 +3,12 @@ package com.wholdus.www.wholdusbuyerapp.loaders;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.OrderDBHelper;
 import com.wholdus.www.wholdusbuyerapp.models.Order;
+import com.wholdus.www.wholdusbuyerapp.models.OrderItem;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
 import com.wholdus.www.wholdusbuyerapp.models.Seller;
 import com.wholdus.www.wholdusbuyerapp.models.Suborder;
@@ -66,6 +68,12 @@ public class OrdersLoader extends AbstractLoader<ArrayList<Order>>{
                 if (mInitialiseOrderItems){
                     for (Suborder suborder:order.getSuborders()){
                         suborder.setOrderItems(orderDBHelper.getOrderItemsData(null, null, suborder.getSuborderID(), null));
+
+                        if (mInitialiseProduct){
+                            for (OrderItem orderItem:suborder.getOrderItems()){
+                                //TODO: Initialise product
+                            }
+                        }
                     }
                 }
             }

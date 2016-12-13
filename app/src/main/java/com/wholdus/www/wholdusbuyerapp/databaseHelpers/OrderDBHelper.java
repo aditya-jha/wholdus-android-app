@@ -41,7 +41,7 @@ public class OrderDBHelper extends BaseDBHelper {
         String query = "SELECT " + columnNames + " FROM " + OrdersContract.OrdersTable.TABLE_NAME;
         boolean whereApplied = false;
         if (orderID != null && orderID != -1) {
-            query += "WHERE " + OrdersContract.OrdersTable.COLUMN_ORDER_ID + " = " + orderID;
+            query += " WHERE " + OrdersContract.OrdersTable.COLUMN_ORDER_ID + " = " + orderID;
             whereApplied = true;
         }
         if (orderStatusValues != null && !orderStatusValues.isEmpty()) {
@@ -63,7 +63,7 @@ public class OrderDBHelper extends BaseDBHelper {
         String query = "SELECT " + columnNames + " FROM " + OrdersContract.SubordersTable.TABLE_NAME;
         boolean whereApplied = false;
         if (suborderID != null && suborderID != -1) {
-            query += "WHERE " + OrdersContract.SubordersTable.COLUMN_SUBORDER_ID + " = " + suborderID;
+            query += " WHERE " + OrdersContract.SubordersTable.COLUMN_SUBORDER_ID + " = " + suborderID;
             whereApplied = true;
         }
         if (orderID != null && orderID != -1) {
@@ -94,7 +94,7 @@ public class OrderDBHelper extends BaseDBHelper {
         String query = "SELECT " + columnNames + " FROM " + OrdersContract.OrderItemsTable.TABLE_NAME;
         boolean whereApplied = false;
         if (orderItemID != null && orderItemID != -1) {
-            query += "WHERE " + OrdersContract.OrderItemsTable.COLUMN_ORDER_ITEM_ID + " = " + orderItemID;
+            query += " WHERE " + OrdersContract.OrderItemsTable.COLUMN_ORDER_ITEM_ID + " = " + orderItemID;
             whereApplied = true;
         }
         if (suborderID != null && suborderID != -1) {
@@ -334,11 +334,14 @@ public class OrderDBHelper extends BaseDBHelper {
         ContentValues values = new ContentValues();
         values.put(OrdersContract.OrderItemsTable.COLUMN_ORDER_ITEM_ID, orderitem.getInt(OrdersContract.OrderItemsTable.COLUMN_ORDER_ITEM_ID));
         values.put(OrdersContract.OrderItemsTable.COLUMN_SUBORDER_ID, orderitem.getInt(OrdersContract.OrderItemsTable.COLUMN_SUBORDER_ID));
-        values.put(OrdersContract.OrderItemsTable.COLUMN_PRODUCT_ID, orderitem.getInt(OrdersContract.OrderItemsTable.COLUMN_PRODUCT_ID));
+        JSONObject product = orderitem.getJSONObject("product");
+        values.put(OrdersContract.OrderItemsTable.COLUMN_PRODUCT_ID, product.getInt(ProductsContract.ProductsTable.COLUMN_PRODUCT_ID));
         //TODO: What to do with null order shipment ID
         int orderShipmentID = 0;
-        if (!orderitem.isNull(OrdersContract.OrderItemsTable.COLUMN_ORDER_SHIPMENT_ID)){
+        String trackingUrl = "";
+        if (orderitem.has(OrdersContract.OrderItemsTable.COLUMN_ORDER_SHIPMENT_ID) && !orderitem.isNull(OrdersContract.OrderItemsTable.COLUMN_ORDER_SHIPMENT_ID)){
             orderShipmentID = orderitem.getInt(OrdersContract.OrderItemsTable.COLUMN_ORDER_SHIPMENT_ID);
+            trackingUrl = orderitem.getString(OrdersContract.OrderItemsTable.COLUMN_TRACKING_URL);
         }
         values.put(OrdersContract.OrderItemsTable.COLUMN_ORDER_SHIPMENT_ID, orderShipmentID);
         values.put(OrdersContract.OrderItemsTable.COLUMN_LOTS, orderitem.getInt(OrdersContract.OrderItemsTable.COLUMN_LOTS));
@@ -351,7 +354,7 @@ public class OrderDBHelper extends BaseDBHelper {
         JSONObject orderItemStatus = orderitem.getJSONObject("order_item_status");
         values.put(OrdersContract.OrderItemsTable.COLUMN_ORDER_ITEM_STATUS_VALUE, orderItemStatus.getInt("value"));
         values.put(OrdersContract.OrderItemsTable.COLUMN_ORDER_ITEM_STATUS_DISPLAY, orderItemStatus.getString("display_value"));
-        values.put(OrdersContract.OrderItemsTable.COLUMN_TRACKING_URL, orderitem.getString(OrdersContract.OrderItemsTable.COLUMN_TRACKING_URL));
+        values.put(OrdersContract.OrderItemsTable.COLUMN_TRACKING_URL, trackingUrl);
         values.put(OrdersContract.OrderItemsTable.COLUMN_CREATED_AT, orderitem.getString(OrdersContract.OrderItemsTable.COLUMN_CREATED_AT));
         values.put(OrdersContract.OrderItemsTable.COLUMN_UPDATED_AT, orderitem.getString(OrdersContract.OrderItemsTable.COLUMN_UPDATED_AT));
         values.put(OrdersContract.OrderItemsTable.COLUMN_REMARKS, orderitem.getString(OrdersContract.OrderItemsTable.COLUMN_REMARKS));
