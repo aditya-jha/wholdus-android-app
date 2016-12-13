@@ -43,6 +43,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Order order = mListData.get(position);
         holder.orderID.setText(order.getDisplayNumber());
+        holder.orderStatus.setText(order.getOrderStatusDisplay());
         holder.orderDate.setText(HelperFunctions.getDateFromString(order.getCreatedAt()));
         holder.orderAmount.setText(String.format("%.00f", order.getFinalPrice()));
 
@@ -70,13 +71,15 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder{
-        public TextView orderID;
-        public TextView orderDate;
-        public TextView orderAmount;
-        public ListView suborderListView;
-        public MyViewHolder(View itemView) {
+        private TextView orderID;
+        private TextView orderStatus;
+        private TextView orderDate;
+        private TextView orderAmount;
+        private ListView suborderListView;
+        private MyViewHolder(View itemView) {
             super(itemView);
             orderID = (TextView) itemView.findViewById(R.id.order_id_text_view);
+            orderStatus = (TextView) itemView.findViewById(R.id.order_status_text_view);
             orderDate = (TextView) itemView.findViewById(R.id.order_date_text_view);
             orderAmount = (TextView) itemView.findViewById(R.id.order_amount_text_view);
             suborderListView = (ListView) itemView.findViewById(R.id.suborder_list_view);
