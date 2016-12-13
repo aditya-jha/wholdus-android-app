@@ -84,4 +84,6 @@
 
     <!-- filter fragment -->
     <string name="filter_footer_title">Filter Products</string>
+    <string name="max_price_key">Max Price</string>
+    <string name="min_price_key">Min Price</string>
 </resources>

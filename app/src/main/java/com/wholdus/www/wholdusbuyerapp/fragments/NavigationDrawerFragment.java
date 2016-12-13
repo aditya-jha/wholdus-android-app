@@ -13,6 +13,7 @@ import android.widget.ExpandableListView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.AccountActivity;
+import com.wholdus.www.wholdusbuyerapp.activities.HomeActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.LoginSignupActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.ExpandableListViewAdapter;
 import com.wholdus.www.wholdusbuyerapp.asynctasks.LoginHelperAsyncTask;
@@ -51,13 +52,18 @@ public class NavigationDrawerFragment extends Fragment {
                 R.layout.navigation_drawer_list_group, R.layout.navigation_drawer_list_item);
         mExpandableListView.setAdapter(mExpandableListViewAdapter);
 
+        /* TODO: functionality should not be handled based on the postion, some Id or tag mus tbe used */
         mExpandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
                 switch (groupPosition) {
                     case 0:
+                        // go to home
+                        startActivity(new Intent(getContext(), HomeActivity.class));
                         return true;
-                    case 4:
+                    case 1:
+                        return true;
+                    case 5:
                         logout();
                         return true;
                     default:
@@ -70,13 +76,13 @@ public class NavigationDrawerFragment extends Fragment {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 switch (groupPosition) {
-                    case 1:
+                    case 2:
                         handleStoreCase(childPosition);
                         break;
-                    case 2:
+                    case 3:
                         handleAccountCase(childPosition);
                         break;
-                    case 3:
+                    case 4:
                         handleHelpSupportCase(childPosition);
                         break;
                     default:
