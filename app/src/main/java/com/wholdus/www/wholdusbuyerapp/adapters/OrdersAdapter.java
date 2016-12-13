@@ -7,14 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.gms.vision.text.Text;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
+import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
+import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.models.Order;
 import com.wholdus.www.wholdusbuyerapp.models.Suborder;
 
@@ -28,10 +27,12 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
 
     private ArrayList<Order> mListData;
     private Context mContext;
+    private ItemClickListener mListener;
 
-    public OrdersAdapter(Context context, ArrayList<Order> listData){
+    public OrdersAdapter(Context context, ArrayList<Order> listData,final ItemClickListener listener){
         mContext = context;
         mListData = listData;
+        mListener = listener;
     }
 
     @Override
@@ -43,6 +44,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Order order = mListData.get(position);
         holder.orderID.setText(order.getDisplayNumber());
+        holder.orderStatus.setText(order.getOrderStatusDisplay());
         holder.orderDate.setText(HelperFunctions.getDateFromString(order.getCreatedAt()));
         holder.orderAmount.setText(String.format("%.00f", order.getFinalPrice()));
 
@@ -50,6 +52,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
         SuborderListViewAdapter suborderAdapter = new SuborderListViewAdapter(mContext, suborders);
         holder.suborderListView.setAdapter(suborderAdapter);
         HelperFunctions.setListViewHeightBasedOnChildren(holder.suborderListView);
+        //TODO:Handle on click behavior for the list view
         /*
         final int adapterCount = suborderAdapter.getCount();
         LinearLayout layout = new LinearLayout(mContext);
@@ -59,6 +62,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
         }*/
 
         //holder.suborderListView.addView(layout);
+        holder.mListener = mListener;
 
     }
 
@@ -69,72 +73,35 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
         return holder;
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder{
-        public TextView orderID;
-        public TextView orderDate;
-        public TextView orderAmount;
-        public ListView suborderListView;
-        public MyViewHolder(View itemView) {
+    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private TextView orderID;
+        private TextView orderStatus;
+        private TextView orderDate;
+        private TextView orderAmount;
+        private ListView suborderListView;
+        private ItemClickListener mListener;
+
+        private MyViewHolder(View itemView) {
             super(itemView);
             orderID = (TextView) itemView.findViewById(R.id.order_id_text_view);
+            orderStatus = (TextView) itemView.findViewById(R.id.order_status_text_view);
             orderDate = (TextView) itemView.findViewById(R.id.order_date_text_view);
             orderAmount = (TextView) itemView.findViewById(R.id.order_amount_text_view);
             suborderListView = (ListView) itemView.findViewById(R.id.suborder_list_view);
-        }
-    }
 
-    private class SuborderListViewAdapter extends BaseAdapter{
-
-        private ArrayList<Suborder> mListData;
-        private Context mContext;
-        private LayoutInflater layoutInflater;
-
-        public SuborderListViewAdapter(Context context, ArrayList<Suborder> listData){
-            mContext = context;
-            mListData = listData;
-            layoutInflater = LayoutInflater.from(context);
+            itemView.setOnClickListener(this);
         }
 
         @Override
-        public int getCount() {
-            return mListData.size();
-        }
+        public void onClick(View view) {
 
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
+            int position = getAdapterPosition();
+            if (position == RecyclerView.NO_POSITION) return;
 
-        @Override
-        public View getView(int i, View convertView, ViewGroup viewGroup) {
-            ViewHolder holder;
-
-            if(convertView == null){
-                convertView = layoutInflater.inflate(R.layout.list_item_layout_orders_suborders, viewGroup, false);
-                holder = new ViewHolder();
-                holder.sellerName = (TextView) convertView.findViewById(R.id.suborder_seller_name_text_view);
-                holder.pieces = (TextView) convertView.findViewById(R.id.suborder_pieces_text_view);
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
+            if (mListener != null) {
+                mListener.itemClicked(position, view.getId());
             }
-            final Suborder suborder = this.mListData.get(i);
 
-            holder.sellerName.setText(suborder.getSeller().getCompanyName());
-            holder.pieces.setText(String.valueOf(suborder.getPieces()));
-            return convertView;
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return mListData.get(i);
-        }
-
-        class ViewHolder{
-            int id;
-            TextView sellerName;
-            TextView pieces;
         }
     }
-
 }

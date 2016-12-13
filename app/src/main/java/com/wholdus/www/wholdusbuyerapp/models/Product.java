@@ -9,6 +9,5 @@ import android.database.Cursor;
 public class Product {
 
     public Product(Cursor cursor) {
-
     }
 }

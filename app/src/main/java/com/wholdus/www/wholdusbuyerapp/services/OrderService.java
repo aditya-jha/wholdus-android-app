@@ -3,6 +3,7 @@ package com.wholdus.www.wholdusbuyerapp.services;
 import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -49,11 +50,13 @@ public class OrderService extends IntentService {
     }
 
     public void fetchOrders(int todo, int pageNumber){
-        HashMap<String,Object> params = new HashMap<>();
-        params.put("items_per_page", 10);
-        params.put("page_number", pageNumber);
-        params.put("sub_order_details", 1);
-        params.put("seller_details", 1);
+        HashMap<String,String> params = new HashMap<>();
+        params.put("items_per_page", "10");
+        params.put("page_number", String.valueOf(pageNumber));
+        params.put("sub_order_details", "1");
+        params.put("seller_details", "1");
+        params.put("order_item_details", "1");
+        params.put("product_details", "1");
         String url = GlobalAccessHelper.generateUrl(getApplicationContext(), getString(R.string.orders_url), params);
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }
@@ -116,6 +119,7 @@ public class OrderService extends IntentService {
     private void saveOrderstoDB(JSONArray ordersArray) throws JSONException{
         OrderDBHelper orderDBHelper = new OrderDBHelper(this);
         orderDBHelper.saveOrdersData(ordersArray);
+        sendOrderDataUpdatedBroadCast(null);
     }
 
     private void handlePagination(JSONObject data, int todo){
@@ -131,5 +135,13 @@ public class OrderService extends IntentService {
         } catch (JSONException e){
             e.printStackTrace();
         }
+    }
+
+    private void sendOrderDataUpdatedBroadCast(@Nullable String extra) {
+        Intent intent = new Intent(getString(R.string.order_data_updated));
+        if (extra != null) {
+            intent.putExtra("extra", extra);
+        }
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

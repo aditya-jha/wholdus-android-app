@@ -16,7 +16,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions.booleanToInteger;
 
 /**
  * Created by aditya on 10/12/16.
@@ -28,6 +27,8 @@ public class CatalogDBHelper extends BaseDBHelper {
     public CatalogDBHelper(Context context) {
         super(context);
     }
+
+    private SparseArray<String> mPresentSellerIDs;
 
     public Cursor getAllCategories(boolean productsCount) {
         String countQuery = "";
@@ -53,6 +54,9 @@ public class CatalogDBHelper extends BaseDBHelper {
     }
 
     public SparseArray<String> getPresentSellerIDs() {
+        if (mPresentSellerIDs!= null){
+            return mPresentSellerIDs;
+        }
         String[] columns = new String[]{ProductsContract.SellersTable.COLUMN_SELLER_ID, ProductsContract.SellersTable.COLUMN_UPDATED_AT};
         Cursor cursor = getSellerData(null, columns);
         SparseArray<String> sellerIDs = new SparseArray<>();
@@ -60,6 +64,7 @@ public class CatalogDBHelper extends BaseDBHelper {
             sellerIDs.put(cursor.getInt(cursor.getColumnIndexOrThrow(ProductsContract.SellersTable.COLUMN_SELLER_ID)),
                     cursor.getString(cursor.getColumnIndexOrThrow(ProductsContract.SellersTable.COLUMN_UPDATED_AT)));
         }
+        mPresentSellerIDs = sellerIDs;
         return sellerIDs;
     }
 
@@ -104,20 +109,23 @@ public class CatalogDBHelper extends BaseDBHelper {
         return insertedUpdatedCount;
     }
 
-    public void saveSellerData(JSONObject seller, @Nullable String sellerUpdatedAtLocal) throws JSONException{
+    public void saveSellerData(JSONObject seller) throws JSONException{
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
         int sellerID = seller.getInt(ProductsContract.SellersTable.COLUMN_SELLER_ID);
         if (!seller.has(ProductsContract.SellersTable.COLUMN_UPDATED_AT)){
             return;
         }
+        String sellerUpdatedAtLocal = getPresentSellerIDs().get(sellerID);
         String sellerUpdatedAtServer = seller.getString(ProductsContract.SellersTable.COLUMN_UPDATED_AT);
         if (sellerUpdatedAtLocal == null) { // insert
             ContentValues values = getSellerContentValues(seller);
             db.insert(ProductsContract.SellersTable.TABLE_NAME, null, values);
+            mPresentSellerIDs.put(sellerID, sellerUpdatedAtServer);
         } else if (!sellerUpdatedAtLocal.equals(sellerUpdatedAtServer)) {
             ContentValues values = getSellerContentValues(seller);
             String selection = ProductsContract.SellersTable.COLUMN_SELLER_ID + " = " + sellerID;
             db.update(ProductsContract.SellersTable.TABLE_NAME, values, selection, null);
+            mPresentSellerIDs.put(sellerID, sellerUpdatedAtServer);
         }
         mDatabaseHelper.closeDatabase();
     }
@@ -128,7 +136,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         values.put(ProductsContract.SellersTable.COLUMN_COMPANY_NAME, seller.getString(ProductsContract.SellersTable.COLUMN_COMPANY_NAME));
         values.put(ProductsContract.SellersTable.COLUMN_NAME, seller.getString(ProductsContract.SellersTable.COLUMN_NAME));
         values.put(ProductsContract.SellersTable.COLUMN_COMPANY_PROFILE, seller.getString(ProductsContract.SellersTable.COLUMN_COMPANY_PROFILE));
-        values.put(ProductsContract.SellersTable.COLUMN_SHOW_ONLINE, booleanToInteger(seller.getBoolean(ProductsContract.SellersTable.COLUMN_SHOW_ONLINE)));
+        values.put(ProductsContract.SellersTable.COLUMN_SHOW_ONLINE, seller.getBoolean(ProductsContract.SellersTable.COLUMN_SHOW_ONLINE)? 1 : 0);
         values.put(ProductsContract.SellersTable.COLUMN_CREATED_AT, seller.getString(ProductsContract.SellersTable.COLUMN_CREATED_AT));
         values.put(ProductsContract.SellersTable.COLUMN_UPDATED_AT, seller.getString(ProductsContract.SellersTable.COLUMN_UPDATED_AT));
         return values;
