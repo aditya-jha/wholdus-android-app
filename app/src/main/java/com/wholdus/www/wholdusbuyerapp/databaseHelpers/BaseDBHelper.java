@@ -33,9 +33,9 @@ public class BaseDBHelper {
         return cursor;
     }
 
-    public String getColumnNamesString(@Nullable String[] columns){
+    protected String getColumnNamesString(@Nullable String[] columns){
         String columnNames;
-        if (columns != null && !(columns.length == 0)) {
+        if (columns != null && columns.length != 0) {
             columnNames = TextUtils.join(", ", columns);
         } else {
             columnNames = "*";

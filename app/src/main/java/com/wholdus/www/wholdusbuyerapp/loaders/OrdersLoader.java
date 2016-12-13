@@ -2,6 +2,7 @@ package com.wholdus.www.wholdusbuyerapp.loaders;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.Nullable;
 
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.OrderDBHelper;
@@ -11,6 +12,7 @@ import com.wholdus.www.wholdusbuyerapp.models.Seller;
 import com.wholdus.www.wholdusbuyerapp.models.Suborder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by kaustubh on 7/12/16.
@@ -18,17 +20,27 @@ import java.util.ArrayList;
 
 public class OrdersLoader extends AbstractLoader<ArrayList<Order>>{
 
-    boolean mInitialiseSuborders;
-    boolean mInitialiseOrderItems;
-    boolean mInitialiseSeller;
+    private int mOrderID;
+    private List<Integer> mOrderStatusValues;
+    private boolean mInitialiseSuborders;
+    private boolean mInitialiseOrderItems;
+    private boolean mInitialiseSeller;
+    private boolean mInitialiseProduct;
+
 
     public OrdersLoader(Context context,
+                        int orderID,
+                        List<Integer> orderStatusValues,
                         boolean initialiseSuborders,
                         boolean initialiseOrderItems,
+                        boolean initialiseProduct,
                         boolean initialiseSeller) {
         super(context);
+        mOrderID = orderID;
+        mOrderStatusValues = orderStatusValues;
         mInitialiseSuborders = initialiseSuborders;
         mInitialiseOrderItems = initialiseOrderItems;
+        mInitialiseProduct = initialiseProduct;
         mInitialiseSeller = initialiseSeller;
     }
 
@@ -38,7 +50,7 @@ public class OrdersLoader extends AbstractLoader<ArrayList<Order>>{
         // fetch data from DB
         OrderDBHelper orderDBHelper = new OrderDBHelper(getContext());
         CatalogDBHelper catalogDBHelper = new CatalogDBHelper(getContext());
-        ArrayList<Order> orders = Order.getOrdersFromCursor(orderDBHelper.getOrdersData(null, null, null));
+        ArrayList<Order> orders = Order.getOrdersFromCursor(orderDBHelper.getOrdersData(mOrderStatusValues, mOrderID != -1 ? mOrderID : null, null));
         if (mInitialiseSuborders) {
             for (Order order : orders) {
                 order.setSuborders(orderDBHelper.getSubordersData(null, null, order.getOrderID(), null));
@@ -49,6 +61,11 @@ public class OrdersLoader extends AbstractLoader<ArrayList<Order>>{
                             cursor.moveToNext();
                             suborder.setSeller(new Seller(cursor));
                         }
+                    }
+                }
+                if (mInitialiseOrderItems){
+                    for (Suborder suborder:order.getSuborders()){
+                        suborder.setOrderItems(orderDBHelper.getOrderItemsData(null, null, suborder.getSuborderID(), null));
                     }
                 }
             }

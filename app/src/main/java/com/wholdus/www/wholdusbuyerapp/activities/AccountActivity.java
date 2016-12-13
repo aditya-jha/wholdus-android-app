@@ -20,6 +20,7 @@ import com.wholdus.www.wholdusbuyerapp.fragments.BuyerInterestFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.EditAddressFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.EditProfileDetailsFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
+import com.wholdus.www.wholdusbuyerapp.fragments.OrderDetailsFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.OrdersFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProductGridCategoryTabFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProfileFragment;
@@ -81,6 +82,13 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
     }
 
     @Override
+    public void openOrderDetails(int orderID) {
+        Bundle bundle = new Bundle();
+        bundle.putInt("orderID", orderID);
+        openToFragment("orderDetails", bundle);
+    }
+
+    @Override
     public void fragmentCreated(String fragmentName, boolean backEnabled) {
         modifyToolbar(fragmentName, backEnabled);
     }
@@ -91,7 +99,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
     }
 
     @Override
-    public void editAddress(@Nullable int addressID, int _ID) {
+    public void editAddress(int addressID, int _ID) {
         Bundle bundle = new Bundle();
         bundle.putInt("addressID", addressID);
         bundle.putInt("_ID", _ID);
@@ -175,6 +183,9 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
                 break;
             case "buyerInterests":
                 fragment = new BuyerInterestFragment();
+                break;
+            case "orderDetails":
+                fragment = new OrderDetailsFragment();
                 break;
             default:
                 fragment = new ProfileFragment();

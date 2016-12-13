@@ -167,4 +167,8 @@ public class Suborder {
         mSeller = seller;
     }
 
+    public void setOrderItems(Cursor cursor){
+        mOrderItems = OrderItem.getOrderItemsFromCursor(cursor);
+    }
+
 }

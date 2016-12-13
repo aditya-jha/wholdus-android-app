@@ -49,11 +49,12 @@ public class OrderService extends IntentService {
     }
 
     public void fetchOrders(int todo, int pageNumber){
-        HashMap<String,Object> params = new HashMap<>();
-        params.put("items_per_page", 10);
-        params.put("page_number", pageNumber);
-        params.put("sub_order_details", 1);
-        params.put("seller_details", 1);
+        HashMap<String,String> params = new HashMap<>();
+        params.put("items_per_page", "10");
+        params.put("page_number", String.valueOf(pageNumber));
+        params.put("sub_order_details", "1");
+        params.put("seller_details", "1");
+        params.put("order_item_details", "1");
         String url = GlobalAccessHelper.generateUrl(getApplicationContext(), getString(R.string.orders_url), params);
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }

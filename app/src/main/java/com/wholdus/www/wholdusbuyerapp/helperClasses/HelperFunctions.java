@@ -66,9 +66,4 @@ public class HelperFunctions {
         df.setTimeZone(TimeZone.getDefault());
         return df.format(getDateObjectFromString(dateStr));
     }
-
-    public static int booleanToInteger(boolean bool){
-        return (bool) ? 1 : 0;
-    }
-
 }
