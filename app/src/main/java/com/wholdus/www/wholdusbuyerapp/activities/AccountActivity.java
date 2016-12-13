@@ -91,9 +91,9 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
     }
 
     @Override
-    public void editAddress(@Nullable String addressID, int _ID) {
+    public void editAddress(@Nullable int addressID, int _ID) {
         Bundle bundle = new Bundle();
-        bundle.putString("addressID", addressID);
+        bundle.putInt("addressID", addressID);
         bundle.putInt("_ID", _ID);
         openToFragment("editAddress", bundle);
     }

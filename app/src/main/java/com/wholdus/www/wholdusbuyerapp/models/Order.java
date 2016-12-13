@@ -2,7 +2,9 @@ package com.wholdus.www.wholdusbuyerapp.models;
 
 import android.database.Cursor;
 
+import com.wholdus.www.wholdusbuyerapp.WholdusApplication;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract;
+import com.wholdus.www.wholdusbuyerapp.databaseHelpers.OrderDBHelper;
 
 import java.util.ArrayList;
 
@@ -12,9 +14,9 @@ import java.util.ArrayList;
 
 public class Order {
     private int m_ID;
-    private String mOrderID;
+    private int mOrderID;
     private String mDisplayNumber;
-    private String mBuyerAddressID;
+    private int mBuyerAddressID;
     private BuyerAddress mBuyerAddress;
     private int mProductCount;
     private int mPieces;
@@ -51,9 +53,9 @@ public class Order {
 
     public void setDataFromCursor(Cursor cursor) {
         m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable._ID));
-        mOrderID = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_ORDER_ID));
+        mOrderID = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_ORDER_ID));
         mDisplayNumber = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_DISPLAY_NUMBER));
-        mBuyerAddressID = cursor.getString(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_BUYER_ADDRESS_ID));
+        mBuyerAddressID = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_BUYER_ADDRESS_ID));
         mProductCount = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_PRODUCT_COUNT));
         mPieces = cursor.getInt(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_PIECES));
         mRetailPrice = cursor.getFloat(cursor.getColumnIndexOrThrow(OrdersContract.OrdersTable.COLUMN_RETAIL_PRICE));
@@ -75,7 +77,7 @@ public class Order {
         return m_ID;
     }
 
-    public String getOrderID() {
+    public int getOrderID() {
         return mOrderID;
     }
 
@@ -83,7 +85,7 @@ public class Order {
         return mDisplayNumber;
     }
 
-    public String getBuyerAddressID() {
+    public int getBuyerAddressID() {
         return mBuyerAddressID;
     }
 
@@ -153,5 +155,9 @@ public class Order {
 
     public ArrayList<Suborder> getSuborders() {
         return mSuborders;
+    }
+
+    public void setSuborders(Cursor cursor){
+        mSuborders = Suborder.getSubordersFromCursor(cursor);
     }
 }

@@ -84,7 +84,6 @@ public class ProductsContract {
         public static final String COLUMN_COMPANY_PROFILE = "company_profile";
 
         public static final String COLUMN_SHOW_ONLINE = "show_online";
-        public static final String COLUMN_DELETE_STATUS = "delete_status";
 
         public static final String COLUMN_CREATED_AT = "created_at";
         public static final String COLUMN_UPDATED_AT = "updated_at";

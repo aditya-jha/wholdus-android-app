@@ -13,5 +13,5 @@ public interface ProfileListenerInterface {
 
     void openProfileFragment();
 
-    void editAddress(@Nullable String addressID, int _ID);
+    void editAddress(@Nullable int addressID, int _ID);
 }

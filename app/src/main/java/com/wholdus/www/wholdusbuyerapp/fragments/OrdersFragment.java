@@ -52,7 +52,7 @@ public class OrdersFragment extends Fragment {
     private final int ORDERS_DB_LOADER = 10;
     private BroadcastReceiver mOrderServiceResponseReceiver;
     private OrderLoaderManager mOrderLoader;
-    OrdersAdapter ordersAdapter;
+    private OrdersAdapter ordersAdapter;
     ArrayList<Order> orderArrayList;
 
     public OrdersFragment() {
@@ -167,7 +167,7 @@ public class OrdersFragment extends Fragment {
 
         @Override
         public Loader<ArrayList<Order>> onCreateLoader(final int id, Bundle args) {
-            return new OrdersLoader(getContext());
+            return new OrdersLoader(getContext(), true, false, true);
         }
    }
 

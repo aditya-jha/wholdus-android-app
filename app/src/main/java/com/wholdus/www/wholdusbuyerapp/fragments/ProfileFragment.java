@@ -152,7 +152,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         mAddAddressTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.editAddress(null, -1);
+                mListener.editAddress(-1, -1);
             }
         });
     }
@@ -178,7 +178,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
         BuyerPersonalDetailsAdapter adapter = new BuyerPersonalDetailsAdapter(getContext(), items);
         mPersonalDetailsListView.setAdapter(adapter);
-        HelperFunctions.setListViewHeightBasedOnChildren(mPersonalDetailsListView);
+        //HelperFunctions.setListViewHeightBasedOnChildren(mPersonalDetailsListView);
     }
 
     private void setViewForAddressListView(ArrayList<BuyerAddress> address) {
@@ -194,7 +194,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     int _ID = (Integer) view.getTag(R.integer._ID);
-                    String addressID = (String) view.getTag(R.integer.addressID);
+                    int addressID = (int) view.getTag(R.integer.addressID);
 
                     mListener.editAddress(addressID, _ID);
                 }

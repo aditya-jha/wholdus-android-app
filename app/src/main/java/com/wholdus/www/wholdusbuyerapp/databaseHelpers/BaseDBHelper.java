@@ -3,6 +3,8 @@ package com.wholdus.www.wholdusbuyerapp.databaseHelpers;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 /**
  * Created by aditya on 9/12/16.
@@ -29,6 +31,17 @@ public class BaseDBHelper {
         Cursor cursor = db.rawQuery(query, null);
         mDatabaseHelper.closeDatabase();
         return cursor;
+    }
+
+    public String getColumnNamesString(@Nullable String[] columns){
+        String columnNames;
+        if (columns != null && !(columns.length == 0)) {
+            columnNames = TextUtils.join(", ", columns);
+        } else {
+            columnNames = "*";
+        }
+
+        return columnNames;
     }
 
     /*

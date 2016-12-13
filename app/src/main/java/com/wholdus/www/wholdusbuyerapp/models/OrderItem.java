@@ -7,11 +7,11 @@ package com.wholdus.www.wholdusbuyerapp.models;
 public class OrderItem {
 
     private int m_ID;
-    private String mOrderItemID;
-    private String mSuborderID;
-    private String mProductID;
+    private int mOrderItemID;
+    private int mSuborderID;
+    private int mProductID;
     private Product mProduct;
-    private String mOrderShipmentID;
+    private int mOrderShipmentID;
     private int mLots;
     private int mLotSize;
     private int mPieces;
@@ -33,15 +33,15 @@ public class OrderItem {
         return m_ID;
     }
 
-    public String getOrderItemID() {
+    public int getOrderItemID() {
         return mOrderItemID;
     }
 
-    public String getSuborderID() {
+    public int getSuborderID() {
         return mSuborderID;
     }
 
-    public String getProductID() {
+    public int getProductID() {
         return mProductID;
     }
 
@@ -49,7 +49,7 @@ public class OrderItem {
         return mProduct;
     }
 
-    public String getOrderShipmentID() {
+    public int getOrderShipmentID() {
         return mOrderShipmentID;
     }
 
