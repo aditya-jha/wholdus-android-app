@@ -6,9 +6,9 @@ import android.provider.BaseColumns;
  * Created by kaustubh on 7/12/16.
  */
 
-public class ProductsContract {
+public class CatalogContract {
 
-    private ProductsContract() {
+    private CatalogContract() {
     }
 
     public static final class ProductsTable implements BaseColumns {

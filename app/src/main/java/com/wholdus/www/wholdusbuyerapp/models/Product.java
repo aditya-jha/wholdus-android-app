@@ -3,11 +3,9 @@ package com.wholdus.www.wholdusbuyerapp.models;
 import android.database.Cursor;
 import android.text.TextUtils;
 
-import com.wholdus.www.wholdusbuyerapp.R;
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by kaustubh on 8/12/16.
@@ -43,24 +41,24 @@ public class Product {
     }
 
     public void setDataFromCursor(Cursor cursor){
-        m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsContract.ProductsTable._ID));
-        mProductID = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsContract.ProductsTable.COLUMN_PRODUCT_ID));
-        mSellerID = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsContract.ProductsTable.COLUMN_SELLER_ID));
-        mCategoryID = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsContract.ProductsTable.COLUMN_CATEGORY_ID));
-        mPricePerUnit = cursor.getFloat(cursor.getColumnIndexOrThrow(ProductsContract.ProductsTable.COLUMN_PRICE_PER_UNIT));
-        mLotSize = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsContract.ProductsTable.COLUMN_LOT_SIZE));
-        mPricePerLot = cursor.getFloat(cursor.getColumnIndexOrThrow(ProductsContract.ProductsTable.COLUMN_PRICE_PER_LOT));
-        mMinPricePerUnit = cursor.getFloat(cursor.getColumnIndexOrThrow(ProductsContract.ProductsTable.COLUMN_MIN_PRICE_PER_UNIT));
-        mMargin = cursor.getFloat(cursor.getColumnIndexOrThrow(ProductsContract.ProductsTable.COLUMN_MARGIN));
-        mUrl = cursor.getString(cursor.getColumnIndexOrThrow(ProductsContract.ProductsTable.COLUMN_URL));
-        mImageCount = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsContract.ProductsTable.COLUMN_IMAGE_COUNT));
-        mProductImageNumbers = TextUtils.split(cursor.getString(cursor.getColumnIndexOrThrow(ProductsContract.ProductsTable.COLUMN_IMAGE_NUMBERS)), ",");
-        mColours = cursor.getString(cursor.getColumnIndexOrThrow(ProductsContract.ProductsTable.COLUMN_COLOURS));
-        mFabricGSM = cursor.getString(cursor.getColumnIndexOrThrow(ProductsContract.ProductsTable.COLUMN_FABRIC_GSM));
-        mSizes = cursor.getString(cursor.getColumnIndexOrThrow(ProductsContract.ProductsTable.COLUMN_SIZES));
+        m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable._ID));
+        mProductID = cursor.getInt(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID));
+        mSellerID = cursor.getInt(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_SELLER_ID));
+        mCategoryID = cursor.getInt(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_CATEGORY_ID));
+        mPricePerUnit = cursor.getFloat(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_PRICE_PER_UNIT));
+        mLotSize = cursor.getInt(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_LOT_SIZE));
+        mPricePerLot = cursor.getFloat(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_PRICE_PER_LOT));
+        mMinPricePerUnit = cursor.getFloat(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_MIN_PRICE_PER_UNIT));
+        mMargin = cursor.getFloat(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_MARGIN));
+        mUrl = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_URL));
+        mImageCount = cursor.getInt(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_IMAGE_COUNT));
+        mProductImageNumbers = TextUtils.split(cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_IMAGE_NUMBERS)), ",");
+        mColours = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_COLOURS));
+        mFabricGSM = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_FABRIC_GSM));
+        mSizes = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_SIZES));
 
-        mImagePathString = cursor.getString(cursor.getColumnIndexOrThrow(ProductsContract.ProductsTable.COLUMN_IMAGE_PATH))
-                + "%s/" + cursor.getString(cursor.getColumnIndexOrThrow(ProductsContract.ProductsTable.COLUMN_IMAGE_NAME))
+        mImagePathString = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_IMAGE_PATH))
+                + "%s/" + cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_IMAGE_NAME))
                 + "-%s.jpg";
     }
 

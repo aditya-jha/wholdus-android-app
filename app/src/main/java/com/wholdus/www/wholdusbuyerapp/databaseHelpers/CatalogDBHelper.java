@@ -8,9 +8,9 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract;
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract.CategoriesTable;
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract.ProductsTable;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategoriesTable;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.ProductsTable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -130,10 +130,10 @@ public class CatalogDBHelper extends BaseDBHelper {
     public Cursor getSellerData(@Nullable Integer sellerID, @Nullable String[] columns){
         String columnNames = getColumnNamesString(columns);
 
-        String query = "SELECT " + columnNames + " FROM " + ProductsContract.SellersTable.TABLE_NAME;
+        String query = "SELECT " + columnNames + " FROM " + CatalogContract.SellersTable.TABLE_NAME;
 
         if (sellerID != null && sellerID != -1) {
-            query += " WHERE " + ProductsContract.SellersTable.COLUMN_SELLER_ID + " = " + sellerID;
+            query += " WHERE " + CatalogContract.SellersTable.COLUMN_SELLER_ID + " = " + sellerID;
         }
 
         return getCursor(query);
@@ -143,12 +143,12 @@ public class CatalogDBHelper extends BaseDBHelper {
         if (mPresentSellerIDs!= null){
             return mPresentSellerIDs;
         }
-        String[] columns = new String[]{ProductsContract.SellersTable.COLUMN_SELLER_ID, ProductsContract.SellersTable.COLUMN_UPDATED_AT};
+        String[] columns = new String[]{CatalogContract.SellersTable.COLUMN_SELLER_ID, CatalogContract.SellersTable.COLUMN_UPDATED_AT};
         Cursor cursor = getSellerData(null, columns);
         SparseArray<String> sellerIDs = new SparseArray<>();
         while (cursor.moveToNext()) {
-            sellerIDs.put(cursor.getInt(cursor.getColumnIndexOrThrow(ProductsContract.SellersTable.COLUMN_SELLER_ID)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(ProductsContract.SellersTable.COLUMN_UPDATED_AT)));
+            sellerIDs.put(cursor.getInt(cursor.getColumnIndexOrThrow(CatalogContract.SellersTable.COLUMN_SELLER_ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.SellersTable.COLUMN_UPDATED_AT)));
         }
         mPresentSellerIDs = sellerIDs;
         return sellerIDs;
@@ -158,12 +158,12 @@ public class CatalogDBHelper extends BaseDBHelper {
         if (mPresentProductIDs!= null){
             return mPresentProductIDs;
         }
-        String[] columns = new String[]{ProductsContract.ProductsTable.COLUMN_PRODUCT_ID, ProductsContract.ProductsTable.COLUMN_UPDATED_AT};
+        String[] columns = new String[]{CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, CatalogContract.ProductsTable.COLUMN_UPDATED_AT};
         Cursor cursor = getProductData(-1, null,null,-1,-1,null,null,null,-1,-1,columns);
         SparseArray<String> productIDs = new SparseArray<>();
         while (cursor.moveToNext()) {
-            productIDs.put(cursor.getInt(cursor.getColumnIndexOrThrow(ProductsContract.ProductsTable.COLUMN_PRODUCT_ID)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(ProductsContract.ProductsTable.COLUMN_UPDATED_AT)));
+            productIDs.put(cursor.getInt(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_UPDATED_AT)));
         }
         mPresentProductIDs = productIDs;
         return productIDs;
@@ -212,20 +212,20 @@ public class CatalogDBHelper extends BaseDBHelper {
 
     public void saveSellerData(JSONObject seller) throws JSONException{
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
-        int sellerID = seller.getInt(ProductsContract.SellersTable.COLUMN_SELLER_ID);
-        if (!seller.has(ProductsContract.SellersTable.COLUMN_UPDATED_AT)){
+        int sellerID = seller.getInt(CatalogContract.SellersTable.COLUMN_SELLER_ID);
+        if (!seller.has(CatalogContract.SellersTable.COLUMN_UPDATED_AT)){
             return;
         }
         String sellerUpdatedAtLocal = getPresentSellerIDs().get(sellerID);
-        String sellerUpdatedAtServer = seller.getString(ProductsContract.SellersTable.COLUMN_UPDATED_AT);
+        String sellerUpdatedAtServer = seller.getString(CatalogContract.SellersTable.COLUMN_UPDATED_AT);
         if (sellerUpdatedAtLocal == null) { // insert
             ContentValues values = getSellerContentValues(seller);
-            db.insert(ProductsContract.SellersTable.TABLE_NAME, null, values);
+            db.insert(CatalogContract.SellersTable.TABLE_NAME, null, values);
             mPresentSellerIDs.put(sellerID, sellerUpdatedAtServer);
         } else if (!sellerUpdatedAtLocal.equals(sellerUpdatedAtServer)) {
             ContentValues values = getSellerContentValues(seller);
-            String selection = ProductsContract.SellersTable.COLUMN_SELLER_ID + " = " + sellerID;
-            db.update(ProductsContract.SellersTable.TABLE_NAME, values, selection, null);
+            String selection = CatalogContract.SellersTable.COLUMN_SELLER_ID + " = " + sellerID;
+            db.update(CatalogContract.SellersTable.TABLE_NAME, values, selection, null);
             mPresentSellerIDs.put(sellerID, sellerUpdatedAtServer);
         }
         mDatabaseHelper.closeDatabase();
@@ -252,25 +252,25 @@ public class CatalogDBHelper extends BaseDBHelper {
         mDatabaseHelper.closeDatabase();
     }
 
-    public ContentValues getSellerContentValues(JSONObject seller) throws JSONException{
+    private ContentValues getSellerContentValues(JSONObject seller) throws JSONException{
         ContentValues values = new ContentValues();
-        values.put(ProductsContract.SellersTable.COLUMN_SELLER_ID, seller.getInt(ProductsContract.SellersTable.COLUMN_SELLER_ID));
-        values.put(ProductsContract.SellersTable.COLUMN_COMPANY_NAME, seller.getString(ProductsContract.SellersTable.COLUMN_COMPANY_NAME));
-        values.put(ProductsContract.SellersTable.COLUMN_NAME, seller.getString(ProductsContract.SellersTable.COLUMN_NAME));
-        values.put(ProductsContract.SellersTable.COLUMN_COMPANY_PROFILE, seller.getString(ProductsContract.SellersTable.COLUMN_COMPANY_PROFILE));
-        values.put(ProductsContract.SellersTable.COLUMN_SHOW_ONLINE, seller.getBoolean(ProductsContract.SellersTable.COLUMN_SHOW_ONLINE)? 1 : 0);
-        values.put(ProductsContract.SellersTable.COLUMN_CREATED_AT, seller.getString(ProductsContract.SellersTable.COLUMN_CREATED_AT));
-        values.put(ProductsContract.SellersTable.COLUMN_UPDATED_AT, seller.getString(ProductsContract.SellersTable.COLUMN_UPDATED_AT));
+        values.put(CatalogContract.SellersTable.COLUMN_SELLER_ID, seller.getInt(CatalogContract.SellersTable.COLUMN_SELLER_ID));
+        values.put(CatalogContract.SellersTable.COLUMN_COMPANY_NAME, seller.getString(CatalogContract.SellersTable.COLUMN_COMPANY_NAME));
+        values.put(CatalogContract.SellersTable.COLUMN_NAME, seller.getString(CatalogContract.SellersTable.COLUMN_NAME));
+        values.put(CatalogContract.SellersTable.COLUMN_COMPANY_PROFILE, seller.getString(CatalogContract.SellersTable.COLUMN_COMPANY_PROFILE));
+        values.put(CatalogContract.SellersTable.COLUMN_SHOW_ONLINE, seller.getBoolean(CatalogContract.SellersTable.COLUMN_SHOW_ONLINE)? 1 : 0);
+        values.put(CatalogContract.SellersTable.COLUMN_CREATED_AT, seller.getString(CatalogContract.SellersTable.COLUMN_CREATED_AT));
+        values.put(CatalogContract.SellersTable.COLUMN_UPDATED_AT, seller.getString(CatalogContract.SellersTable.COLUMN_UPDATED_AT));
         return values;
     }
 
-    public ContentValues getProductContentValues(JSONObject product) throws JSONException{
+    private ContentValues getProductContentValues(JSONObject product) throws JSONException{
         ContentValues values = new ContentValues();
         values.put(ProductsTable.COLUMN_PRODUCT_ID, product.getInt(ProductsTable.COLUMN_PRODUCT_ID));
         JSONObject category = product.getJSONObject("category");
         values.put(ProductsTable.COLUMN_CATEGORY_ID, category.getInt(CategoriesTable.COLUMN_CATEGORY_ID));
         JSONObject seller = product.getJSONObject("seller");
-        values.put(ProductsTable.COLUMN_SELLER_ID, seller.getInt(ProductsContract.SellersTable.COLUMN_SELLER_ID));
+        values.put(ProductsTable.COLUMN_SELLER_ID, seller.getInt(CatalogContract.SellersTable.COLUMN_SELLER_ID));
         JSONObject productDetails = product.getJSONObject("details");
         values.put(ProductsTable.COLUMN_PRODUCT_DETAILS_ID, productDetails.getInt(ProductsTable.COLUMN_PRODUCT_DETAILS_ID));
         values.put(ProductsTable.COLUMN_PRICE_PER_UNIT, product.getDouble(ProductsTable.COLUMN_PRICE_PER_UNIT));

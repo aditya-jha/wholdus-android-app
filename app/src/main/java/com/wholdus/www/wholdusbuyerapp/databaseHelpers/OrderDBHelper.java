@@ -10,7 +10,7 @@ import android.util.SparseArray;
 
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract;
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 
 import org.json.JSONArray;
@@ -287,9 +287,9 @@ public class OrderDBHelper extends BaseDBHelper {
         values.put(OrdersContract.SubordersTable.COLUMN_SUBORDER_ID, suborder.getInt(OrdersContract.SubordersTable.COLUMN_SUBORDER_ID));
         values.put(OrdersContract.SubordersTable.COLUMN_DISPLAY_NUMBER, suborder.getString(OrdersContract.SubordersTable.COLUMN_DISPLAY_NUMBER));
         JSONObject seller = suborder.getJSONObject("seller");
-        values.put(OrdersContract.SubordersTable.COLUMN_SELLER_ID, seller.getInt(ProductsContract.SellersTable.COLUMN_SELLER_ID));
+        values.put(OrdersContract.SubordersTable.COLUMN_SELLER_ID, seller.getInt(CatalogContract.SellersTable.COLUMN_SELLER_ID));
         JSONObject sellerAddress = suborder.getJSONObject("seller_address");
-        values.put(OrdersContract.SubordersTable.COLUMN_SELLER_ADDRESS_ID, sellerAddress.getInt(ProductsContract.SellerAddressTable.COLUMN_ADDRESS_ID));
+        values.put(OrdersContract.SubordersTable.COLUMN_SELLER_ADDRESS_ID, sellerAddress.getInt(CatalogContract.SellerAddressTable.COLUMN_ADDRESS_ID));
         values.put(OrdersContract.SubordersTable.COLUMN_PRODUCT_COUNT, suborder.getInt(OrdersContract.SubordersTable.COLUMN_PRODUCT_COUNT));
         values.put(OrdersContract.SubordersTable.COLUMN_PIECES, suborder.getInt(OrdersContract.SubordersTable.COLUMN_PIECES));
         values.put(OrdersContract.SubordersTable.COLUMN_RETAIL_PRICE, suborder.getDouble(OrdersContract.SubordersTable.COLUMN_RETAIL_PRICE));
@@ -314,7 +314,7 @@ public class OrderDBHelper extends BaseDBHelper {
         values.put(OrdersContract.OrderItemsTable.COLUMN_ORDER_ITEM_ID, orderitem.getInt(OrdersContract.OrderItemsTable.COLUMN_ORDER_ITEM_ID));
         values.put(OrdersContract.OrderItemsTable.COLUMN_SUBORDER_ID, orderitem.getInt(OrdersContract.OrderItemsTable.COLUMN_SUBORDER_ID));
         JSONObject product = orderitem.getJSONObject("product");
-        values.put(OrdersContract.OrderItemsTable.COLUMN_PRODUCT_ID, product.getInt(ProductsContract.ProductsTable.COLUMN_PRODUCT_ID));
+        values.put(OrdersContract.OrderItemsTable.COLUMN_PRODUCT_ID, product.getInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID));
         //TODO: What to do with null order shipment ID
         int orderShipmentID = 0;
         String trackingUrl = "";
