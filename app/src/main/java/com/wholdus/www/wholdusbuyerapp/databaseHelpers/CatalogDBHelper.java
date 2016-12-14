@@ -8,11 +8,10 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract.CategoriesTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract.ProductsTable;
-import com.wholdus.www.wholdusbuyerapp.models.Product;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract.SellerAddressTable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,7 +43,7 @@ public class CatalogDBHelper extends BaseDBHelper {
     public static String[] ExtraProductColumns = {ProductsTable.COLUMN_PRODUCT_DETAILS_ID,ProductsTable.COLUMN_UNIT, ProductsTable.COLUMN_DISPLAY_NAME,
         ProductsTable.COLUMN_DELETE_STATUS, ProductsTable.COLUMN_SHOW_ONLINE, ProductsTable.COLUMN_WARRANTY, ProductsTable.COLUMN_SPECIAL_FEATURE,
         ProductsTable.COLUMN_AVAILABILITY,ProductsTable.COLUMN_STYLE, ProductsTable.COLUMN_MANUFACTURED_CITY, ProductsTable.COLUMN_PATTERN,
-        ProductsTable.COLUMN_LOT_DESCRIPTION, ProductsTable.COLUMN_DESCRIPTION, ProductsTable.COLUMN_WORK_DESCRIPTION_TYPE, ProductsTable.COLUMN_NECK_COLLAR_TYPE,
+        ProductsTable.COLUMN_LOT_DESCRIPTION, ProductsTable.COLUMN_DESCRIPTION, ProductsTable.WORK_DECORATION_TYPE, ProductsTable.COLUMN_NECK_COLLAR_TYPE,
         ProductsTable.COLUMN_DISPATCHED_IN,ProductsTable.COLUMN_REMARKS, ProductsTable.COLUMN_SELLER_CATALOG_NUMBER,ProductsTable.COLUMN_SLEEVE,
         ProductsTable.COLUMN_GENDER, ProductsTable.COLUMN_WEIGHT_PER_UNIT, ProductsTable.COLUMN_PACKAGING_DETAILS, ProductsTable.COLUMN_LENGTH,
         ProductsTable.COLUMN_CREATED_AT, ProductsTable.COLUMN_UPDATED_AT};
@@ -239,6 +238,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         if (!product.has("details") || !product.has("image")){
             return;
         }
+        // TODO: Save category data
         String productUpdatedAtLocal = getPresentProductIDs().get(productID);
         String productUpdatedAtServer = product.getString(ProductsTable.COLUMN_UPDATED_AT);
         if (productUpdatedAtLocal == null) { // insert
@@ -252,6 +252,11 @@ public class CatalogDBHelper extends BaseDBHelper {
             mPresentProductIDs.put(productID, productUpdatedAtServer);
         }
         mDatabaseHelper.closeDatabase();
+    }
+
+    public void saveSellerAddressData(JSONObject sellerAddress, boolean addressHistory) throws JSONException{
+        SQLiteDatabase db = mDatabaseHelper.openDatabase();
+        int addressID = sellerAddress.getInt(ProductsContract.SellerAddressTable.COLUMN_ADDRESS_ID);
     }
 
     public ContentValues getSellerContentValues(JSONObject seller) throws JSONException{
@@ -283,9 +288,9 @@ public class CatalogDBHelper extends BaseDBHelper {
         values.put(ProductsTable.COLUMN_UNIT, product.getString(ProductsTable.COLUMN_UNIT));
         values.put(ProductsTable.COLUMN_DISPLAY_NAME, product.getString(ProductsTable.COLUMN_DISPLAY_NAME));
         values.put(ProductsTable.COLUMN_NAME, product.getString(ProductsTable.COLUMN_NAME));
-        values.put(ProductsTable.COLUMN_URL, product.getString(ProductsTable.COLUMN_PRODUCT_ID));
-        values.put(ProductsTable.COLUMN_SHOW_ONLINE, product.getBoolean(ProductsTable.COLUMN_SHOW_ONLINE) ? 1:0);
-        values.put(ProductsTable.COLUMN_DELETE_STATUS, product.getBoolean(ProductsTable.COLUMN_PRODUCT_ID)?1:0);
+        values.put(ProductsTable.COLUMN_URL, product.getString(ProductsTable.COLUMN_URL));
+        values.put(ProductsTable.COLUMN_SHOW_ONLINE, product.getBoolean(ProductsTable.COLUMN_SHOW_ONLINE)?1:0);
+        values.put(ProductsTable.COLUMN_DELETE_STATUS, product.getBoolean(ProductsTable.COLUMN_DELETE_STATUS)?1:0);
         JSONObject image = product.getJSONObject("image");
         values.put(ProductsTable.COLUMN_IMAGE_NAME, image.getString(ProductsTable.COLUMN_IMAGE_NAME));
         values.put(ProductsTable.COLUMN_IMAGE_COUNT, image.getInt(ProductsTable.COLUMN_IMAGE_COUNT));
@@ -305,7 +310,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         values.put(ProductsTable.COLUMN_COLOURS, productDetails.getString(ProductsTable.COLUMN_COLOURS));
         values.put(ProductsTable.COLUMN_LOT_DESCRIPTION, productDetails.getString(ProductsTable.COLUMN_LOT_DESCRIPTION));
         values.put(ProductsTable.COLUMN_DESCRIPTION, productDetails.getString(ProductsTable.COLUMN_DESCRIPTION));
-        values.put(ProductsTable.COLUMN_WORK_DESCRIPTION_TYPE, productDetails.getString(ProductsTable.COLUMN_WORK_DESCRIPTION_TYPE));
+        values.put(ProductsTable.WORK_DECORATION_TYPE, productDetails.getString(ProductsTable.WORK_DECORATION_TYPE));
         values.put(ProductsTable.COLUMN_NECK_COLLAR_TYPE, productDetails.getString(ProductsTable.COLUMN_NECK_COLLAR_TYPE));
         values.put(ProductsTable.COLUMN_FABRIC_GSM, productDetails.getString(ProductsTable.COLUMN_FABRIC_GSM));
         values.put(ProductsTable.COLUMN_DISPATCHED_IN, productDetails.getString(ProductsTable.COLUMN_DISPATCHED_IN));
@@ -320,6 +325,21 @@ public class CatalogDBHelper extends BaseDBHelper {
         values.put(ProductsTable.COLUMN_CREATED_AT, product.getString(ProductsTable.COLUMN_CREATED_AT));
         values.put(ProductsTable.COLUMN_UPDATED_AT, product.getString(ProductsTable.COLUMN_UPDATED_AT));
 
+        return values;
+    }
+
+    public ContentValues getSellerAddressContentValues(JSONObject sellerAddress) throws JSONException{
+        ContentValues values = new ContentValues();
+        values.put(SellerAddressTable.COLUMN_ADDRESS_ID, sellerAddress.getInt(SellerAddressTable.COLUMN_ADDRESS_ID));
+        values.put(SellerAddressTable.COLUMN_SELLER_ID, sellerAddress.getInt(SellerAddressTable.COLUMN_SELLER_ID));
+        values.put(SellerAddressTable.COLUMN_ADDRESS, sellerAddress.getString(SellerAddressTable.COLUMN_ADDRESS));
+        values.put(SellerAddressTable.COLUMN_CITY, sellerAddress.getString(SellerAddressTable.COLUMN_CITY));
+        values.put(SellerAddressTable.COLUMN_CONTACT_NUMBER, sellerAddress.getString(SellerAddressTable.COLUMN_CONTACT_NUMBER));
+        values.put(SellerAddressTable.COLUMN_LANDMARK, sellerAddress.getString(SellerAddressTable.COLUMN_LANDMARK));
+        values.put(SellerAddressTable.COLUMN_PINCODE, sellerAddress.getString(SellerAddressTable.COLUMN_PINCODE));
+        values.put(SellerAddressTable.COLUMN_STATE, sellerAddress.getString(SellerAddressTable.COLUMN_STATE));
+        values.put(SellerAddressTable.COLUMN_CREATED_AT, sellerAddress.getString(SellerAddressTable.COLUMN_CREATED_AT));
+        values.put(SellerAddressTable.COLUMN_UPDATED_AT, sellerAddress.getString(SellerAddressTable.COLUMN_UPDATED_AT));
         return values;
     }
 

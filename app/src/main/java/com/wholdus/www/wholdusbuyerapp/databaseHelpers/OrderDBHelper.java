@@ -145,21 +145,13 @@ public class OrderDBHelper extends BaseDBHelper {
 
     public void saveOrdersData(JSONArray ordersArray) throws JSONException {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
-        UserDBHelper userDBHelper = new UserDBHelper(mContext);
+
 
         try {
             db.beginTransaction();
             for (int i = 0; i < ordersArray.length(); i++) {
-                JSONObject order = ordersArray.getJSONObject(i);
                 saveOrderData(ordersArray.getJSONObject(i));
-
-                userDBHelper.updateUserAddressDataFromJSONObject(order.getJSONObject("buyer_address"));
-
-                if (order.has("sub_orders")){
-                    saveSubordersData(order.getJSONArray("sub_orders"));
-                }
             }
-
             db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
@@ -172,32 +164,17 @@ public class OrderDBHelper extends BaseDBHelper {
 
     public void saveSubordersData(JSONArray subordersArray) throws JSONException{
 
-        CatalogDBHelper catalogDBHelper = new CatalogDBHelper(mContext);
         for (int i = 0; i < subordersArray.length(); i++) {
             JSONObject suborder = subordersArray.getJSONObject(i);
             saveSuborderData(suborder);
-
-            if (suborder.has("seller")){
-                catalogDBHelper.saveSellerData(suborder.getJSONObject("seller"));
-            }
-
-            if (suborder.has("order_items")){
-                saveOrderItemsData(suborder.getJSONArray("order_items"));
-            }
         }
     }
 
     public void saveOrderItemsData(JSONArray orderItemsArray) throws JSONException{
 
-        CatalogDBHelper catalogDBHelper = new CatalogDBHelper(mContext);
         for (int i = 0; i < orderItemsArray.length(); i++) {
             JSONObject orderItem = orderItemsArray.getJSONObject(i);
             saveOrderItemData(orderItem);
-
-            if (orderItem.has("product")){
-                catalogDBHelper.saveProductData(orderItem.getJSONObject("product"));
-            }
-
         }
     }
 
@@ -215,6 +192,11 @@ public class OrderDBHelper extends BaseDBHelper {
             String selection = OrdersContract.OrdersTable.COLUMN_ORDER_ID + " = " + orderID;
             db.update(OrdersContract.OrdersTable.TABLE_NAME, values, selection, null);
             mPresentOrderIDs.put(orderID, orderUpdatedAtServer);
+        }
+        UserDBHelper userDBHelper = new UserDBHelper(mContext);
+        userDBHelper.updateUserAddressDataFromJSONObject(order.getJSONObject("buyer_address"));
+        if (order.has("sub_orders")){
+            saveSubordersData(order.getJSONArray("sub_orders"));
         }
         mDatabaseHelper.closeDatabase();
     }
@@ -235,6 +217,19 @@ public class OrderDBHelper extends BaseDBHelper {
             mPresentSuborderIDs.put(suborderID, suborderUpdatedAtServer);
         }
 
+        if (suborder.has("seller")){
+            CatalogDBHelper catalogDBHelper = new CatalogDBHelper(mContext);
+            catalogDBHelper.saveSellerData(suborder.getJSONObject("seller"));
+        }
+
+        if (suborder.has("seller_address")){
+            //TODO:Save seller address data
+        }
+
+        if (suborder.has("order_items")){
+            saveOrderItemsData(suborder.getJSONArray("order_items"));
+        }
+
         mDatabaseHelper.closeDatabase();
     }
 
@@ -252,6 +247,10 @@ public class OrderDBHelper extends BaseDBHelper {
             String selection = OrdersContract.OrderItemsTable.COLUMN_ORDER_ITEM_ID + " = " + orderItemID;
             db.update(OrdersContract.OrderItemsTable.TABLE_NAME, values, selection, null);
             mPresentOrderItemIDs.put(orderItemID, orderItemUpdatedAtServer);
+        }
+        if (orderItem.has("product")){
+            CatalogDBHelper catalogDBHelper = new CatalogDBHelper(mContext);
+            catalogDBHelper.saveProductData(orderItem.getJSONObject("product"));
         }
         mDatabaseHelper.closeDatabase();
     }
@@ -316,7 +315,6 @@ public class OrderDBHelper extends BaseDBHelper {
         values.put(OrdersContract.OrderItemsTable.COLUMN_SUBORDER_ID, orderitem.getInt(OrdersContract.OrderItemsTable.COLUMN_SUBORDER_ID));
         JSONObject product = orderitem.getJSONObject("product");
         values.put(OrdersContract.OrderItemsTable.COLUMN_PRODUCT_ID, product.getInt(ProductsContract.ProductsTable.COLUMN_PRODUCT_ID));
-        //TODO: What to do with null order shipment ID
         int orderShipmentID = 0;
         String trackingUrl = "";
         if (orderitem.has(OrdersContract.OrderItemsTable.COLUMN_ORDER_SHIPMENT_ID) && !orderitem.isNull(OrdersContract.OrderItemsTable.COLUMN_ORDER_SHIPMENT_ID)){

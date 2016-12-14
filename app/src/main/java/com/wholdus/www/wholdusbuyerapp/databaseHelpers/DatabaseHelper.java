@@ -203,7 +203,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     ProductsTable.COLUMN_COLOURS + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_LOT_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
-                    ProductsTable.COLUMN_WORK_DESCRIPTION_TYPE + TEXT_TYPE + COMMA_SEP +
+                    ProductsTable.WORK_DECORATION_TYPE + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_NECK_COLLAR_TYPE + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_FABRIC_GSM + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_DISPATCHED_IN + TEXT_TYPE + COMMA_SEP +
