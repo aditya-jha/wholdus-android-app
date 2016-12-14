@@ -6,9 +6,9 @@ import android.provider.BaseColumns;
  * Created by kaustubh on 7/12/16.
  */
 
-public class ProductsContract {
+public class CatalogContract {
 
-    private ProductsContract() {
+    private CatalogContract() {
     }
 
     public static final class ProductsTable implements BaseColumns {
@@ -103,5 +103,14 @@ public class ProductsContract {
 
         public static final String COLUMN_CREATED_AT = "created_at";
         public static final String COLUMN_UPDATED_AT = "updated_at";
+    }
+
+    /* TODO: Create Many to Many relationship between Category and Seller */
+    public static final class CategorySellersTable implements BaseColumns {
+        public static final String TABLE_NAME = "seller_categories";
+
+        public static final String COLUMN_CATEGORY_ID = "categoryID";
+        public static final String COLUMN_SELLER_ID = "sellerID";
+        public static final String COLUMN_COMPANY_NAME = "company_name";
     }
 }

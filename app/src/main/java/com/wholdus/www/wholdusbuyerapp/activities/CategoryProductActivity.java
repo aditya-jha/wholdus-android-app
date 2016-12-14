@@ -59,8 +59,13 @@ public class CategoryProductActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 /* TODO: Implement what happens when category is changed from toolbar dropdown */
+                int oldCategoryID = FilterClass.getCategoryID();
                 FilterClass.setCategoryID((int) mCategorySpinner.getSelectedItemId());
                 if (!mFilterFragmentActive) updateProducts();
+                else {
+                    FilterFragment fragment = (FilterFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                    fragment.categoryIDChanged(oldCategoryID);
+                }
             }
 
             @Override

@@ -15,8 +15,8 @@
     <string name="update_user_profile">updateUserProfile</string>
     <string name="fetch_business_types">fetchBusinessTypes</string>
     <string name="update_user_address">updateUserAddress</string>
-
+    <string name="fetch_sellers">fetchSellers</string>
     <string name="fetch_orders">fetchOrders</string>
-
+    <string name="seller_category_details">seller_category_details</string>
     <string name="fetch_buyer_products">fetchBuyerProducts</string>
 </resources>

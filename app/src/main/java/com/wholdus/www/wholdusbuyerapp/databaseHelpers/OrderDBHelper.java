@@ -10,14 +10,13 @@ import android.util.SparseArray;
 
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract;
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -45,7 +44,7 @@ public class OrderDBHelper extends BaseDBHelper {
             whereApplied = true;
         }
         if (orderStatusValues != null && !orderStatusValues.isEmpty()) {
-            query = whereClauseHelper(query, whereApplied);
+            query += whereClauseHelper(whereApplied);
             query += OrdersContract.OrdersTable.COLUMN_ORDER_STATUS_VALUE + " IN " + TextUtils.join(", ", orderStatusValues);
         }
 
@@ -63,12 +62,12 @@ public class OrderDBHelper extends BaseDBHelper {
             whereApplied = true;
         }
         if (orderID != null && orderID != -1) {
-            query = whereClauseHelper(query, whereApplied);
+            query += whereClauseHelper(whereApplied);
             query += OrdersContract.SubordersTable.COLUMN_ORDER_ID + " = " + orderID;
             whereApplied = true;
         }
         if (subOrderStatusValues != null && !subOrderStatusValues.isEmpty()) {
-            query = whereClauseHelper(query, whereApplied);
+            query += whereClauseHelper(whereApplied);
             query += OrdersContract.SubordersTable.COLUMN_SUBORDER_STATUS_VALUE + " IN " + TextUtils.join(", ", subOrderStatusValues);
         }
 
@@ -86,12 +85,12 @@ public class OrderDBHelper extends BaseDBHelper {
             whereApplied = true;
         }
         if (suborderID != null && suborderID != -1) {
-            query = whereClauseHelper(query, whereApplied);
+            query += whereClauseHelper(whereApplied);
             query += OrdersContract.OrderItemsTable.COLUMN_SUBORDER_ID + " = " + suborderID;
             whereApplied = true;
         }
         if (orderItemStatusValues != null && !orderItemStatusValues.isEmpty()) {
-            query = whereClauseHelper(query, whereApplied);
+            query += whereClauseHelper(whereApplied);
             query += OrdersContract.OrderItemsTable.COLUMN_ORDER_ITEM_STATUS_VALUE + " IN " + TextUtils.join(", ", orderItemStatusValues);
         }
 
@@ -287,9 +286,9 @@ public class OrderDBHelper extends BaseDBHelper {
         values.put(OrdersContract.SubordersTable.COLUMN_SUBORDER_ID, suborder.getInt(OrdersContract.SubordersTable.COLUMN_SUBORDER_ID));
         values.put(OrdersContract.SubordersTable.COLUMN_DISPLAY_NUMBER, suborder.getString(OrdersContract.SubordersTable.COLUMN_DISPLAY_NUMBER));
         JSONObject seller = suborder.getJSONObject("seller");
-        values.put(OrdersContract.SubordersTable.COLUMN_SELLER_ID, seller.getInt(ProductsContract.SellersTable.COLUMN_SELLER_ID));
+        values.put(OrdersContract.SubordersTable.COLUMN_SELLER_ID, seller.getInt(CatalogContract.SellersTable.COLUMN_SELLER_ID));
         JSONObject sellerAddress = suborder.getJSONObject("seller_address");
-        values.put(OrdersContract.SubordersTable.COLUMN_SELLER_ADDRESS_ID, sellerAddress.getInt(ProductsContract.SellerAddressTable.COLUMN_ADDRESS_ID));
+        values.put(OrdersContract.SubordersTable.COLUMN_SELLER_ADDRESS_ID, sellerAddress.getInt(CatalogContract.SellerAddressTable.COLUMN_ADDRESS_ID));
         values.put(OrdersContract.SubordersTable.COLUMN_PRODUCT_COUNT, suborder.getInt(OrdersContract.SubordersTable.COLUMN_PRODUCT_COUNT));
         values.put(OrdersContract.SubordersTable.COLUMN_PIECES, suborder.getInt(OrdersContract.SubordersTable.COLUMN_PIECES));
         values.put(OrdersContract.SubordersTable.COLUMN_RETAIL_PRICE, suborder.getDouble(OrdersContract.SubordersTable.COLUMN_RETAIL_PRICE));
@@ -314,7 +313,7 @@ public class OrderDBHelper extends BaseDBHelper {
         values.put(OrdersContract.OrderItemsTable.COLUMN_ORDER_ITEM_ID, orderitem.getInt(OrdersContract.OrderItemsTable.COLUMN_ORDER_ITEM_ID));
         values.put(OrdersContract.OrderItemsTable.COLUMN_SUBORDER_ID, orderitem.getInt(OrdersContract.OrderItemsTable.COLUMN_SUBORDER_ID));
         JSONObject product = orderitem.getJSONObject("product");
-        values.put(OrdersContract.OrderItemsTable.COLUMN_PRODUCT_ID, product.getInt(ProductsContract.ProductsTable.COLUMN_PRODUCT_ID));
+        values.put(OrdersContract.OrderItemsTable.COLUMN_PRODUCT_ID, product.getInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID));
         int orderShipmentID = 0;
         String trackingUrl = "";
         if (orderitem.has(OrdersContract.OrderItemsTable.COLUMN_ORDER_SHIPMENT_ID) && !orderitem.isNull(OrdersContract.OrderItemsTable.COLUMN_ORDER_SHIPMENT_ID)){
