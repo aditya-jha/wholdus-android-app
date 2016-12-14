@@ -44,8 +44,6 @@ public class OrderService extends IntentService {
             case R.string.fetch_orders:
                 fetchOrders(R.string.fetch_orders, 1);
                 break;
-            default:
-                return;
         }
     }
 
@@ -110,8 +108,6 @@ public class OrderService extends IntentService {
                     saveOrderstoDB(orders);
                     handlePagination(data, todo);
                     break;
-                default:
-                    return;
             }
         } catch (JSONException e) {
             e.printStackTrace();

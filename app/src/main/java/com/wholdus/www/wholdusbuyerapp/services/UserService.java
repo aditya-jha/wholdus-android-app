@@ -42,9 +42,10 @@ public class UserService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        switch (intent.getIntExtra("TODO", 0)) {
+        int todo = intent.getIntExtra("TODO", 0);
+        switch (todo) {
             case R.string.fetch_user_profile:
-                fetchUserProfile(R.string.fetch_user_profile);
+                fetchUserProfile(todo);
                 break;
             case R.string.update_user_profile:
                 // update user profile
@@ -58,22 +59,23 @@ public class UserService extends IntentService {
                     details.put("buyertypeID", intent.getStringExtra(getString(R.string.business_type_key)));
                     data.put("details", details);
 
-                    updateUserProfile(R.string.update_user_profile, data);
+                    updateUserProfile(todo, data);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 break;
             case R.string.fetch_business_types:
                 // fetch business types and update db
-                fetchBusinessTypes(R.string.fetch_business_types);
+                fetchBusinessTypes(todo);
                 break;
             case R.string.update_user_address:
                 try {
                     JSONObject address = new JSONObject(intent.getStringExtra(UserAddressTable.TABLE_NAME));
-                    updateUserAddress(R.string.update_user_address, address);
+                    updateUserAddress(todo, address);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                break;
         }
     }
 

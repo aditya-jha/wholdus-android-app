@@ -41,14 +41,18 @@ public class CatalogService extends IntentService {
         int todo = intent.getIntExtra("TODO", -1);
         switch (todo) {
             case R.integer.fetch_categories:
-                fetchCategories(todo);
+                fetchCategories(todo, intent.getBooleanExtra(getString(R.string.seller_category_details), false));
                 break;
-
         }
     }
 
-    public void fetchCategories(int todo) {
-        String endPoint = GlobalAccessHelper.generateUrl(getApplicationContext(), getString(R.string.category_url), null);
+    public void fetchCategories(int todo, boolean categoryDetails) {
+        HashMap<String, String> params = null;
+        if (categoryDetails) {
+            params = new HashMap<>();
+            params.put("seller_category_details", "1");
+        }
+        String endPoint = GlobalAccessHelper.generateUrl(getApplicationContext(), getString(R.string.category_url), params);
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }
 

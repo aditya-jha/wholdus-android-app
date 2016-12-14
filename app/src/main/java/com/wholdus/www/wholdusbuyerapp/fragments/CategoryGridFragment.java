@@ -153,6 +153,7 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
     private void fetchDataFromServer() {
         Intent intent = new Intent(getContext(), CatalogService.class);
         intent.putExtra("TODO", R.integer.fetch_categories);
+        intent.putExtra(getString(R.string.seller_category_details), true);
         getActivity().startService(intent);
     }
 
