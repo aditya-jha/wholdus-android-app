@@ -17,14 +17,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
+import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarFinalValueListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.FilterBrandValuesDisplayAdapter;
@@ -39,13 +38,13 @@ import java.util.LinkedHashMap;
 
 /**
  * Created by aditya on 12/12/16.
- */
+ * TODO: try to use same adapter for all filters, inside functionality is same except the data source
+ **/
 
 public class FilterFragment extends Fragment implements View.OnClickListener,
         AdapterView.OnItemClickListener, LoaderManager.LoaderCallbacks<ArrayList<CategorySeller>> {
 
     private ListView mFilterValues, mFilterKeys;
-    private CrystalRangeSeekbar mPriceRangeSeekBar;
     private TextView mMinPriceValue, mMaxPriceValue;
     private LinkedHashMap<String, ArrayList<String>> mFilterData;
     private ArrayAdapter mFilterKeysAdapter;
@@ -188,15 +187,22 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
         mMinPriceValue = (TextView) rootView.findViewById(R.id.min_price_value);
         mMaxPriceValue = (TextView) rootView.findViewById(R.id.max_price_value);
 
-        mPriceRangeSeekBar = (CrystalRangeSeekbar) rootView.findViewById(R.id.price_range);
-        mPriceRangeSeekBar.setMinValue(getResources().getInteger(R.integer.price_filter_min));
-        mPriceRangeSeekBar.setMaxValue(getResources().getInteger(R.integer.price_filter_max));
+        CrystalRangeSeekbar priceRangeSeekBar = (CrystalRangeSeekbar) rootView.findViewById(R.id.price_range);
+        priceRangeSeekBar.setMinValue(getResources().getInteger(R.integer.price_filter_min));
+        priceRangeSeekBar.setMaxValue(getResources().getInteger(R.integer.price_filter_max));
+        priceRangeSeekBar.setMinStartValue(FilterClass.getMinPriceFilter()).setMaxStartValue(FilterClass.getMaxPriceFilter()).apply();
 
-        mPriceRangeSeekBar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
+        priceRangeSeekBar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
             @Override
             public void valueChanged(Number minValue, Number maxValue) {
                 mMaxPriceValue.setText(maxValue.toString());
                 mMinPriceValue.setText(minValue.toString());
+            }
+        });
+        priceRangeSeekBar.setOnRangeSeekbarFinalValueListener(new OnRangeSeekbarFinalValueListener() {
+            @Override
+            public void finalValue(Number minValue, Number maxValue) {
+                FilterClass.setPriceFilter(minValue.intValue(),maxValue.intValue());
             }
         });
 

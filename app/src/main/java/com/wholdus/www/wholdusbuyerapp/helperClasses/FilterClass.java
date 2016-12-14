@@ -13,6 +13,8 @@ public final class FilterClass {
     }
 
     private static int mCategoryID;
+    private static int mMinPrice = 0;
+    private static int mMaxPrice = 5000;
     private static HashSet<String> mFabrics = new HashSet<>();
     private static HashSet<String> mColors = new HashSet<>();
     private static HashSet<String> mSizes = new HashSet<>();
@@ -66,5 +68,19 @@ public final class FilterClass {
 
     public static boolean isItemSelected(String type, String value) {
         return getSelectedItems(type).contains(value);
+    }
+
+    public static void setPriceFilter(int min, int max) {
+        mMaxPrice = max;
+        mMinPrice = min;
+        Log.d("price filter", min + "-" + max);
+    }
+
+    public static int getMinPriceFilter() {
+        return mMinPrice;
+    }
+
+    public static int getMaxPriceFilter() {
+        return mMaxPrice;
     }
 }
