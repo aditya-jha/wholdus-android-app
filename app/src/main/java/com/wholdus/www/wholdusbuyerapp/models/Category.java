@@ -4,7 +4,7 @@ import android.database.Cursor;
 
 import java.util.ArrayList;
 
-import static com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract.CategoriesTable;
+import static com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategoriesTable;
 
 /**
  * Created by aditya on 10/12/16.

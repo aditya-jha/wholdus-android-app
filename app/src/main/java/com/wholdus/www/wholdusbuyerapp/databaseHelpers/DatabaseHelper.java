@@ -4,15 +4,15 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract.SellerAddressTable;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.SellerAddressTable;
 
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.BuyerProductsContract.BuyerProductTable;
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract.OrderItemsTable;
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract.OrdersTable;
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract.SubordersTable;
-import static com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract.CategoriesTable;
-import static com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract.ProductsTable;
-import static com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract.SellersTable;
+import static com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategoriesTable;
+import static com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.ProductsTable;
+import static com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.SellersTable;
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.BusinessTypesTable;
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserInterestsTable;
