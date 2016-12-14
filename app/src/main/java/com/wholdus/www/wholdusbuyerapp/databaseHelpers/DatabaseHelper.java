@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategorySellersTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.SellerAddressTable;
 
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.BuyerProductsContract.BuyerProductTable;
@@ -24,7 +26,7 @@ import static com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContr
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2; /*TODO: set this to 1 on launch */
     private static final String DATABASE_NAME = "wholdus.db";
 
     private static final String TEXT_TYPE = " TEXT";
@@ -85,8 +87,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     UserInterestsTable.COLUMN_BUYER_INTEREST_ID + INT_TYPE + COMMA_SEP +
                     UserInterestsTable.COLUMN_CATEGORY_ID + INT_TYPE + COMMA_SEP +
                     UserInterestsTable.COLUMN_CATEGORY_NAME + TEXT_TYPE + COMMA_SEP +
-                    UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT + TEXT_TYPE + COMMA_SEP +
-                    UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT + TEXT_TYPE + COMMA_SEP +
+                    UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT + INT_TYPE + COMMA_SEP +
+                    UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT + INT_TYPE + COMMA_SEP +
                     UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT + TEXT_TYPE + COMMA_SEP +
                     UserInterestsTable.COLUMN_CREATED_AT + TEXT_TYPE + COMMA_SEP +
                     UserInterestsTable.COLUMN_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
@@ -283,6 +285,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SQL_DROP_BUYER_PRODUCT_TABLE =
             "DROP TABLE IF EXISTS " + BuyerProductTable.TABLE_NAME;
 
+    private static final String SQL_CREATE_CATEGORY_SELLER_TABLE =
+            "CREATE TABLE " + CategorySellersTable.TABLE_NAME + " (" +
+                    CategorySellersTable.COLUMN_CATEGORY_ID + INT_TYPE + COMMA_SEP +
+                    CategorySellersTable.COLUMN_SELLER_ID + INT_TYPE + COMMA_SEP +
+                    CategorySellersTable.COLUMN_COMPANY_NAME + TEXT_TYPE + " )";
+
+    private static final String SQL_DROP_CATEGORY_SELLER_TABLE =
+            "DROP TABLE IF EXISTS " + CategorySellersTable.TABLE_NAME;
+
     private static DatabaseHelper instance;
 
     private DatabaseHelper(Context context) {
@@ -324,6 +335,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_CATEGORIES_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_SELLERS_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_SELLER_ADDRESS_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_CATEGORY_SELLER_TABLE);
 
         sqLiteDatabase.execSQL(SQL_CREATE_BUYER_PRODUCT_TABLE);
     }
@@ -343,6 +355,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_DROP_CATEGORIES_TABLE);
         sqLiteDatabase.execSQL(SQL_DROP_SELLERS_TABLE);
         sqLiteDatabase.execSQL(SQL_DROP_SELLER_ADDRESS_TABLE);
+        sqLiteDatabase.execSQL(SQL_DROP_CATEGORY_SELLER_TABLE);
 
         sqLiteDatabase.execSQL(SQL_DROP_BUYER_PRODUCT_TABLE);
 

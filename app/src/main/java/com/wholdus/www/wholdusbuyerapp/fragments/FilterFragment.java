@@ -1,10 +1,13 @@
 package com.wholdus.www.wholdusbuyerapp.fragments;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,9 +27,12 @@ import android.widget.Toast;
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.adapters.FilterBrandValuesDisplayAdapter;
 import com.wholdus.www.wholdusbuyerapp.adapters.FilterValuesDisplayAdapter;
 import com.wholdus.www.wholdusbuyerapp.dataSource.FiltersData;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
+import com.wholdus.www.wholdusbuyerapp.loaders.CategorySellerLoader;
+import com.wholdus.www.wholdusbuyerapp.models.CategorySeller;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -35,7 +41,8 @@ import java.util.LinkedHashMap;
  * Created by aditya on 12/12/16.
  */
 
-public class FilterFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class FilterFragment extends Fragment implements View.OnClickListener,
+        AdapterView.OnItemClickListener, LoaderManager.LoaderCallbacks<ArrayList<CategorySeller>> {
 
     private ListView mFilterValues, mFilterKeys;
     private CrystalRangeSeekbar mPriceRangeSeekBar;
@@ -43,6 +50,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Ad
     private LinkedHashMap<String, ArrayList<String>> mFilterData;
     private ArrayAdapter mFilterKeysAdapter;
     private FilterValuesDisplayAdapter mFilterValuesAdapter;
+    private FilterBrandValuesDisplayAdapter mBrandFilterValuesAdapter;
     private String mSelectedFilter;
 
     public FilterFragment() {
@@ -111,6 +119,22 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Ad
     }
 
     @Override
+    public Loader<ArrayList<CategorySeller>> onCreateLoader(int id, Bundle args) {
+        return new CategorySellerLoader(getContext());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<ArrayList<CategorySeller>> loader, ArrayList<CategorySeller> data) {
+        mBrandFilterValuesAdapter.resetData(data);
+        mBrandFilterValuesAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<ArrayList<CategorySeller>> loader) {
+
+    }
+
+    @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.filter_button:
@@ -120,18 +144,37 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Ad
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         switch (adapterView.getId()) {
             case R.id.filter_keys_list_view:
-                String filterKeySelected = (String) mFilterKeysAdapter.getItem(i);
+                String filterKeySelected = (String) mFilterKeysAdapter.getItem(position);
                 Toast.makeText(getContext(), filterKeySelected, Toast.LENGTH_SHORT).show();
-                view.setSelected(true);
+
+                /* TODO: handle state of list view when click and presses */
+                int childCount = adapterView.getChildCount();
+                for (int i=0; i<childCount; i++) {
+                    if (i == position) {
+                        adapterView.getChildAt(i).setBackgroundColor(Color.YELLOW);
+                    } else {
+                        adapterView.getChildAt(i).setBackgroundColor(Color.WHITE);
+                    }
+                }
                 populateValuesListView(filterKeySelected);
                 break;
             case R.id.filter_values_list_view:
-                mFilterValuesAdapter.itemClicked(view, i);
+                if (mSelectedFilter.equals("Brand")) {
+                    mBrandFilterValuesAdapter.itemClicked(view, position);
+                } else {
+                    mFilterValuesAdapter.itemClicked(view, position);
+                }
                 Log.d(this.getClass().getSimpleName(), FilterClass.getSelectedItems(mSelectedFilter).toString());
                 break;
+        }
+    }
+
+    public void categoryIDChanged(int oldCategoryID) {
+        if (FilterClass.getCategoryID() != oldCategoryID) {
+            getActivity().getSupportLoaderManager().restartLoader(1, null, this);
         }
     }
 
@@ -176,8 +219,8 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Ad
         mFilterKeys.setAdapter(mFilterKeysAdapter);
         mFilterKeys.setOnItemClickListener(this);
 
-        mFilterValuesAdapter = new FilterValuesDisplayAdapter(getContext(), new ArrayList<String>(), "Fabric");
-        mFilterValues.setAdapter(mFilterValuesAdapter);
+        mFilterValuesAdapter = new FilterValuesDisplayAdapter(getContext(), new ArrayList<String>(), "");
+        mBrandFilterValuesAdapter = new FilterBrandValuesDisplayAdapter(getContext(), new ArrayList<CategorySeller>());
         mFilterValues.setOnItemClickListener(this);
     }
 
@@ -185,8 +228,10 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Ad
         mSelectedFilter = filterKey;
         if (filterKey.equals("Brand")) {
             /* TODO: implement Brand case filter loading */
-            return;
+            mFilterValues.setAdapter(mBrandFilterValuesAdapter);
+            getActivity().getSupportLoaderManager().initLoader(1, null, this);
         } else {
+            mFilterValues.setAdapter(mFilterValuesAdapter);
             mFilterValuesAdapter.resetData(mFilterData.get(mSelectedFilter), mSelectedFilter);
             mFilterValuesAdapter.notifyDataSetChanged();
         }

@@ -16,6 +16,7 @@ public final class FilterClass {
     private static HashSet<String> mFabrics = new HashSet<>();
     private static HashSet<String> mColors = new HashSet<>();
     private static HashSet<String> mSizes = new HashSet<>();
+    private static HashSet<String> mBrands = new HashSet<>();
 
     public static int getCategoryID() {
         return mCategoryID;
@@ -30,6 +31,7 @@ public final class FilterClass {
         mFabrics.clear();
         mColors.clear();
         mSizes.clear();
+        mBrands.clear();
     }
 
     public static void toggleFilterItem(String type, String value) {
@@ -53,6 +55,9 @@ public final class FilterClass {
             case "Sizes":
                 returnValue = mSizes;
                 break;
+            case "Brands":
+                returnValue = mBrands;
+                break;
             default:
                 returnValue = mSizes;
         }
@@ -61,9 +66,5 @@ public final class FilterClass {
 
     public static boolean isItemSelected(String type, String value) {
         return getSelectedItems(type).contains(value);
-    }
-
-    public static HashSet getSelectedColors() {
-        return mColors;
     }
 }
