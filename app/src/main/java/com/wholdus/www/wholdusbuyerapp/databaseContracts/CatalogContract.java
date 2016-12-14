@@ -104,4 +104,13 @@ public class CatalogContract {
         public static final String COLUMN_CREATED_AT = "created_at";
         public static final String COLUMN_UPDATED_AT = "updated_at";
     }
+
+    /* TODO: Create Many to Many relationship between Category and Seller */
+    public static final class CategorySellersTable implements BaseColumns {
+        public static final String TABLE_NAME = "seller_categories";
+
+        public static final String COLUMN_CATEGORY_ID = "categoryID";
+        public static final String COLUMN_SELLER_ID = "sellerID";
+        public static final String COLUMN_COMPANY_NAME = "company_name";
+    }
 }

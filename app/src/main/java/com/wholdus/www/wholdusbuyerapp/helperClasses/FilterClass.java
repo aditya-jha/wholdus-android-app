@@ -13,9 +13,12 @@ public final class FilterClass {
     }
 
     private static int mCategoryID;
+    private static int mMinPrice = 0;
+    private static int mMaxPrice = 5000;
     private static HashSet<String> mFabrics = new HashSet<>();
     private static HashSet<String> mColors = new HashSet<>();
     private static HashSet<String> mSizes = new HashSet<>();
+    private static HashSet<String> mBrands = new HashSet<>();
 
     public static int getCategoryID() {
         return mCategoryID;
@@ -30,6 +33,7 @@ public final class FilterClass {
         mFabrics.clear();
         mColors.clear();
         mSizes.clear();
+        mBrands.clear();
     }
 
     public static void toggleFilterItem(String type, String value) {
@@ -53,6 +57,9 @@ public final class FilterClass {
             case "Sizes":
                 returnValue = mSizes;
                 break;
+            case "Brands":
+                returnValue = mBrands;
+                break;
             default:
                 returnValue = mSizes;
         }
@@ -63,7 +70,17 @@ public final class FilterClass {
         return getSelectedItems(type).contains(value);
     }
 
-    public static HashSet getSelectedColors() {
-        return mColors;
+    public static void setPriceFilter(int min, int max) {
+        mMaxPrice = max;
+        mMinPrice = min;
+        Log.d("price filter", min + "-" + max);
+    }
+
+    public static int getMinPriceFilter() {
+        return mMinPrice;
+    }
+
+    public static int getMaxPriceFilter() {
+        return mMaxPrice;
     }
 }
