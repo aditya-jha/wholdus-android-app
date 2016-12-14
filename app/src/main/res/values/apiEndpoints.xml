@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--<string name="api_base">http://api.wholdus.com/</string>-->
+    <string name="website_url">http://www.wholdus.com/</string>
     <string name="api_base">http://13.76.211.119:8000/</string>
     <string name="login_url">users/buyer/login/</string>
     <string name="signup_url">leads/buyer/</string>

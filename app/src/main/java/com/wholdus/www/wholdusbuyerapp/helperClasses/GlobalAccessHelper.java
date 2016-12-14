@@ -12,6 +12,7 @@ import android.widget.ListView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.WholdusApplication;
+import com.wholdus.www.wholdusbuyerapp.models.Seller;
 
 import org.json.JSONException;
 import org.json.JSONObject;
