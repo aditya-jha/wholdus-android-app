@@ -8,11 +8,9 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract.CategoriesTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract.ProductsTable;
-import com.wholdus.www.wholdusbuyerapp.models.Product;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -79,50 +77,50 @@ public class CatalogDBHelper extends BaseDBHelper {
             whereApplied = true;
         }
         if (sellerIDs != null && !sellerIDs.isEmpty()){
-            query = whereClauseHelper(query, whereApplied);
+            query += whereClauseHelper(whereApplied);
             query += ProductsTable.COLUMN_SELLER_ID + " IN " + TextUtils.join(", ", sellerIDs);
             whereApplied = true;
         }
         if (categoryIDs != null && !categoryIDs.isEmpty()){
-            query = whereClauseHelper(query, whereApplied);
+            query += whereClauseHelper(whereApplied);
             query += ProductsTable.COLUMN_CATEGORY_ID + " IN " + TextUtils.join(", ", categoryIDs);
             whereApplied = true;
         }
         if (priceGreaterThan != -1){
-            query = whereClauseHelper(query, whereApplied);
+            query += whereClauseHelper(whereApplied);
             query += ProductsTable.COLUMN_MIN_PRICE_PER_UNIT + " >= " + priceGreaterThan;
             whereApplied = true;
         }
         if (priceLowerThan != -1){
-            query = whereClauseHelper(query, whereApplied);
+            query += whereClauseHelper(whereApplied);
             query += ProductsTable.COLUMN_MIN_PRICE_PER_UNIT + " <= " + priceLowerThan;
             whereApplied = true;
         }
         if (fabrics != null && !fabrics.isEmpty()){
-            query = whereClauseHelper(query, whereApplied);
+            query += whereClauseHelper(whereApplied);
             query += " ( LOWER(" + ProductsTable.COLUMN_FABRIC_GSM + ") LIKE LOWER('%" +
                     TextUtils.join("%') OR LOWER(" + ProductsTable.COLUMN_FABRIC_GSM + ") LIKE LOWER('%", fabrics) + "%') ) ";
             whereApplied = true;
         }
         if (colours != null && !colours.isEmpty()){
-            query = whereClauseHelper(query, whereApplied);
+            query += whereClauseHelper(whereApplied);
             query += " ( LOWER(" + ProductsTable.COLUMN_COLOURS + ") LIKE LOWER('%" +
                     TextUtils.join("%') OR LOWER(" + ProductsTable.COLUMN_COLOURS + ") LIKE LOWER('%", colours) + "%') ) ";
             whereApplied = true;
         }
         if (sizes != null && !sizes.isEmpty()){
-            query = whereClauseHelper(query, whereApplied);
+            query += whereClauseHelper(whereApplied);
             query += " ( LOWER(" + ProductsTable.COLUMN_SIZES + ") LIKE LOWER('%" +
                     TextUtils.join("%') OR LOWER(" + ProductsTable.COLUMN_SIZES + ") LIKE LOWER('%", sizes) + "%') ) ";
             whereApplied = true;
         }
         if (deleteStatus != -1){
-            query = whereClauseHelper(query, whereApplied);
+            query += whereClauseHelper(whereApplied);
             query += ProductsTable.COLUMN_DELETE_STATUS + " = " + deleteStatus;
             whereApplied = true;
         }
         if (showOnline != -1){
-            query = whereClauseHelper(query, whereApplied);
+            query += whereClauseHelper(whereApplied);
             query += ProductsTable.COLUMN_SHOW_ONLINE + " = " + showOnline;
         }
 
