@@ -17,7 +17,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -45,7 +44,7 @@ public class OrderDBHelper extends BaseDBHelper {
             whereApplied = true;
         }
         if (orderStatusValues != null && !orderStatusValues.isEmpty()) {
-            query = whereClauseHelper(query, whereApplied);
+            query += whereClauseHelper(whereApplied);
             query += OrdersContract.OrdersTable.COLUMN_ORDER_STATUS_VALUE + " IN " + TextUtils.join(", ", orderStatusValues);
         }
 
@@ -63,12 +62,12 @@ public class OrderDBHelper extends BaseDBHelper {
             whereApplied = true;
         }
         if (orderID != null && orderID != -1) {
-            query = whereClauseHelper(query, whereApplied);
+            query += whereClauseHelper(whereApplied);
             query += OrdersContract.SubordersTable.COLUMN_ORDER_ID + " = " + orderID;
             whereApplied = true;
         }
         if (subOrderStatusValues != null && !subOrderStatusValues.isEmpty()) {
-            query = whereClauseHelper(query, whereApplied);
+            query += whereClauseHelper(whereApplied);
             query += OrdersContract.SubordersTable.COLUMN_SUBORDER_STATUS_VALUE + " IN " + TextUtils.join(", ", subOrderStatusValues);
         }
 
@@ -86,12 +85,12 @@ public class OrderDBHelper extends BaseDBHelper {
             whereApplied = true;
         }
         if (suborderID != null && suborderID != -1) {
-            query = whereClauseHelper(query, whereApplied);
+            query += whereClauseHelper(whereApplied);
             query += OrdersContract.OrderItemsTable.COLUMN_SUBORDER_ID + " = " + suborderID;
             whereApplied = true;
         }
         if (orderItemStatusValues != null && !orderItemStatusValues.isEmpty()) {
-            query = whereClauseHelper(query, whereApplied);
+            query += whereClauseHelper(whereApplied);
             query += OrdersContract.OrderItemsTable.COLUMN_ORDER_ITEM_STATUS_VALUE + " IN " + TextUtils.join(", ", orderItemStatusValues);
         }
 
