@@ -12,6 +12,7 @@ import com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract.CategoriesTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.ProductsContract.ProductsTable;
+import com.wholdus.www.wholdusbuyerapp.models.Product;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,6 +34,20 @@ public class CatalogDBHelper extends BaseDBHelper {
 
     private SparseArray<String> mPresentSellerIDs;
     private SparseArray<String> mPresentProductIDs;
+
+    public static String[] BasicProductColumns = {ProductsTable._ID, ProductsTable.COLUMN_PRODUCT_ID, ProductsTable.COLUMN_SELLER_ID,
+        ProductsTable.COLUMN_CATEGORY_ID, ProductsTable.COLUMN_PRICE_PER_UNIT, ProductsTable.COLUMN_LOT_SIZE, ProductsTable.COLUMN_PRICE_PER_LOT,
+        ProductsTable.COLUMN_MIN_PRICE_PER_UNIT, ProductsTable.COLUMN_MARGIN, ProductsTable.COLUMN_URL, ProductsTable.COLUMN_IMAGE_NAME,
+        ProductsTable.COLUMN_IMAGE_COUNT, ProductsTable.COLUMN_IMAGE_NUMBERS, ProductsTable.COLUMN_IMAGE_PATH, ProductsTable.COLUMN_COLOURS,
+        ProductsTable.COLUMN_FABRIC_GSM, ProductsTable.COLUMN_SIZES};
+
+    public static String[] ExtraProductColumns = {ProductsTable.COLUMN_PRODUCT_DETAILS_ID,ProductsTable.COLUMN_UNIT, ProductsTable.COLUMN_DISPLAY_NAME,
+        ProductsTable.COLUMN_DELETE_STATUS, ProductsTable.COLUMN_SHOW_ONLINE, ProductsTable.COLUMN_WARRANTY, ProductsTable.COLUMN_SPECIAL_FEATURE,
+        ProductsTable.COLUMN_AVAILABILITY,ProductsTable.COLUMN_STYLE, ProductsTable.COLUMN_MANUFACTURED_CITY, ProductsTable.COLUMN_PATTERN,
+        ProductsTable.COLUMN_LOT_DESCRIPTION, ProductsTable.COLUMN_DESCRIPTION, ProductsTable.COLUMN_WORK_DESCRIPTION_TYPE, ProductsTable.COLUMN_NECK_COLLAR_TYPE,
+        ProductsTable.COLUMN_DISPATCHED_IN,ProductsTable.COLUMN_REMARKS, ProductsTable.COLUMN_SELLER_CATALOG_NUMBER,ProductsTable.COLUMN_SLEEVE,
+        ProductsTable.COLUMN_GENDER, ProductsTable.COLUMN_WEIGHT_PER_UNIT, ProductsTable.COLUMN_PACKAGING_DETAILS, ProductsTable.COLUMN_LENGTH,
+        ProductsTable.COLUMN_CREATED_AT, ProductsTable.COLUMN_UPDATED_AT};
 
     public Cursor getAllCategories(boolean productsCount) {
         String countQuery = "";
@@ -277,7 +292,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         JSONArray imageNumbers = image.getJSONArray(ProductsTable.COLUMN_IMAGE_NUMBERS);
         String imageNumbersString = imageNumbers.getString(0);
         for (int i=1;i<imageNumbers.length(); i++){
-            imageNumbersString += ", " + imageNumbers.getString(i);
+            imageNumbersString += "," + imageNumbers.getString(i);
         }
         values.put(ProductsTable.COLUMN_IMAGE_NUMBERS, imageNumbersString);
         values.put(ProductsTable.COLUMN_IMAGE_PATH, image.getString(ProductsTable.COLUMN_IMAGE_PATH));
