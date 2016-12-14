@@ -73,7 +73,6 @@ public final class FilterClass {
     public static void setPriceFilter(int min, int max) {
         mMaxPrice = max;
         mMinPrice = min;
-        Log.d("price filter", min + "-" + max);
     }
 
     public static int getMinPriceFilter() {
