@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 public class GridProductModel {
 
-    private int m_ID;
     private int mProductID;
     private String mImageUrl;
     private String mName;
@@ -28,7 +27,6 @@ public class GridProductModel {
     }
 
     public GridProductModel(Cursor cursor) {
-        m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable._ID));
         mProductID = cursor.getInt(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID));
         mImageUrl = getImageUrl(cursor);
         mName = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_NAME));
@@ -48,5 +46,33 @@ public class GridProductModel {
 
     private String getImageUrl(Cursor cursor) {
         return "";
+    }
+
+    public int getProductID() {
+        return mProductID;
+    }
+
+    public String getImageUrl() {
+        return mImageUrl;
+    }
+
+    public String getName() {
+        return mName;
+    }
+
+    public Double getPrice() {
+        return mPrice;
+    }
+
+    public String getFabric() {
+        return mFabric;
+    }
+
+    public boolean isLiked() {
+        return mLikeStatus;
+    }
+
+    public int getCartCount() {
+        return mCartCount;
     }
 }

@@ -3,6 +3,8 @@ package com.wholdus.www.wholdusbuyerapp.helperClasses;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.wholdus.www.wholdusbuyerapp.R;
+
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -17,6 +19,7 @@ public final class FilterClass {
     private static int mCategoryID;
     private static int mMinPrice = 0;
     private static int mMaxPrice = 5000;
+    private static int mSelectedSort = -1;
     private static HashSet<String> mFabrics = new HashSet<>();
     private static HashSet<String> mColors = new HashSet<>();
     private static HashSet<String> mSizes = new HashSet<>();
@@ -83,6 +86,14 @@ public final class FilterClass {
 
     public static int getMaxPriceFilter() {
         return mMaxPrice;
+    }
+
+    public static int getSelectSort() {
+        return mSelectedSort;
+    }
+
+    public static void setSelectedSort(int sort) {
+        mSelectedSort = sort;
     }
 
     public static String getFilterString() {

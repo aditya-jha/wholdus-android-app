@@ -209,7 +209,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         if (mPresentProductIDs != null) {
             return mPresentProductIDs;
         }
-        String[] columns = new String[]{ProductsTable.COLUMN_PRODUCT_ID, ProductsTable.COLUMN_UPDATED_AT};
+        String[] columns = {ProductsTable.COLUMN_PRODUCT_ID, ProductsTable.COLUMN_UPDATED_AT};
         Cursor cursor = getProductData(-1, null, null, -1, -1, null, null, null, -1, -1,null,-1,-1, columns);
         SparseArray<String> productIDs = new SparseArray<>();
         while (cursor.moveToNext()) {
