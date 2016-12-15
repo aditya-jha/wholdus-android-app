@@ -37,10 +37,13 @@ import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
+import com.wholdus.www.wholdusbuyerapp.models.BuyerAddress;
 import com.wholdus.www.wholdusbuyerapp.services.UserService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.UUID;
 
 /**
  * Created by aditya on 29/11/16.
@@ -59,6 +62,7 @@ public class EditAddressFragment extends Fragment {
     private TextInputEditText mPincodeEditText, mMobileNumberEditText,
             mAddressEditText, mCityEditText, mStateEditText, mLandmarkEditText, mAliasEditText;
     private GoogleApiClient mGoogleApiClient;
+    private BuyerAddress mBuyerAddress;
 
     private static final int PERMISSION_ACCESS_COARSE_LOCATION = 0;
 
@@ -118,7 +122,11 @@ public class EditAddressFragment extends Fragment {
 
         initReferences(rootView);
 
-        if (mAddressID != -1 || m_ID != -1) {
+        if (mAddressID == -1 && m_ID == -1) {
+            // Create new buyer model
+            mBuyerAddress = new BuyerAddress();
+        } else {
+            //TODO : Start loader
             // getActivity().getSupportLoaderManager().restartLoader(USER_ADDRESS_LOADER, null, this);
         }
 
@@ -133,10 +141,10 @@ public class EditAddressFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (mAddressID != -1 || m_ID != -1) {
-            mListener.fragmentCreated("Edit Address", true);
-        } else {
+        if (mAddressID == -1 && m_ID == -1) {
             mListener.fragmentCreated("Add New Address", true);
+        } else {
+            mListener.fragmentCreated("Edit Address", true);
         }
         IntentFilter intentFilter = new IntentFilter(getString(R.string.user_data_updated));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mUserServiceResponseReceiver, intentFilter);
@@ -236,11 +244,18 @@ public class EditAddressFragment extends Fragment {
             address.put(UserAddressTable.COLUMN_CITY, getDataFromView(UserAddressTable.COLUMN_CITY));
             address.put(UserAddressTable.COLUMN_LANDMARK, getDataFromView(UserAddressTable.COLUMN_LANDMARK));
             address.put(UserAddressTable.COLUMN_CONTACT_NUMBER, getDataFromView(UserAddressTable.COLUMN_CONTACT_NUMBER));
+            address.put(UserAddressTable.COLUMN_SYNCED, 0);
+            address.put(UserAddressTable.COLUMN_CLIENT_ID, mBuyerAddress.getClientID());
 
+            //TODO : Update loader parameters from address id to pincode if response received from server
             address.put(UserAddressTable.COLUMN_ADDRESS_ID, mAddressID);
-            address.put(UserAddressTable.COLUMN_PINCODE_ID, "");
-            address.put(UserAddressTable.COLUMN_PRIORITY, "");
-            address.put(UserAddressTable._ID, m_ID);
+            address.put(UserAddressTable.COLUMN_CREATED_AT, mBuyerAddress.getCreatedAt());
+            address.put(UserAddressTable.COLUMN_UPDATED_AT, mBuyerAddress.getUpdatedAt());
+            address.put(UserAddressTable.COLUMN_CLIENT_ID, mBuyerAddress.getClientID());
+            address.put(UserAddressTable.COLUMN_PRIORITY, mBuyerAddress.getPriority());
+            address.put(UserAddressTable.COLUMN_PINCODE_ID, mBuyerAddress.getPincodeID());
+
+            address.put(UserAddressTable._ID, mBuyerAddress.get_ID());
 
             Intent intent = new Intent(getContext(), UserService.class);
             intent.putExtra(UserAddressTable.TABLE_NAME, address.toString());

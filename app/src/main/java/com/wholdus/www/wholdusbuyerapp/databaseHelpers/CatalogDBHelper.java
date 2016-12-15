@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
@@ -70,8 +71,6 @@ public class CatalogDBHelper extends BaseDBHelper {
      *
      * @param orderBy use as "column_name" + "sort_order"(default ASC)
      *                to use descending, " DESC "
-
-     * @return
      */
 
     public Cursor getProductData(int productID,
@@ -344,8 +343,8 @@ public class CatalogDBHelper extends BaseDBHelper {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
         int addressID = sellerAddress.getInt(SellerAddressTable.COLUMN_ADDRESS_ID);
         String sellerAddressUpdatedAtLocal;
-        if(addressHistory) {sellerAddressUpdatedAtLocal = getPresentSellerAddressIDs().get(addressID);
-        } else {sellerAddressUpdatedAtLocal = getPresentSellerAddressHistoryIDs().get(addressID);}
+        if(addressHistory) {sellerAddressUpdatedAtLocal = getPresentSellerAddressHistoryIDs().get(addressID);
+        } else {sellerAddressUpdatedAtLocal = getPresentSellerAddressIDs().get(addressID);}
         String sellerAddressUpdatedAtServer = sellerAddress.getString(SellerAddressTable.COLUMN_UPDATED_AT);
         if (sellerAddressUpdatedAtLocal == null){
             ContentValues values = getSellerAddressContentValues(sellerAddress, addressHistory);
