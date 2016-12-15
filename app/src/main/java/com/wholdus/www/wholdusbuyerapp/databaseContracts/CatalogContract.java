@@ -92,6 +92,7 @@ public class CatalogContract {
     public static final class SellerAddressTable implements BaseColumns {
         public static final String TABLE_NAME = "seller_address";
         public static final String COLUMN_ADDRESS_ID = "addressID";
+        public static final String COLUMN_ADDRESS_HISTORY_ID = "address_history_ID";
         public static final String COLUMN_SELLER_ID = "sellerID";
 
         public static final String COLUMN_CITY = "city";

@@ -259,6 +259,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     SellerAddressTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
                     SellerAddressTable.COLUMN_SELLER_ID + INT_TYPE + COMMA_SEP +
                     SellerAddressTable.COLUMN_ADDRESS_ID + INT_TYPE + COMMA_SEP +
+                    SellerAddressTable.COLUMN_ADDRESS_HISTORY_ID + INT_TYPE + COMMA_SEP +
                     SellerAddressTable.COLUMN_CITY + TEXT_TYPE + COMMA_SEP +
                     SellerAddressTable.COLUMN_STATE + TEXT_TYPE + COMMA_SEP +
                     SellerAddressTable.COLUMN_LANDMARK + TEXT_TYPE + COMMA_SEP +

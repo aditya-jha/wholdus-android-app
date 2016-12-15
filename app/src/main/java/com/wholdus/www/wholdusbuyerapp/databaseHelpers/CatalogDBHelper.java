@@ -36,6 +36,8 @@ public class CatalogDBHelper extends BaseDBHelper {
 
     private SparseArray<String> mPresentSellerIDs;
     private SparseArray<String> mPresentProductIDs;
+    private SparseArray<String> mPresentSellerAddressIDs;
+    private SparseArray<String> mPresentSellerAddressHistoryIDs;
 
     public static String[] BasicProductColumns = {ProductsTable._ID, ProductsTable.COLUMN_PRODUCT_ID, ProductsTable.COLUMN_SELLER_ID,
         ProductsTable.COLUMN_CATEGORY_ID, ProductsTable.COLUMN_PRICE_PER_UNIT, ProductsTable.COLUMN_LOT_SIZE, ProductsTable.COLUMN_PRICE_PER_LOT,
@@ -81,51 +83,42 @@ public class CatalogDBHelper extends BaseDBHelper {
             whereApplied = true;
         }
         if (sellerIDs != null && !sellerIDs.isEmpty()){
-            query += whereClauseHelper(whereApplied);
-            query += ProductsTable.COLUMN_SELLER_ID + " IN " + TextUtils.join(", ", sellerIDs);
+            query += whereClauseHelper(whereApplied) + ProductsTable.COLUMN_SELLER_ID + " IN " + TextUtils.join(", ", sellerIDs);
             whereApplied = true;
         }
         if (categoryIDs != null && !categoryIDs.isEmpty()){
-            query += whereClauseHelper(whereApplied);
-            query += ProductsTable.COLUMN_CATEGORY_ID + " IN " + TextUtils.join(", ", categoryIDs);
+            query += whereClauseHelper(whereApplied) + ProductsTable.COLUMN_CATEGORY_ID + " IN " + TextUtils.join(", ", categoryIDs);
             whereApplied = true;
         }
         if (priceGreaterThan != -1){
-            query += whereClauseHelper(whereApplied);
-            query += ProductsTable.COLUMN_MIN_PRICE_PER_UNIT + " >= " + priceGreaterThan;
+            query += whereClauseHelper(whereApplied) + ProductsTable.COLUMN_MIN_PRICE_PER_UNIT + " >= " + priceGreaterThan;
             whereApplied = true;
         }
         if (priceLowerThan != -1){
-            query += whereClauseHelper(whereApplied);
-            query += ProductsTable.COLUMN_MIN_PRICE_PER_UNIT + " <= " + priceLowerThan;
+            query += whereClauseHelper(whereApplied) + ProductsTable.COLUMN_MIN_PRICE_PER_UNIT + " <= " + priceLowerThan;
             whereApplied = true;
         }
         if (fabrics != null && !fabrics.isEmpty()){
-            query += whereClauseHelper(whereApplied);
-            query += " ( LOWER(" + ProductsTable.COLUMN_FABRIC_GSM + ") LIKE LOWER('%" +
+            query += whereClauseHelper(whereApplied) + " ( LOWER(" + ProductsTable.COLUMN_FABRIC_GSM + ") LIKE LOWER('%" +
                     TextUtils.join("%') OR LOWER(" + ProductsTable.COLUMN_FABRIC_GSM + ") LIKE LOWER('%", fabrics) + "%') ) ";
             whereApplied = true;
         }
         if (colours != null && !colours.isEmpty()){
-            query += whereClauseHelper(whereApplied);
-            query += " ( LOWER(" + ProductsTable.COLUMN_COLOURS + ") LIKE LOWER('%" +
+            query += whereClauseHelper(whereApplied) + " ( LOWER(" + ProductsTable.COLUMN_COLOURS + ") LIKE LOWER('%" +
                     TextUtils.join("%') OR LOWER(" + ProductsTable.COLUMN_COLOURS + ") LIKE LOWER('%", colours) + "%') ) ";
             whereApplied = true;
         }
         if (sizes != null && !sizes.isEmpty()){
-            query += whereClauseHelper(whereApplied);
-            query += " ( LOWER(" + ProductsTable.COLUMN_SIZES + ") LIKE LOWER('%" +
+            query += whereClauseHelper(whereApplied) + " ( LOWER(" + ProductsTable.COLUMN_SIZES + ") LIKE LOWER('%" +
                     TextUtils.join("%') OR LOWER(" + ProductsTable.COLUMN_SIZES + ") LIKE LOWER('%", sizes) + "%') ) ";
             whereApplied = true;
         }
         if (deleteStatus != -1){
-            query += whereClauseHelper(whereApplied);
-            query += ProductsTable.COLUMN_DELETE_STATUS + " = " + deleteStatus;
+            query += whereClauseHelper(whereApplied) + ProductsTable.COLUMN_DELETE_STATUS + " = " + deleteStatus;
             whereApplied = true;
         }
         if (showOnline != -1){
-            query += whereClauseHelper(whereApplied);
-            query += ProductsTable.COLUMN_SHOW_ONLINE + " = " + showOnline;
+            query += whereClauseHelper(whereApplied) + ProductsTable.COLUMN_SHOW_ONLINE + " = " + showOnline;
         }
 
         return getCursor(query);
@@ -142,6 +135,36 @@ public class CatalogDBHelper extends BaseDBHelper {
 
         return getCursor(query);
     }
+
+    /**Seller Address IDs and Seller Address History IDs stored separately
+     * Pass -1 for integer to not get the corresponding values
+     * Seller Address IDs and Seller Address History IDs are stored by 0 as default
+     * Pass address Id or address history ID as 0 when they are not wanted
+     */
+
+    public Cursor getSellerAddressData(int sellerAddressID,
+                                       int sellerAddressHistoryID, int sellerID, @Nullable String[] columns){
+        String columnNames = getColumnNamesString(columns);
+
+        String query = "SELECT " + columnNames + " FROM " + SellerAddressTable.TABLE_NAME;
+        boolean whereApplied = false;
+        if (sellerAddressID != -1) {
+            query += " WHERE " + SellerAddressTable.COLUMN_ADDRESS_ID + " = " + sellerAddressID;
+            whereApplied = true;
+        }
+
+        if (sellerAddressHistoryID != -1) {
+            query += whereClauseHelper(whereApplied) + SellerAddressTable.COLUMN_ADDRESS_HISTORY_ID + " = " + sellerAddressHistoryID;
+            whereApplied = true;
+        }
+
+        if (sellerID != -1) {
+            query += whereClauseHelper(whereApplied) + SellerAddressTable.COLUMN_SELLER_ID + " = " + sellerID;
+        }
+
+        return getCursor(query);
+    }
+
 
     public SparseArray<String> getPresentSellerIDs() {
         if (mPresentSellerIDs!= null){
@@ -171,6 +194,36 @@ public class CatalogDBHelper extends BaseDBHelper {
         }
         mPresentProductIDs = productIDs;
         return productIDs;
+    }
+
+    public SparseArray<String> getPresentSellerAddressIDs(){
+        if (mPresentSellerAddressIDs!= null){
+            return mPresentSellerAddressIDs;
+        }
+        String[] columns = new String[]{SellerAddressTable.COLUMN_ADDRESS_ID, SellerAddressTable.COLUMN_UPDATED_AT};
+        Cursor cursor = getSellerAddressData(-1, 0, -1, columns);
+        SparseArray<String> sellerAddressIDs = new SparseArray<>();
+        while (cursor.moveToNext()) {
+            sellerAddressIDs.put(cursor.getInt(cursor.getColumnIndexOrThrow(SellerAddressTable.COLUMN_ADDRESS_ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(SellerAddressTable.COLUMN_UPDATED_AT)));
+        }
+        mPresentSellerAddressIDs = sellerAddressIDs;
+        return sellerAddressIDs;
+    }
+
+    public SparseArray<String> getPresentSellerAddressHistoryIDs(){
+        if (mPresentSellerAddressHistoryIDs!= null){
+            return mPresentSellerAddressHistoryIDs;
+        }
+        String[] columns = new String[]{SellerAddressTable.COLUMN_ADDRESS_HISTORY_ID, SellerAddressTable.COLUMN_UPDATED_AT};
+        Cursor cursor = getSellerAddressData(0, -1, -1, columns);
+        SparseArray<String> sellerAddressHistoryIDs = new SparseArray<>();
+        while (cursor.moveToNext()) {
+            sellerAddressHistoryIDs.put(cursor.getInt(cursor.getColumnIndexOrThrow(SellerAddressTable.COLUMN_ADDRESS_HISTORY_ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(SellerAddressTable.COLUMN_UPDATED_AT)));
+        }
+        mPresentSellerAddressHistoryIDs = sellerAddressHistoryIDs;
+        return sellerAddressHistoryIDs;
     }
 
     public int updateCategories(JSONObject data) {
@@ -265,7 +318,25 @@ public class CatalogDBHelper extends BaseDBHelper {
 
     public void saveSellerAddressData(JSONObject sellerAddress, boolean addressHistory) throws JSONException{
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
-        int addressID = sellerAddress.getInt(CatalogContract.SellerAddressTable.COLUMN_ADDRESS_ID);
+        int addressID = sellerAddress.getInt(SellerAddressTable.COLUMN_ADDRESS_ID);
+        String sellerAddressUpdatedAtLocal;
+        if(addressHistory) {sellerAddressUpdatedAtLocal = getPresentSellerAddressIDs().get(addressID);
+        } else {sellerAddressUpdatedAtLocal = getPresentSellerAddressHistoryIDs().get(addressID);}
+        String sellerAddressUpdatedAtServer = sellerAddress.getString(SellerAddressTable.COLUMN_UPDATED_AT);
+        if (sellerAddressUpdatedAtLocal == null){
+            ContentValues values = getSellerAddressContentValues(sellerAddress, addressHistory);
+            db.insert(SellerAddressTable.TABLE_NAME, null, values);
+        }
+        else if (!sellerAddressUpdatedAtLocal.equals(sellerAddressUpdatedAtServer)){
+            ContentValues values = getSellerAddressContentValues(sellerAddress, addressHistory);
+            String selection = addressHistory? SellerAddressTable.COLUMN_ADDRESS_ID : SellerAddressTable.COLUMN_ADDRESS_HISTORY_ID
+                    + " = " + addressID;
+            db.update(SellerAddressTable.TABLE_NAME, values, selection, null);
+        }
+        if (addressHistory){mPresentSellerAddressHistoryIDs.put(addressID, sellerAddressUpdatedAtServer);}
+        else {mPresentSellerAddressIDs.put(addressID, sellerAddressUpdatedAtServer);}
+
+        mDatabaseHelper.closeDatabase();
     }
 
     public ContentValues getSellerContentValues(JSONObject seller) throws JSONException{
@@ -337,9 +408,12 @@ public class CatalogDBHelper extends BaseDBHelper {
         return values;
     }
 
-    public ContentValues getSellerAddressContentValues(JSONObject sellerAddress) throws JSONException{
+    public ContentValues getSellerAddressContentValues(JSONObject sellerAddress, boolean addressHistory) throws JSONException{
         ContentValues values = new ContentValues();
         values.put(SellerAddressTable.COLUMN_ADDRESS_ID, sellerAddress.getInt(SellerAddressTable.COLUMN_ADDRESS_ID));
+        values.put(SellerAddressTable.COLUMN_ADDRESS_HISTORY_ID, sellerAddress.getInt(SellerAddressTable.COLUMN_ADDRESS_ID));
+        if (addressHistory) {values.put(SellerAddressTable.COLUMN_ADDRESS_ID, 0);}
+        else {values.put(SellerAddressTable.COLUMN_ADDRESS_HISTORY_ID, 0);}
         values.put(SellerAddressTable.COLUMN_SELLER_ID, sellerAddress.getInt(SellerAddressTable.COLUMN_SELLER_ID));
         values.put(SellerAddressTable.COLUMN_ADDRESS, sellerAddress.getString(SellerAddressTable.COLUMN_ADDRESS));
         values.put(SellerAddressTable.COLUMN_CITY, sellerAddress.getString(SellerAddressTable.COLUMN_CITY));
