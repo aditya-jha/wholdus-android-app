@@ -217,6 +217,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     ProductsTable.COLUMN_WEIGHT_PER_UNIT + REAL_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_PACKAGING_DETAILS + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_LENGTH + TEXT_TYPE + COMMA_SEP +
+                    ProductsTable.COLUMN_LIKE_STATUS + INT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_CREATED_AT + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_UPDATED_AT + TEXT_TYPE + " )";
 

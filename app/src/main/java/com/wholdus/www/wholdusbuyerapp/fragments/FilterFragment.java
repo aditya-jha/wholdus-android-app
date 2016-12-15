@@ -30,6 +30,7 @@ import com.wholdus.www.wholdusbuyerapp.adapters.FilterBrandValuesDisplayAdapter;
 import com.wholdus.www.wholdusbuyerapp.adapters.FilterValuesDisplayAdapter;
 import com.wholdus.www.wholdusbuyerapp.dataSource.FiltersData;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
+import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.CategorySellerLoader;
 import com.wholdus.www.wholdusbuyerapp.models.CategorySeller;
 
@@ -51,6 +52,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
     private FilterValuesDisplayAdapter mFilterValuesAdapter;
     private FilterBrandValuesDisplayAdapter mBrandFilterValuesAdapter;
     private String mSelectedFilter;
+    private CategoryProductListenerInterface mListener;
 
     public FilterFragment() {
     }
@@ -58,6 +60,11 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        try {
+            mListener = (CategoryProductListenerInterface) context;
+        } catch (ClassCastException cee){
+            Log.e(this.getClass().getSimpleName(), " must implement" + CategoryProductListenerInterface.class.getSimpleName());
+        }
     }
 
     @Override
@@ -101,6 +108,12 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.filter_action_buttons, menu);
         super.onCreateOptionsMenu(menu, inflater);
@@ -137,7 +150,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.filter_button:
-                /* TODO: what happens when filter button is clicked */
+                mListener.openFilter(false);
                 break;
         }
     }

@@ -28,25 +28,28 @@ import java.util.Objects;
 public class GlobalAccessHelper {
 
     public static String getAccessToken(Context context) {
-        return "access_token=" + ((WholdusApplication)context).getAccessToken();
+        return "access_token=" + ((WholdusApplication) context).getAccessToken();
     }
 
     public static String getRefreshToken(Application context) {
-        return "refresh_token=" + ((WholdusApplication)context).getRefreshToken();
+        return "refresh_token=" + ((WholdusApplication) context).getRefreshToken();
     }
 
-    public static String generateUrl(Context context, String endPoint, @Nullable HashMap<String,String> params) {
-        String url = context.getString(R.string.api_base) + endPoint;
-        if (params!= null){
-            url += "?";
+    public static String generateUrl(Context context, String endPoint, @Nullable HashMap<String, String> params) {
+        return context.getString(R.string.api_base) + endPoint + getUrlStringFromHashMap(params);
+    }
+
+    public static int getBuyerID(Context context) {
+        return ((WholdusApplication) context).getBuyerID();
+    }
+
+    public static String getUrlStringFromHashMap(@Nullable HashMap<String, String> params) {
+        String url = "?";
+        if (params != null) {
             for (HashMap.Entry<String, String> entry : params.entrySet()) {
                 url += "&" + entry.getKey() + "=" + entry.getValue();
             }
         }
         return url;
-    }
-
-    public static int getBuyerID(Context context) {
-        return ((WholdusApplication)context).getBuyerID();
     }
 }

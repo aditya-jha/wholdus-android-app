@@ -17,12 +17,6 @@ import java.util.zip.DataFormatException;
 
 public class HelperFunctions {
 
-    public static int getIntFromBooleanString(String value) {
-        if(value == "true") {
-            return 1;
-        } else return 0;
-    }
-
     public static void setListViewHeightBasedOnChildren(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter == null)

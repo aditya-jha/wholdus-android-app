@@ -6,5 +6,5 @@ package com.wholdus.www.wholdusbuyerapp.interfaces;
 
 public interface CategoryProductListenerInterface {
 
-    void openFilter();
+    void openFilter(boolean open);
 }
