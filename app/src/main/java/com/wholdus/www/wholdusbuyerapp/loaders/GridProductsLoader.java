@@ -3,6 +3,7 @@ package com.wholdus.www.wholdusbuyerapp.loaders;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.models.GridProductModel;
@@ -16,9 +17,20 @@ import java.util.HashSet;
 
 public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductModel>> {
 
-    private static final String[] columns = {};
+    private static final String[] columns = {
+            CatalogContract.ProductsTable._ID,
+            CatalogContract.ProductsTable.COLUMN_NAME,
+            CatalogContract.ProductsTable.COLUMN_PRODUCT_ID,
+            CatalogContract.ProductsTable.COLUMN_MIN_PRICE_PER_UNIT,
+            CatalogContract.ProductsTable.COLUMN_FABRIC_GSM,
+            CatalogContract.ProductsTable.COLUMN_LIKE_STATUS,
+            CatalogContract.ProductsTable.COLUMN_IMAGE_COUNT,
+            CatalogContract.ProductsTable.COLUMN_IMAGE_NAME,
+            CatalogContract.ProductsTable.COLUMN_IMAGE_NUMBERS,
+            CatalogContract.ProductsTable.COLUMN_IMAGE_PATH
+    };
 
-    public GridProductsLoader(Context context, String filerParams) {
+    public GridProductsLoader(Context context) {
         super(context);
     }
 
