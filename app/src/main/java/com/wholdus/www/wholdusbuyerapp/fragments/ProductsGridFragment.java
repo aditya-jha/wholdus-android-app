@@ -145,10 +145,13 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<ArrayList<GridProductModel>> loader, ArrayList<GridProductModel> data) {
-        if (mScrolling) {
-            int oldPosition = mProducts.size();
-            mProducts.addAll(data);
+        if (!mScrolling) {
+            mProducts.clear();
+            mScrolling = true;
         }
+        int oldPosition = mProducts.size();
+        mProducts.addAll(data);
+        mProductsGridAdapter.notifyItemRangeInserted(oldPosition, data.size());
     }
 
     @Override
