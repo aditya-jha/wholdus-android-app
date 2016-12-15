@@ -35,6 +35,9 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
                 FilterClass.getSelectedItems("Sizes"),
                 0,
                 1,
+                null,
+                -1,
+                -1,
                 columns);
         return GridProductModel.getGridProducts(cursor);
     }

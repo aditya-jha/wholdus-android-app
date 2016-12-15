@@ -205,7 +205,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     ProductsTable.COLUMN_COLOURS + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_LOT_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
-                    ProductsTable.COLUMN_WORK_DESCRIPTION_TYPE + TEXT_TYPE + COMMA_SEP +
+                    ProductsTable.WORK_DECORATION_TYPE + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_NECK_COLLAR_TYPE + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_FABRIC_GSM + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_DISPATCHED_IN + TEXT_TYPE + COMMA_SEP +
@@ -260,6 +260,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     SellerAddressTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
                     SellerAddressTable.COLUMN_SELLER_ID + INT_TYPE + COMMA_SEP +
                     SellerAddressTable.COLUMN_ADDRESS_ID + INT_TYPE + COMMA_SEP +
+                    SellerAddressTable.COLUMN_ADDRESS_HISTORY_ID + INT_TYPE + COMMA_SEP +
                     SellerAddressTable.COLUMN_CITY + TEXT_TYPE + COMMA_SEP +
                     SellerAddressTable.COLUMN_STATE + TEXT_TYPE + COMMA_SEP +
                     SellerAddressTable.COLUMN_LANDMARK + TEXT_TYPE + COMMA_SEP +
@@ -296,6 +297,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "DROP TABLE IF EXISTS " + CategorySellersTable.TABLE_NAME;
 
     private static DatabaseHelper instance;
+
+    //TODO : CREATE indexes on certain columns if necessary like product_id
 
     private DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
