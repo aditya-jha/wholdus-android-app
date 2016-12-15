@@ -12,8 +12,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
@@ -138,11 +136,17 @@ public class CategoryProductActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public void sortClicked() {
+        updateProducts();
+    }
+
     private void initToolbar() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         // set default toolbar as the action bar for this activity
         mToolbar = (Toolbar) findViewById(R.id.spinner_toolbar);
+        mToolbar.setTitle(null);
         setSupportActionBar(mToolbar);
         try {
             getSupportActionBar().setTitle(null);
