@@ -86,4 +86,10 @@
     <string name="filter_footer_title">Filter Products</string>
     <string name="max_price_key">Max Price</string>
     <string name="min_price_key">Min Price</string>
+
+    <!-- sort dialog fragment -->
+    <string name="sort_by">SORT BY</string>
+    <string name="sort_newest_first">Newest First</string>
+    <string name="sort_price_low_to_high">Price - Low to High</string>
+    <string name="sort_price_high_to_low">Price - High to Low</string>
 </resources>

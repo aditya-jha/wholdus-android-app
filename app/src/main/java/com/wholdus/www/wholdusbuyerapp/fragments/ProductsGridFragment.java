@@ -32,6 +32,9 @@ import com.wholdus.www.wholdusbuyerapp.models.GridProductModel;
 
 import java.util.ArrayList;
 
+import static com.wholdus.www.wholdusbuyerapp.R.id.cancel_action;
+import static com.wholdus.www.wholdusbuyerapp.R.id.sort_button;
+
 /**
  * Created by aditya on 8/12/16.
  */
@@ -74,8 +77,11 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_products_grid, container, false);
         setHasOptionsMenu(true);
 
-        Button filteButton = (Button) rootView.findViewById(R.id.filter_button);
-        filteButton.setOnClickListener(this);
+        Button filterButton = (Button) rootView.findViewById(R.id.filter_button);
+        filterButton.setOnClickListener(this);
+
+        Button sortButton = (Button) rootView.findViewById(R.id.sort_button);
+        sortButton.setOnClickListener(this);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -164,6 +170,9 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         switch (view.getId()) {
             case R.id.filter_button:
                 mListener.openFilter(true);
+                break;
+            case R.id.sort_button:
+                SortBottomSheetFragment.newInstance().show(getChildFragmentManager(), "Sort");
                 break;
         }
     }
