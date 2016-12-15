@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,16 +21,25 @@ import android.widget.Toast;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.CheckoutActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.StoreActivity;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
+import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.models.BuyerProduct;
+import com.wholdus.www.wholdusbuyerapp.models.GridProductModel;
+
+import java.util.ArrayList;
 
 /**
  * Created by aditya on 8/12/16.
  */
 
-public class ProductsGridFragment extends Fragment implements LoaderManager.LoaderCallbacks<BuyerProduct>, View.OnClickListener {
+public class ProductsGridFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<GridProductModel>>,
+        View.OnClickListener, ItemClickListener {
 
     private CategoryProductListenerInterface mListener;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private String mFilters;
+    public static final int PRODUCTS_GRID_LOADER = 2;
 
     public ProductsGridFragment() {
     }
@@ -57,6 +67,14 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
         Button filteButton = (Button) rootView.findViewById(R.id.filter_button);
         filteButton.setOnClickListener(this);
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
         return rootView;
     }
 
@@ -106,16 +124,16 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
-    public Loader<BuyerProduct> onCreateLoader(int id, Bundle args) {
+    public Loader<ArrayList<GridProductModel>> onCreateLoader(int id, Bundle args) {
         return null;
     }
 
     @Override
-    public void onLoadFinished(Loader<BuyerProduct> loader, BuyerProduct data) {
+    public void onLoadFinished(Loader<ArrayList<GridProductModel>> loader, ArrayList<GridProductModel> data) {
     }
 
     @Override
-    public void onLoaderReset(Loader<BuyerProduct> loader) {
+    public void onLoaderReset(Loader<ArrayList<GridProductModel>> loader) {
 
     }
 
@@ -123,11 +141,23 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.filter_button:
-                mListener.openFilter();
+                mListener.openFilter(true);
+                break;
         }
+    }
+
+    @Override
+    public void itemClicked(int position, int id) {
+        Toast.makeText(getContext(), position + "", Toast.LENGTH_SHORT).show();
     }
 
     public void refreshData() {
         Log.d(getClass().getSimpleName(), "refresh data");
+        String filters = FilterClass.getFilterString();
+
+        if (!filters.equals(mFilters)) {
+            mFilters = filters;
+            getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
+        }
     }
 }

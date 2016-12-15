@@ -53,6 +53,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         ProductsTable.COLUMN_GENDER, ProductsTable.COLUMN_WEIGHT_PER_UNIT, ProductsTable.COLUMN_PACKAGING_DETAILS, ProductsTable.COLUMN_LENGTH,
         ProductsTable.COLUMN_CREATED_AT, ProductsTable.COLUMN_UPDATED_AT};
 
+
     public Cursor getAllCategories(boolean productsCount) {
         String countQuery = "";
         if (productsCount) {
@@ -60,26 +61,28 @@ public class CatalogDBHelper extends BaseDBHelper {
                     " WHERE C." + CategoriesTable.COLUMN_CATEGORY_ID + " = P." + ProductsTable.COLUMN_CATEGORY_ID + ") AS " +
                     CategoriesTable.COLUMN_PRODUCTS_COUNT;
         }
-        String query = "SELECT C.*" + countQuery + " FROM " + CategoriesTable.TABLE_NAME + " AS C";;
+        String query = "SELECT C.*" + countQuery + " FROM " + CategoriesTable.TABLE_NAME + " AS C";
+        ;
         return getCursor(query);
     }
 
     public Cursor getProductData(int productID,
-                                 @Nullable ArrayList<Integer> sellerIDs,
-                                 @Nullable ArrayList<Integer> categoryIDs,
+                                 @Nullable HashSet<String> sellerIDs,
+                                 @Nullable HashSet<Integer> categoryIDs,
                                  int priceGreaterThan,
                                  int priceLowerThan,
-                                 @Nullable ArrayList<String> fabrics,
-                                 @Nullable ArrayList<String> colours,
-                                 @Nullable ArrayList<String> sizes,
+                                 @Nullable HashSet<String> fabrics,
+                                 @Nullable HashSet<String> colours,
+                                 @Nullable HashSet<String> sizes,
                                  int deleteStatus,
                                  int showOnline,
-                                 @Nullable String[] columns){
+                                 @Nullable String[] columns) {
         String columnNames = getColumnNamesString(columns);
         String query = "SELECT " + columnNames + " FROM " + ProductsTable.TABLE_NAME;
         boolean whereApplied = false;
-        if (productID != -1){
-            query += " AND " + ProductsTable.COLUMN_PRODUCT_ID + " = " + productID;
+
+        if (productID != -1) {
+            query += " WHERE " + ProductsTable.COLUMN_PRODUCT_ID + " = " + productID;
             whereApplied = true;
         }
         if (sellerIDs != null && !sellerIDs.isEmpty()){
@@ -124,7 +127,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         return getCursor(query);
     }
 
-    public Cursor getSellerData(@Nullable Integer sellerID, @Nullable String[] columns){
+    public Cursor getSellerData(@Nullable Integer sellerID, @Nullable String[] columns) {
         String columnNames = getColumnNamesString(columns);
 
         String query = "SELECT " + columnNames + " FROM " + SellersTable.TABLE_NAME;
@@ -167,7 +170,7 @@ public class CatalogDBHelper extends BaseDBHelper {
 
 
     public SparseArray<String> getPresentSellerIDs() {
-        if (mPresentSellerIDs!= null){
+        if (mPresentSellerIDs != null) {
             return mPresentSellerIDs;
         }
         String[] columns = new String[]{SellersTable.COLUMN_SELLER_ID, SellersTable.COLUMN_UPDATED_AT};
@@ -182,11 +185,11 @@ public class CatalogDBHelper extends BaseDBHelper {
     }
 
     public SparseArray<String> getPresentProductIDs() {
-        if (mPresentProductIDs!= null){
+        if (mPresentProductIDs != null) {
             return mPresentProductIDs;
         }
         String[] columns = new String[]{ProductsTable.COLUMN_PRODUCT_ID, ProductsTable.COLUMN_UPDATED_AT};
-        Cursor cursor = getProductData(-1, null,null,-1,-1,null,null,null,-1,-1,columns);
+        Cursor cursor = getProductData(-1, null, null, -1, -1, null, null, null, -1, -1, columns);
         SparseArray<String> productIDs = new SparseArray<>();
         while (cursor.moveToNext()) {
             productIDs.put(cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_PRODUCT_ID)),
@@ -272,10 +275,10 @@ public class CatalogDBHelper extends BaseDBHelper {
         return insertedUpdatedCount;
     }
 
-    public void saveSellerData(JSONObject seller) throws JSONException{
+    public void saveSellerData(JSONObject seller) throws JSONException {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
         int sellerID = seller.getInt(SellersTable.COLUMN_SELLER_ID);
-        if (!seller.has(SellersTable.COLUMN_UPDATED_AT)){
+        if (!seller.has(SellersTable.COLUMN_UPDATED_AT)) {
             return;
         }
         String sellerUpdatedAtLocal = getPresentSellerIDs().get(sellerID);
@@ -293,10 +296,10 @@ public class CatalogDBHelper extends BaseDBHelper {
         mDatabaseHelper.closeDatabase();
     }
 
-    public void saveProductData(JSONObject product) throws JSONException{
+    public void saveProductData(JSONObject product) throws JSONException {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
         int productID = product.getInt(ProductsTable.COLUMN_PRODUCT_ID);
-        if (!product.has("details") || !product.has("image")){
+        if (!product.has("details") || !product.has("image")) {
             return;
         }
         // TODO: Save category data
@@ -314,7 +317,6 @@ public class CatalogDBHelper extends BaseDBHelper {
         }
         mDatabaseHelper.closeDatabase();
     }
-
 
     public void saveSellerAddressData(JSONObject sellerAddress, boolean addressHistory) throws JSONException{
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
@@ -339,19 +341,19 @@ public class CatalogDBHelper extends BaseDBHelper {
         mDatabaseHelper.closeDatabase();
     }
 
-    public ContentValues getSellerContentValues(JSONObject seller) throws JSONException{
+    private ContentValues getSellerContentValues(JSONObject seller) throws JSONException{
         ContentValues values = new ContentValues();
         values.put(SellersTable.COLUMN_SELLER_ID, seller.getInt(SellersTable.COLUMN_SELLER_ID));
         values.put(SellersTable.COLUMN_COMPANY_NAME, seller.getString(SellersTable.COLUMN_COMPANY_NAME));
         values.put(SellersTable.COLUMN_NAME, seller.getString(SellersTable.COLUMN_NAME));
         values.put(SellersTable.COLUMN_COMPANY_PROFILE, seller.getString(SellersTable.COLUMN_COMPANY_PROFILE));
-        values.put(SellersTable.COLUMN_SHOW_ONLINE, seller.getBoolean(SellersTable.COLUMN_SHOW_ONLINE)? 1 : 0);
+        values.put(SellersTable.COLUMN_SHOW_ONLINE, seller.getBoolean(SellersTable.COLUMN_SHOW_ONLINE) ? 1 : 0);
         values.put(SellersTable.COLUMN_CREATED_AT, seller.getString(SellersTable.COLUMN_CREATED_AT));
         values.put(SellersTable.COLUMN_UPDATED_AT, seller.getString(SellersTable.COLUMN_UPDATED_AT));
         return values;
     }
 
-    private ContentValues getProductContentValues(JSONObject product) throws JSONException{
+    private ContentValues getProductContentValues(JSONObject product) throws JSONException {
         ContentValues values = new ContentValues();
         values.put(ProductsTable.COLUMN_PRODUCT_ID, product.getInt(ProductsTable.COLUMN_PRODUCT_ID));
         JSONObject category = product.getJSONObject("category");
@@ -376,7 +378,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         values.put(ProductsTable.COLUMN_IMAGE_COUNT, image.getInt(ProductsTable.COLUMN_IMAGE_COUNT));
         JSONArray imageNumbers = image.getJSONArray(ProductsTable.COLUMN_IMAGE_NUMBERS);
         String imageNumbersString = imageNumbers.getString(0);
-        for (int i=1;i<imageNumbers.length(); i++){
+        for (int i = 1; i < imageNumbers.length(); i++) {
             imageNumbersString += "," + imageNumbers.getString(i);
         }
         values.put(ProductsTable.COLUMN_IMAGE_NUMBERS, imageNumbersString);
@@ -455,7 +457,7 @@ public class CatalogDBHelper extends BaseDBHelper {
     private SparseArray<String> getCategorySellersID(int categoryID) {
         String query = "SELECT C." + CategorySellersTable.COLUMN_SELLER_ID + ", C." +
                 CategorySellersTable.COLUMN_COMPANY_NAME + " FROM " + CategorySellersTable.TABLE_NAME + " AS C WHERE C."
-                + CategorySellersTable.COLUMN_CATEGORY_ID + "=" +categoryID;
+                + CategorySellersTable.COLUMN_CATEGORY_ID + "=" + categoryID;
         Cursor cursor = getCursor(query);
         SparseArray<String> sellers = new SparseArray<>();
         while (cursor.moveToNext()) {
@@ -476,7 +478,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         cv.put(CategorySellersTable.COLUMN_CATEGORY_ID, categoryID);
         SparseArray<String> catSellersInDB = getCategorySellersID(categoryID);
 
-        for (int i=0; i<sellers.length(); i++) {
+        for (int i = 0; i < sellers.length(); i++) {
             JSONObject seller = sellers.getJSONObject(i).getJSONObject("seller");
             int sellerID = seller.getInt(CategorySellersTable.COLUMN_SELLER_ID);
             String companyName = seller.getString(CategorySellersTable.COLUMN_COMPANY_NAME);
@@ -486,7 +488,7 @@ public class CatalogDBHelper extends BaseDBHelper {
             String companyNameInDB = catSellersInDB.get(sellerID);
             if (companyNameInDB == null) { // insert
                 db.insert(CategorySellersTable.TABLE_NAME, null, cv);
-            } else if (!companyName.equals(companyNameInDB)){
+            } else if (!companyName.equals(companyNameInDB)) {
                 db.update(CategorySellersTable.TABLE_NAME, cv, null, null);
             }
         }

@@ -1,7 +1,9 @@
 package com.wholdus.www.wholdusbuyerapp.helperClasses;
 
+import android.text.TextUtils;
 import android.util.Log;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -73,7 +75,6 @@ public final class FilterClass {
     public static void setPriceFilter(int min, int max) {
         mMaxPrice = max;
         mMinPrice = min;
-        Log.d("price filter", min + "-" + max);
     }
 
     public static int getMinPriceFilter() {
@@ -82,5 +83,21 @@ public final class FilterClass {
 
     public static int getMaxPriceFilter() {
         return mMaxPrice;
+    }
+
+    public static String getFilterString() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("categoryID", String.valueOf(mCategoryID));
+        params.put("sellerID", TextUtils.join(",", mBrands));
+        params.put("fabric", TextUtils.join(",", mFabrics));
+        params.put("colour", TextUtils.join(",", mColors));
+        if (mMaxPrice == 5000) {
+            params.put("max_price_per_unit", "-1");
+        } else {
+            params.put("max_price_per_unit", String.valueOf(mMaxPrice));
+        }
+        params.put("min_price_per_unit", String.valueOf(mMinPrice));
+
+        return GlobalAccessHelper.getUrlStringFromHashMap(params);
     }
 }
