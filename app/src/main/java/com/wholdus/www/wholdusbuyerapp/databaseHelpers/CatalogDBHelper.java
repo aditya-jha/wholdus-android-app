@@ -66,6 +66,14 @@ public class CatalogDBHelper extends BaseDBHelper {
         return getCursor(query);
     }
 
+    /**
+     *
+     * @param orderBy use as "column_name" + "sort_order"(default ASC)
+     *                to use descending, " DESC "
+
+     * @return
+     */
+
     public Cursor getProductData(int productID,
                                  @Nullable HashSet<String> sellerIDs,
                                  @Nullable HashSet<Integer> categoryIDs,
@@ -76,6 +84,9 @@ public class CatalogDBHelper extends BaseDBHelper {
                                  @Nullable HashSet<String> sizes,
                                  int deleteStatus,
                                  int showOnline,
+                                 @Nullable String[] orderBy,
+                                 int limit,
+                                 int offset,
                                  @Nullable String[] columns) {
         String columnNames = getColumnNamesString(columns);
         String query = "SELECT " + columnNames + " FROM " + ProductsTable.TABLE_NAME;
@@ -122,6 +133,17 @@ public class CatalogDBHelper extends BaseDBHelper {
         }
         if (showOnline != -1){
             query += whereClauseHelper(whereApplied) + ProductsTable.COLUMN_SHOW_ONLINE + " = " + showOnline;
+            whereApplied = true;
+        }
+        if (orderBy == null || orderBy.length == 0){
+            orderBy = new String[]{ProductsTable.COLUMN_PRODUCT_ID + " DESC "};
+        }
+        query += " ORDER BY " + TextUtils.join(", ", orderBy);
+        if (limit != -1){
+            query +=  " LIMIT " + limit;
+        }
+        if (offset != -1){
+            query +=  " OFFSET " + offset;
         }
 
         return getCursor(query);
@@ -189,7 +211,7 @@ public class CatalogDBHelper extends BaseDBHelper {
             return mPresentProductIDs;
         }
         String[] columns = new String[]{ProductsTable.COLUMN_PRODUCT_ID, ProductsTable.COLUMN_UPDATED_AT};
-        Cursor cursor = getProductData(-1, null, null, -1, -1, null, null, null, -1, -1, columns);
+        Cursor cursor = getProductData(-1, null, null, -1, -1, null, null, null, -1, -1,null,-1,-1, columns);
         SparseArray<String> productIDs = new SparseArray<>();
         while (cursor.moveToNext()) {
             productIDs.put(cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_PRODUCT_ID)),
