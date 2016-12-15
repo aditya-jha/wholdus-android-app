@@ -23,7 +23,7 @@ public class ProductDetails {
     private String mPattern;
     private String mLotDescription;
     private String mDescription;
-    private String mWorkDescriptionType;
+    private String mWorkDecorationType;
     private String mNeckCollarType;
     private String mDispatchedIn;
     private String mRemarks;
@@ -54,7 +54,7 @@ public class ProductDetails {
         mPattern = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_PATTERN));
         mLotDescription = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_LOT_DESCRIPTION));
         mDescription = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_DESCRIPTION));
-        mWorkDescriptionType = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_WORK_DESCRIPTION_TYPE));
+        mWorkDecorationType = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.WORK_DECORATION_TYPE));
         mNeckCollarType = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_NECK_COLLAR_TYPE));
         mDispatchedIn = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_DISPATCHED_IN));
         mRemarks = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_REMARKS));
@@ -66,6 +66,7 @@ public class ProductDetails {
         mLength = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_LENGTH));
         mCreatedAt = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_CREATED_AT));
         mUpdatedAt = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_UPDATED_AT));
+
     }
 
     public int getProductDetailsID(){return mProductDetailsID;}
@@ -94,7 +95,7 @@ public class ProductDetails {
 
     public String getDescription(){return mDescription;}
 
-    public String getWorkDescriptionType(){return mWorkDescriptionType;}
+    public String getWorkDecorationType(){return mWorkDecorationType;}
 
     public String getNeckCollarType(){return mNeckCollarType;}
 
