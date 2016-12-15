@@ -36,6 +36,7 @@ public class CatalogContract {
         public static final String COLUMN_IMAGE_NUMBERS = "image_numbers";
         public static final String COLUMN_IMAGE_PATH = "image_path";
 
+        public static final String COLUMN_LIKE_STATUS = "like_status";
         public static final String COLUMN_WARRANTY = "warranty";
         public static final String COLUMN_SPECIAL_FEATURE = "special_feature";
         public static final String COLUMN_AVAILABILITY = "availability";

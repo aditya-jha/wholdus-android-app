@@ -132,7 +132,7 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
     public void itemClicked(int position, int id) {
         switch (id) {
             case R.id.fav_icon_image_view:
-                // add the category at position to buyer interests
+                /* TODO: add the category at position to buyer interests */
                 break;
             default:
                 // open category clicked

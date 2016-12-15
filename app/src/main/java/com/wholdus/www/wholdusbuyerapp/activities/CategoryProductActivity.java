@@ -129,8 +129,13 @@ public class CategoryProductActivity extends AppCompatActivity
     }
 
     @Override
-    public void openFilter() {
-        openToFragment("filter", null);
+    public void openFilter(boolean open) {
+        if (open) {
+            openToFragment("filter", null);
+        } else {
+            onBackPressed();
+            updateProducts();
+        }
     }
 
     private void initToolbar() {
@@ -179,6 +184,7 @@ public class CategoryProductActivity extends AppCompatActivity
         } else {
             // fragment is not added yet
             openToFragment("", null);
+            updateProducts();
         }
     }
 
