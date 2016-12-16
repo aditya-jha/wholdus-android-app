@@ -57,6 +57,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     UserAddressTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
                     UserAddressTable.COLUMN_PINCODE_ID + INT_TYPE + COMMA_SEP +
                     UserAddressTable.COLUMN_ADDRESS_ID + INT_TYPE + COMMA_SEP +
+                    UserAddressTable.COLUMN_ADDRESS_HISTORY_ID + INT_TYPE + COMMA_SEP +
                     UserAddressTable.COLUMN_PRIORITY + INT_TYPE + COMMA_SEP +
                     UserAddressTable.COLUMN_CITY + TEXT_TYPE + COMMA_SEP +
                     UserAddressTable.COLUMN_STATE + TEXT_TYPE + COMMA_SEP +
@@ -65,6 +66,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     UserAddressTable.COLUMN_CONTACT_NUMBER + TEXT_TYPE + COMMA_SEP +
                     UserAddressTable.COLUMN_ADDRESS_ALIAS + TEXT_TYPE + COMMA_SEP +
                     UserAddressTable.COLUMN_CREATED_AT + TEXT_TYPE + COMMA_SEP +
+                    UserAddressTable.COLUMN_SYNCED + INT_TYPE + COMMA_SEP +
+                    UserAddressTable.COLUMN_CLIENT_ID + TEXT_TYPE + COMMA_SEP +
                     UserAddressTable.COLUMN_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
                     UserAddressTable.COLUMN_PINCODE + TEXT_TYPE + " )";
 

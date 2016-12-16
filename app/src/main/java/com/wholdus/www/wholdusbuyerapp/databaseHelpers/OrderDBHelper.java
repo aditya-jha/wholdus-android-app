@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseArray;
 
 
@@ -188,7 +189,7 @@ public class OrderDBHelper extends BaseDBHelper {
             mPresentOrderIDs.put(orderID, orderUpdatedAtServer);
         }
         UserDBHelper userDBHelper = new UserDBHelper(mContext);
-        userDBHelper.updateUserAddressDataFromJSONObject(order.getJSONObject("buyer_address"));
+        userDBHelper.updateUserAddressDataFromJSONObject(order.getJSONObject("buyer_address"), true);
         if (order.has("sub_orders")){
             saveSubordersData(order.getJSONArray("sub_orders"));
         }

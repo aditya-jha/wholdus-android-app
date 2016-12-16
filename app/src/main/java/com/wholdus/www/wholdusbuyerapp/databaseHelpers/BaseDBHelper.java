@@ -44,7 +44,7 @@ public class BaseDBHelper {
         return columnNames;
     }
 
-    protected String whereClauseHelper(boolean whereApplied){
+    protected static String whereClauseHelper(boolean whereApplied){
         return whereApplied ? " AND " : " WHERE ";
     }
 
