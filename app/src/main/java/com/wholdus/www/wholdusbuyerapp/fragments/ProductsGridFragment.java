@@ -94,13 +94,18 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         mProductsRecyclerView = (RecyclerView) rootView.findViewById(R.id.products_recycler_view);
         mProductsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
+        if (mProducts == null) {
+            mProducts = new ArrayList<>();
+        }
+        mProductsGridAdapter = new ProductsGridAdapter(getContext(), mProducts, this);
+        mProductsRecyclerView.setAdapter(mProductsGridAdapter);
+
         return rootView;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
 
         mPageNumber = 0;
         fetchProductsFromServer();
@@ -159,10 +164,11 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<ArrayList<GridProductModel>> loader, ArrayList<GridProductModel> data) {
-        mProductsRecyclerView.invalidate();
-        mProductsGridAdapter = new ProductsGridAdapter(getContext(), data, this);
-        mProductsRecyclerView.setAdapter(mProductsGridAdapter);
-        mProductsGridAdapter.notifyDataSetChanged();
+        int oldPosition = mProducts.size();
+        mProducts.addAll(data);
+        mProductsGridAdapter.notifyItemRangeInserted(oldPosition, data.size());
+
+        Log.d("on load", mProducts.size() + "");
     }
 
     @Override

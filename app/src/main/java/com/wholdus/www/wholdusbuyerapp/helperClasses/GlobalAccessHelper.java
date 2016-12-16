@@ -35,8 +35,8 @@ public class GlobalAccessHelper {
         return "refresh_token=" + ((WholdusApplication) context).getRefreshToken();
     }
 
-    public static String generateUrl(Context context, String endPoint, @Nullable HashMap<String, String> params) {
-        return context.getString(R.string.api_base) + endPoint + getUrlStringFromHashMap(params);
+    public static String generateUrl(String endPoint, @Nullable HashMap<String, String> params) {
+        return Constants.TEMP_API_BASE + endPoint + getUrlStringFromHashMap(params);
     }
 
     public static int getBuyerID(Context context) {

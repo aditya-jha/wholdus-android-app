@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -14,7 +13,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.OrderDBHelper;
-import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
@@ -57,7 +55,7 @@ public class OrderService extends IntentService {
         params.put("product_details", "1");
         params.put("product_details_details","1");
         params.put("product_image_details", "1");
-        String url = GlobalAccessHelper.generateUrl(getApplicationContext(), getString(R.string.orders_url), params);
+        String url = GlobalAccessHelper.generateUrl(getString(R.string.orders_url), params);
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }
 

@@ -60,4 +60,8 @@ public class HelperFunctions {
         df.setTimeZone(TimeZone.getDefault());
         return df.format(getDateObjectFromString(dateStr));
     }
+
+    public static String generateUrl(String endPoint) {
+        return Constants.API_BASE + endPoint;
+    }
 }

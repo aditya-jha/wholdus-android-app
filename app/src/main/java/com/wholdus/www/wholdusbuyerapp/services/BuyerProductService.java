@@ -44,7 +44,7 @@ public class BuyerProductService extends IntentService {
     }
 
     private void fetchBuyerProducts(int todo) {
-        String endPoint = GlobalAccessHelper.generateUrl(getApplicationContext(), getString(R.string.fetch_buyer_products), null);
+        String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.fetch_buyer_products), null);
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }
 

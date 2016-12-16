@@ -251,10 +251,11 @@ public class CatalogDBHelper extends BaseDBHelper {
 
     public int updateCategories(JSONObject data) {
         int insertedUpdatedCount = 0;
-        SQLiteDatabase db = mDatabaseHelper.openDatabase();
 
         // get map of catID and updated at
         SparseArray<String> categoriesPresent = getMapOfCategoriesPresent();
+
+        SQLiteDatabase db = mDatabaseHelper.openDatabase();
 
         try {
             JSONArray categories = data.getJSONArray(CategoriesTable.TABLE_NAME);

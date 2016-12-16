@@ -89,7 +89,7 @@ public class UserService extends IntentService {
     }
 
     private void fetchUserProfile(int todo) {
-        String url = GlobalAccessHelper.generateUrl(getApplicationContext(), getString(R.string.buyer_details_url), null);
+        String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_details_url), null);
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }
 
@@ -106,12 +106,12 @@ public class UserService extends IntentService {
         sendUserDataUpdatedBroadCast(getString(R.string.user_data_modified));
 
         // send to server
-        String url = GlobalAccessHelper.generateUrl(this, getString(R.string.buyer_details_url), null);
+        String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_details_url), null);
         volleyStringRequest(todo, Request.Method.PUT, url, data.toString());
     }
 
     private void fetchBusinessTypes(int todo) {
-        String url = GlobalAccessHelper.generateUrl(this, getString(R.string.business_types_url), null);
+        String url = GlobalAccessHelper.generateUrl(getString(R.string.business_types_url), null);
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }
 
