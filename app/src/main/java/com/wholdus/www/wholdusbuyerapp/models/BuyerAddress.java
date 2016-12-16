@@ -4,6 +4,8 @@ import android.database.Cursor;
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 
+import java.util.UUID;
+
 /**
  * Created by aditya on 7/12/16.
  */
@@ -20,8 +22,20 @@ public class BuyerAddress {
     private String mPincode;
     private String mAlias;
     private int mPriority;
+    private int mSynced;
+    private String mCreatedAt;
+    private String mUpdatedAt;
+    private String mClientID;
 
     public BuyerAddress() {
+        m_ID = -1;
+        mAddressID = -1;
+        mPincodeID = -1;
+        mPriority = 0;
+        mSynced = 0;
+        mCreatedAt = "";
+        mUpdatedAt = "";
+        mClientID = UUID.randomUUID().toString();
     }
 
     public BuyerAddress(Cursor cursor) {
@@ -36,6 +50,10 @@ public class BuyerAddress {
         mPincode = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_PINCODE));
         mAlias = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS_ALIAS));
         mPriority = cursor.getInt(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_PRIORITY));
+        mSynced = cursor.getInt(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_SYNCED));
+        mCreatedAt = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_CREATED_AT));
+        mUpdatedAt = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_UPDATED_AT));
+        mClientID = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_CLIENT_ID));
     }
 
     public int get_ID() {
@@ -81,4 +99,12 @@ public class BuyerAddress {
     public int getPriority() {
         return mPriority;
     }
+
+    public int getSynced() {return mSynced;}
+
+    public String getCreatedAt(){return mCreatedAt;}
+
+    public String getUpdatedAt(){return mUpdatedAt;}
+
+    public String getClientID(){return mClientID;}
 }
