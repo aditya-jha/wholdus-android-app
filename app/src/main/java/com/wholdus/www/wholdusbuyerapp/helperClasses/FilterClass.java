@@ -41,6 +41,10 @@ public final class FilterClass {
         mBrands.clear();
     }
 
+    public static void resetFilter(String type) {
+        getSelectedItems(type).clear();
+    }
+
     public static void toggleFilterItem(String type, String value) {
         HashSet<String> object = getSelectedItems(type);
         if (object.contains(value)) {
@@ -97,18 +101,30 @@ public final class FilterClass {
     }
 
     public static String getFilterString() {
+        return GlobalAccessHelper.getUrlStringFromHashMap(getFilterHashMap());
+    }
+
+    public static HashMap<String, String> getFilterHashMap() {
         HashMap<String, String> params = new HashMap<>();
-        params.put("categoryID", String.valueOf(mCategoryID));
-        params.put("sellerID", TextUtils.join(",", mBrands));
-        params.put("fabric", TextUtils.join(",", mFabrics));
-        params.put("colour", TextUtils.join(",", mColors));
-        if (mMaxPrice == 5000) {
-            params.put("max_price_per_unit", "-1");
-        } else {
+        if (mCategoryID != -1) {
+            params.put("categoryID", String.valueOf(mCategoryID));
+        }
+        if (mBrands.size() != 0) {
+            params.put("sellerID", TextUtils.join(",", mBrands));
+        }
+        if (mFabrics.size() != 0) {
+            params.put("fabric", TextUtils.join(",", mFabrics));
+        }
+        if (mColors.size() != 0) {
+            params.put("color", TextUtils.join(",", mColors));
+        }
+        if (mMaxPrice != 5000) {
             params.put("max_price_per_unit", String.valueOf(mMaxPrice));
         }
-        params.put("min_price_per_unit", String.valueOf(mMinPrice));
+        if (mMinPrice != 0) {
+            params.put("min_price_per_unit", String.valueOf(mMinPrice));
+        }
 
-        return GlobalAccessHelper.getUrlStringFromHashMap(params);
+        return params;
     }
 }

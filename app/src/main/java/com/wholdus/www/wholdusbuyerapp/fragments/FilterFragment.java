@@ -186,6 +186,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
 
     public void categoryIDChanged(int oldCategoryID) {
         if (FilterClass.getCategoryID() != oldCategoryID) {
+            FilterClass.resetFilter("Brands");
             getActivity().getSupportLoaderManager().restartLoader(1, null, this);
         }
     }

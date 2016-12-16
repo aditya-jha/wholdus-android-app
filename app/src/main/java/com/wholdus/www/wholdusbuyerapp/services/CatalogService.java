@@ -12,7 +12,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategoriesTable;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.ProductsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
@@ -43,10 +46,25 @@ public class CatalogService extends IntentService {
             case R.integer.fetch_categories:
                 fetchCategories(todo, intent.getBooleanExtra(getString(R.string.seller_category_details), false));
                 break;
+            case R.integer.fetch_products:
+                int pageNumber = intent.getIntExtra("page_number", 0);
+                int itemsPerPage = intent.getIntExtra("items_per_page", 20);
+                fetchProducts(todo, pageNumber, itemsPerPage);
         }
     }
 
-    public void fetchCategories(int todo, boolean categoryDetails) {
+
+    private void fetchProducts(int todo, int pageNumber, int itemsPerPage) {
+        HashMap<String, String> params = FilterClass.getFilterHashMap();
+        params.put("items_per_page", String.valueOf(itemsPerPage));
+        params.put("page_number", String.valueOf(pageNumber));
+        params.put("product_image_details", "1");
+        params.put("product_details_details", "1");
+        String endPoint = GlobalAccessHelper.generateUrl(getApplicationContext(), getString(R.string.product_url), params);
+        volleyStringRequest(todo, Request.Method.GET, endPoint, null);
+    }
+
+    private void fetchCategories(int todo, boolean categoryDetails) {
         HashMap<String, String> params = null;
         if (categoryDetails) {
             params = new HashMap<>();
@@ -80,6 +98,7 @@ public class CatalogService extends IntentService {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 params.put("Accept", "version=1");
+                params.put("Authorization", GlobalAccessHelper.getAccessToken(getApplication()));
                 return params;
             }
 
@@ -99,15 +118,30 @@ public class CatalogService extends IntentService {
     }
 
     private void onResponseHandler(int todo, JSONObject response) {
+        CatalogDBHelper catalogDBHelper = new CatalogDBHelper(getApplicationContext());
+        int updatedInserted = 0;
+
         switch (todo) {
             case R.integer.fetch_categories:
                 // save to db
-                CatalogDBHelper dbHelper = new CatalogDBHelper(getApplicationContext());
-                int updatedInserted = dbHelper.updateCategories(response);
+                updatedInserted = catalogDBHelper.updateCategories(response);
 
                 if (updatedInserted > 0) {
-                    sendUpdatedBroadCast(getString(R.string.categories_data_updated), null);
+                    sendUpdatedBroadCast(getString(R.string.catalog_data_updated), CategoriesTable.TABLE_NAME);
                 }
+                break;
+            case R.integer.fetch_products:
+                // save to db
+                try {
+                    updatedInserted = catalogDBHelper.saveProductsFromJSONArray(response.getJSONArray(ProductsTable.TABLE_NAME));
+
+                    if (updatedInserted > 0) {
+                        sendUpdatedBroadCast(getString(R.string.catalog_data_updated), ProductsTable.TABLE_NAME);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
     }
 

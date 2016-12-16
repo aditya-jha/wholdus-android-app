@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="fetch_categories">0</integer>
-
     <string name="user_api_request_tag">USER_API_REQUESTS</string>
     <string name="login_api_request_tag">LOGIN_API_REQUESTS</string>
 
