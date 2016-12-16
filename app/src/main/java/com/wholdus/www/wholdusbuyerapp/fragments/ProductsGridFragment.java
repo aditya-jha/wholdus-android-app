@@ -29,11 +29,9 @@ import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterfa
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.GridProductsLoader;
 import com.wholdus.www.wholdusbuyerapp.models.GridProductModel;
+import com.wholdus.www.wholdusbuyerapp.services.CatalogService;
 
 import java.util.ArrayList;
-
-import static com.wholdus.www.wholdusbuyerapp.R.id.cancel_action;
-import static com.wholdus.www.wholdusbuyerapp.R.id.sort_button;
 
 /**
  * Created by aditya on 8/12/16.
@@ -49,6 +47,8 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     private ArrayList<GridProductModel> mProducts;
     private ProductsGridAdapter mProductsGridAdapter;
     private RecyclerView mProductsRecyclerView;
+    private int mPageNumber;
+    private final int mLimit = 20;
 
     public static final int PRODUCTS_GRID_LOADER = 2;
 
@@ -68,7 +68,6 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mProducts = new ArrayList<>();
     }
 
     @Nullable
@@ -88,15 +87,24 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
             @Override
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(false);
+                refreshData();
             }
         });
 
         mProductsRecyclerView = (RecyclerView) rootView.findViewById(R.id.products_recycler_view);
         mProductsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        mProductsGridAdapter = new ProductsGridAdapter(getContext(), mProducts, this);
-        mProductsRecyclerView.setAdapter(mProductsGridAdapter);
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+
+        mPageNumber = 0;
+        fetchProductsFromServer();
+        refreshData();
     }
 
     @Override
@@ -146,18 +154,15 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public Loader<ArrayList<GridProductModel>> onCreateLoader(int id, Bundle args) {
-        return new GridProductsLoader(getContext());
+        return new GridProductsLoader(getContext(), mPageNumber, mLimit);
     }
 
     @Override
     public void onLoadFinished(Loader<ArrayList<GridProductModel>> loader, ArrayList<GridProductModel> data) {
-        if (!mScrolling) {
-            mProducts.clear();
-            mScrolling = true;
-        }
-        int oldPosition = mProducts.size();
-        mProducts.addAll(data);
-        mProductsGridAdapter.notifyItemRangeInserted(oldPosition, data.size());
+        mProductsRecyclerView.invalidate();
+        mProductsGridAdapter = new ProductsGridAdapter(getContext(), data, this);
+        mProductsRecyclerView.setAdapter(mProductsGridAdapter);
+        mProductsGridAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -189,7 +194,18 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         if (!filters.equals(mFilters)) {
             mFilters = filters;
             mScrolling = false;
+            mPageNumber = 0;
+            getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
+        } else {
             getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
         }
+    }
+
+    private void fetchProductsFromServer() {
+        Intent intent = new Intent(getContext(), CatalogService.class);
+        intent.putExtra("TODO", R.integer.fetch_products);
+        intent.putExtra("page_number", mPageNumber);
+        intent.putExtra("items_per_page", mLimit);
+        getActivity().startService(intent);
     }
 }

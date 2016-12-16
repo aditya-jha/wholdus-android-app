@@ -178,7 +178,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
         BuyerPersonalDetailsAdapter adapter = new BuyerPersonalDetailsAdapter(getContext(), items);
         mPersonalDetailsListView.setAdapter(adapter);
-        //HelperFunctions.setListViewHeightBasedOnChildren(mPersonalDetailsListView);
+        HelperFunctions.setListViewHeightBasedOnChildren(mPersonalDetailsListView);
     }
 
     private void setViewForAddressListView(ArrayList<BuyerAddress> address) {

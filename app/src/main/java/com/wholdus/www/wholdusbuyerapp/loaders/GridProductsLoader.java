@@ -11,6 +11,8 @@ import com.wholdus.www.wholdusbuyerapp.models.GridProductModel;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import static android.R.attr.offset;
+
 /**
  * Created by aditya on 15/12/16.
  */
@@ -30,8 +32,16 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
             CatalogContract.ProductsTable.COLUMN_IMAGE_PATH
     };
 
-    public GridProductsLoader(Context context) {
+    private int mOffset, mLimit;
+
+    public GridProductsLoader(Context context, int pageNumber, int limit) {
         super(context);
+        mLimit = limit;
+        if (pageNumber > 0) {
+            mOffset = (pageNumber - 1) * mLimit ;
+        } else {
+            mOffset = 0 ;
+        }
     }
 
     @Override
@@ -47,9 +57,9 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
                 FilterClass.getSelectedItems("Sizes"),
                 0,
                 1,
-                null,
-                -1,
-                -1,
+                null, // ORDER BY
+                mLimit,
+                mOffset,
                 columns);
         return GridProductModel.getGridProducts(cursor);
     }

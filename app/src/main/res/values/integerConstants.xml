@@ -2,4 +2,7 @@
 <resources>
     <integer name="_ID">0</integer>
     <integer name="addressID">1</integer>
+
+    <integer name="fetch_categories">2</integer>
+    <integer name="fetch_products">3</integer>
 </resources>

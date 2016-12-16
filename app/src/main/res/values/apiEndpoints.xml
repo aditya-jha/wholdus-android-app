@@ -21,4 +21,7 @@
 
     <!-- catalog api -->
     <string name="category_url">category/</string>
+
+    <!-- product api -->
+    <string name="product_url">products/</string>
 </resources>

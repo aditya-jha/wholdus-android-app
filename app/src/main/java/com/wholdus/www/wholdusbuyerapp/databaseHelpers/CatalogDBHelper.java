@@ -6,10 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseArray;
 
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategoriesTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.ProductsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.SellerAddressTable;
@@ -18,10 +16,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
-import static com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.*;
+import static com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategorySellersTable;
+import static com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.SellersTable;
 
 
 /**
@@ -41,18 +39,18 @@ public class CatalogDBHelper extends BaseDBHelper {
     private SparseArray<String> mPresentSellerAddressHistoryIDs;
 
     public static String[] BasicProductColumns = {ProductsTable._ID, ProductsTable.COLUMN_PRODUCT_ID, ProductsTable.COLUMN_SELLER_ID,
-        ProductsTable.COLUMN_CATEGORY_ID, ProductsTable.COLUMN_PRICE_PER_UNIT, ProductsTable.COLUMN_LOT_SIZE, ProductsTable.COLUMN_PRICE_PER_LOT,
-        ProductsTable.COLUMN_MIN_PRICE_PER_UNIT, ProductsTable.COLUMN_MARGIN, ProductsTable.COLUMN_URL, ProductsTable.COLUMN_IMAGE_NAME,
-        ProductsTable.COLUMN_IMAGE_COUNT, ProductsTable.COLUMN_IMAGE_NUMBERS, ProductsTable.COLUMN_IMAGE_PATH, ProductsTable.COLUMN_COLOURS,
-        ProductsTable.COLUMN_FABRIC_GSM, ProductsTable.COLUMN_SIZES};
+            ProductsTable.COLUMN_CATEGORY_ID, ProductsTable.COLUMN_PRICE_PER_UNIT, ProductsTable.COLUMN_LOT_SIZE, ProductsTable.COLUMN_PRICE_PER_LOT,
+            ProductsTable.COLUMN_MIN_PRICE_PER_UNIT, ProductsTable.COLUMN_MARGIN, ProductsTable.COLUMN_URL, ProductsTable.COLUMN_IMAGE_NAME,
+            ProductsTable.COLUMN_IMAGE_COUNT, ProductsTable.COLUMN_IMAGE_NUMBERS, ProductsTable.COLUMN_IMAGE_PATH, ProductsTable.COLUMN_COLOURS,
+            ProductsTable.COLUMN_FABRIC_GSM, ProductsTable.COLUMN_SIZES};
 
-    public static String[] ExtraProductColumns = {ProductsTable.COLUMN_PRODUCT_DETAILS_ID,ProductsTable.COLUMN_UNIT, ProductsTable.COLUMN_DISPLAY_NAME,
-        ProductsTable.COLUMN_DELETE_STATUS, ProductsTable.COLUMN_SHOW_ONLINE, ProductsTable.COLUMN_WARRANTY, ProductsTable.COLUMN_SPECIAL_FEATURE,
-        ProductsTable.COLUMN_AVAILABILITY,ProductsTable.COLUMN_STYLE, ProductsTable.COLUMN_MANUFACTURED_CITY, ProductsTable.COLUMN_PATTERN,
-        ProductsTable.COLUMN_LOT_DESCRIPTION, ProductsTable.COLUMN_DESCRIPTION, ProductsTable.WORK_DECORATION_TYPE, ProductsTable.COLUMN_NECK_COLLAR_TYPE,
-        ProductsTable.COLUMN_DISPATCHED_IN,ProductsTable.COLUMN_REMARKS, ProductsTable.COLUMN_SELLER_CATALOG_NUMBER,ProductsTable.COLUMN_SLEEVE,
-        ProductsTable.COLUMN_GENDER, ProductsTable.COLUMN_WEIGHT_PER_UNIT, ProductsTable.COLUMN_PACKAGING_DETAILS, ProductsTable.COLUMN_LENGTH,
-        ProductsTable.COLUMN_CREATED_AT, ProductsTable.COLUMN_UPDATED_AT};
+    public static String[] ExtraProductColumns = {ProductsTable.COLUMN_PRODUCT_DETAILS_ID, ProductsTable.COLUMN_UNIT, ProductsTable.COLUMN_DISPLAY_NAME,
+            ProductsTable.COLUMN_DELETE_STATUS, ProductsTable.COLUMN_SHOW_ONLINE, ProductsTable.COLUMN_WARRANTY, ProductsTable.COLUMN_SPECIAL_FEATURE,
+            ProductsTable.COLUMN_AVAILABILITY, ProductsTable.COLUMN_STYLE, ProductsTable.COLUMN_MANUFACTURED_CITY, ProductsTable.COLUMN_PATTERN,
+            ProductsTable.COLUMN_LOT_DESCRIPTION, ProductsTable.COLUMN_DESCRIPTION, ProductsTable.WORK_DECORATION_TYPE, ProductsTable.COLUMN_NECK_COLLAR_TYPE,
+            ProductsTable.COLUMN_DISPATCHED_IN, ProductsTable.COLUMN_REMARKS, ProductsTable.COLUMN_SELLER_CATALOG_NUMBER, ProductsTable.COLUMN_SLEEVE,
+            ProductsTable.COLUMN_GENDER, ProductsTable.COLUMN_WEIGHT_PER_UNIT, ProductsTable.COLUMN_PACKAGING_DETAILS, ProductsTable.COLUMN_LENGTH,
+            ProductsTable.COLUMN_CREATED_AT, ProductsTable.COLUMN_UPDATED_AT};
 
 
     public Cursor getAllCategories(boolean productsCount) {
@@ -68,9 +66,9 @@ public class CatalogDBHelper extends BaseDBHelper {
     }
 
     /**
-     *
      * @param orderBy use as "column_name" + "sort_order"(default ASC)
      *                to use descending, " DESC "
+     * @return
      */
 
     public Cursor getProductData(int productID,
@@ -95,54 +93,54 @@ public class CatalogDBHelper extends BaseDBHelper {
             query += " WHERE " + ProductsTable.COLUMN_PRODUCT_ID + " = " + productID;
             whereApplied = true;
         }
-        if (sellerIDs != null && !sellerIDs.isEmpty()){
-            query += whereClauseHelper(whereApplied) + ProductsTable.COLUMN_SELLER_ID + " IN " + TextUtils.join(", ", sellerIDs);
+        if (sellerIDs != null && !sellerIDs.isEmpty()) {
+            query += whereClauseHelper(whereApplied) + ProductsTable.COLUMN_SELLER_ID + " IN (" + TextUtils.join(", ", sellerIDs) + ") ";
             whereApplied = true;
         }
-        if (categoryIDs != null && !categoryIDs.isEmpty()){
-            query += whereClauseHelper(whereApplied) + ProductsTable.COLUMN_CATEGORY_ID + " IN " + TextUtils.join(", ", categoryIDs);
+        if (categoryIDs != null && !categoryIDs.isEmpty()) {
+            query += whereClauseHelper(whereApplied) + ProductsTable.COLUMN_CATEGORY_ID + " IN (" + TextUtils.join(", ", categoryIDs) + ") ";
             whereApplied = true;
         }
-        if (priceGreaterThan != -1){
+        if (priceGreaterThan != -1) {
             query += whereClauseHelper(whereApplied) + ProductsTable.COLUMN_MIN_PRICE_PER_UNIT + " >= " + priceGreaterThan;
             whereApplied = true;
         }
-        if (priceLowerThan != -1){
+        if (priceLowerThan != -1) {
             query += whereClauseHelper(whereApplied) + ProductsTable.COLUMN_MIN_PRICE_PER_UNIT + " <= " + priceLowerThan;
             whereApplied = true;
         }
-        if (fabrics != null && !fabrics.isEmpty()){
+        if (fabrics != null && !fabrics.isEmpty()) {
             query += whereClauseHelper(whereApplied) + " ( LOWER(" + ProductsTable.COLUMN_FABRIC_GSM + ") LIKE LOWER('%" +
                     TextUtils.join("%') OR LOWER(" + ProductsTable.COLUMN_FABRIC_GSM + ") LIKE LOWER('%", fabrics) + "%') ) ";
             whereApplied = true;
         }
-        if (colours != null && !colours.isEmpty()){
+        if (colours != null && !colours.isEmpty()) {
             query += whereClauseHelper(whereApplied) + " ( LOWER(" + ProductsTable.COLUMN_COLOURS + ") LIKE LOWER('%" +
                     TextUtils.join("%') OR LOWER(" + ProductsTable.COLUMN_COLOURS + ") LIKE LOWER('%", colours) + "%') ) ";
             whereApplied = true;
         }
-        if (sizes != null && !sizes.isEmpty()){
+        if (sizes != null && !sizes.isEmpty()) {
             query += whereClauseHelper(whereApplied) + " ( LOWER(" + ProductsTable.COLUMN_SIZES + ") LIKE LOWER('%" +
                     TextUtils.join("%') OR LOWER(" + ProductsTable.COLUMN_SIZES + ") LIKE LOWER('%", sizes) + "%') ) ";
             whereApplied = true;
         }
-        if (deleteStatus != -1){
+        if (deleteStatus != -1) {
             query += whereClauseHelper(whereApplied) + ProductsTable.COLUMN_DELETE_STATUS + " = " + deleteStatus;
             whereApplied = true;
         }
-        if (showOnline != -1){
+        if (showOnline != -1) {
             query += whereClauseHelper(whereApplied) + ProductsTable.COLUMN_SHOW_ONLINE + " = " + showOnline;
             whereApplied = true;
         }
-        if (orderBy == null || orderBy.length == 0){
+        if (orderBy == null || orderBy.length == 0) {
             orderBy = new String[]{ProductsTable.COLUMN_PRODUCT_ID + " DESC "};
         }
         query += " ORDER BY " + TextUtils.join(", ", orderBy);
-        if (limit != -1){
-            query +=  " LIMIT " + limit;
+        if (limit != -1) {
+            query += " LIMIT " + limit;
         }
-        if (offset != -1){
-            query +=  " OFFSET " + offset;
+        if (offset != -1) {
+            query += " OFFSET " + offset;
         }
 
         return getCursor(query);
@@ -160,14 +158,15 @@ public class CatalogDBHelper extends BaseDBHelper {
         return getCursor(query);
     }
 
-    /**Seller Address IDs and Seller Address History IDs stored separately
+    /**
+     * Seller Address IDs and Seller Address History IDs stored separately
      * Pass -1 for integer to not get the corresponding values
      * Seller Address IDs and Seller Address History IDs are stored by 0 as default
      * Pass address Id or address history ID as 0 when they are not wanted
      */
 
     public Cursor getSellerAddressData(int sellerAddressID,
-                                       int sellerAddressHistoryID, int sellerID, @Nullable String[] columns){
+                                       int sellerAddressHistoryID, int sellerID, @Nullable String[] columns) {
         String columnNames = getColumnNamesString(columns);
 
         String query = "SELECT " + columnNames + " FROM " + SellerAddressTable.TABLE_NAME;
@@ -210,7 +209,7 @@ public class CatalogDBHelper extends BaseDBHelper {
             return mPresentProductIDs;
         }
         String[] columns = {ProductsTable.COLUMN_PRODUCT_ID, ProductsTable.COLUMN_UPDATED_AT};
-        Cursor cursor = getProductData(-1, null, null, -1, -1, null, null, null, -1, -1,null,-1,-1, columns);
+        Cursor cursor = getProductData(-1, null, null, -1, -1, null, null, null, -1, -1, null, -1, -1, columns);
         SparseArray<String> productIDs = new SparseArray<>();
         while (cursor.moveToNext()) {
             productIDs.put(cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_PRODUCT_ID)),
@@ -220,8 +219,8 @@ public class CatalogDBHelper extends BaseDBHelper {
         return productIDs;
     }
 
-    public SparseArray<String> getPresentSellerAddressIDs(){
-        if (mPresentSellerAddressIDs!= null){
+    public SparseArray<String> getPresentSellerAddressIDs() {
+        if (mPresentSellerAddressIDs != null) {
             return mPresentSellerAddressIDs;
         }
         String[] columns = new String[]{SellerAddressTable.COLUMN_ADDRESS_ID, SellerAddressTable.COLUMN_UPDATED_AT};
@@ -235,8 +234,8 @@ public class CatalogDBHelper extends BaseDBHelper {
         return sellerAddressIDs;
     }
 
-    public SparseArray<String> getPresentSellerAddressHistoryIDs(){
-        if (mPresentSellerAddressHistoryIDs!= null){
+    public SparseArray<String> getPresentSellerAddressHistoryIDs() {
+        if (mPresentSellerAddressHistoryIDs != null) {
             return mPresentSellerAddressHistoryIDs;
         }
         String[] columns = new String[]{SellerAddressTable.COLUMN_ADDRESS_HISTORY_ID, SellerAddressTable.COLUMN_UPDATED_AT};
@@ -317,6 +316,40 @@ public class CatalogDBHelper extends BaseDBHelper {
         mDatabaseHelper.closeDatabase();
     }
 
+    public int saveProductsFromJSONArray(JSONArray products) {
+        SQLiteDatabase db = mDatabaseHelper.openDatabase();
+        int insertedUpdated = 0;
+
+        try {
+            SparseArray<String> presentProducts = getPresentProductIDs();
+            db.beginTransaction();
+
+            for (int i = 0; i < products.length(); i++) {
+                JSONObject product = products.getJSONObject(i);
+                int productID = product.getInt(ProductsTable.COLUMN_PRODUCT_ID);
+
+                ContentValues cv = getProductContentValues(product);
+                if (presentProducts.get(productID) == null) { // insert
+                    db.insert(ProductsTable.TABLE_NAME, null, cv);
+                    insertedUpdated++;
+                } else if (!presentProducts.get(productID).equals(product.getString(ProductsTable.COLUMN_UPDATED_AT))) { // update
+                    db.update(ProductsTable.TABLE_NAME,
+                            cv,
+                            ProductsTable.COLUMN_PRODUCT_ID + " = " + productID,
+                            null);
+                    insertedUpdated++;
+                }
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
+            insertedUpdated = 0;
+        } finally {
+            db.endTransaction();
+        }
+        return insertedUpdated;
+    }
+
     public void saveProductData(JSONObject product) throws JSONException {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
         int productID = product.getInt(ProductsTable.COLUMN_PRODUCT_ID);
@@ -339,30 +372,35 @@ public class CatalogDBHelper extends BaseDBHelper {
         mDatabaseHelper.closeDatabase();
     }
 
-    public void saveSellerAddressData(JSONObject sellerAddress, boolean addressHistory) throws JSONException{
+    public void saveSellerAddressData(JSONObject sellerAddress, boolean addressHistory) throws JSONException {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
         int addressID = sellerAddress.getInt(SellerAddressTable.COLUMN_ADDRESS_ID);
         String sellerAddressUpdatedAtLocal;
-        if(addressHistory) {sellerAddressUpdatedAtLocal = getPresentSellerAddressHistoryIDs().get(addressID);
-        } else {sellerAddressUpdatedAtLocal = getPresentSellerAddressIDs().get(addressID);}
+        if (addressHistory) {
+            sellerAddressUpdatedAtLocal = getPresentSellerAddressHistoryIDs().get(addressID);
+        } else {
+            sellerAddressUpdatedAtLocal = getPresentSellerAddressIDs().get(addressID);
+        }
         String sellerAddressUpdatedAtServer = sellerAddress.getString(SellerAddressTable.COLUMN_UPDATED_AT);
-        if (sellerAddressUpdatedAtLocal == null){
+        if (sellerAddressUpdatedAtLocal == null) {
             ContentValues values = getSellerAddressContentValues(sellerAddress, addressHistory);
             db.insert(SellerAddressTable.TABLE_NAME, null, values);
-        }
-        else if (!sellerAddressUpdatedAtLocal.equals(sellerAddressUpdatedAtServer)){
+        } else if (!sellerAddressUpdatedAtLocal.equals(sellerAddressUpdatedAtServer)) {
             ContentValues values = getSellerAddressContentValues(sellerAddress, addressHistory);
-            String selection = addressHistory? SellerAddressTable.COLUMN_ADDRESS_ID : SellerAddressTable.COLUMN_ADDRESS_HISTORY_ID
+            String selection = addressHistory ? SellerAddressTable.COLUMN_ADDRESS_ID : SellerAddressTable.COLUMN_ADDRESS_HISTORY_ID
                     + " = " + addressID;
             db.update(SellerAddressTable.TABLE_NAME, values, selection, null);
         }
-        if (addressHistory){mPresentSellerAddressHistoryIDs.put(addressID, sellerAddressUpdatedAtServer);}
-        else {mPresentSellerAddressIDs.put(addressID, sellerAddressUpdatedAtServer);}
+        if (addressHistory) {
+            mPresentSellerAddressHistoryIDs.put(addressID, sellerAddressUpdatedAtServer);
+        } else {
+            mPresentSellerAddressIDs.put(addressID, sellerAddressUpdatedAtServer);
+        }
 
         mDatabaseHelper.closeDatabase();
     }
 
-    private ContentValues getSellerContentValues(JSONObject seller) throws JSONException{
+    private ContentValues getSellerContentValues(JSONObject seller) throws JSONException {
         ContentValues values = new ContentValues();
         values.put(SellersTable.COLUMN_SELLER_ID, seller.getInt(SellersTable.COLUMN_SELLER_ID));
         values.put(SellersTable.COLUMN_COMPANY_NAME, seller.getString(SellersTable.COLUMN_COMPANY_NAME));
@@ -392,8 +430,8 @@ public class CatalogDBHelper extends BaseDBHelper {
         values.put(ProductsTable.COLUMN_DISPLAY_NAME, product.getString(ProductsTable.COLUMN_DISPLAY_NAME));
         values.put(ProductsTable.COLUMN_NAME, product.getString(ProductsTable.COLUMN_NAME));
         values.put(ProductsTable.COLUMN_URL, product.getString(ProductsTable.COLUMN_URL));
-        values.put(ProductsTable.COLUMN_SHOW_ONLINE, product.getBoolean(ProductsTable.COLUMN_SHOW_ONLINE)?1:0);
-        values.put(ProductsTable.COLUMN_DELETE_STATUS, product.getBoolean(ProductsTable.COLUMN_DELETE_STATUS)?1:0);
+        values.put(ProductsTable.COLUMN_SHOW_ONLINE, product.getBoolean(ProductsTable.COLUMN_SHOW_ONLINE) ? 1 : 0);
+        values.put(ProductsTable.COLUMN_DELETE_STATUS, product.getBoolean(ProductsTable.COLUMN_DELETE_STATUS) ? 1 : 0);
         JSONObject image = product.getJSONObject("image");
         values.put(ProductsTable.COLUMN_IMAGE_NAME, image.getString(ProductsTable.COLUMN_IMAGE_NAME));
         values.put(ProductsTable.COLUMN_IMAGE_COUNT, image.getInt(ProductsTable.COLUMN_IMAGE_COUNT));
@@ -431,12 +469,15 @@ public class CatalogDBHelper extends BaseDBHelper {
         return values;
     }
 
-    public ContentValues getSellerAddressContentValues(JSONObject sellerAddress, boolean addressHistory) throws JSONException{
+    public ContentValues getSellerAddressContentValues(JSONObject sellerAddress, boolean addressHistory) throws JSONException {
         ContentValues values = new ContentValues();
         values.put(SellerAddressTable.COLUMN_ADDRESS_ID, sellerAddress.getInt(SellerAddressTable.COLUMN_ADDRESS_ID));
         values.put(SellerAddressTable.COLUMN_ADDRESS_HISTORY_ID, sellerAddress.getInt(SellerAddressTable.COLUMN_ADDRESS_ID));
-        if (addressHistory) {values.put(SellerAddressTable.COLUMN_ADDRESS_ID, 0);}
-        else {values.put(SellerAddressTable.COLUMN_ADDRESS_HISTORY_ID, 0);}
+        if (addressHistory) {
+            values.put(SellerAddressTable.COLUMN_ADDRESS_ID, 0);
+        } else {
+            values.put(SellerAddressTable.COLUMN_ADDRESS_HISTORY_ID, 0);
+        }
         values.put(SellerAddressTable.COLUMN_SELLER_ID, sellerAddress.getInt(SellerAddressTable.COLUMN_SELLER_ID));
         values.put(SellerAddressTable.COLUMN_ADDRESS, sellerAddress.getString(SellerAddressTable.COLUMN_ADDRESS));
         values.put(SellerAddressTable.COLUMN_CITY, sellerAddress.getString(SellerAddressTable.COLUMN_CITY));

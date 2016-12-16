@@ -59,10 +59,16 @@ public class CategoryProductActivity extends AppCompatActivity
                 /* TODO: Implement what happens when category is changed from toolbar dropdown */
                 int oldCategoryID = FilterClass.getCategoryID();
                 FilterClass.setCategoryID((int) mCategorySpinner.getSelectedItemId());
-                if (!mFilterFragmentActive) updateProducts();
+                if (!mFilterFragmentActive) {
+                    if (oldCategoryID != FilterClass.getCategoryID()) {
+                        updateProducts();
+                    }
+                }
                 else {
-                    FilterFragment fragment = (FilterFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-                    fragment.categoryIDChanged(oldCategoryID);
+                    Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                    if (fragment instanceof FilterFragment) {
+                        ((FilterFragment)fragment).categoryIDChanged(oldCategoryID);
+                    }
                 }
             }
 
@@ -146,7 +152,6 @@ public class CategoryProductActivity extends AppCompatActivity
 
         // set default toolbar as the action bar for this activity
         mToolbar = (Toolbar) findViewById(R.id.spinner_toolbar);
-        mToolbar.setTitle(null);
         setSupportActionBar(mToolbar);
         try {
             getSupportActionBar().setTitle(null);
@@ -188,7 +193,6 @@ public class CategoryProductActivity extends AppCompatActivity
         } else {
             // fragment is not added yet
             openToFragment("", null);
-            updateProducts();
         }
     }
 

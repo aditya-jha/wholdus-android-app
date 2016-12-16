@@ -42,9 +42,9 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<ProductsGridAdapte
     }
 
     @Override
-    public ProductsGridAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.layout_category_grid, parent, false);
-        return new ProductsGridAdapter.ViewHolder(view);
+        return new ViewHolder(view);
     }
 
     @Override
