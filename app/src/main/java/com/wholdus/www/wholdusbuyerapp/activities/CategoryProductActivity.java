@@ -43,7 +43,7 @@ public class CategoryProductActivity extends AppCompatActivity
         setContentView(R.layout.activity_category_product);
 
         Intent intent = getIntent();
-        FilterClass.setCategoryID(intent.getIntExtra(getString(R.string.selected_category_id), 0));
+        FilterClass.setCategoryID(intent.getIntExtra(getString(R.string.selected_category_id), 1));
         mFilterFragmentActive = false;
 
         // initialize the toolbar
@@ -138,7 +138,6 @@ public class CategoryProductActivity extends AppCompatActivity
             openToFragment("filter", null);
         } else {
             onBackPressed();
-            updateProducts();
         }
     }
 
@@ -189,7 +188,7 @@ public class CategoryProductActivity extends AppCompatActivity
     private void updateProducts() {
         ProductsGridFragment fragment = (ProductsGridFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         if (fragment != null) {
-            fragment.refreshData();
+            fragment.updateData();
         } else {
             // fragment is not added yet
             openToFragment("", null);
