@@ -54,8 +54,9 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     private RecyclerView mProductsRecyclerView;
     private EndlessRecyclerViewScrollListener mOnScrollListener;
     private BroadcastReceiver mReceiver;
+    private GridLayoutManager mGridLayoutManager;
 
-    private int mPageNumber, mTotalPages;
+    private int mPageNumber, mTotalPages, mRecyclerViewPosition;
 
     private final int mLimit = 20;
     public static final int PRODUCTS_GRID_LOADER = 2;
@@ -82,6 +83,8 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         } else {
             Toast.makeText(getContext(), "products already when created - " + mProducts.size(), Toast.LENGTH_SHORT).show();
         }
+
+        mRecyclerViewPosition = 0;
         mPageNumber = 1;
         mTotalPages = -1;
 
@@ -117,7 +120,8 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         });
 
         mProductsRecyclerView = (RecyclerView) rootView.findViewById(R.id.products_recycler_view);
-        final GridLayoutManager mGridLayoutManager = new GridLayoutManager(getContext(), 2);
+
+        mGridLayoutManager = new GridLayoutManager(getContext(), 2);
         mGridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
@@ -151,10 +155,10 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
         if (mProductsGridAdapter == null) {
             mProductsGridAdapter = new ProductsGridAdapter(getContext(), mProducts, this);
-            mProductsRecyclerView.setAdapter(mProductsGridAdapter);
+            refreshData();
         }
+        mProductsRecyclerView.setAdapter(mProductsGridAdapter);
 
-        updateData();
         Log.d(this.getClass().getSimpleName(), "onactivitycreated");
     }
 
@@ -170,6 +174,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         Log.d(this.getClass().getSimpleName(), "onresume");
         IntentFilter intentFilter = new IntentFilter(getString(R.string.catalog_data_updated));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
+        restoreRecyclerViewPosition();
     }
 
     @Override
@@ -177,6 +182,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         super.onPause();
         Log.d(this.getClass().getSimpleName(), "onpause");
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+        saveRecyclerViewPosition();
     }
 
     @Override
@@ -273,7 +279,8 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         if (!filters.equals(mFilters)) {
             mFilters = filters;
             mPageNumber = 1;
-            mProducts.clear();
+
+            resetAdapterState();
         } else {
             mPageNumber++;
         }
@@ -316,14 +323,24 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
     private void refreshData() {
         mPageNumber = 1;
+        resetAdapterState();
+        getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
+        Toast.makeText(getContext(), "Products updated", Toast.LENGTH_SHORT).show();
+    }
 
+    public void resetAdapterState() {
         int totalItems = mProducts.size();
         if (totalItems > 0) {
             mProducts.clear();
             mProductsGridAdapter.notifyItemRangeRemoved(0, totalItems);
         }
+    }
 
-        getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
-        Toast.makeText(getContext(), "Products updated", Toast.LENGTH_SHORT).show();
+    private void saveRecyclerViewPosition() {
+        mRecyclerViewPosition = mGridLayoutManager.findFirstCompletelyVisibleItemPosition();
+    }
+
+    private void restoreRecyclerViewPosition() {
+        mProductsRecyclerView.scrollToPosition(mRecyclerViewPosition);
     }
 }
