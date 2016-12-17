@@ -60,7 +60,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
                     public void run() {
                         mDoublePressToExit = false;
                     }
-                }, 2000);
+                }, 3000);
             } else {
                 finish();
             }
@@ -137,8 +137,14 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     }
 
     private void initNavigationDrawer() {
+        Fragment navDrawerFragment = new NavigationDrawerFragment();
+
+        Bundle args = new Bundle();
+        args.putSerializable(getString(R.string.open_activity_key), this.getClass().getSimpleName());
+        navDrawerFragment.setArguments(args);
+
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.navigation_drawer_fragment, new NavigationDrawerFragment()).commit();
+                .replace(R.id.navigation_drawer_fragment, navDrawerFragment).commit();
     }
 
     private String getFragmentToOpenName(Bundle savedInstanceState) {
