@@ -60,7 +60,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
                     public void run() {
                         mDoublePressToExit = false;
                     }
-                }, 2000);
+                }, 3000);
             } else {
                 finish();
             }
