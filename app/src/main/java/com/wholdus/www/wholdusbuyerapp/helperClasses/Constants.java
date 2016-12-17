@@ -15,4 +15,8 @@ public final class Constants {
     public static final String SMALL_IMAGE = "300x300";
     public static final String MEDIUM_IMAGE = "500x500";
     public static final String LARGE_IMAGE = "700x700";
+
+    public static final String PRODUCT_RESPONSE = "ProductResponse";
+    public static final String INSERTED_UPDATED = "insertedUpdated";
+
 }

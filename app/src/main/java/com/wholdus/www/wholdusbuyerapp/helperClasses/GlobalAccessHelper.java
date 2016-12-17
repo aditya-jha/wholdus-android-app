@@ -36,7 +36,7 @@ public class GlobalAccessHelper {
     }
 
     public static String generateUrl(String endPoint, @Nullable HashMap<String, String> params) {
-        return Constants.TEMP_API_BASE + endPoint + getUrlStringFromHashMap(params);
+        return APIConstants.TEMP_API_BASE + endPoint + getUrlStringFromHashMap(params);
     }
 
     public static int getBuyerID(Context context) {
