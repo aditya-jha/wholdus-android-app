@@ -98,7 +98,7 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
     public void onResume() {
         super.onResume();
         mListener.fragmentCreated("All Categories", false);
-        IntentFilter intentFilter = new IntentFilter(getString(R.string.catalog_data_updated));
+        IntentFilter intentFilter = new IntentFilter(getString(R.string.category_data_updated));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
     }
 

@@ -6,5 +6,7 @@
     <string name="user_data_modified">intentFilter.USER_DATA_MODIFIED</string>
 
     <string name="order_data_updated">intentFilter.ORDER_DATA_UPDATED</string>
-    <string name="catalog_data_updated">intentFilter.CATEGORIES_DATA_UPDATED</string>
+    <string name="category_data_updated">intentFilter.CATEGORIES_DATA_UPDATED</string>
+
+    <string name="buyer_product_data_updated">intentFilter.BUYER_PRODUCTS_DATA_UPDATED</string>
 </resources>

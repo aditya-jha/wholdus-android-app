@@ -41,6 +41,14 @@ public class Product {
         setDataFromCursor(cursor);
     }
 
+    public static ArrayList<Product> getProductsFromCursor(Cursor cursor) {
+        ArrayList<Product> products = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            products.add(new Product(cursor));
+        }
+        return products;
+    }
+
     public void setDataFromCursor(Cursor cursor){
         m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable._ID));
         mProductID = cursor.getInt(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID));
