@@ -4,6 +4,7 @@
     android:id="@+id/activity_hand_picked"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity">
 
     <include layout="@layout/default_toolbar" />
