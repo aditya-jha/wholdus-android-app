@@ -34,6 +34,7 @@ public class Product {
     private String mSizes;
     private ProductDetails mProductDetails;
 
+
     public Product(){}
 
     public Product(Cursor cursor) {
@@ -69,6 +70,7 @@ public class Product {
         }
         return allImageUrls;
     }
+
     public String getImageUrl(String imageSize, String imageNumber){
         return String.format(mImagePathString, imageSize, imageNumber);
     }

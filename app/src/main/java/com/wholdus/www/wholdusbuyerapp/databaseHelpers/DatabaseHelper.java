@@ -26,7 +26,7 @@ import static com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContr
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 2; /*TODO: set this to 1 on launch */
+    private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "wholdus.db";
 
     private static final String TEXT_TYPE = " TEXT";

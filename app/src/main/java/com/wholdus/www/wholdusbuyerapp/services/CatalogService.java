@@ -60,7 +60,7 @@ public class CatalogService extends IntentService {
         params.put("page_number", String.valueOf(pageNumber));
         params.put("product_image_details", "1");
         params.put("product_details_details", "1");
-        String endPoint = GlobalAccessHelper.generateUrl(getApplicationContext(), getString(R.string.product_url), params);
+        String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.product_url), params);
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }
 
@@ -70,7 +70,7 @@ public class CatalogService extends IntentService {
             params = new HashMap<>();
             params.put("seller_category_details", "1");
         }
-        String endPoint = GlobalAccessHelper.generateUrl(getApplicationContext(), getString(R.string.category_url), params);
+        String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.category_url), params);
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }
 
@@ -152,5 +152,4 @@ public class CatalogService extends IntentService {
         }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
-
 }

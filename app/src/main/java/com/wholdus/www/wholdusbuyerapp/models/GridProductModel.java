@@ -4,6 +4,8 @@ import android.database.Cursor;
 import android.renderscript.Double2;
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 
 import java.util.ArrayList;
 
@@ -33,6 +35,9 @@ public class GridProductModel {
         mPrice = cursor.getDouble(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_MIN_PRICE_PER_UNIT));
         mFabric = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_FABRIC_GSM));
         mLikeStatus = cursor.getInt(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_LIKE_STATUS)) > 0;
+        mImageUrl = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_IMAGE_PATH))
+                + "%s/" + cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_IMAGE_NAME))
+                + "-%s.jpg";
         mCartCount = 0;
     }
 
@@ -52,8 +57,8 @@ public class GridProductModel {
         return mProductID;
     }
 
-    public String getImageUrl() {
-        return mImageUrl;
+    public String getImageUrl(String imageSize, String imageNumber) {
+        return HelperFunctions.generateUrl(String.format(mImageUrl, imageSize, imageNumber));
     }
 
     public String getName() {
