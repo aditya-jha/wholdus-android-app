@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="open_fragment_key">openFragment</string>
+    <string name="open_activity_key">openActivity</string>
     <string name="selected_category_id">selectedCategoryID</string>
     <integer name="price_filter_min">0</integer>
     <integer name="price_filter_max">5000</integer>

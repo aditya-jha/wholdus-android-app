@@ -13,6 +13,7 @@ import android.widget.ExpandableListView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.AccountActivity;
+import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HomeActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.LoginSignupActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.ExpandableListViewAdapter;
@@ -28,6 +29,8 @@ import java.util.List;
  */
 public class NavigationDrawerFragment extends Fragment {
 
+    private Bundle mBundle;
+
     public NavigationDrawerFragment() {
     }
 
@@ -36,6 +39,8 @@ public class NavigationDrawerFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
 
         initNavigationDrawer(rootView);
+
+        mBundle = getArguments();
 
         return rootView;
     }
@@ -59,12 +64,19 @@ public class NavigationDrawerFragment extends Fragment {
                 switch (groupPosition) {
                     case 0:
                         // go to home
-                        startActivity(new Intent(getContext(), HomeActivity.class));
+                        String openActivity = mBundle.getString(getString(R.string.open_activity_key), "none");
+                        if (!openActivity.equals(HomeActivity.class.getSimpleName())){
+                            startActivity(new Intent(getContext(), HomeActivity.class));
+                        }
+                        mDrawerLayout.closeDrawer(GravityCompat.START);
                         return true;
                     case 1:
+                        startActivity(new Intent(getContext(), HandPickedActivity.class));
+                        mDrawerLayout.closeDrawer(GravityCompat.START);
                         return true;
                     case 5:
                         logout();
+                        mDrawerLayout.closeDrawer(GravityCompat.START);
                         return true;
                     default:
                         return false;
@@ -106,10 +118,9 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean handleAccountCase(int childPosition) {
         Intent intent = new Intent(getContext(), AccountActivity.class);
 
-        Bundle bundle = getArguments();
         String openFragmentName = "";
-        if (bundle != null) {
-            openFragmentName = bundle.getString(getString(R.string.open_fragment_key), "none");
+        if (mBundle != null) {
+            openFragmentName = mBundle.getString(getString(R.string.open_fragment_key), "none");
         }
 
         switch (childPosition) {
