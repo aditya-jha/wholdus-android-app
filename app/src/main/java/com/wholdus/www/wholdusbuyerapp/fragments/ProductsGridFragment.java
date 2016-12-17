@@ -1,12 +1,15 @@
 package com.wholdus.www.wholdusbuyerapp.fragments;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,8 +27,11 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.CheckoutActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.StoreActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductsGridAdapter;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
+import com.wholdus.www.wholdusbuyerapp.interfaces.EndlessRecyclerViewScrollListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.GridProductsLoader;
 import com.wholdus.www.wholdusbuyerapp.models.GridProductModel;
@@ -43,13 +49,15 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     private CategoryProductListenerInterface mListener;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private String mFilters;
-    private boolean mScrolling;
     private ArrayList<GridProductModel> mProducts;
     private ProductsGridAdapter mProductsGridAdapter;
     private RecyclerView mProductsRecyclerView;
-    private int mPageNumber;
-    private final int mLimit = 20;
+    private EndlessRecyclerViewScrollListener mOnScrollListener;
+    private BroadcastReceiver mReceiver;
 
+    private int mPageNumber, mTotalPages;
+
+    private final int mLimit = 20;
     public static final int PRODUCTS_GRID_LOADER = 2;
 
     public ProductsGridFragment() {
@@ -75,6 +83,14 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
             Toast.makeText(getContext(), "products already when created - " + mProducts.size(), Toast.LENGTH_SHORT).show();
         }
         mPageNumber = 1;
+        mTotalPages = -1;
+
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                handleOnBroadcastReceive(intent);
+            }
+        };
 
         Log.d(this.getClass().getSimpleName(), "oncreate");
     }
@@ -101,7 +117,29 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         });
 
         mProductsRecyclerView = (RecyclerView) rootView.findViewById(R.id.products_recycler_view);
-        mProductsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        final GridLayoutManager mGridLayoutManager = new GridLayoutManager(getContext(), 2);
+        mGridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                switch (mProductsGridAdapter.getItemViewType(position)) {
+                    case 1:
+                        return 2;
+                    default:
+                        return 1;
+                }
+            }
+        });
+
+        mProductsRecyclerView.setLayoutManager(mGridLayoutManager);
+
+        mOnScrollListener = new EndlessRecyclerViewScrollListener(mGridLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                Toast.makeText(getContext(), "load more - " + page, Toast.LENGTH_SHORT).show();
+                updateData();
+            }
+        };
+        mProductsRecyclerView.addOnScrollListener(mOnScrollListener);
 
         Log.d(this.getClass().getSimpleName(), "onCreateview");
         return rootView;
@@ -130,12 +168,15 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     public void onResume() {
         super.onResume();
         Log.d(this.getClass().getSimpleName(), "onresume");
+        IntentFilter intentFilter = new IntentFilter(getString(R.string.catalog_data_updated));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         Log.d(this.getClass().getSimpleName(), "onpause");
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
 
     @Override
@@ -182,15 +223,22 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
-    public void onLoadFinished(Loader<ArrayList<GridProductModel>> loader, ArrayList<GridProductModel> data) {
+    public void onLoadFinished(Loader<ArrayList<GridProductModel>> loader, final ArrayList<GridProductModel> data) {
         int oldPosition = mProducts.size();
-        mProducts.addAll(data);
-        if (oldPosition == 0) {
-            mProductsGridAdapter.notifyDataSetChanged();
-        } else {
-            mProductsGridAdapter.notifyItemRangeInserted(oldPosition, data.size());
+
+        if (oldPosition != 0) {
+            oldPosition--;
+            mProducts.remove(oldPosition);
+            mProductsGridAdapter.notifyItemRemoved(oldPosition);
         }
 
+        if (data.size() != 0) {
+            mProducts.addAll(data);
+            mProducts.add(new GridProductModel());
+            mProductsGridAdapter.notifyItemRangeInserted(oldPosition, data.size() + 1);
+        } else {
+            mTotalPages = 0;
+        }
 
         Log.d("on load", mProducts.size() + "");
     }
@@ -230,8 +278,10 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
             mPageNumber++;
         }
 
-        getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
-        fetchProductsFromServer();
+        if (hasNextPage()) {
+            fetchProductsFromServer();
+            getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
+        }
     }
 
     private void fetchProductsFromServer() {
@@ -240,5 +290,40 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         intent.putExtra("page_number", mPageNumber);
         intent.putExtra("items_per_page", mLimit);
         getActivity().startService(intent);
+    }
+
+    private void handleOnBroadcastReceive(final Intent intent) {
+        String type = intent.getStringExtra("type");
+        if (type.equals("ProductResponse")) {
+            int pageNumber = intent.getIntExtra(APIConstants.API_PAGE_NUMBER_KEY, -1);
+            int totalPages = intent.getIntExtra(APIConstants.API_TOTAL_PAGES_KEY, 1);
+            int updatedInserted = intent.getIntExtra(Constants.INSERTED_UPDATED, 0);
+
+            if (updatedInserted > 0) {
+                if (mPageNumber > pageNumber && mPageNumber != 1) {
+                            /* TODO: show button to refresh data */
+                } else {
+                    refreshData();
+                }
+            }
+            mTotalPages = totalPages;
+        }
+    }
+
+    private boolean hasNextPage() {
+        return mTotalPages == -1 || mTotalPages > mPageNumber;
+    }
+
+    private void refreshData() {
+        mPageNumber = 1;
+
+        int totalItems = mProducts.size();
+        if (totalItems > 0) {
+            mProducts.clear();
+            mProductsGridAdapter.notifyItemRangeRemoved(0, totalItems);
+        }
+
+        getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
+        Toast.makeText(getContext(), "Products updated", Toast.LENGTH_SHORT).show();
     }
 }

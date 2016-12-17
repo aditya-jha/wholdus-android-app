@@ -1,13 +1,13 @@
 package com.wholdus.www.wholdusbuyerapp.adapters;
 
 import android.content.Context;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -15,7 +15,6 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.models.GridProductModel;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
@@ -26,12 +25,15 @@ import java.util.ArrayList;
  * Created by aditya on 15/12/16.
  */
 
-public class ProductsGridAdapter extends RecyclerView.Adapter<ProductsGridAdapter.ViewHolder> {
+public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
     private ArrayList<GridProductModel> mData;
     private ImageLoader mImageLoader;
     private ItemClickListener mListener;
+
+    private static final int PRODUCT_VIEW = 0;
+    private static final int LOADER_VIEW = 1;
 
     public ProductsGridAdapter(Context context, ArrayList<GridProductModel> products, final ItemClickListener listener) {
         mContext = context;
@@ -46,16 +48,53 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<ProductsGridAdapte
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.layout_product_grid, parent, false);
-        return new ViewHolder(view);
+    public int getItemViewType(int position) {
+        GridProductModel gridProductModel = mData.get(position);
+        if (gridProductModel.getName() == null) {
+            Log.d(this.getClass().getSimpleName(), position + " - Loader View and total products - " + mData.size() );
+            return LOADER_VIEW;
+        } else {
+            Log.d(this.getClass().getSimpleName(), position + " - Product View and total products - " + mData.size() );
+            return PRODUCT_VIEW;
+        }
     }
 
     @Override
-    public void onBindViewHolder(final ProductsGridAdapter.ViewHolder holder, int position) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder viewHolder;
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+
+        switch (viewType) {
+            case PRODUCT_VIEW:
+                viewHolder =  new ProductViewHolder(inflater.inflate(R.layout.layout_product_grid, parent, false));
+                break;
+            case LOADER_VIEW:
+                Log.d("recycler view", "loader view holder on create");
+                viewHolder = new ProgressViewHolder(inflater.inflate(R.layout.layout_progress_bar, parent, false));
+                break;
+            default:
+                viewHolder =  new ProductViewHolder(inflater.inflate(R.layout.layout_product_grid, parent, false));
+        }
+
+        return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+        switch (getItemViewType(position)) {
+            case PRODUCT_VIEW:
+                onBindProductViewHolder((ProductsGridAdapter.ProductViewHolder) holder, position);
+                break;
+            case LOADER_VIEW:
+                Log.d("recycler view", "loader viewwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww");
+                break;
+        }
+    }
+
+    private void onBindProductViewHolder(final ProductsGridAdapter.ProductViewHolder holder, int position) {
         GridProductModel product = mData.get(position);
 
-        holder.mProuctName.setText(product.getName());
+        holder.mProductName.setText(product.getName());
         holder.mProductFabric.setText(product.getFabric());
         holder.mProductPrice.setText("Rs. " + product.getPrice().toString() + "/pcs");
         holder.mProductImage.setImageUrl(product.getImageUrl(Constants.SMALL_IMAGE, "1"), mImageLoader);
@@ -71,20 +110,23 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<ProductsGridAdapte
         holder.mListener = mListener;
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private void onBindProgressBarHolder(final ProductsGridAdapter.ProgressViewHolder holder, int position) {
+    }
+
+    static class ProductViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         NetworkImageView mProductImage;
-        TextView mProuctName, mProductFabric, mProductPrice;
+        TextView mProductName, mProductFabric, mProductPrice;
         ImageButton mFabButton, mShareButton, mCartButton;
         ProgressBar mProgressBar;
 
         private ItemClickListener mListener;
 
-        ViewHolder(View itemView) {
+        ProductViewHolder(View itemView) {
             super(itemView);
 
             mProductImage = (NetworkImageView) itemView.findViewById(R.id.product_image);
-            mProuctName = (TextView) itemView.findViewById(R.id.product_name);
+            mProductName = (TextView) itemView.findViewById(R.id.product_name);
             mProductFabric = (TextView) itemView.findViewById(R.id.product_fabric);
             mProductPrice = (TextView) itemView.findViewById(R.id.product_price);
             mFabButton = (ImageButton) itemView.findViewById(R.id.fav_icon_image_view);
@@ -108,9 +150,11 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<ProductsGridAdapte
         }
     }
 
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-        Log.d("attached ", mData.size() + " to recycler view");
+    static class ProgressViewHolder extends RecyclerView.ViewHolder {
+
+
+        ProgressViewHolder(View itemView) {
+            super(itemView);
+        }
     }
 }
