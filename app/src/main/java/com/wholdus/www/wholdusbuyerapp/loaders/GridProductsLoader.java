@@ -11,8 +11,6 @@ import com.wholdus.www.wholdusbuyerapp.models.GridProductModel;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import static android.R.attr.offset;
-
 /**
  * Created by aditya on 15/12/16.
  */
@@ -38,18 +36,22 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
         super(context);
         mLimit = limit;
         if (pageNumber > 0) {
-            mOffset = (pageNumber - 1) * mLimit ;
+            mOffset = (pageNumber - 1) * mLimit;
         } else {
-            mOffset = 0 ;
+            mOffset = 0;
         }
     }
 
     @Override
     public ArrayList<GridProductModel> loadInBackground() {
         CatalogDBHelper catalogDBHelper = new CatalogDBHelper(getContext());
+
+        HashSet<Integer> categoryID = new HashSet<>();
+        categoryID.add(FilterClass.getCategoryID());
+
         Cursor cursor = catalogDBHelper.getProductData(-1,
                 FilterClass.getSelectedItems("Brand"),
-                new HashSet<Integer>(FilterClass.getCategoryID()),
+                categoryID,
                 FilterClass.getMinPriceFilter(),
                 FilterClass.getMaxPriceFilter(),
                 FilterClass.getSelectedItems("Fabric"),

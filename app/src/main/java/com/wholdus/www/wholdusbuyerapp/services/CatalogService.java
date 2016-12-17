@@ -152,5 +152,4 @@ public class CatalogService extends IntentService {
         }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
-
 }

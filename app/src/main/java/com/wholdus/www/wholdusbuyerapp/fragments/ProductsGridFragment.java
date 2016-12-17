@@ -63,11 +63,20 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         } catch (ClassCastException cee) {
             Log.e(getClass().getSimpleName(), " must implement " + CategoryProductListenerInterface.class.getSimpleName());
         }
+        Log.d(this.getClass().getSimpleName(), "onattach");
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (mProducts == null) {
+            mProducts = new ArrayList<>();
+        } else {
+            Toast.makeText(getContext(), "products already when created - " + mProducts.size(), Toast.LENGTH_SHORT).show();
+        }
+        mPageNumber = 1;
+
+        Log.d(this.getClass().getSimpleName(), "oncreate");
     }
 
     @Nullable
@@ -87,19 +96,14 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
             @Override
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(false);
-                refreshData();
+                updateData();
             }
         });
 
         mProductsRecyclerView = (RecyclerView) rootView.findViewById(R.id.products_recycler_view);
         mProductsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
-        if (mProducts == null) {
-            mProducts = new ArrayList<>();
-        }
-        mProductsGridAdapter = new ProductsGridAdapter(getContext(), mProducts, this);
-        mProductsRecyclerView.setAdapter(mProductsGridAdapter);
-
+        Log.d(this.getClass().getSimpleName(), "onCreateview");
         return rootView;
     }
 
@@ -107,35 +111,50 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mPageNumber = 0;
-        fetchProductsFromServer();
-        refreshData();
+        if (mProductsGridAdapter == null) {
+            mProductsGridAdapter = new ProductsGridAdapter(getContext(), mProducts, this);
+            mProductsRecyclerView.setAdapter(mProductsGridAdapter);
+        }
+
+        updateData();
+        Log.d(this.getClass().getSimpleName(), "onactivitycreated");
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        Log.d(this.getClass().getSimpleName(), "onstart");
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(this.getClass().getSimpleName(), "onresume");
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        Log.d(this.getClass().getSimpleName(), "onpause");
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        Log.d(this.getClass().getSimpleName(), "onstop");
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d(this.getClass().getSimpleName(), "onDestryview");
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        Log.d(this.getClass().getSimpleName(), "ondetach");
     }
 
     @Override
@@ -166,7 +185,12 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     public void onLoadFinished(Loader<ArrayList<GridProductModel>> loader, ArrayList<GridProductModel> data) {
         int oldPosition = mProducts.size();
         mProducts.addAll(data);
-        mProductsGridAdapter.notifyItemRangeInserted(oldPosition, data.size());
+        if (oldPosition == 0) {
+            mProductsGridAdapter.notifyDataSetChanged();
+        } else {
+            mProductsGridAdapter.notifyItemRangeInserted(oldPosition, data.size());
+        }
+
 
         Log.d("on load", mProducts.size() + "");
     }
@@ -193,18 +217,21 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         Toast.makeText(getContext(), position + "", Toast.LENGTH_SHORT).show();
     }
 
-    public void refreshData() {
-        Log.d(getClass().getSimpleName(), "refresh data");
+    public void updateData() {
         String filters = FilterClass.getFilterString();
 
+        // if the filter is not same then set page number to 1 and clean current products
+        // else increment pageNumber
         if (!filters.equals(mFilters)) {
             mFilters = filters;
-            mScrolling = false;
-            mPageNumber = 0;
-            getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
+            mPageNumber = 1;
+            mProducts.clear();
         } else {
-            getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
+            mPageNumber++;
         }
+
+        getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
+        fetchProductsFromServer();
     }
 
     private void fetchProductsFromServer() {
