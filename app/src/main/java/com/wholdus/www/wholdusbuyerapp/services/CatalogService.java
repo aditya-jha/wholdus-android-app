@@ -15,6 +15,8 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategoriesTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.ProductsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
@@ -60,16 +62,17 @@ public class CatalogService extends IntentService {
         params.put("page_number", String.valueOf(pageNumber));
         params.put("product_image_details", "1");
         params.put("product_details_details", "1");
+        params.put("product_show_online", "1");
         String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.product_url), params);
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }
 
     private void fetchCategories(int todo, boolean categoryDetails) {
-        HashMap<String, String> params = null;
+        HashMap<String, String> params = new HashMap<>();;
         if (categoryDetails) {
-            params = new HashMap<>();
             params.put("seller_category_details", "1");
         }
+        params.put("category_show_online", "1");
         String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.category_url), params);
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }
@@ -135,9 +138,13 @@ public class CatalogService extends IntentService {
                 try {
                     updatedInserted = catalogDBHelper.saveProductsFromJSONArray(response.getJSONArray(ProductsTable.TABLE_NAME));
 
-                    if (updatedInserted > 0) {
-                        sendUpdatedBroadCast(getString(R.string.catalog_data_updated), ProductsTable.TABLE_NAME);
-                    }
+                    Intent intent = new Intent(getString(R.string.catalog_data_updated));
+                    intent.putExtra("type", Constants.PRODUCT_RESPONSE);
+                    intent.putExtra(Constants.INSERTED_UPDATED, updatedInserted);
+                    intent.putExtra(APIConstants.API_PAGE_NUMBER_KEY, response.getInt(APIConstants.API_PAGE_NUMBER_KEY));
+                    intent.putExtra(APIConstants.API_TOTAL_PAGES_KEY, response.getInt(APIConstants.API_TOTAL_PAGES_KEY));
+
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

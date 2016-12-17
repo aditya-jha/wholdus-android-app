@@ -66,7 +66,7 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
                 handleBroadcastOnReceive();
             }
         };
-
+        fetchDataFromServer();
     }
 
     @Nullable
@@ -100,12 +100,12 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
         mListener.fragmentCreated("All Categories", false);
         IntentFilter intentFilter = new IntentFilter(getString(R.string.catalog_data_updated));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
-        fetchDataFromServer();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
 
     @Override
