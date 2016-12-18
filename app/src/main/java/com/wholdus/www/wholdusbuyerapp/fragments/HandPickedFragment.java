@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
@@ -114,18 +115,26 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         mLikeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mSwipeDeck.swipeTopCardRight(180);
+                mSwipeDeck.swipeTopCardRight(250);
             }
         });
         mDislikeButton = (ImageButton) rootView.findViewById(R.id.hand_picked_dislike_button);
         mDislikeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mSwipeDeck.swipeTopCardLeft(180);
+                mSwipeDeck.swipeTopCardLeft(250);
             }
         });
         //TODO : Implement add to cart and set store price fragments
         mAddToCartButton = (ImageButton) rootView.findViewById(R.id.hand_picked_cart_button);
+        mAddToCartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fm = getFragmentManager();
+                CartDialogFragment dialogFragment = new CartDialogFragment();
+                dialogFragment.show(fm, "Sample Fragment");
+            }
+        });
         mSetStorePriceButton = (ImageButton) rootView.findViewById(R.id.hand_picked_set_price_button);
 
         mProductsArrayList = new ArrayList<>();
