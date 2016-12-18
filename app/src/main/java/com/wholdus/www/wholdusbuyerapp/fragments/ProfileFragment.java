@@ -168,7 +168,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         items.add(new BuyerPersonalDetails(getString(R.string.name_key),
                 buyer.getName(), R.drawable.ic_person_black_24dp));
         items.add(new BuyerPersonalDetails(getString(R.string.company_name_key),
-                buyer.getCompanyName(), R.drawable.ic_store_mall_directory_black_24dp));
+                buyer.getCompanyName(), R.drawable.ic_store_mall_directory_black_28dp));
         items.add(new BuyerPersonalDetails(getString(R.string.mobile_number_key),
                 buyer.getMobileNumber(), R.drawable.ic_phone_black_24dp));
         items.add(new BuyerPersonalDetails(getString(R.string.email_key),

@@ -13,8 +13,8 @@
                 android:gravity="center_vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/ic_store_mall_directory_black_24dp"
-                android:drawableRight="@drawable/ic_store_mall_directory_black_24dp"
+                android:drawableEnd="@drawable/ic_store_mall_directory_black_28dp"
+                android:drawableRight="@drawable/ic_store_mall_directory_black_28dp"
                 android:text="@string/seller_details_title" />
 
             <TextView

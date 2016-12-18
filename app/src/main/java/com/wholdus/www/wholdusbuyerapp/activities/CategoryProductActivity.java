@@ -160,7 +160,7 @@ public class CategoryProductActivity extends AppCompatActivity
     }
 
     private void showBackButtonInToolbar() {
-        mToolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_black_24dp);
+        mToolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_white_32dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -171,7 +171,7 @@ public class CategoryProductActivity extends AppCompatActivity
     }
 
     private void showMenuButtonInToolbar() {
-        mToolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
+        mToolbar.setNavigationIcon(R.drawable.ic_menu_white_32dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

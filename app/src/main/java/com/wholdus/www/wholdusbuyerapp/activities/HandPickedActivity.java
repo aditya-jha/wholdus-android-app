@@ -4,11 +4,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 
 import com.wholdus.www.wholdusbuyerapp.R;
@@ -37,7 +35,7 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
     @Override
     public void fragmentCreated(String title) {
         mToolbar.setTitle(title);
-        mToolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_black_24dp);
+        mToolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_white_32dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -1,10 +1,6 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.content.Intent;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -14,17 +10,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
-import com.wholdus.www.wholdusbuyerapp.fragments.BuyerInterestFragment;
-import com.wholdus.www.wholdusbuyerapp.fragments.EditAddressFragment;
-import com.wholdus.www.wholdusbuyerapp.fragments.EditProfileDetailsFragment;
-import com.wholdus.www.wholdusbuyerapp.fragments.OrderDetailsFragment;
-import com.wholdus.www.wholdusbuyerapp.fragments.OrdersFragment;
-import com.wholdus.www.wholdusbuyerapp.fragments.ProductGridCategoryTabFragment;
-import com.wholdus.www.wholdusbuyerapp.fragments.ProfileFragment;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProductLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
 
@@ -96,7 +84,7 @@ public class ProductDetailActivity extends AppCompatActivity implements LoaderMa
         mToolbar = (Toolbar) findViewById(R.id.default_toolbar);
         setSupportActionBar(mToolbar);
 
-        mToolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_black_24dp);
+        mToolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_white_32dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
