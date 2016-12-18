@@ -13,11 +13,13 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
+import com.daprlabs.aaron.swipedeck.SwipeDeck;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.adapters.ProductSwipeDeckAdapter;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HandPickedListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProductsLoader;
-import com.wholdus.www.wholdusbuyerapp.models.Buyer;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
 import com.wholdus.www.wholdusbuyerapp.services.BuyerProductService;
 
@@ -34,6 +36,12 @@ public class HandPickedFragment extends Fragment {
     private BroadcastReceiver mProductServiceResponseReceiver;
     private ProductsLoaderManager mProductsLoader;
     ArrayList<Product> mProductsArrayList;
+    SwipeDeck mSwipeDeck;
+    ImageButton mLikeButton;
+    ImageButton mDislikeButton;
+    ImageButton mAddToCartButton;
+    ImageButton mSetStorePriceButton;
+    ProductSwipeDeckAdapter mProductSwipeDeckAdapter;
 
     public HandPickedFragment(){
     }
@@ -62,7 +70,7 @@ public class HandPickedFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_orders, container, false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_handpicked, container, false);
         initReferences(rootView);
 
         fetchDataFromServer();
@@ -79,7 +87,6 @@ public class HandPickedFragment extends Fragment {
         IntentFilter intentFilter = new IntentFilter(getString(R.string.buyer_product_data_updated));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mProductServiceResponseReceiver, intentFilter);
 
-        mListener.fragmentCreated("Hand Picked Fragment");
     }
 
     private void handleAPIResponse() {
@@ -87,7 +94,41 @@ public class HandPickedFragment extends Fragment {
     }
 
     private void initReferences(ViewGroup rootView){
+        mSwipeDeck = (SwipeDeck) rootView.findViewById(R.id.product_swipe_deck);
+        mSwipeDeck.setLeftImage(R.id.left_image);
+        mSwipeDeck.setRightImage(R.id.right_image);
+        mSwipeDeck.setCallback(new SwipeDeck.SwipeDeckCallback() {
+            @Override
+            public void cardSwipedLeft(long l) {
+                //TODO : Write functions to like and dislike
+                actionAfterSwipe();
+            }
+            @Override
+            public void cardSwipedRight(long l) {
+                actionAfterSwipe();
+            }
+        });
+        mLikeButton = (ImageButton) rootView.findViewById(R.id.hand_picked_like_button);
+        mLikeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSwipeDeck.swipeTopCardRight(180);
+            }
+        });
+        mDislikeButton = (ImageButton) rootView.findViewById(R.id.hand_picked_dislike_button);
+        mDislikeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSwipeDeck.swipeTopCardLeft(180);
+            }
+        });
+        //TODO : Implement add to cart and set store price fragments
+        mAddToCartButton = (ImageButton) rootView.findViewById(R.id.hand_picked_cart_button);
+        mSetStorePriceButton = (ImageButton) rootView.findViewById(R.id.hand_picked_set_price_button);
 
+        mProductsArrayList = new ArrayList<>();
+        mProductSwipeDeckAdapter = new ProductSwipeDeckAdapter(getContext(), mProductsArrayList);
+        mSwipeDeck.setAdapter(mProductSwipeDeckAdapter);
     }
 
     private void fetchDataFromServer(){
@@ -96,8 +137,25 @@ public class HandPickedFragment extends Fragment {
         getContext().startService(intent);
     }
 
-    private void setViewForProducts(ArrayList<Product> data){
+    private void actionAfterSwipe(){
+        mProductsArrayList.remove(0);
+        if (mProductsArrayList.size() < 5){
+            getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, mProductsLoader);
+        }
+        if (mProductsArrayList.size() > 0){
+            mListener.fragmentCreated(mProductsArrayList.get(0).getName());
+        }
+        mProductSwipeDeckAdapter.notifyDataSetChanged();
+    }
 
+    private void setViewForProducts(ArrayList<Product> data){
+        //TODO: Add products to adapter correctly(not ones already present)
+        mProductsArrayList.addAll(data);
+        mProductSwipeDeckAdapter.notifyDataSetChanged();
+        if (mProductsArrayList.size()>0){
+            mListener.fragmentCreated(mProductsArrayList.get(0).getName());
+        }
+        //TODO: Handle case for 0 products
     }
 
     private class ProductsLoaderManager implements LoaderManager.LoaderCallbacks<ArrayList<Product>> {

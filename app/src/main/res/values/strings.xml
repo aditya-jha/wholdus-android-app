@@ -92,4 +92,10 @@
     <string name="sort_newest_first">Newest First</string>
     <string name="sort_price_low_to_high">Price - Low to High</string>
     <string name="sort_price_high_to_low">Price - High to Low</string>
+
+    <!-- handpicked fragment -->
+    <string name="hand_picked_add_to_cart_button_content_description">Add to Cart</string>
+    <string name="hand_picked_like_button_content_description">Like</string>
+    <string name="hand_picked_dislike_button_content_description">Dislike</string>
+    <string name="hand_picked_set_price_button_content_description">Set Price</string>
 </resources>

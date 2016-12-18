@@ -90,7 +90,7 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
 
         if (!fragmentPopped) { // fragment not in backstack create it
             FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
+            ft.replace(R.id.handpicked_fragment_container, fragment, fragment.getClass().getSimpleName());
             ft.addToBackStack(backStateName);
             ft.commit();
         }

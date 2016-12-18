@@ -25,17 +25,14 @@ public class ProductsLoader extends AbstractLoader<ArrayList<Product>> {
     public ArrayList<Product> loadInBackground() {
         CatalogDBHelper catalogDBHelper = new CatalogDBHelper(getContext());
 
-        HashSet<Integer> categoryID = new HashSet<>();
-        categoryID.add(FilterClass.getCategoryID());
-
         Cursor cursor = catalogDBHelper.getProductData(-1,
-                FilterClass.getSelectedItems("Brand"),
-                categoryID,
-                FilterClass.getMinPriceFilter(),
-                FilterClass.getMaxPriceFilter(),
-                FilterClass.getSelectedItems("Fabric"),
-                FilterClass.getSelectedItems("Colors"),
-                FilterClass.getSelectedItems("Sizes"),
+                null,
+                null,
+                -1,
+                -1,
+                null,
+                null,
+                null,
                 0,
                 1,
                 null, // ORDER BY
