@@ -9,7 +9,7 @@
     card_view:cardElevation="4dp"
     card_view:cardUseCompatPadding="true">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="@dimen/card_margin_horizontal"
@@ -19,6 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
+            android:layout_alignParentTop="true"
             >
 
             <RelativeLayout
@@ -92,7 +93,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center">
+            android:layout_centerInParent="true"
+            >
             <ImageView
                 android:layout_weight="1"
                 android:id="@+id/left_image"
@@ -109,6 +111,6 @@
                 />
         </LinearLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </android.support.v7.widget.CardView>

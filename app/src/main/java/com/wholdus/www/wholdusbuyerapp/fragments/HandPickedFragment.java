@@ -19,6 +19,7 @@ import com.daprlabs.aaron.swipedeck.SwipeDeck;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductSwipeDeckAdapter;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HandPickedListenerInterface;
+import com.wholdus.www.wholdusbuyerapp.interfaces.ProductCardListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProductsLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
 import com.wholdus.www.wholdusbuyerapp.services.BuyerProductService;
@@ -29,7 +30,7 @@ import java.util.ArrayList;
  * Created by kaustubh on 17/12/16.
  */
 
-public class HandPickedFragment extends Fragment {
+public class HandPickedFragment extends Fragment implements ProductCardListenerInterface {
 
     private HandPickedListenerInterface mListener;
     private final int PRODUCTS_DB_LOADER = 30;
@@ -42,6 +43,7 @@ public class HandPickedFragment extends Fragment {
     ImageButton mAddToCartButton;
     ImageButton mSetStorePriceButton;
     ProductSwipeDeckAdapter mProductSwipeDeckAdapter;
+    private int mProductsLeft = 0;
 
     public HandPickedFragment(){
     }
@@ -101,11 +103,11 @@ public class HandPickedFragment extends Fragment {
             @Override
             public void cardSwipedLeft(long l) {
                 //TODO : Write functions to like and dislike
-                actionAfterSwipe();
+                actionAfterSwipe(false);
             }
             @Override
             public void cardSwipedRight(long l) {
-                actionAfterSwipe();
+                actionAfterSwipe(true);
             }
         });
         mLikeButton = (ImageButton) rootView.findViewById(R.id.hand_picked_like_button);
@@ -127,7 +129,7 @@ public class HandPickedFragment extends Fragment {
         mSetStorePriceButton = (ImageButton) rootView.findViewById(R.id.hand_picked_set_price_button);
 
         mProductsArrayList = new ArrayList<>();
-        mProductSwipeDeckAdapter = new ProductSwipeDeckAdapter(getContext(), mProductsArrayList);
+        mProductSwipeDeckAdapter = new ProductSwipeDeckAdapter(getContext(), mProductsArrayList, this);
         mSwipeDeck.setAdapter(mProductSwipeDeckAdapter);
     }
 
@@ -137,24 +139,24 @@ public class HandPickedFragment extends Fragment {
         getContext().startService(intent);
     }
 
-    private void actionAfterSwipe(){
-        mProductsArrayList.remove(0);
-        if (mProductsArrayList.size() < 5){
+    private void actionAfterSwipe(boolean liked){
+        mProductsLeft -= 1;
+        if (mProductsLeft < 5){
             getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, mProductsLoader);
         }
-        if (mProductsArrayList.size() > 0){
-            mListener.fragmentCreated(mProductsArrayList.get(0).getName());
-        }
-        mProductSwipeDeckAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void cardCreated(String productName) {
+        mListener.fragmentCreated(productName);
     }
 
     private void setViewForProducts(ArrayList<Product> data){
         //TODO: Add products to adapter correctly(not ones already present)
         mProductsArrayList.addAll(data);
         mProductSwipeDeckAdapter.notifyDataSetChanged();
-        if (mProductsArrayList.size()>0){
-            mListener.fragmentCreated(mProductsArrayList.get(0).getName());
-        }
+        mProductsLeft += data.size();
+
         //TODO: Handle case for 0 products
     }
 
@@ -172,6 +174,7 @@ public class HandPickedFragment extends Fragment {
 
         @Override
         public Loader<ArrayList<Product>> onCreateLoader(final int id, Bundle args) {
+            //TODO : only request products which are not in list
             return new ProductsLoader(getContext());
         }
     }

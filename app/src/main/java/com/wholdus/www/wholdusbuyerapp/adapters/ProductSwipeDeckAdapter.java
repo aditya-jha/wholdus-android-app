@@ -14,6 +14,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
+import com.wholdus.www.wholdusbuyerapp.interfaces.ProductCardListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
@@ -28,11 +29,14 @@ public class ProductSwipeDeckAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<Product> mProductArrayList;
     private ImageLoader mImageLoader;
+    private ProductCardListenerInterface mListener;
 
-    public ProductSwipeDeckAdapter(Context context, ArrayList<Product> productArrayList){
+    public ProductSwipeDeckAdapter(Context context, ArrayList<Product> productArrayList
+            , ProductCardListenerInterface listenerInterface){
         mContext = context;
         mProductArrayList = productArrayList;
         mImageLoader = VolleySingleton.getInstance(context).getImageLoader();
+        mListener = listenerInterface;
     }
 
     @Override
@@ -79,6 +83,8 @@ public class ProductSwipeDeckAdapter extends BaseAdapter {
                 }
             }
         });
+
+        mListener.cardCreated(product.getName());
 
         return convertView;
     }
