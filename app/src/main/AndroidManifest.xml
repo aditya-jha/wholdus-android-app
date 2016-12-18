@@ -54,7 +54,8 @@
             android:name=".services.CatalogService"
             android:exported="false" />
 
-        <activity android:name=".activities.HandPickedActivity"></activity>
+        <activity android:name=".activities.HandPickedActivity" />
+        <activity android:name=".activities.ProductDetailActivity"></activity>
     </application>
 
 </manifest>

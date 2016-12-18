@@ -24,9 +24,12 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.activities.AccountActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.CheckoutActivity;
+import com.wholdus.www.wholdusbuyerapp.activities.ProductDetailActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.StoreActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductsGridAdapter;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
@@ -155,7 +158,11 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
         if (mProductsGridAdapter == null) {
             mProductsGridAdapter = new ProductsGridAdapter(getContext(), mProducts, this);
-            refreshData();
+            if (mProducts.size() == 0) {
+                updateData();
+            } else {
+                refreshData();
+            }
         }
         mProductsRecyclerView.setAdapter(mProductsGridAdapter);
 
@@ -201,7 +208,6 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        Log.d(this.getClass().getSimpleName(), "ondetach");
     }
 
     @Override
@@ -268,7 +274,21 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void itemClicked(int position, int id) {
-        Toast.makeText(getContext(), position + "", Toast.LENGTH_SHORT).show();
+        switch (id) {
+            case R.id.share_image_view:
+                /* TODO: handle share button click */
+                break;
+            case R.id.cart_image_view:
+                /* TODO: handle cart button click */
+                break;
+            case R.id.fav_icon_image_view:
+                /* TODO: handle fav button click */
+                break;
+            default:
+                Intent intent = new Intent(getContext(), ProductDetailActivity.class);
+                intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME, mProducts.get(position).getProductID());
+                startActivity(intent);
+        }
     }
 
     public void updateData() {

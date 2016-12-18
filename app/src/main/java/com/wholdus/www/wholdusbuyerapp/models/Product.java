@@ -15,33 +15,35 @@ public class Product {
 
     private int m_ID;
     private int mProductID;
-    private int mSellerID;
-    private Seller mSeller;
-    private int mCategoryID;
-    private Category mCategory;
+    private String mName;
     private float mPricePerUnit;
     private int mLotSize;
     private float mPricePerLot;
     private float mMinPricePerUnit;
     private float mMargin;
     private String mUrl;
-    //TODO: What to do about images
-    private String[] mProductImageNumbers;
+    private String[] mProductImageNumbers; //TODO: What to do about images
     private int mImageCount;
     private String mImagePathString;
     private String mColours;
     private String mFabricGSM;
     private String mSizes;
+
+    private int mSellerID;
+    private int mCategoryID;
+
+    private Seller mSeller;
+    private Category mCategory;
     private ProductDetails mProductDetails;
 
-
-    public Product(){}
+    public Product() {
+    }
 
     public Product(Cursor cursor) {
         setDataFromCursor(cursor);
     }
 
-    public void setDataFromCursor(Cursor cursor){
+    public void setDataFromCursor(Cursor cursor) {
         m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable._ID));
         mProductID = cursor.getInt(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID));
         mSellerID = cursor.getInt(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_SELLER_ID));
@@ -57,62 +59,117 @@ public class Product {
         mColours = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_COLOURS));
         mFabricGSM = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_FABRIC_GSM));
         mSizes = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_SIZES));
-
+        mName = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_NAME));
         mImagePathString = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_IMAGE_PATH))
                 + "%s/" + cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_IMAGE_NAME))
                 + "-%s.jpg";
     }
 
-    public ArrayList<String> getAllImageUrls(String imageSize){
+    public ArrayList<String> getAllImageUrls(String imageSize) {
         ArrayList<String> allImageUrls = new ArrayList<>();
-        for (String imageNumber:mProductImageNumbers){
+        for (String imageNumber : mProductImageNumbers) {
             allImageUrls.add(getImageUrl(imageSize, imageNumber));
         }
         return allImageUrls;
     }
 
-    public String getImageUrl(String imageSize, String imageNumber){
+    public String getImageUrl(String imageSize, String imageNumber) {
         return String.format(mImagePathString, imageSize, imageNumber);
     }
 
-    public int get_ID(){return m_ID;}
+    public int get_ID() {
+        return m_ID;
+    }
 
-    public int getProductID(){return  mProductID;}
+    public int getProductID() {
+        return mProductID;
+    }
 
-    public int getSellerID(){return mSellerID;}
+    public String getName() {
+        return mName;
+    }
 
-    public Seller getSeller(){return mSeller;}
+    public float getPricePerUnit() {
+        return mPricePerUnit;
+    }
 
-    public int getCategoryID(){return mCategoryID;}
+    public int getLotSize() {
+        return mLotSize;
+    }
 
-    public Category getCategory(){return mCategory;}
+    public float getPricePerLot() {
+        return mPricePerLot;
+    }
 
-    public float getPricePerUnit(){return mPricePerUnit;}
+    public float getMinPricePerUnit() {
+        return mMinPricePerUnit;
+    }
 
-    public int getLotSize(){return mLotSize;}
+    public float getMargin() {
+        return mMargin;
+    }
 
-    public float getPricePerLot(){return mPricePerLot;}
+    public String getUrl() {
+        return mUrl;
+    }
 
-    public float getMinPricePerUnit(){return mMinPricePerUnit;}
+    public String[] getProductImageNumbers() {
+        return mProductImageNumbers;
+    }
 
-    public float getMargin(){return mMargin;}
+    public int getImageCount() {
+        return mImageCount;
+    }
 
-    public String getUrl(){return mUrl;}
+    public String getColours() {
+        return mColours;
+    }
 
-    public String[] getProductImageNumbers(){return mProductImageNumbers;}
+    public String getFabricGSM() {
+        return mFabricGSM;
+    }
 
-    public int getImageCount(){return mImageCount;}
+    public String getSizes() {
+        return mSizes;
+    }
 
-    public String getColours(){return mColours;}
+    public int getSellerID() {
+        return mSellerID;
+    }
 
-    public String getFabricGSM(){return mFabricGSM;}
+    public int getCategoryID() {
+        return mCategoryID;
+    }
 
-    public String getSizes(){return mSizes;}
+    public Seller getSeller() {
+        return mSeller;
+    }
 
-    private ProductDetails getProductDetails(){return mProductDetails;}
+    public void setSeller(Seller seller) {
+        mSeller = seller;
+    }
 
-    public void setProductDetails(Cursor cursor){
+    public Category getCategory() {
+        return mCategory;
+    }
+
+    public void setCategory(Category category) {
+        mCategory = category;
+    }
+
+    public ProductDetails getProductDetails() {
+        return mProductDetails;
+    }
+
+    public void setProductDetails(Cursor cursor) {
         mProductDetails = new ProductDetails(cursor);
     }
 
+    public void setSeller(Cursor cursor) {
+        mSeller = new Seller(cursor);
+    }
+
+    public void setCategory(Cursor cursor) {
+        mCategory = new Category(cursor);
+    }
 }

@@ -92,4 +92,28 @@
     <string name="sort_newest_first">Newest First</string>
     <string name="sort_price_low_to_high">Price - Low to High</string>
     <string name="sort_price_high_to_low">Price - High to Low</string>
+    
+    <!-- product Detail Activity -->
+    <string name="fabric_key">Fabric</string>
+    <string name="size_key">Sizes</string>
+    <string name="color_key">Colors</string>
+    <string name="brand_key">Brand</string>
+
+    <string name="delivery_options">Delivery Options</string>
+    <string name="check">Check</string>
+    <string name="delivery_text">Surface delivery in 8-10 days</string>
+
+    <string name="replacement_policy_title">Replacement Policy</string>
+    <string name="replacement_policy_text">Defective products can be replaced within 3 days of delivery</string>
+
+    <string name="more_product_details_title">More Product Details</string>
+    <string name="pattern_key">Pattern</string>
+    <string name="style_key">Style</string>
+    <string name="work_key">Work</string>
+
+    <string name="seller_details_title">Seller Details</string>
+    <string name="location_key">Location</string>
+    <string name="speciality_key">Speciality</string>
+    <string name="view_store_key">View Store</string>
+
 </resources>
