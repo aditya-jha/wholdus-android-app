@@ -45,4 +45,11 @@
         <item name="android:paddingLeft">@dimen/title_text_padding</item>
         <item name="android:paddingBottom">@dimen/title_text_padding</item>
     </style>
+
+    <style name="AppTheme.ListItem" parent="AppTheme">
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:fontFamily">@string/font_family_regular</item>
+        <item name="android:textSize">16sp</item>
+    </style>
 </resources>
