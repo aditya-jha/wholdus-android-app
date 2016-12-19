@@ -66,7 +66,6 @@ public class ProductDetails {
         mLength = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_LENGTH));
         mCreatedAt = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_CREATED_AT));
         mUpdatedAt = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_UPDATED_AT));
-
     }
 
     public int getProductDetailsID(){return mProductDetailsID;}

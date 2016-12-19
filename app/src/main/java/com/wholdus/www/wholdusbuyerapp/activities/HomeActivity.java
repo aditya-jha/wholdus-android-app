@@ -108,7 +108,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     public void fragmentCreated(String title, boolean backEnabled) {
         mToolbar.setTitle(title);
         if (backEnabled && mToolbar.getNavigationContentDescription() != "backEnabled") {
-            mToolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_black_24dp);
+            mToolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_white_32dp);
             mToolbar.setNavigationContentDescription("backEnabled");
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
@@ -117,7 +117,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
                 }
             });
         } else if (!backEnabled && mToolbar.getNavigationContentDescription() != "default") {
-            mToolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
+            mToolbar.setNavigationIcon(R.drawable.ic_menu_white_32dp);
             mToolbar.setNavigationContentDescription("default");
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override

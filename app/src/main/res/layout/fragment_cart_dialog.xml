@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/secondary_text"
                 android:fontFamily="@string/font_family_regular"
-                android:text="@string/cart_dialog_lot_size"
+                android:text="@string/lot_size_key"
                 android:textSize="16sp"
                 android:layout_marginLeft="10dp" />
 
@@ -72,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/secondary_text"
                 android:fontFamily="@string/font_family_regular"
-                android:text="@string/cart_dialog_lot_description"
+                android:text="@string/lot_details_key"
                 android:textSize="16sp"
                 android:layout_marginLeft="14dp" />
 
@@ -111,7 +111,7 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/secondary_text"
                         android:fontFamily="@string/font_family_regular"
-                        android:text="@string/cart_dialog_price_per_piece"
+                        android:text="@string/price_per_piece"
                         android:textSize="16sp"
                         android:layout_gravity="center_horizontal"/>
 
@@ -145,7 +145,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/secondary_text"
                     android:fontFamily="@string/font_family_regular"
-                    android:text="@string/cart_dialog_pieces"
+                    android:text="@string/pieces_key"
                     android:textSize="16sp"
                     android:layout_gravity="center_horizontal"/>
 
@@ -179,7 +179,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/secondary_text"
                     android:fontFamily="@string/font_family_regular"
-                    android:text="@string/cart_dialog_total_price"
+                    android:text="@string/total_price_key"
                     android:textSize="16sp"
                     android:layout_gravity="center_horizontal"/>
 

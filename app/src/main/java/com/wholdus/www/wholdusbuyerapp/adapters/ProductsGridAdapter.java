@@ -51,10 +51,8 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public int getItemViewType(int position) {
         GridProductModel gridProductModel = mData.get(position);
         if (gridProductModel.getName() == null) {
-            Log.d(this.getClass().getSimpleName(), position + " - Loader View and total products - " + mData.size() );
             return LOADER_VIEW;
         } else {
-            Log.d(this.getClass().getSimpleName(), position + " - Product View and total products - " + mData.size() );
             return PRODUCT_VIEW;
         }
     }
@@ -65,11 +63,7 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         LayoutInflater inflater = LayoutInflater.from(mContext);
 
         switch (viewType) {
-            case PRODUCT_VIEW:
-                viewHolder =  new ProductViewHolder(inflater.inflate(R.layout.layout_product_grid, parent, false));
-                break;
             case LOADER_VIEW:
-                Log.d("recycler view", "loader view holder on create");
                 viewHolder = new ProgressViewHolder(inflater.inflate(R.layout.layout_progress_bar, parent, false));
                 break;
             default:
@@ -86,7 +80,6 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 onBindProductViewHolder((ProductsGridAdapter.ProductViewHolder) holder, position);
                 break;
             case LOADER_VIEW:
-                Log.d("recycler view", "loader viewwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww");
                 break;
         }
     }
@@ -110,10 +103,7 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.mListener = mListener;
     }
 
-    private void onBindProgressBarHolder(final ProductsGridAdapter.ProgressViewHolder holder, int position) {
-    }
-
-    static class ProductViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private static class ProductViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         NetworkImageView mProductImage;
         TextView mProductName, mProductFabric, mProductPrice;
@@ -137,6 +127,7 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             mCartButton.setOnClickListener(this);
             mFabButton.setOnClickListener(this);
             mShareButton.setOnClickListener(this);
+            itemView.setOnClickListener(this);
         }
 
         @Override
@@ -150,7 +141,7 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    static class ProgressViewHolder extends RecyclerView.ViewHolder {
+    private static class ProgressViewHolder extends RecyclerView.ViewHolder {
 
 
         ProgressViewHolder(View itemView) {

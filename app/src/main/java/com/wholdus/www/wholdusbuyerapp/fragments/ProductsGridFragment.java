@@ -24,9 +24,12 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.activities.AccountActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.CheckoutActivity;
+import com.wholdus.www.wholdusbuyerapp.activities.ProductDetailActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.StoreActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductsGridAdapter;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
@@ -54,8 +57,9 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     private RecyclerView mProductsRecyclerView;
     private EndlessRecyclerViewScrollListener mOnScrollListener;
     private BroadcastReceiver mReceiver;
+    private GridLayoutManager mGridLayoutManager;
 
-    private int mPageNumber, mTotalPages;
+    private int mPageNumber, mTotalPages, mRecyclerViewPosition;
 
     private final int mLimit = 20;
     public static final int PRODUCTS_GRID_LOADER = 2;
@@ -82,6 +86,8 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         } else {
             Toast.makeText(getContext(), "products already when created - " + mProducts.size(), Toast.LENGTH_SHORT).show();
         }
+
+        mRecyclerViewPosition = 0;
         mPageNumber = 1;
         mTotalPages = -1;
 
@@ -117,7 +123,8 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         });
 
         mProductsRecyclerView = (RecyclerView) rootView.findViewById(R.id.products_recycler_view);
-        final GridLayoutManager mGridLayoutManager = new GridLayoutManager(getContext(), 2);
+
+        mGridLayoutManager = new GridLayoutManager(getContext(), 2);
         mGridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
@@ -151,10 +158,14 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
         if (mProductsGridAdapter == null) {
             mProductsGridAdapter = new ProductsGridAdapter(getContext(), mProducts, this);
-            mProductsRecyclerView.setAdapter(mProductsGridAdapter);
+            if (mProducts.size() == 0) {
+                updateData();
+            } else {
+                refreshData();
+            }
         }
+        mProductsRecyclerView.setAdapter(mProductsGridAdapter);
 
-        updateData();
         Log.d(this.getClass().getSimpleName(), "onactivitycreated");
     }
 
@@ -170,6 +181,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         Log.d(this.getClass().getSimpleName(), "onresume");
         IntentFilter intentFilter = new IntentFilter(getString(R.string.category_data_updated));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
+        restoreRecyclerViewPosition();
     }
 
     @Override
@@ -177,6 +189,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         super.onPause();
         Log.d(this.getClass().getSimpleName(), "onpause");
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+        saveRecyclerViewPosition();
     }
 
     @Override
@@ -195,7 +208,6 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        Log.d(this.getClass().getSimpleName(), "ondetach");
     }
 
     @Override
@@ -262,7 +274,21 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void itemClicked(int position, int id) {
-        Toast.makeText(getContext(), position + "", Toast.LENGTH_SHORT).show();
+        switch (id) {
+            case R.id.share_image_view:
+                /* TODO: handle share button click */
+                break;
+            case R.id.cart_image_view:
+                /* TODO: handle cart button click */
+                break;
+            case R.id.fav_icon_image_view:
+                /* TODO: handle fav button click */
+                break;
+            default:
+                Intent intent = new Intent(getContext(), ProductDetailActivity.class);
+                intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME, mProducts.get(position).getProductID());
+                startActivity(intent);
+        }
     }
 
     public void updateData() {
@@ -273,7 +299,8 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         if (!filters.equals(mFilters)) {
             mFilters = filters;
             mPageNumber = 1;
-            mProducts.clear();
+
+            resetAdapterState();
         } else {
             mPageNumber++;
         }
@@ -316,14 +343,24 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
     private void refreshData() {
         mPageNumber = 1;
+        resetAdapterState();
+        getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
+        Toast.makeText(getContext(), "Products updated", Toast.LENGTH_SHORT).show();
+    }
 
+    public void resetAdapterState() {
         int totalItems = mProducts.size();
         if (totalItems > 0) {
             mProducts.clear();
             mProductsGridAdapter.notifyItemRangeRemoved(0, totalItems);
         }
+    }
 
-        getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
-        Toast.makeText(getContext(), "Products updated", Toast.LENGTH_SHORT).show();
+    private void saveRecyclerViewPosition() {
+        mRecyclerViewPosition = mGridLayoutManager.findFirstCompletelyVisibleItemPosition();
+    }
+
+    private void restoreRecyclerViewPosition() {
+        mProductsRecyclerView.scrollToPosition(mRecyclerViewPosition);
     }
 }

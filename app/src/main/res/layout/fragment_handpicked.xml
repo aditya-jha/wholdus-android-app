@@ -45,7 +45,7 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:background="@drawable/circular_button_shape"
-            android:contentDescription="@string/hand_picked_add_to_cart_button_content_description"
+            android:contentDescription="@string/add_to_cart"
             android:src="@drawable/ic_add_shopping_cart_black_24dp"
             android:layout_marginTop="9dp"/>
 
@@ -60,7 +60,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:background="@drawable/circular_button_shape"
-            android:contentDescription="@string/hand_picked_dislike_button_content_description"
+            android:contentDescription="@string/dislike_key"
             android:src="@drawable/ic_clear_black_48dp" />
 
         <View
@@ -74,7 +74,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:background="@drawable/circular_button_shape"
-            android:contentDescription="@string/hand_picked_like_button_content_description"
+            android:contentDescription="@string/like_key"
             android:src="@drawable/ic_favorite_red_48dp" />
 
         <View
@@ -88,7 +88,7 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:background="@drawable/circular_button_shape"
-            android:contentDescription="@string/hand_picked_set_price_button_content_description"
+            android:contentDescription="@string/set_price_key"
             android:src="@drawable/ic_set_price_tag_24dp"
             android:layout_marginTop="9dp"/>
 

@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:contentDescription="like"
-                android:src="@drawable/ic_favorite_border_black_24dp" />
+                android:src="@drawable/ic_favorite_border_white_28dp" />
 
             <ImageButton
                 android:id="@+id/cart_image_view"
@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:contentDescription="cart"
-                android:src="@drawable/ic_local_grocery_store_black_24dp" />
+                android:src="@drawable/ic_local_grocery_store_white_24dp" />
 
             <ImageButton
                 android:id="@+id/share_image_view"
@@ -56,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:contentDescription="share"
-                android:src="@drawable/ic_share_black_24dp" />
+                android:src="@drawable/ic_share_white_28dp" />
         </LinearLayout>
 
         <View

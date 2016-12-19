@@ -1,5 +1,8 @@
 package com.wholdus.www.wholdusbuyerapp.helperClasses;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -63,5 +66,11 @@ public class HelperFunctions {
 
     public static String generateUrl(String endPoint) {
         return Constants.API_BASE + endPoint;
+    }
+
+    public static float convertPixelsToDp(float px, Context context){
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        return px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
 }
