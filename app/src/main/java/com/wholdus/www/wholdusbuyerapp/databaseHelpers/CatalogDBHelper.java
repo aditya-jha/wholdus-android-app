@@ -314,6 +314,9 @@ public class CatalogDBHelper extends BaseDBHelper {
             db.update(SellersTable.TABLE_NAME, values, selection, null);
             mPresentSellerIDs.put(sellerID, sellerUpdatedAtServer);
         }
+        if (seller.has("address")) {
+            saveSellerAddressFromJsonArray(seller.getJSONArray("address"));
+        }
         mDatabaseHelper.closeDatabase();
     }
 
@@ -339,6 +342,9 @@ public class CatalogDBHelper extends BaseDBHelper {
                             ProductsTable.COLUMN_PRODUCT_ID + " = " + productID,
                             null);
                     insertedUpdated++;
+                }
+                if (product.has("seller")) {
+                    saveSellerData(product.getJSONObject("seller"));
                 }
             }
             db.setTransactionSuccessful();
@@ -371,6 +377,12 @@ public class CatalogDBHelper extends BaseDBHelper {
             mPresentProductIDs.put(productID, productUpdatedAtServer);
         }
         mDatabaseHelper.closeDatabase();
+    }
+
+    public void saveSellerAddressFromJsonArray(JSONArray sellerAddress) throws JSONException {
+        for (int i=0; i<sellerAddress.length(); i++) {
+            saveSellerAddressData(sellerAddress.getJSONObject(i), false);
+        }
     }
 
     public void saveSellerAddressData(JSONObject sellerAddress, boolean addressHistory) throws JSONException {

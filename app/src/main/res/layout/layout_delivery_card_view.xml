@@ -47,8 +47,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/selected_dot"
-                android:drawableStart="@drawable/selected_dot"
+                android:drawableLeft="@drawable/ic_brightness_1_black_18dp"
+                android:drawableStart="@drawable/ic_brightness_1_black_18dp"
                 android:gravity="center_vertical"
                 android:text="@string/delivery_text" />
         </LinearLayout>

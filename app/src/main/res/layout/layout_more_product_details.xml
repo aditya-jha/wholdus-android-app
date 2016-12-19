@@ -26,8 +26,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:drawableLeft="@drawable/selected_dot"
-                    android:drawableStart="@drawable/selected_dot"
+                    android:drawableLeft="@drawable/ic_brightness_1_black_18dp"
+                    android:drawableStart="@drawable/ic_brightness_1_black_18dp"
                     android:text="@string/pattern_key" />
 
                 <TextView
@@ -46,8 +46,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:drawableLeft="@drawable/selected_dot"
-                    android:drawableStart="@drawable/selected_dot"
+                    android:drawableLeft="@drawable/ic_brightness_1_black_18dp"
+                    android:drawableStart="@drawable/ic_brightness_1_black_18dp"
                     android:text="@string/style_key" />
 
                 <TextView
@@ -66,8 +66,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:drawableLeft="@drawable/selected_dot"
-                    android:drawableStart="@drawable/selected_dot"
+                    android:drawableLeft="@drawable/ic_brightness_1_black_18dp"
+                    android:drawableStart="@drawable/ic_brightness_1_black_18dp"
                     android:text="@string/work_key" />
 
                 <TextView

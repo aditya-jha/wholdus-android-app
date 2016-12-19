@@ -8,12 +8,11 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -21,7 +20,6 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.ThumbImageAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProductLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
@@ -40,6 +38,9 @@ public class ProductDetailActivity extends AppCompatActivity implements
     private RecyclerView mThumbImagesRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private ThumbImageAdapter mThumbImageAdapter;
+    private TextView mProductName, mProductPrice, mProductMrp, mLotSize, mLotDescription,
+            mProductFabric, mProductColor, mProductSizes, mProductBrand,
+            mProductPattern, mProductStyle, mProductWork, mSellerLocation, mSellerSpeciality;
 
     private static final int PRODUCT_LOADER = 10;
 
@@ -54,15 +55,27 @@ public class ProductDetailActivity extends AppCompatActivity implements
         mDisplayImage = (NetworkImageView) findViewById(R.id.display_image);
         mDisplayImage.requestFocus();
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                initToolbar();
-                mThumbImagesRecyclerView = (RecyclerView) findViewById(R.id.thumb_images_recycler_view);
-                mLinearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
-                mThumbImagesRecyclerView.setLayoutManager(mLinearLayoutManager);
-            }
-        }).start();
+        initToolbar();
+        mThumbImagesRecyclerView = (RecyclerView) findViewById(R.id.thumb_images_recycler_view);
+        mLinearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
+        mThumbImagesRecyclerView.setLayoutManager(mLinearLayoutManager);
+
+        mProductName = (TextView) findViewById(R.id.product_name);
+        mProductPrice = (TextView) findViewById(R.id.product_price);
+        mProductMrp = (TextView) findViewById(R.id.product_mrp);
+        mLotSize = (TextView) findViewById(R.id.lot_size);
+        mLotDescription = (TextView) findViewById(R.id.lot_description);
+        mProductFabric = (TextView) findViewById(R.id.fabric);
+        mProductColor = (TextView) findViewById(R.id.colors);
+        mProductSizes = (TextView) findViewById(R.id.sizes);
+        mProductBrand = (TextView) findViewById(R.id.brand);
+
+        mProductPattern = (TextView) findViewById(R.id.pattern);
+        mProductStyle = (TextView) findViewById(R.id.style);
+        mProductWork = (TextView) findViewById(R.id.work);
+
+        mSellerLocation = (TextView) findViewById(R.id.seller_location);
+        mSellerSpeciality = (TextView) findViewById(R.id.seller_speciality);
 
         getSupportLoaderManager().initLoader(PRODUCT_LOADER, null, this);
     }
@@ -156,5 +169,22 @@ public class ProductDetailActivity extends AppCompatActivity implements
                 mThumbImagesRecyclerView.setAdapter(mThumbImageAdapter);
             }
         }
+
+        mProductName.setText(mProduct.getProductDetails().getDisplayName());
+        mProductPrice.setText(String.format(getString(R.string.price_per_pcs_format), String.valueOf(mProduct.getMinPricePerUnit())));
+        mProductMrp.setText(String.format(getString(R.string.price_format), String.valueOf(mProduct.getPricePerUnit())));
+        mLotSize.setText(String.valueOf(mProduct.getLotSize()));
+        mLotDescription.setText(mProduct.getProductDetails().getLotDescription());
+
+        mProductFabric.setText(mProduct.getFabricGSM());
+        mProductColor.setText(mProduct.getColours());
+        mProductSizes.setText(mProduct.getSizes());
+        mProductBrand.setText(mProduct.getSeller().getCompanyName());
+
+        mProductPattern.setText(mProduct.getProductDetails().getPackagingDetails());
+        mProductStyle.setText(mProduct.getProductDetails().getStyle());
+        mProductWork.setText(mProduct.getProductDetails().getWorkDecorationType());
+
+
     }
 }

@@ -6,7 +6,9 @@ import android.support.v4.content.res.TypedArrayUtils;
 import android.util.Log;
 
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
+import com.wholdus.www.wholdusbuyerapp.models.Category;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
+import com.wholdus.www.wholdusbuyerapp.models.Seller;
 
 import java.util.ArrayList;
 
@@ -53,6 +55,12 @@ public class ProductLoader extends AbstractLoader<Product> {
 
         Product product = new Product(cursor);
         product.setProductDetails(cursor);
+
+        cursor = catalogDBHelper.getSellerData(product.getSellerID(), null);
+        cursor.moveToFirst();
+
+        product.setSeller(cursor);
+        product.setCategory(new Category());
 
         return product;
     }
