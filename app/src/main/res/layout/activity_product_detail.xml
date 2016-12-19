@@ -51,8 +51,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_local_grocery_store_white_24dp"
-            android:drawableStart="@drawable/ic_local_grocery_store_white_24dp"
+            android:drawableLeft="@drawable/ic_local_grocery_store_white_28dp"
+            android:drawableStart="@drawable/ic_local_grocery_store_white_28dp"
             android:text="@string/add_to_cart" />
 
         <ImageButton

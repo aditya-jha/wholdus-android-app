@@ -30,6 +30,7 @@ import com.wholdus.www.wholdusbuyerapp.activities.ProductDetailActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.StoreActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductsGridAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
+import com.wholdus.www.wholdusbuyerapp.decorators.GridItemDecorator;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
@@ -123,7 +124,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         });
 
         mProductsRecyclerView = (RecyclerView) rootView.findViewById(R.id.products_recycler_view);
-
+        mProductsRecyclerView.addItemDecoration(new GridItemDecorator(2, getResources().getDimensionPixelSize(R.dimen.card_margin_horizontal), true, 0));
         mGridLayoutManager = new GridLayoutManager(getContext(), 2);
         mGridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override

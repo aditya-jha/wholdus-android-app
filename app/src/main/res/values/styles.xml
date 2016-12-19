@@ -6,6 +6,8 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
+        <item name="android:fontFamily">@string/font_family_regular</item>
+        <item name="android:textColor">@color/primary_text</item>
     </style>
 
     <!-- Splash Screen Theme -->
@@ -13,4 +15,34 @@
         <item name="android:windowBackground">@drawable/background_splash</item>
     </style>
 
+    <style name="AppTheme.Activity" parent="AppTheme">
+        <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginTop">@dimen/activity_vertical_margin</item>
+        <item name="android:layout_marginBottom">@dimen/activity_vertical_margin</item>
+    </style>
+
+    <style name="AppTheme.DefaultCard" parent="AppTheme">
+        <item name="android:layout_marginLeft">@dimen/card_margin_horizontal</item>
+        <item name="android:layout_marginRight">@dimen/card_margin_horizontal</item>
+        <item name="android:layout_marginTop">@dimen/card_margin_vertical</item>
+        <item name="android:layout_marginBottom">@dimen/card_margin_vertical</item>
+    </style>
+
+    <style name="AppTheme.TitleText" parent="AppTheme">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:padding">@dimen/title_text_padding</item>
+    </style>
+
+    <style name="AppTheme.NormalText" parent="AppTheme">
+        <item name="android:paddingLeft">@dimen/title_text_padding</item>
+        <item name="android:paddingBottom">@dimen/title_text_padding</item>
+    </style>
+
+    <style name="AppTheme.BoldText" parent="AppTheme">
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingLeft">@dimen/title_text_padding</item>
+        <item name="android:paddingBottom">@dimen/title_text_padding</item>
+    </style>
 </resources>

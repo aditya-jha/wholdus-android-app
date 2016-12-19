@@ -89,7 +89,7 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         holder.mProductName.setText(product.getName());
         holder.mProductFabric.setText(product.getFabric());
-        holder.mProductPrice.setText("Rs. " + product.getPrice().toString() + "/pcs");
+        holder.mProductPrice.setText(String.format(mContext.getString(R.string.price_per_pcs_format), product.getPrice().toString()));
         holder.mProductImage.setImageUrl(product.getImageUrl(Constants.SMALL_IMAGE, "1"), mImageLoader);
         holder.mProductImage.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
