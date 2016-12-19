@@ -25,12 +25,12 @@
 
         <Button
             android:id="@+id/sort_button"
-            style="?android:attr/borderlessButtonStyle"
+            style="@style/AppTheme.FooterButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_sort_black_24dp"
-            android:drawableStart="@drawable/ic_sort_black_24dp"
+            android:drawableLeft="@drawable/ic_sort_white_24dp"
+            android:drawableStart="@drawable/ic_sort_white_24dp"
             android:text="@string/sort_text" />
 
         <View
@@ -40,12 +40,12 @@
 
         <Button
             android:id="@+id/filter_button"
-            style="?android:attr/borderlessButtonStyle"
+            style="@style/AppTheme.FooterButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_filter_list_black_24dp"
-            android:drawableStart="@drawable/ic_filter_list_black_24dp"
+            android:drawableLeft="@drawable/ic_filter_list_white_24dp"
+            android:drawableStart="@drawable/ic_filter_list_white_24dp"
             android:text="@string/filter_text" />
     </LinearLayout>
 </LinearLayout>

@@ -329,8 +329,8 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
             if (updatedInserted > 0) {
                 if (mPageNumber > pageNumber && mPageNumber != 1) {
-                            /* TODO: show button to refresh data */
-                } else {
+                    /* TODO: show button to refresh data */
+                } else if (pageNumber == 1 && mPageNumber == pageNumber){
                     refreshData();
                 }
             }

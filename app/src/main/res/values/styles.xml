@@ -52,4 +52,10 @@
         <item name="android:fontFamily">@string/font_family_regular</item>
         <item name="android:textSize">16sp</item>
     </style>
+
+    <style name="AppTheme.FooterButton" parent="Base.Widget.AppCompat.Button.Borderless">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
 </resources>

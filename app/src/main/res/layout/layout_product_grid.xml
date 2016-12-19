@@ -73,9 +73,9 @@
 
         <TextView
             android:id="@+id/product_fabric"
-            style="@style/AppTheme.NormalText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/title_text_padding" />
 
         <TextView
             android:id="@+id/product_price"
