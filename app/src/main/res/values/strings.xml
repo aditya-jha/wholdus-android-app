@@ -99,6 +99,8 @@
     <string name="color_key">Colors</string>
     <string name="brand_key">Brand</string>
     <string name="add_to_cart">Add To Cart</string>
+    <string name="mrp_key">MRP</string>
+    <string name="lot_description_key">Lot Description</string>
 
     <string name="delivery_options">Delivery Options</string>
     <string name="check">Check</string>
@@ -130,4 +132,7 @@
     <string name="total_price_key">Total Price</string>
     <string name="cart_dialog_shipping_condition">*Shipping charge extra = Rs.35/kg</string>
     <string name="cart_dialog_add_to_cart">ADD TO CART</string>
+
+    <string name="price_per_pcs_format">Rs. %1$s/pc</string>
+    <string name="price_format">Rs. %1$s</string>
 </resources>

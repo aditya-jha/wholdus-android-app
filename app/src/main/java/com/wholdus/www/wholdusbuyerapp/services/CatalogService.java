@@ -63,6 +63,7 @@ public class CatalogService extends IntentService {
         params.put("product_image_details", "1");
         params.put("product_details_details", "1");
         params.put("product_show_online", "1");
+        params.put("seller_details", "1");
         String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.product_url), params);
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }

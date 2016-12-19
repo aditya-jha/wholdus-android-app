@@ -27,7 +27,6 @@
 
             <include layout="@layout/layout_more_product_details" />
 
-            <include layout="@layout/layout_seller_details" />
         </LinearLayout>
     </ScrollView>
 

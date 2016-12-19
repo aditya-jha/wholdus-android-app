@@ -70,9 +70,9 @@ public class ProductDetails {
 
     public int getProductDetailsID(){return mProductDetailsID;}
 
-    public String getmUnit(){return mUnit;}
+    public String getUnit(){return mUnit;}
 
-    public String getmDisplayName(){return mDisplayName;}
+    public String getDisplayName(){return mDisplayName;}
 
     public boolean getDeleteStatus(){return mDeleteStatus;}
 
