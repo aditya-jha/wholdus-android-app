@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.CategoriesGridAdapter;
+import com.wholdus.www.wholdusbuyerapp.decorators.GridItemDecorator;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.CategoriesGridLoader;
@@ -142,9 +143,10 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
 
     private void initReferences(ViewGroup rootView) {
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.categories_recycler_view);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        mRecyclerView.setHasFixedSize(true);
-
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
+        //mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.addItemDecoration(new GridItemDecorator(2, getResources().getDimensionPixelSize(R.dimen.card_margin_horizontal), true, 0));
         mCategoriesData = new ArrayList<>();
         mCategoriesGridAdapter = new CategoriesGridAdapter(getContext(), mCategoriesData, this);
         mRecyclerView.setAdapter(mCategoriesGridAdapter);

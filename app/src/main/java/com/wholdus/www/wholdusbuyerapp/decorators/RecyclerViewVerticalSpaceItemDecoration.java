@@ -10,7 +10,7 @@ import android.view.View;
 
 public class RecyclerViewVerticalSpaceItemDecoration extends RecyclerView.ItemDecoration {
 
-    private final int verticalSpaceHeight;
+    private int verticalSpaceHeight;
 
     public RecyclerViewVerticalSpaceItemDecoration(int verticalSpaceHeight) {
         this.verticalSpaceHeight = verticalSpaceHeight;

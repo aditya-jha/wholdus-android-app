@@ -7,6 +7,14 @@
 
     <dimen name="card_margin_vertical">8dp</dimen>
     <dimen name="card_margin_horizontal">8dp</dimen>
+    <dimen name="card_padding_vertical">8dp</dimen>
+    <dimen name="card_padding_horizontal">8dp</dimen>
 
     <dimen name="text_divider_gap">3dp</dimen>
+
+    <dimen name="scroll_item_bottom_margin">150dp</dimen>
+
+    <dimen name="title_text_padding">8dp</dimen>
+
+    <dimen name="list_item_height">40dp</dimen>
 </resources>

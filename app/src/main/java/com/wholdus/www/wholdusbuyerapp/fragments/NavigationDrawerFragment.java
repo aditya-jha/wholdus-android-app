@@ -41,7 +41,9 @@ public class NavigationDrawerFragment extends Fragment {
         initNavigationDrawer(rootView);
 
         mBundle = getArguments();
-
+        if (mBundle == null) {
+            mBundle = new Bundle();
+        }
         return rootView;
     }
 
@@ -66,6 +68,7 @@ public class NavigationDrawerFragment extends Fragment {
                         // go to home
                         String openActivity = mBundle.getString(getString(R.string.open_activity_key), "none");
                         if (!openActivity.equals(HomeActivity.class.getSimpleName())){
+                            mBundle.putString(getString(R.string.open_activity_key), HomeActivity.class.getSimpleName());
                             startActivity(new Intent(getContext(), HomeActivity.class));
                         }
                         mDrawerLayout.closeDrawer(GravityCompat.START);

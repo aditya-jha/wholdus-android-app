@@ -30,6 +30,7 @@ import com.wholdus.www.wholdusbuyerapp.activities.ProductDetailActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.StoreActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductsGridAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
+import com.wholdus.www.wholdusbuyerapp.decorators.GridItemDecorator;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
@@ -123,7 +124,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         });
 
         mProductsRecyclerView = (RecyclerView) rootView.findViewById(R.id.products_recycler_view);
-
+        mProductsRecyclerView.addItemDecoration(new GridItemDecorator(2, getResources().getDimensionPixelSize(R.dimen.card_margin_horizontal), true, 0));
         mGridLayoutManager = new GridLayoutManager(getContext(), 2);
         mGridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
@@ -328,8 +329,8 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
             if (updatedInserted > 0) {
                 if (mPageNumber > pageNumber && mPageNumber != 1) {
-                            /* TODO: show button to refresh data */
-                } else {
+                    /* TODO: show button to refresh data */
+                } else if (pageNumber == 1 && mPageNumber == pageNumber){
                     refreshData();
                 }
             }
@@ -341,8 +342,9 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         return mTotalPages == -1 || mTotalPages > mPageNumber;
     }
 
-    private void refreshData() {
+    public void refreshData() {
         mPageNumber = 1;
+        mTotalPages = -1;
         resetAdapterState();
         getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
         Toast.makeText(getContext(), "Products updated", Toast.LENGTH_SHORT).show();
