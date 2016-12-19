@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/card_margin_vertical">
+
+        <TextView
+            android:id="@+id/cart_dialog_product_name_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@string/font_family_regular"
+            android:textColor="@color/primary_text"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="@dimen/card_margin_vertical"
+            android:layout_marginTop="@dimen/card_margin_vertical"
+            android:background="@color/divider" />
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:background="@drawable/nonselected_dot"
+                android:layout_marginTop="8dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text"
+                android:fontFamily="@string/font_family_regular"
+                android:text="@string/lot_size_key"
+                android:textSize="16sp"
+                android:layout_marginLeft="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary_text"
+                android:fontFamily="@string/font_family_regular"
+                android:id="@+id/cart_dialog_lot_size_text_view"
+                android:textSize="16sp"
+                android:layout_marginLeft="10dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/card_margin_vertical">
+
+            <View
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:background="@drawable/nonselected_dot"
+                android:layout_marginTop="8dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text"
+                android:fontFamily="@string/font_family_regular"
+                android:text="@string/lot_details_key"
+                android:textSize="16sp"
+                android:layout_marginLeft="14dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary_text"
+                android:fontFamily="@string/font_family_regular"
+                android:id="@+id/cart_dialog_lot_description_text_view"
+                android:textSize="16sp"
+                android:layout_marginLeft="14dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="@dimen/card_margin_vertical"
+            android:layout_marginTop="@dimen/card_margin_vertical"
+            android:background="@color/divider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/secondary_text"
+                        android:fontFamily="@string/font_family_regular"
+                        android:text="@string/price_per_piece"
+                        android:textSize="16sp"
+                        android:layout_gravity="center_horizontal"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/primary_text"
+                        android:fontFamily="@string/font_family_regular"
+                        android:id="@+id/cart_dialog_price_per_piece_text_view"
+                        android:textSize="20sp"
+                        android:paddingTop="@dimen/card_margin_vertical"
+                        android:layout_gravity="center_horizontal"/>
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_clear_black_48dp"
+                android:layout_gravity="center_vertical"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/secondary_text"
+                    android:fontFamily="@string/font_family_regular"
+                    android:text="@string/pieces_key"
+                    android:textSize="16sp"
+                    android:layout_gravity="center_horizontal"/>
+
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/primary_text"
+                    android:fontFamily="@string/font_family_regular"
+                    android:id="@+id/cart_dialog_pieces_spinner"
+                    android:textSize="20sp"
+                    android:paddingTop="@dimen/card_margin_vertical"
+                    android:layout_gravity="center_horizontal"/>
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_equal_black_24dp"
+                android:layout_gravity="center_vertical"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/secondary_text"
+                    android:fontFamily="@string/font_family_regular"
+                    android:text="@string/total_price_key"
+                    android:textSize="16sp"
+                    android:layout_gravity="center_horizontal"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/primary_text"
+                    android:fontFamily="@string/font_family_regular"
+                    android:id="@+id/cart_dialog_total_price_text_view"
+                    android:textSize="20sp"
+                    android:paddingTop="@dimen/card_margin_vertical"
+                    android:layout_gravity="center_horizontal"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="@dimen/card_margin_vertical"
+            android:layout_marginTop="@dimen/card_margin_vertical"
+            android:background="@color/divider" />
+
+        <Button
+            android:id="@+id/cart_dialog_add_to_cart_button"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/cart_dialog_add_to_cart"
+            android:layout_margin="@dimen/card_margin_vertical"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primary_text"
+            android:fontFamily="@string/font_family_regular"
+            android:text="@string/cart_dialog_shipping_condition"
+            android:textSize="16sp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            />
+
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

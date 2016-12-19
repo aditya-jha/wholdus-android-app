@@ -130,7 +130,7 @@ public class CatalogService extends IntentService {
                 updatedInserted = catalogDBHelper.updateCategories(response);
 
                 if (updatedInserted > 0) {
-                    sendUpdatedBroadCast(getString(R.string.catalog_data_updated), CategoriesTable.TABLE_NAME);
+                    sendUpdatedBroadCast(getString(R.string.category_data_updated), CategoriesTable.TABLE_NAME);
                 }
                 break;
             case R.integer.fetch_products:
@@ -138,7 +138,7 @@ public class CatalogService extends IntentService {
                 try {
                     updatedInserted = catalogDBHelper.saveProductsFromJSONArray(response.getJSONArray(ProductsTable.TABLE_NAME));
 
-                    Intent intent = new Intent(getString(R.string.catalog_data_updated));
+                    Intent intent = new Intent(getString(R.string.category_data_updated));
                     intent.putExtra("type", Constants.PRODUCT_RESPONSE);
                     intent.putExtra(Constants.INSERTED_UPDATED, updatedInserted);
                     intent.putExtra(APIConstants.API_PAGE_NUMBER_KEY, response.getInt(APIConstants.API_PAGE_NUMBER_KEY));

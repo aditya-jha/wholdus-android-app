@@ -92,7 +92,7 @@
     <string name="sort_newest_first">Newest First</string>
     <string name="sort_price_low_to_high">Price - Low to High</string>
     <string name="sort_price_high_to_low">Price - High to Low</string>
-    
+
     <!-- product Detail Activity -->
     <string name="fabric_key">Fabric</string>
     <string name="size_key">Sizes</string>
@@ -117,4 +117,17 @@
     <string name="speciality_key">Speciality</string>
     <string name="view_store_key">View Store</string>
 
+    <!-- handpicked fragment -->
+    <string name="like_key">Like</string>
+    <string name="dislike_key">Dislike</string>
+    <string name="set_price_key">Set Price</string>
+
+    <!-- cart dialog fragment -->
+    <string name="lot_size_key">Lot Size :</string>
+    <string name="lot_details_key">Details :</string>
+    <string name="price_per_piece">Price/pc</string>
+    <string name="pieces_key">Pieces</string>
+    <string name="total_price_key">Total Price</string>
+    <string name="cart_dialog_shipping_condition">*Shipping charge extra = Rs.35/kg</string>
+    <string name="cart_dialog_add_to_cart">ADD TO CART</string>
 </resources>

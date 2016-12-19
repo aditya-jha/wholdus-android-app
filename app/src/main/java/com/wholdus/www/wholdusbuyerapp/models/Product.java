@@ -57,6 +57,7 @@ public class Product {
         mUrl = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_URL));
         mImageCount = cursor.getInt(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_IMAGE_COUNT));
         mProductImageNumbers = TextUtils.split(cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_IMAGE_NUMBERS)), ",");
+        mName = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_NAME));
         mColours = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_COLOURS));
         mFabricGSM = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_FABRIC_GSM));
         mSizes = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_SIZES));
@@ -64,6 +65,14 @@ public class Product {
         mImagePathString = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_IMAGE_PATH))
                 + "%s/" + cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_IMAGE_NAME))
                 + "-%s.jpg";
+    }
+
+    public static ArrayList<Product> getProductsFromCursor(Cursor cursor) {
+        ArrayList<Product> products = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            products.add(new Product(cursor));
+        }
+        return products;
     }
 
     public ArrayList<String> getAllImageUrls(String imageSize) {
@@ -84,10 +93,6 @@ public class Product {
 
     public int getProductID() {
         return mProductID;
-    }
-
-    public String getName() {
-        return mName;
     }
 
     public float getPricePerUnit() {
@@ -149,6 +154,8 @@ public class Product {
     public void setSeller(Seller seller) {
         mSeller = seller;
     }
+
+    public String getName(){return mName;}
 
     public Category getCategory() {
         return mCategory;

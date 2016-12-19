@@ -179,7 +179,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     public void onResume() {
         super.onResume();
         Log.d(this.getClass().getSimpleName(), "onresume");
-        IntentFilter intentFilter = new IntentFilter(getString(R.string.catalog_data_updated));
+        IntentFilter intentFilter = new IntentFilter(getString(R.string.category_data_updated));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
         restoreRecyclerViewPosition();
     }
