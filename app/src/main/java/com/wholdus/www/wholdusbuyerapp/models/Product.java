@@ -29,6 +29,7 @@ public class Product {
     private String[] mProductImageNumbers;
     private int mImageCount;
     private String mImagePathString;
+    private String mName;
     private String mColours;
     private String mFabricGSM;
     private String mSizes;
@@ -39,6 +40,14 @@ public class Product {
 
     public Product(Cursor cursor) {
         setDataFromCursor(cursor);
+    }
+
+    public static ArrayList<Product> getProductsFromCursor(Cursor cursor) {
+        ArrayList<Product> products = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            products.add(new Product(cursor));
+        }
+        return products;
     }
 
     public void setDataFromCursor(Cursor cursor){
@@ -54,6 +63,7 @@ public class Product {
         mUrl = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_URL));
         mImageCount = cursor.getInt(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_IMAGE_COUNT));
         mProductImageNumbers = TextUtils.split(cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_IMAGE_NUMBERS)), ",");
+        mName = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_NAME));
         mColours = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_COLOURS));
         mFabricGSM = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_FABRIC_GSM));
         mSizes = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_SIZES));
@@ -102,6 +112,8 @@ public class Product {
     public String[] getProductImageNumbers(){return mProductImageNumbers;}
 
     public int getImageCount(){return mImageCount;}
+
+    public String getName(){return mName;}
 
     public String getColours(){return mColours;}
 

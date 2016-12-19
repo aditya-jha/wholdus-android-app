@@ -3,6 +3,7 @@ package com.wholdus.www.wholdusbuyerapp.services;
 import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -102,5 +103,14 @@ public class BuyerProductService extends IntentService {
         } catch (JSONException e) {
 
         }
+        sendBuyerProductDataUpdatedBroadCast(null);
+    }
+
+    private void sendBuyerProductDataUpdatedBroadCast(@Nullable String extra) {
+        Intent intent = new Intent(getString(R.string.buyer_product_data_updated));
+        if (extra != null) {
+            intent.putExtra("extra", extra);
+        }
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }
