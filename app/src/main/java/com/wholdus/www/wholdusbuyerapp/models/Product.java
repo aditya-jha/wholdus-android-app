@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.text.TextUtils;
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 
 import java.util.ArrayList;
 
@@ -74,7 +75,7 @@ public class Product {
     }
 
     public String getImageUrl(String imageSize, String imageNumber) {
-        return String.format(mImagePathString, imageSize, imageNumber);
+        return HelperFunctions.generateUrl(String.format(mImagePathString, imageSize, imageNumber));
     }
 
     public int get_ID() {
