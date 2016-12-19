@@ -54,12 +54,6 @@ public class ProductDetailActivity extends AppCompatActivity implements
         mDisplayImage = (NetworkImageView) findViewById(R.id.display_image);
         mDisplayImage.requestFocus();
 
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-
-//        mDisplayImage.setMinimumWidth((int)HelperFunctions.convertPixelsToDp(displayMetrics.widthPixels, this));
-//        mDisplayImage.setMinimumHeight((int)HelperFunctions.convertPixelsToDp(displayMetrics.widthPixels, this));
-
         new Thread(new Runnable() {
             @Override
             public void run() {
