@@ -7,4 +7,6 @@ package com.wholdus.www.wholdusbuyerapp.interfaces;
 public interface HandPickedListenerInterface {
 
     void fragmentCreated(String title);
+
+    void openProductDetails(int productID);
 }

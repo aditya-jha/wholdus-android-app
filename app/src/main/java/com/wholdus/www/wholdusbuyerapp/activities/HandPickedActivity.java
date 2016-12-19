@@ -1,5 +1,6 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.fragments.FilterFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.HandPickedFragment;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HandPickedListenerInterface;
@@ -93,6 +95,12 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
             ft.commit();
         }
 
+    }
+
+    public void openProductDetails(int productID){
+        Intent intent = new Intent(this, ProductDetailActivity.class);
+        intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME, productID);
+        startActivity(intent);
     }
 
 }
