@@ -42,7 +42,6 @@ public class ProductDetailActivity extends AppCompatActivity implements
     private ThumbImageAdapter mThumbImageAdapter;
 
     private static final int PRODUCT_LOADER = 10;
-    private static boolean mLayoutSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +57,13 @@ public class ProductDetailActivity extends AppCompatActivity implements
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
-        mDisplayImage.setMinimumWidth((int)HelperFunctions.convertPixelsToDp(displayMetrics.widthPixels, this));
-        mDisplayImage.setMinimumHeight((int)HelperFunctions.convertPixelsToDp(displayMetrics.widthPixels, this));
+//        mDisplayImage.setMinimumWidth((int)HelperFunctions.convertPixelsToDp(displayMetrics.widthPixels, this));
+//        mDisplayImage.setMinimumHeight((int)HelperFunctions.convertPixelsToDp(displayMetrics.widthPixels, this));
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 initToolbar();
-                mLayoutSet = false;
                 mThumbImagesRecyclerView = (RecyclerView) findViewById(R.id.thumb_images_recycler_view);
                 mLinearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
                 mThumbImagesRecyclerView.setLayoutManager(mLinearLayoutManager);
