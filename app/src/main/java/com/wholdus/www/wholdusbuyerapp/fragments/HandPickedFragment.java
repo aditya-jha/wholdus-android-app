@@ -20,6 +20,7 @@ import com.daprlabs.aaron.swipedeck.SwipeDeck;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductSwipeDeckAdapter;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HandPickedListenerInterface;
+import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProductCardListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProductsLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
@@ -31,7 +32,7 @@ import java.util.ArrayList;
  * Created by kaustubh on 17/12/16.
  */
 
-public class HandPickedFragment extends Fragment implements ProductCardListenerInterface {
+public class HandPickedFragment extends Fragment implements ProductCardListenerInterface, ItemClickListener {
 
     private HandPickedListenerInterface mListener;
     private final int PRODUCTS_DB_LOADER = 30;
@@ -138,7 +139,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         mSetStorePriceButton = (ImageButton) rootView.findViewById(R.id.hand_picked_set_price_button);
 
         mProductsArrayList = new ArrayList<>();
-        mProductSwipeDeckAdapter = new ProductSwipeDeckAdapter(getContext(), mProductsArrayList, this);
+        mProductSwipeDeckAdapter = new ProductSwipeDeckAdapter(getContext(), mProductsArrayList, this, this);
         mSwipeDeck.setAdapter(mProductSwipeDeckAdapter);
     }
 
@@ -186,5 +187,10 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             //TODO : only request products which are not in list
             return new ProductsLoader(getContext());
         }
+    }
+
+    @Override
+    public void itemClicked(int position, int id) {
+        mListener.openProductDetails(mProductsArrayList.get(position).getProductID());
     }
 }
