@@ -14,6 +14,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
+import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProductCardListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
@@ -30,13 +31,15 @@ public class ProductSwipeDeckAdapter extends BaseAdapter {
     private ArrayList<Product> mProductArrayList;
     private ImageLoader mImageLoader;
     private ProductCardListenerInterface mListener;
+    private ItemClickListener mItemClickListener;
 
     public ProductSwipeDeckAdapter(Context context, ArrayList<Product> productArrayList
-            , ProductCardListenerInterface listenerInterface){
+            , ProductCardListenerInterface listenerInterface, ItemClickListener itemClickListener){
         mContext = context;
         mProductArrayList = productArrayList;
         mImageLoader = VolleySingleton.getInstance(context).getImageLoader();
         mListener = listenerInterface;
+        mItemClickListener = itemClickListener;
     }
 
     @Override
@@ -73,8 +76,7 @@ public class ProductSwipeDeckAdapter extends BaseAdapter {
         Product product = mProductArrayList.get(position);
         holder.productFabric.setText(product.getFabricGSM());
         holder.productPrice.setText("Rs." + String.format("%.0f",product.getMinPricePerUnit()) + "/pc");
-        holder.productImageView.setImageUrl("http://api.wholdus.com/"
-                + product.getImageUrl(Constants.LARGE_IMAGE, "1"), mImageLoader);
+        holder.productImageView.setImageUrl(product.getImageUrl(Constants.LARGE_IMAGE, "1"), mImageLoader);
         holder.productImageView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
@@ -85,6 +87,12 @@ public class ProductSwipeDeckAdapter extends BaseAdapter {
         });
 
         mListener.cardCreated(product.getName());
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mItemClickListener.itemClicked(position, 0);
+            }
+        });
 
         return convertView;
     }
