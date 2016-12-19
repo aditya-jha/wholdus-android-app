@@ -9,4 +9,6 @@ public interface CategoryProductListenerInterface {
     void openFilter(boolean open);
 
     void sortClicked();
+
+    void applyFilter();
 }

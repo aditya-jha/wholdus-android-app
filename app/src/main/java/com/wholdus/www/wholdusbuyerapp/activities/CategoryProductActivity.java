@@ -146,6 +146,12 @@ public class CategoryProductActivity extends AppCompatActivity
         updateProducts();
     }
 
+    @Override
+    public void applyFilter() {
+        onBackPressed();
+        updateProducts();
+    }
+
     private void initToolbar() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -188,6 +194,7 @@ public class CategoryProductActivity extends AppCompatActivity
     private void updateProducts() {
         ProductsGridFragment fragment = (ProductsGridFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         if (fragment != null) {
+            fragment.refreshData();
             fragment.updateData();
         } else {
             // fragment is not added yet

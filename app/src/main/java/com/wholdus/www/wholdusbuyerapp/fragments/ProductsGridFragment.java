@@ -342,8 +342,9 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         return mTotalPages == -1 || mTotalPages > mPageNumber;
     }
 
-    private void refreshData() {
+    public void refreshData() {
         mPageNumber = 1;
+        mTotalPages = -1;
         resetAdapterState();
         getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
         Toast.makeText(getContext(), "Products updated", Toast.LENGTH_SHORT).show();

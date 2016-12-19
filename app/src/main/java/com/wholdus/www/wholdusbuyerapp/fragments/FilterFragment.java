@@ -150,7 +150,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.filter_button:
-                mListener.openFilter(false);
+                mListener.applyFilter();
                 break;
         }
     }
