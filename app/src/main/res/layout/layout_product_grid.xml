@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:contentDescription="like"
-                android:src="@drawable/ic_favorite_border_white_28dp" />
+                android:src="@drawable/ic_favorite_border_black_24dp" />
 
             <ImageButton
                 android:id="@+id/cart_image_view"
@@ -46,8 +46,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:contentDescription="cart"
-                android:src="@drawable/ic_local_grocery_store_white_24dp" />
+                android:contentDescription="@string/add_to_cart"
+                android:src="@drawable/ic_add_shopping_cart_black_24dp" />
 
             <ImageButton
                 android:id="@+id/share_image_view"
@@ -56,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:contentDescription="share"
-                android:src="@drawable/ic_share_white_28dp" />
+                android:src="@drawable/ic_share_black_24dp" />
         </LinearLayout>
 
         <View
@@ -66,6 +66,7 @@
 
         <TextView
             android:id="@+id/product_name"
+            style="@style/AppTheme.TitleText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:text="Black Cotton Kurti" />
@@ -74,12 +75,12 @@
             android:id="@+id/product_fabric"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="Black Cotton Kurti" />
+            android:paddingLeft="@dimen/title_text_padding" />
 
         <TextView
             android:id="@+id/product_price"
+            style="@style/AppTheme.TitleText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="Black Cotton Kurti" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 </android.support.v7.widget.CardView>

@@ -21,7 +21,7 @@
 
     <Button
         android:id="@+id/login_submit_button"
-        style="@style/Widget.AppCompat.Button.Colored"
+        style="@style/AppTheme.ColoredButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/login_fragment_header" />

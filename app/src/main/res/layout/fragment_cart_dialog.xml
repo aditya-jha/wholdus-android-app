@@ -32,7 +32,7 @@
             <View
                 android:layout_width="6dp"
                 android:layout_height="6dp"
-                android:background="@drawable/nonselected_dot"
+                android:background="@drawable/nonselected_dot_6dp"
                 android:layout_marginTop="8dp"/>
 
             <TextView
@@ -64,7 +64,7 @@
             <View
                 android:layout_width="6dp"
                 android:layout_height="6dp"
-                android:background="@drawable/nonselected_dot"
+                android:background="@drawable/nonselected_dot_6dp"
                 android:layout_marginTop="8dp"/>
 
             <TextView

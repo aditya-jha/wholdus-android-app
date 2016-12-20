@@ -125,7 +125,7 @@
     <string name="set_price_key">Set Price</string>
 
     <!-- cart dialog fragment -->
-    <string name="lot_size_key">Lot Size :</string>
+    <string name="lot_size_key">Lot Size</string>
     <string name="lot_details_key">Details :</string>
     <string name="price_per_piece">Price/pc</string>
     <string name="pieces_key">Pieces</string>
