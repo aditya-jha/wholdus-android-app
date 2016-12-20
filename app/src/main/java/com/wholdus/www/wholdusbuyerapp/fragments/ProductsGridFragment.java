@@ -24,7 +24,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
-import com.wholdus.www.wholdusbuyerapp.activities.AccountActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.CheckoutActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.ProductDetailActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.StoreActivity;
@@ -35,7 +34,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
-import com.wholdus.www.wholdusbuyerapp.interfaces.EndlessRecyclerViewScrollListener;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.EndlessRecyclerViewScrollListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.GridProductsLoader;
 import com.wholdus.www.wholdusbuyerapp.models.GridProductModel;

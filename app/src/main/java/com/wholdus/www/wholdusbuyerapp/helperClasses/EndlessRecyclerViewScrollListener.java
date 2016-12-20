@@ -1,4 +1,4 @@
-package com.wholdus.www.wholdusbuyerapp.interfaces;
+package com.wholdus.www.wholdusbuyerapp.helperClasses;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
