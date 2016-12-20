@@ -81,7 +81,7 @@ public class IntroActivity extends FragmentActivity implements IntroSlideFragmen
 
         for(int i=0; i<TOTAL_DOTS; i++) {
             mDots[i] = new ImageView(this);
-            mDots[i].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.nonselected_dot));
+            mDots[i].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.nonselected_dot_6dp));
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -96,7 +96,7 @@ public class IntroActivity extends FragmentActivity implements IntroSlideFragmen
     }
 
     private void setIntroPagerDots(int position) {
-        mDots[mLastIntroPagerPosition].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.nonselected_dot));
+        mDots[mLastIntroPagerPosition].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.nonselected_dot_6dp));
         mDots[position].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.selected_dot));
         mLastIntroPagerPosition = position;
     }

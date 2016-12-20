@@ -5,9 +5,9 @@
     android:useLevel="true">
 
     <size
-        android:width="12dp"
-        android:height="12dp"></size>
+        android:width="6dp"
+        android:height="6dp" />
 
-    <solid android:color="@android:color/black"></solid>
+    <solid android:color="@android:color/black" />
 
 </shape>

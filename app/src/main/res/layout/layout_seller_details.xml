@@ -37,8 +37,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:drawableLeft="@drawable/ic_brightness_1_black_18dp"
-                    android:drawableStart="@drawable/ic_brightness_1_black_18dp"
+                    android:drawableLeft="@drawable/nonselected_dot_6dp"
+                    android:drawableStart="@drawable/nonselected_dot_6dp"
                     android:text="@string/location_key" />
 
                 <TextView
@@ -57,8 +57,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:drawableLeft="@drawable/ic_brightness_1_black_18dp"
-                    android:drawableStart="@drawable/ic_brightness_1_black_18dp"
+                    android:drawableLeft="@drawable/nonselected_dot_6dp"
+                    android:drawableStart="@drawable/nonselected_dot_6dp"
                     android:text="@string/speciality_key" />
 
                 <TextView

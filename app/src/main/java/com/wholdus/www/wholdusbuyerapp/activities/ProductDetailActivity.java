@@ -1,10 +1,11 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.content.Intent;
+import android.graphics.Rect;
+import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -28,7 +30,7 @@ import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 import java.util.ArrayList;
 
 public class ProductDetailActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Product>, ItemClickListener {
+        LoaderManager.LoaderCallbacks<Product>, ItemClickListener, View.OnLayoutChangeListener {
 
     private int mProductID;
     private Toolbar mToolbar;
@@ -36,11 +38,10 @@ public class ProductDetailActivity extends AppCompatActivity implements
     private ImageLoader mImageLoader;
     private NetworkImageView mDisplayImage;
     private RecyclerView mThumbImagesRecyclerView;
-    private LinearLayoutManager mLinearLayoutManager;
-    private ThumbImageAdapter mThumbImageAdapter;
     private TextView mProductName, mProductPrice, mProductMrp, mLotSize, mLotDescription,
             mProductFabric, mProductColor, mProductSizes, mProductBrand,
             mProductPattern, mProductStyle, mProductWork, mSellerLocation, mSellerSpeciality;
+    private ProgressBar mDisplayImageLoading;
 
     private static final int PRODUCT_LOADER = 10;
 
@@ -51,13 +52,14 @@ public class ProductDetailActivity extends AppCompatActivity implements
 
         setProductID();
 
+        initToolbar();
+
         mImageLoader = VolleySingleton.getInstance(this).getImageLoader();
         mDisplayImage = (NetworkImageView) findViewById(R.id.display_image);
-        mDisplayImage.requestFocus();
+        mDisplayImageLoading = (ProgressBar) findViewById(R.id.display_image_progress);
 
-        initToolbar();
         mThumbImagesRecyclerView = (RecyclerView) findViewById(R.id.thumb_images_recycler_view);
-        mLinearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
         mThumbImagesRecyclerView.setLayoutManager(mLinearLayoutManager);
 
         mProductName = (TextView) findViewById(R.id.product_name);
@@ -122,8 +124,24 @@ public class ProductDetailActivity extends AppCompatActivity implements
 
     @Override
     public void itemClicked(int position, int id) {
+        mDisplayImage.addOnLayoutChangeListener(this);
+        mDisplayImageLoading.setVisibility(View.VISIBLE);
+        mDisplayImage.setImageDrawable(null);
         mDisplayImage.setImageUrl(mProduct.getImageUrl(Constants.LARGE_IMAGE,
                 mProduct.getProductImageNumbers()[position]), mImageLoader);
+    }
+
+    @Override
+    public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+        switch (view.getId()) {
+            default:
+                if (mDisplayImage.getDrawable() != null) {
+                    mDisplayImageLoading.setVisibility(View.INVISIBLE);
+                    mDisplayImage.removeOnLayoutChangeListener(this);
+                } else {
+                    mDisplayImageLoading.setVisibility(View.VISIBLE);
+                }
+        }
     }
 
     private void initToolbar() {
@@ -158,14 +176,21 @@ public class ProductDetailActivity extends AppCompatActivity implements
             // Remove Thumb Image Section from View
             mThumbImagesRecyclerView.setVisibility(View.GONE);
         } else {
-            mDisplayImage.setImageUrl(mProduct.getImageUrl(Constants.LARGE_IMAGE,
-                    mProduct.getProductImageNumbers()[0]), mImageLoader);
+            itemClicked(0, -1); // load image
 
             if (imageUrls.size() == 1) {
                 // Remove Thumb Image Section from View
                 mThumbImagesRecyclerView.setVisibility(View.GONE);
             } else {
-                mThumbImageAdapter = new ThumbImageAdapter(this, imageUrls, this);
+                mThumbImagesRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+                    @Override
+                    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                        outRect.left = 15;
+                    }
+                });
+                Log.d("image urls", imageUrls.size() + "");
+
+                ThumbImageAdapter mThumbImageAdapter = new ThumbImageAdapter(this, imageUrls, this);
                 mThumbImagesRecyclerView.setAdapter(mThumbImageAdapter);
             }
         }
