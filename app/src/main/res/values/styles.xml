@@ -53,9 +53,13 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="AppTheme.FooterButton" parent="Base.Widget.AppCompat.Button.Borderless">
+    <style name="AppTheme.BorderlessButton" parent="Base.Widget.AppCompat.Button.Borderless">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="AppTheme.ColoredButton" parent="Base.Widget.AppCompat.Button.Colored">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">16sp</item>
+    </style>
 </resources>
