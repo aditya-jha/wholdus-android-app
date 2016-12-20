@@ -1,6 +1,7 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.content.Intent;
+import android.graphics.Rect;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -19,6 +21,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.ThumbImageAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
+import com.wholdus.www.wholdusbuyerapp.decorators.GridItemDecorator;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProductLoader;
@@ -41,6 +44,7 @@ public class ProductDetailActivity extends AppCompatActivity implements
     private TextView mProductName, mProductPrice, mProductMrp, mLotSize, mLotDescription,
             mProductFabric, mProductColor, mProductSizes, mProductBrand,
             mProductPattern, mProductStyle, mProductWork, mSellerLocation, mSellerSpeciality;
+    private ProgressBar mDisplayImageLoading;
 
     private static final int PRODUCT_LOADER = 10;
 
@@ -53,7 +57,18 @@ public class ProductDetailActivity extends AppCompatActivity implements
 
         mImageLoader = VolleySingleton.getInstance(this).getImageLoader();
         mDisplayImage = (NetworkImageView) findViewById(R.id.display_image);
-        mDisplayImage.requestFocus();
+        mDisplayImage.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                if (mDisplayImage.getDrawable() != null) {
+                    mDisplayImageLoading.setVisibility(View.GONE);
+                } else {
+                    mDisplayImageLoading.setVisibility(View.VISIBLE);
+                }
+
+            }
+        });
+        mDisplayImageLoading = (ProgressBar) findViewById(R.id.display_image_progress);
 
         initToolbar();
         mThumbImagesRecyclerView = (RecyclerView) findViewById(R.id.thumb_images_recycler_view);
@@ -122,6 +137,8 @@ public class ProductDetailActivity extends AppCompatActivity implements
 
     @Override
     public void itemClicked(int position, int id) {
+        mDisplayImageLoading.setVisibility(View.VISIBLE);
+        mDisplayImage.setImageDrawable(null);
         mDisplayImage.setImageUrl(mProduct.getImageUrl(Constants.LARGE_IMAGE,
                 mProduct.getProductImageNumbers()[position]), mImageLoader);
     }
@@ -158,13 +175,20 @@ public class ProductDetailActivity extends AppCompatActivity implements
             // Remove Thumb Image Section from View
             mThumbImagesRecyclerView.setVisibility(View.GONE);
         } else {
-            mDisplayImage.setImageUrl(mProduct.getImageUrl(Constants.LARGE_IMAGE,
-                    mProduct.getProductImageNumbers()[0]), mImageLoader);
+            itemClicked(0, -1); // load image
 
             if (imageUrls.size() == 1) {
                 // Remove Thumb Image Section from View
                 mThumbImagesRecyclerView.setVisibility(View.GONE);
             } else {
+                mThumbImagesRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+                    @Override
+                    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                        outRect.left = 15;
+                    }
+                });
+                Log.d("image urls", imageUrls.size() + "");
+
                 mThumbImageAdapter = new ThumbImageAdapter(this, imageUrls, this);
                 mThumbImagesRecyclerView.setAdapter(mThumbImageAdapter);
             }

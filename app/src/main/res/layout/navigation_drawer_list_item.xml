@@ -11,9 +11,9 @@
         android:layout_height="@dimen/list_item_height"
         android:layout_marginLeft="@dimen/list_item_height"
         android:layout_weight="1"
-        android:drawableLeft="@drawable/nonselected_dot"
+        android:drawableLeft="@drawable/nonselected_dot_6dp"
         android:drawablePadding="@dimen/activity_horizontal_margin"
-        android:drawableStart="@drawable/nonselected_dot"
+        android:drawableStart="@drawable/nonselected_dot_6dp"
         android:gravity="center_vertical"
         tools:text="@string/app_name" />
 
