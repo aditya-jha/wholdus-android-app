@@ -12,7 +12,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:isScrollContainer="false">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -46,13 +47,13 @@
             android:src="@drawable/ic_favorite_border_white_28dp" />
 
         <Button
-            style="@style/Base.Widget.AppCompat.Button.Colored"
+            style="@style/AppTheme.ColoredButton"
             android:id="@+id/cart_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_local_grocery_store_white_28dp"
-            android:drawableStart="@drawable/ic_local_grocery_store_white_28dp"
+            android:drawableLeft="@drawable/ic_add_shopping_cart_white_28dp"
+            android:drawableStart="@drawable/ic_add_shopping_cart_white_28dp"
             android:text="@string/add_to_cart" />
 
         <ImageButton

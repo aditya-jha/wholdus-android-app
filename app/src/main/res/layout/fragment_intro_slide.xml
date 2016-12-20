@@ -10,7 +10,7 @@
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="4"
+        android:layout_weight="2"
         android:scaleType="fitCenter"
         tools:scaleType="fitCenter"
         tools:src="@drawable/wholdus_logo" />
@@ -18,7 +18,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="1"
         android:orientation="vertical">
 
         <TextView
@@ -33,12 +33,14 @@
 
         <Button
             android:id="@+id/startButton"
+            style="@style/AppTheme.ColoredButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:padding="@dimen/activity_vertical_margin"
             android:text="@string/start_button"
+            android:textColor="@android:color/white"
             android:textSize="@dimen/intro_text_size" />
     </LinearLayout>
 
