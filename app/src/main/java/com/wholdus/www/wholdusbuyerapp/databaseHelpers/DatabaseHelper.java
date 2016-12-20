@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategorySellersTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.SellerAddressTable;
 
@@ -221,8 +220,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     ProductsTable.COLUMN_PACKAGING_DETAILS + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_LENGTH + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_LIKE_STATUS + INT_TYPE + COMMA_SEP +
-                    ProductsTable.COLUMN_CREATED_AT + TEXT_TYPE + COMMA_SEP +
-                    ProductsTable.COLUMN_UPDATED_AT + TEXT_TYPE + " )";
+                    ProductsTable.COLUMN_PRODUCT_CREATED_AT + TEXT_TYPE + COMMA_SEP +
+                    ProductsTable.COLUMN_PRODUCT_UPDATED_AT + TEXT_TYPE + " )";
 
     private static final String SQL_DROP_PRODUCTS_TABLE =
             "DROP TABLE IF EXISTS " + ProductsTable.TABLE_NAME;

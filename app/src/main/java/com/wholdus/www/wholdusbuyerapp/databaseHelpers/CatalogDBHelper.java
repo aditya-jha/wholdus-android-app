@@ -50,7 +50,7 @@ public class CatalogDBHelper extends BaseDBHelper {
             ProductsTable.COLUMN_LOT_DESCRIPTION, ProductsTable.COLUMN_DESCRIPTION, ProductsTable.WORK_DECORATION_TYPE, ProductsTable.COLUMN_NECK_COLLAR_TYPE,
             ProductsTable.COLUMN_DISPATCHED_IN, ProductsTable.COLUMN_REMARKS, ProductsTable.COLUMN_SELLER_CATALOG_NUMBER, ProductsTable.COLUMN_SLEEVE,
             ProductsTable.COLUMN_GENDER, ProductsTable.COLUMN_WEIGHT_PER_UNIT, ProductsTable.COLUMN_PACKAGING_DETAILS, ProductsTable.COLUMN_LENGTH,
-            ProductsTable.COLUMN_CREATED_AT, ProductsTable.COLUMN_UPDATED_AT};
+            ProductsTable.COLUMN_PRODUCT_CREATED_AT, ProductsTable.COLUMN_PRODUCT_UPDATED_AT};
 
 
     public Cursor getAllCategories(boolean productsCount) {
@@ -208,12 +208,12 @@ public class CatalogDBHelper extends BaseDBHelper {
         if (mPresentProductIDs != null) {
             return mPresentProductIDs;
         }
-        String[] columns = {ProductsTable.COLUMN_PRODUCT_ID, ProductsTable.COLUMN_UPDATED_AT};
+        String[] columns = {ProductsTable.COLUMN_PRODUCT_ID, ProductsTable.COLUMN_PRODUCT_UPDATED_AT};
         Cursor cursor = getProductData(-1, null, null, -1, -1, null, null, null, -1, -1, null, -1, -1, columns);
         SparseArray<String> productIDs = new SparseArray<>();
         while (cursor.moveToNext()) {
             productIDs.put(cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_PRODUCT_ID)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_UPDATED_AT)));
+                    cursor.getString(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_PRODUCT_UPDATED_AT)));
         }
         mPresentProductIDs = productIDs;
         return productIDs;
@@ -336,7 +336,7 @@ public class CatalogDBHelper extends BaseDBHelper {
                 if (presentProducts.get(productID) == null) { // insert
                     db.insert(ProductsTable.TABLE_NAME, null, cv);
                     insertedUpdated++;
-                } else if (!presentProducts.get(productID).equals(product.getString(ProductsTable.COLUMN_UPDATED_AT))) { // update
+                } else if (!presentProducts.get(productID).equals(product.getString(ProductsTable.COLUMN_PRODUCT_UPDATED_AT))) { // update
                     db.update(ProductsTable.TABLE_NAME,
                             cv,
                             ProductsTable.COLUMN_PRODUCT_ID + " = " + productID,
@@ -365,7 +365,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         }
         // TODO: Save category data
         String productUpdatedAtLocal = getPresentProductIDs().get(productID);
-        String productUpdatedAtServer = product.getString(ProductsTable.COLUMN_UPDATED_AT);
+        String productUpdatedAtServer = product.getString(ProductsTable.COLUMN_PRODUCT_UPDATED_AT);
         if (productUpdatedAtLocal == null) { // insert
             ContentValues values = getProductContentValues(product);
             db.insert(ProductsTable.TABLE_NAME, null, values);
@@ -476,8 +476,8 @@ public class CatalogDBHelper extends BaseDBHelper {
         values.put(ProductsTable.COLUMN_WEIGHT_PER_UNIT, productDetails.getDouble(ProductsTable.COLUMN_WEIGHT_PER_UNIT));
         values.put(ProductsTable.COLUMN_PACKAGING_DETAILS, productDetails.getString(ProductsTable.COLUMN_PACKAGING_DETAILS));
         values.put(ProductsTable.COLUMN_LENGTH, productDetails.getString(ProductsTable.COLUMN_LENGTH));
-        values.put(ProductsTable.COLUMN_CREATED_AT, product.getString(ProductsTable.COLUMN_CREATED_AT));
-        values.put(ProductsTable.COLUMN_UPDATED_AT, product.getString(ProductsTable.COLUMN_UPDATED_AT));
+        values.put(ProductsTable.COLUMN_PRODUCT_CREATED_AT, product.getString(ProductsTable.COLUMN_PRODUCT_CREATED_AT));
+        values.put(ProductsTable.COLUMN_PRODUCT_UPDATED_AT, product.getString(ProductsTable.COLUMN_PRODUCT_UPDATED_AT));
 
         return values;
     }

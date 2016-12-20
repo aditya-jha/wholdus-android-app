@@ -64,8 +64,8 @@ public class ProductDetails {
         mWeightPerUnit = cursor.getFloat(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_WEIGHT_PER_UNIT));
         mPackagingDetails = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_PACKAGING_DETAILS));
         mLength = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_LENGTH));
-        mCreatedAt = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_CREATED_AT));
-        mUpdatedAt = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_UPDATED_AT));
+        mCreatedAt = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_PRODUCT_CREATED_AT));
+        mUpdatedAt = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_PRODUCT_UPDATED_AT));
     }
 
     public int getProductDetailsID(){return mProductDetailsID;}
