@@ -185,7 +185,9 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         @Override
         public Loader<ArrayList<Product>> onCreateLoader(final int id, Bundle args) {
             //TODO : only request products which are not in list
-            return new ProductsLoader(getContext());
+            ArrayList<Integer> responseCodes = new ArrayList<>();
+            responseCodes.add(0);
+            return new ProductsLoader(getContext(), responseCodes);
         }
     }
 

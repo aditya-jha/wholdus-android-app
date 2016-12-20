@@ -2,6 +2,7 @@ package com.wholdus.www.wholdusbuyerapp.loaders;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.Nullable;
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
@@ -23,7 +24,6 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
             CatalogContract.ProductsTable.COLUMN_PRODUCT_ID,
             CatalogContract.ProductsTable.COLUMN_MIN_PRICE_PER_UNIT,
             CatalogContract.ProductsTable.COLUMN_FABRIC_GSM,
-            CatalogContract.ProductsTable.COLUMN_LIKE_STATUS,
             CatalogContract.ProductsTable.COLUMN_IMAGE_COUNT,
             CatalogContract.ProductsTable.COLUMN_IMAGE_NAME,
             CatalogContract.ProductsTable.COLUMN_IMAGE_NUMBERS,
@@ -31,10 +31,12 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
     };
 
     private int mOffset, mLimit;
+    private ArrayList<Integer> mResponseCodes;
 
-    public GridProductsLoader(Context context, int pageNumber, int limit) {
+    public GridProductsLoader(Context context, int pageNumber, int limit, @Nullable ArrayList<Integer> responseCodes) {
         super(context);
         mLimit = limit;
+        mResponseCodes = responseCodes;
         if (pageNumber > 0) {
             mOffset = (pageNumber - 1) * mLimit;
         } else {
@@ -49,7 +51,12 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
         HashSet<Integer> categoryID = new HashSet<>();
         categoryID.add(FilterClass.getCategoryID());
 
-        Cursor cursor = catalogDBHelper.getProductData(-1,
+        Cursor cursor = catalogDBHelper.getProductData(null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 FilterClass.getSelectedItems("Brand"),
                 categoryID,
                 FilterClass.getMinPriceFilter(),
@@ -57,7 +64,10 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
                 FilterClass.getSelectedItems("Fabric"),
                 FilterClass.getSelectedItems("Colors"),
                 FilterClass.getSelectedItems("Sizes"),
+                mResponseCodes, //TODO : Put appropriate response codes
                 0,
+                1,
+                1,
                 1,
                 null, // ORDER BY
                 mLimit,

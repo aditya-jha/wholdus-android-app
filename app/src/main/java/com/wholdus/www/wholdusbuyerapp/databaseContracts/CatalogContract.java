@@ -36,7 +36,6 @@ public class CatalogContract {
         public static final String COLUMN_IMAGE_NUMBERS = "image_numbers";
         public static final String COLUMN_IMAGE_PATH = "image_path";
 
-        public static final String COLUMN_LIKE_STATUS = "like_status";
         public static final String COLUMN_WARRANTY = "warranty";
         public static final String COLUMN_SPECIAL_FEATURE = "special_feature";
         public static final String COLUMN_AVAILABILITY = "availability";
@@ -81,6 +80,7 @@ public class CatalogContract {
         public static final String TABLE_NAME = "categories";
         public static final String COLUMN_CATEGORY_ID = "categoryID";
 
+        public static final String COLUMN_SHOW_ONLINE = "show_online";
         public static final String COLUMN_CATEGORY_NAME = "display_name";
         public static final String COLUMN_URL = "url";
         public static final String COLUMN_SLUG = "slug";

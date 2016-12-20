@@ -17,15 +17,22 @@ import java.util.HashSet;
 
 public class ProductsLoader extends AbstractLoader<ArrayList<Product>> {
 
-    public ProductsLoader(Context context) {
-        super(context);
+    private ArrayList<Integer> mResponseCodes;
 
+    public ProductsLoader(Context context, ArrayList<Integer> responseCodes) {
+        super(context);
+        mResponseCodes = responseCodes;
     }
     @Override
     public ArrayList<Product> loadInBackground() {
         CatalogDBHelper catalogDBHelper = new CatalogDBHelper(getContext());
 
-        Cursor cursor = catalogDBHelper.getProductData(-1,
+        Cursor cursor = catalogDBHelper.getProductData(null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 null,
                 null,
                 -1,
@@ -33,8 +40,11 @@ public class ProductsLoader extends AbstractLoader<ArrayList<Product>> {
                 null,
                 null,
                 null,
+                mResponseCodes,
                 0,
                 1,
+                -1,
+                -1,
                 null, // ORDER BY
                 10,
                 0,

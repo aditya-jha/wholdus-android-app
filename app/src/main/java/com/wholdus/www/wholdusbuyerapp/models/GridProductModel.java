@@ -21,7 +21,6 @@ public class GridProductModel {
     private String mName;
     private Double mPrice;
     private String mFabric;
-    private boolean mLikeStatus;
     private int mCartCount;
 
     public GridProductModel() {
@@ -34,7 +33,6 @@ public class GridProductModel {
         mName = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_NAME));
         mPrice = cursor.getDouble(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_MIN_PRICE_PER_UNIT));
         mFabric = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_FABRIC_GSM));
-        mLikeStatus = cursor.getInt(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_LIKE_STATUS)) > 0;
         mImageUrl = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_IMAGE_PATH))
                 + "%s/" + cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_IMAGE_NAME))
                 + "-%s.jpg";
@@ -71,10 +69,6 @@ public class GridProductModel {
 
     public String getFabric() {
         return mFabric;
-    }
-
-    public boolean isLiked() {
-        return mLikeStatus;
     }
 
     public int getCartCount() {

@@ -12,7 +12,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wholdus.www.wholdusbuyerapp.R;
-import com.wholdus.www.wholdusbuyerapp.databaseHelpers.BuyerProductsDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
@@ -96,6 +95,7 @@ public class BuyerProductService extends IntentService {
     }
 
     private void saveResponseToDB(String response) {
+        /*
         BuyerProductsDBHelper dbHelper = new BuyerProductsDBHelper(this);
 
         try {
@@ -104,6 +104,7 @@ public class BuyerProductService extends IntentService {
 
         }
         sendBuyerProductDataUpdatedBroadCast(null);
+        */
     }
 
     private void sendBuyerProductDataUpdatedBroadCast(@Nullable String extra) {
