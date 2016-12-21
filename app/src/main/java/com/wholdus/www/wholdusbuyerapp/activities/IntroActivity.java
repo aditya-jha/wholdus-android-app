@@ -27,10 +27,6 @@ public class IntroActivity extends FragmentActivity implements IntroSlideFragmen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
 
-        if(savedInstanceState != null) {
-            Log.v("bundle ", savedInstanceState.toString());
-            return;
-        }
         initIntroPagerDots();
         initViewPagerSettings();
     }
