@@ -231,7 +231,10 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public Loader<ArrayList<GridProductModel>> onCreateLoader(int id, Bundle args) {
-        return new GridProductsLoader(getContext(), mPageNumber, mLimit);
+        ArrayList<Integer> responseCodes = new ArrayList<>();
+        responseCodes.add(0);
+        responseCodes.add(1);
+        return new GridProductsLoader(getContext(), mPageNumber, mLimit, responseCodes);
     }
 
     @Override

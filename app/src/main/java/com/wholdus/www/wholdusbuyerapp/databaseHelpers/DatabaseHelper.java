@@ -4,11 +4,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategorySellersTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.SellerAddressTable;
 
-import static com.wholdus.www.wholdusbuyerapp.databaseContracts.BuyerProductsContract.BuyerProductTable;
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract.OrderItemsTable;
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract.OrdersTable;
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract.SubordersTable;
@@ -220,9 +218,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     ProductsTable.COLUMN_WEIGHT_PER_UNIT + REAL_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_PACKAGING_DETAILS + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_LENGTH + TEXT_TYPE + COMMA_SEP +
-                    ProductsTable.COLUMN_LIKE_STATUS + INT_TYPE + COMMA_SEP +
-                    ProductsTable.COLUMN_CREATED_AT + TEXT_TYPE + COMMA_SEP +
-                    ProductsTable.COLUMN_UPDATED_AT + TEXT_TYPE + " )";
+                    ProductsTable.COLUMN_PRODUCT_CREATED_AT + TEXT_TYPE + COMMA_SEP +
+                    ProductsTable.COLUMN_PRODUCT_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
+                    ProductsTable.COLUMN_BUYER_PRODUCT_ID + INT_TYPE + COMMA_SEP +
+                    ProductsTable.COLUMN_BUYER_PRODUCT_CREATED_AT + TEXT_TYPE + COMMA_SEP +
+                    ProductsTable.COLUMN_BUYER_PRODUCT_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
+                    ProductsTable.COLUMN_BUYER_PRODUCT_IS_ACTIVE + INT_TYPE + COMMA_SEP +
+                    ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID + INT_TYPE + COMMA_SEP +
+                    ProductsTable.COLUMN_STORE_MARGIN + REAL_TYPE + COMMA_SEP +
+                    ProductsTable.COLUMN_HAS_SWIPED + INT_TYPE + COMMA_SEP +
+                    ProductsTable.COLUMN_RESPONDED_FROM + INT_TYPE + COMMA_SEP +
+                    ProductsTable.COLUMN_RESPONSE_CODE + INT_TYPE + COMMA_SEP +
+                    ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_CREATED_AT + TEXT_TYPE + COMMA_SEP +
+                    ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
+                    ProductsTable.COLUMN_SYNCED + INT_TYPE +
+                    " )";
 
     private static final String SQL_DROP_PRODUCTS_TABLE =
             "DROP TABLE IF EXISTS " + ProductsTable.TABLE_NAME;
@@ -232,6 +242,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + CategoriesTable.TABLE_NAME + " (" +
                     CategoriesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
                     CategoriesTable.COLUMN_CATEGORY_ID + INT_TYPE + COMMA_SEP +
+                    CategoriesTable.COLUMN_SHOW_ONLINE + INT_TYPE + COMMA_SEP +
                     CategoriesTable.COLUMN_CATEGORY_NAME + TEXT_TYPE + COMMA_SEP +
                     CategoriesTable.COLUMN_URL + TEXT_TYPE + COMMA_SEP +
                     CategoriesTable.COLUMN_IMAGE_URL + TEXT_TYPE + COMMA_SEP +
@@ -275,20 +286,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String SQL_DROP_SELLER_ADDRESS_TABLE =
             "DROP TABLE IF EXISTS " + SellerAddressTable.TABLE_NAME;
-
-    private static final String SQL_CREATE_BUYER_PRODUCT_TABLE =
-            "CREATE TABLE " + BuyerProductTable.TABLE_NAME + " (" +
-                    BuyerProductTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
-                    BuyerProductTable.COLUMN_BUYER_PRODUCT_ID + INT_TYPE + COMMA_SEP +
-                    BuyerProductTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID + INT_TYPE + COMMA_SEP +
-                    BuyerProductTable.COLUMN_PRODUCT_ID + INT_TYPE + COMMA_SEP +
-                    BuyerProductTable.COLUMN_STORE_DISCOUNT + REAL_TYPE + COMMA_SEP +
-                    BuyerProductTable.COLUMN_HAS_SWIPED + INT_TYPE + COMMA_SEP +
-                    BuyerProductTable.COLUMN_RESPONSE_CODE + INT_TYPE + COMMA_SEP +
-                    BuyerProductTable.COLUMN_SYNCED + INT_TYPE + " )";
-
-    private static final String SQL_DROP_BUYER_PRODUCT_TABLE =
-            "DROP TABLE IF EXISTS " + BuyerProductTable.TABLE_NAME;
 
     private static final String SQL_CREATE_CATEGORY_SELLER_TABLE =
             "CREATE TABLE " + CategorySellersTable.TABLE_NAME + " (" +
@@ -344,7 +341,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_SELLER_ADDRESS_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_CATEGORY_SELLER_TABLE);
 
-        sqLiteDatabase.execSQL(SQL_CREATE_BUYER_PRODUCT_TABLE);
     }
 
     @Override
@@ -364,7 +360,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_DROP_SELLER_ADDRESS_TABLE);
         sqLiteDatabase.execSQL(SQL_DROP_CATEGORY_SELLER_TABLE);
 
-        sqLiteDatabase.execSQL(SQL_DROP_BUYER_PRODUCT_TABLE);
 
         onCreate(sqLiteDatabase);
     }
