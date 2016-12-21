@@ -165,7 +165,7 @@ public class ProductDetailActivity extends AppCompatActivity implements
         ArrayList<String> imageUrls = mProduct.getAllImageUrls(Constants.EXTRA_SMALL_IMAGE);
         if (imageUrls.size() == 0) {
             // no Image is present, set dummy image
-            mDisplayImage.setImageResource(R.drawable.slide_1); /* TODO: Save Dummy Image */
+            mDisplayImage.setImageResource(R.drawable.image_not_available);
 
             // Remove Thumb Image Section from View
             mThumbImagesRecyclerView.setVisibility(View.GONE);
