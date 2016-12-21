@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.ThumbImageAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
@@ -92,6 +93,12 @@ public class ProductDetailActivity extends AppCompatActivity implements
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        mProduct = null;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_bar_checkout:
@@ -106,7 +113,8 @@ public class ProductDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        //super.onBackPressed();
+        finish();
     }
 
     @Override
@@ -127,11 +135,6 @@ public class ProductDetailActivity extends AppCompatActivity implements
 
     @Override
     public void itemClicked(int position, int id) {
-//        mDisplayImage.addOnLayoutChangeListener(this);
-//        mDisplayImageLoading.setVisibility(View.VISIBLE);
-//        mDisplayImage.setImageDrawable(null);
-//        mDisplayImage.setImageUrl(mProduct.getImageUrl(Constants.LARGE_IMAGE,
-//                mProduct.getProductImageNumbers()[position]), mImageLoader);
         loadDisplayImage(position);
     }
 
@@ -149,8 +152,13 @@ public class ProductDetailActivity extends AppCompatActivity implements
     }
 
     private void loadDisplayImage(int position) {
-        Glide.with(this).load(mProduct.getImageUrl(Constants.LARGE_IMAGE,
-                mProduct.getProductImageNumbers()[position])).placeholder(R.drawable.progress_drawable).into(mDisplayImage);
+        Glide.with(this)
+                .load(mProduct.getImageUrl(Constants.LARGE_IMAGE, mProduct.getProductImageNumbers()[position]))
+                .crossFade()
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .thumbnail(0.05f)
+                .into(mDisplayImage);
     }
 
     private void initToolbar() {
@@ -185,7 +193,7 @@ public class ProductDetailActivity extends AppCompatActivity implements
             // Remove Thumb Image Section from View
             mThumbImagesRecyclerView.setVisibility(View.GONE);
         } else {
-            itemClicked(0, -1); // load image
+            loadDisplayImage(0); // load image
 
             if (imageUrls.size() == 1) {
                 // Remove Thumb Image Section from View
@@ -218,7 +226,5 @@ public class ProductDetailActivity extends AppCompatActivity implements
         mProductPattern.setText(mProduct.getProductDetails().getPackagingDetails());
         mProductStyle.setText(mProduct.getProductDetails().getStyle());
         mProductWork.setText(mProduct.getProductDetails().getWorkDecorationType());
-
-
     }
 }
