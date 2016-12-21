@@ -13,11 +13,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
+import com.bumptech.glide.Glide;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.ThumbImageAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
@@ -29,6 +30,8 @@ import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
 import java.util.ArrayList;
 
+import static java.lang.System.load;
+
 public class ProductDetailActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Product>, ItemClickListener, View.OnLayoutChangeListener {
 
@@ -36,7 +39,7 @@ public class ProductDetailActivity extends AppCompatActivity implements
     private Toolbar mToolbar;
     private Product mProduct;
     private ImageLoader mImageLoader;
-    private NetworkImageView mDisplayImage;
+    private ImageView mDisplayImage;
     private RecyclerView mThumbImagesRecyclerView;
     private TextView mProductName, mProductPrice, mProductMrp, mLotSize, mLotDescription,
             mProductFabric, mProductColor, mProductSizes, mProductBrand,
@@ -55,8 +58,8 @@ public class ProductDetailActivity extends AppCompatActivity implements
         initToolbar();
 
         mImageLoader = VolleySingleton.getInstance(this).getImageLoader();
-        mDisplayImage = (NetworkImageView) findViewById(R.id.display_image);
-        mDisplayImageLoading = (ProgressBar) findViewById(R.id.display_image_progress);
+        mDisplayImage = (ImageView) findViewById(R.id.display_image);
+//        mDisplayImageLoading = (ProgressBar) findViewById(R.id.display_image_progress);
 
         mThumbImagesRecyclerView = (RecyclerView) findViewById(R.id.thumb_images_recycler_view);
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -124,11 +127,12 @@ public class ProductDetailActivity extends AppCompatActivity implements
 
     @Override
     public void itemClicked(int position, int id) {
-        mDisplayImage.addOnLayoutChangeListener(this);
-        mDisplayImageLoading.setVisibility(View.VISIBLE);
-        mDisplayImage.setImageDrawable(null);
-        mDisplayImage.setImageUrl(mProduct.getImageUrl(Constants.LARGE_IMAGE,
-                mProduct.getProductImageNumbers()[position]), mImageLoader);
+//        mDisplayImage.addOnLayoutChangeListener(this);
+//        mDisplayImageLoading.setVisibility(View.VISIBLE);
+//        mDisplayImage.setImageDrawable(null);
+//        mDisplayImage.setImageUrl(mProduct.getImageUrl(Constants.LARGE_IMAGE,
+//                mProduct.getProductImageNumbers()[position]), mImageLoader);
+        loadDisplayImage(position);
     }
 
     @Override
@@ -142,6 +146,11 @@ public class ProductDetailActivity extends AppCompatActivity implements
                     mDisplayImageLoading.setVisibility(View.VISIBLE);
                 }
         }
+    }
+
+    private void loadDisplayImage(int position) {
+        Glide.with(this).load(mProduct.getImageUrl(Constants.LARGE_IMAGE,
+                mProduct.getProductImageNumbers()[position])).placeholder(R.drawable.progress_drawable).into(mDisplayImage);
     }
 
     private void initToolbar() {
