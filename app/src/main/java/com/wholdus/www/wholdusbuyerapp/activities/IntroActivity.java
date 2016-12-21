@@ -18,9 +18,6 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 
 public class IntroActivity extends FragmentActivity implements IntroSlideFragment.OnIntroSlideListener {
 
-    private LinearLayout mIntroPagerDots;
-    private ViewPager mViewPager;
-    private PagerAdapter mPagerAdapter;
     private static final int TOTAL_DOTS = 3;
     private ImageView[] mDots;
     private int mLastIntroPagerPosition;
@@ -46,8 +43,8 @@ public class IntroActivity extends FragmentActivity implements IntroSlideFragmen
     }
 
     private void initViewPagerSettings() {
-        mViewPager = (ViewPager) findViewById(R.id.viewPager);
-        mPagerAdapter = new IntroViewPagerAdapter(getSupportFragmentManager(), TOTAL_DOTS, this);
+        ViewPager mViewPager = (ViewPager) findViewById(R.id.viewPager);
+        PagerAdapter mPagerAdapter = new IntroViewPagerAdapter(getSupportFragmentManager(), TOTAL_DOTS, this);
         mViewPager.setAdapter(mPagerAdapter);
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -69,7 +66,7 @@ public class IntroActivity extends FragmentActivity implements IntroSlideFragmen
     }
 
     private void initIntroPagerDots() {
-        mIntroPagerDots = (LinearLayout) findViewById(R.id.introPagerDots);
+        LinearLayout mIntroPagerDots = (LinearLayout) findViewById(R.id.introPagerDots);
         mDots = new ImageView[TOTAL_DOTS];
 
         for(int i=0; i<TOTAL_DOTS; i++) {
