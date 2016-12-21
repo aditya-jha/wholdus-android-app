@@ -14,10 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.wholdus.www.wholdusbuyerapp.R;
@@ -27,25 +25,20 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProductLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
-import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
 import java.util.ArrayList;
 
-import static java.lang.System.load;
-
 public class ProductDetailActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Product>, ItemClickListener, View.OnLayoutChangeListener {
+        LoaderManager.LoaderCallbacks<Product>, ItemClickListener {
 
     private int mProductID;
     private Toolbar mToolbar;
     private Product mProduct;
-    private ImageLoader mImageLoader;
     private ImageView mDisplayImage;
     private RecyclerView mThumbImagesRecyclerView;
     private TextView mProductName, mProductPrice, mProductMrp, mLotSize, mLotDescription,
             mProductFabric, mProductColor, mProductSizes, mProductBrand,
             mProductPattern, mProductStyle, mProductWork, mSellerLocation, mSellerSpeciality;
-    private ProgressBar mDisplayImageLoading;
 
     private static final int PRODUCT_LOADER = 10;
 
@@ -58,9 +51,7 @@ public class ProductDetailActivity extends AppCompatActivity implements
 
         initToolbar();
 
-        mImageLoader = VolleySingleton.getInstance(this).getImageLoader();
         mDisplayImage = (ImageView) findViewById(R.id.display_image);
-//        mDisplayImageLoading = (ProgressBar) findViewById(R.id.display_image_progress);
 
         mThumbImagesRecyclerView = (RecyclerView) findViewById(R.id.thumb_images_recycler_view);
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -113,7 +104,6 @@ public class ProductDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
         finish();
     }
 
@@ -136,19 +126,6 @@ public class ProductDetailActivity extends AppCompatActivity implements
     @Override
     public void itemClicked(int position, int id) {
         loadDisplayImage(position);
-    }
-
-    @Override
-    public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-        switch (view.getId()) {
-            default:
-                if (mDisplayImage.getDrawable() != null) {
-                    mDisplayImageLoading.setVisibility(View.INVISIBLE);
-                    mDisplayImage.removeOnLayoutChangeListener(this);
-                } else {
-                    mDisplayImageLoading.setVisibility(View.VISIBLE);
-                }
-        }
     }
 
     private void loadDisplayImage(int position) {
