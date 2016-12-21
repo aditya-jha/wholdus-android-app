@@ -25,6 +25,7 @@ import com.wholdus.www.wholdusbuyerapp.interfaces.ProductCardListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProductsLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
 import com.wholdus.www.wholdusbuyerapp.services.BuyerProductService;
+import com.wholdus.www.wholdusbuyerapp.services.CartService;
 
 import java.util.ArrayList;
 
@@ -144,9 +145,14 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     }
 
     private void fetchDataFromServer(){
+        /*
         Intent intent = new Intent(getContext(), BuyerProductService.class);
         intent.putExtra("TODO", R.string.fetch_buyer_products);
-        getContext().startService(intent);
+        getContext().startService(intent);*/
+
+        Intent cartServiceIntent = new Intent(getContext(), CartService.class);
+        cartServiceIntent.putExtra("TODO", R.string.fetch_cart);
+        getContext().startService(cartServiceIntent);
     }
 
     private void actionAfterSwipe(boolean liked){

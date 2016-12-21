@@ -58,6 +58,9 @@
             android:name=".services.OrderService"
             android:exported="false" />
         <service
+            android:name=".services.CartService"
+            android:exported="false" />
+        <service
             android:name=".services.CatalogService"
             android:exported="false" />
     </application>

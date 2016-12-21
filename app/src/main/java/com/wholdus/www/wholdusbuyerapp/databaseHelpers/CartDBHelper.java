@@ -143,31 +143,39 @@ public class CartDBHelper extends BaseDBHelper {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
         String[] columns = {CartTable.COLUMN_UPDATED_AT};
         Cursor cursor = getCartData(-1, -1, columns);
-        boolean cartInserted = false;
-        if (cursor.getCount()==0){
-            ContentValues values = getCartContentValues(cart);
-            db.insert(CartTable.TABLE_NAME, null, values);
-            cartInserted = true;
-        }
-        if (!cartInserted) {
-            cursor.moveToNext();
-            if (!cart.getString(CartTable.COLUMN_UPDATED_AT).equals(cursor.getString(cursor.getColumnIndexOrThrow(CartTable.COLUMN_UPDATED_AT)))) {
+        try {
+            db.beginTransaction();
+            boolean cartInserted = false;
+            if (cursor.getCount() == 0) {
                 ContentValues values = getCartContentValues(cart);
-                db.update(CartTable.TABLE_NAME, values, null, null);
+                db.insert(CartTable.TABLE_NAME, null, values);
                 cartInserted = true;
             }
-        }
-        if (cartInserted && cart.has("sub_carts")){
-            JSONArray subCarts = cart.getJSONArray("sub_carts");
-            ArrayList<Integer> subCartIDs = new ArrayList<>();
-            for (int i = 0; i < subCarts.length(); i++) {
-                JSONObject subCart = subCarts.getJSONObject(i);
-                saveSubCartDataFromJSONObject(subCart);
-                subCartIDs.add(subCart.getInt(SubCartsTable.COLUMN_SUBCART_ID));
+            if (!cartInserted) {
+                cursor.moveToNext();
+                if (!cart.getString(CartTable.COLUMN_UPDATED_AT).equals(cursor.getString(cursor.getColumnIndexOrThrow(CartTable.COLUMN_UPDATED_AT)))) {
+                    ContentValues values = getCartContentValues(cart);
+                    db.update(CartTable.TABLE_NAME, values, null, null);
+                    cartInserted = true;
+                }
             }
-            String selection = SubCartsTable.COLUMN_SUBCART_ID + " NOT IN (" + TextUtils.join(", ", subCartIDs) + ")";
-            db.delete(SubCartsTable.TABLE_NAME,selection,null);
-            mPresentSubCartIds = null;
+            if (cartInserted && cart.has("sub_carts")) {
+                JSONArray subCarts = cart.getJSONArray("sub_carts");
+                ArrayList<Integer> subCartIDs = new ArrayList<>();
+                for (int i = 0; i < subCarts.length(); i++) {
+                    JSONObject subCart = subCarts.getJSONObject(i);
+                    saveSubCartDataFromJSONObject(subCart);
+                    subCartIDs.add(subCart.getInt(SubCartsTable.COLUMN_SUBCART_ID));
+                }
+                String selection = SubCartsTable.COLUMN_SUBCART_ID + " NOT IN (" + TextUtils.join(", ", subCartIDs) + ")";
+                db.delete(SubCartsTable.TABLE_NAME, selection, null);
+                mPresentSubCartIds = null;
+            }
+            db.setTransactionSuccessful();
+        }catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
         }
         mDatabaseHelper.closeDatabase();
     }

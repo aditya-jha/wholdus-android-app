@@ -24,4 +24,8 @@
 
     <!-- product api -->
     <string name="product_url">products/</string>
+
+    <!-- cart api -->
+    <string name="cart_url">cart/</string>
+    <string name="cart_item_url">cart/item/</string>
 </resources>

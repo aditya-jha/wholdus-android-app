@@ -55,7 +55,7 @@ public class CartContract {
         public static final String COLUMN_PIECES = "pieces";
         public static final String COLUMN_LOTS = "lots";
         public static final String COLUMN_LOT_SIZE = "lot_size";
-        public static final String COLUMN_RETAIL_PRICE_PER_PIECE = "retail_price_piece";
+        public static final String COLUMN_RETAIL_PRICE_PER_PIECE = "retail_price_per_piece";
         public static final String COLUMN_CALCULATED_PRICE_PER_PIECE = "calculated_price_per_piece";
         public static final String COLUMN_SHIPPING_CHARGE = "shipping_charge";
         public static final String COLUMN_FINAL_PRICE = "final_price";

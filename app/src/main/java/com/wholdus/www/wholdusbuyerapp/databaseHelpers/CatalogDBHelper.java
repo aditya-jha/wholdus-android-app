@@ -431,6 +431,9 @@ public class CatalogDBHelper extends BaseDBHelper {
     public int saveCategoryData(JSONObject category) throws JSONException{
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
         int insertUpdated = 0;
+        if (!category.has(CategoriesTable.COLUMN_UPDATED_AT)) {
+            return 0;
+        }
         int categoryID = category.getInt(CategoriesTable.COLUMN_CATEGORY_ID);
         String categoryUpdatedAtLocal = getPresentCategoryIDs().get(categoryID);
         String categoryUpdatedAtServer = category.getString(CategoriesTable.COLUMN_UPDATED_AT);
@@ -464,7 +467,9 @@ public class CatalogDBHelper extends BaseDBHelper {
             return 0;
         }
         int insertUpdated = 0;
-        // TODO: Save category data and product data
+        if (product.has("category")) {
+            saveCategoryData(product.getJSONObject("category"));
+        }
         String productUpdatedAtLocal = getPresentProductIDs().get(productID);
         String productUpdatedAtServer = product.getString(ProductsTable.COLUMN_PRODUCT_UPDATED_AT);
         if (productUpdatedAtLocal == null) { // insert

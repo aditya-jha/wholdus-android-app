@@ -14,7 +14,14 @@
     <string name="fetch_business_types">fetchBusinessTypes</string>
     <string name="update_user_address">updateUserAddress</string>
     <string name="fetch_sellers">fetchSellers</string>
-    <string name="fetch_orders">fetchOrders</string>
     <string name="seller_category_details">seller_category_details</string>
+
+    <!-- orders -->
+    <string name="fetch_orders">fetchOrders</string>
+
+    <!--buyer products -->
     <string name="fetch_buyer_products">fetchBuyerProducts</string>
+
+    <!-- cart -->
+    <string name="fetch_cart">fetchCart</string>
 </resources>
