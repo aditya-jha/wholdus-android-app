@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -28,8 +29,9 @@ import com.wholdus.www.wholdusbuyerapp.models.Product;
 
 import java.util.ArrayList;
 
-public class ProductDetailActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Product>, ItemClickListener {
+public class ProductDetailActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<Product>, ItemClickListener,
+                    View.OnClickListener {
 
     private int mProductID;
     private Toolbar mToolbar;
@@ -52,7 +54,7 @@ public class ProductDetailActivity extends AppCompatActivity implements
         initToolbar();
 
         mDisplayImage = (ImageView) findViewById(R.id.display_image);
-
+        mDisplayImage.setOnClickListener(this);
         mThumbImagesRecyclerView = (RecyclerView) findViewById(R.id.thumb_images_recycler_view);
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
         mThumbImagesRecyclerView.setLayoutManager(mLinearLayoutManager);
@@ -126,6 +128,16 @@ public class ProductDetailActivity extends AppCompatActivity implements
     @Override
     public void itemClicked(int position, int id) {
         loadDisplayImage(position);
+    }
+
+    @Override
+    public void onClick(View view) {
+        final int id = view.getId();
+        switch (id) {
+            case R.id.display_image:
+                Toast.makeText(this, "open image gallery", Toast.LENGTH_SHORT).show();
+                break;
+        }
     }
 
     private void loadDisplayImage(int position) {
