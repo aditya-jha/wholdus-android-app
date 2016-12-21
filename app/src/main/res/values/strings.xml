@@ -135,4 +135,6 @@
 
     <string name="price_per_pcs_format">Rs. %1$s/pc</string>
     <string name="price_format">Rs. %1$s</string>
+
+    <string name="share_description">Share</string>
 </resources>

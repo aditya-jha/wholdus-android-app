@@ -26,21 +26,6 @@ public class IntroViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        String callersClassName = mContext.getClass().getSimpleName();
-
-        if(callersClassName.equals("IntroActivity")) {
-            return handleIntroActivityCase(position);
-        }
-
-        return null;
-    }
-
-    @Override
-    public int getCount() {
-        return mTotalPages;
-    }
-
-    private Fragment handleIntroActivityCase(int position) {
         IntroSlideFragment introSlideFragment = new IntroSlideFragment();
 
         switch (position) {
@@ -55,5 +40,10 @@ public class IntroViewPagerAdapter extends FragmentStatePagerAdapter {
                 break;
         }
         return introSlideFragment;
+    }
+
+    @Override
+    public int getCount() {
+        return mTotalPages;
     }
 }

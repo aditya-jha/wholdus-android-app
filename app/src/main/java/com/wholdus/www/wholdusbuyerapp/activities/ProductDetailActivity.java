@@ -14,10 +14,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.wholdus.www.wholdusbuyerapp.R;
@@ -27,25 +26,21 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProductLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
-import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
 import java.util.ArrayList;
 
-import static java.lang.System.load;
-
-public class ProductDetailActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Product>, ItemClickListener, View.OnLayoutChangeListener {
+public class ProductDetailActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<Product>, ItemClickListener,
+        View.OnClickListener {
 
     private int mProductID;
     private Toolbar mToolbar;
     private Product mProduct;
-    private ImageLoader mImageLoader;
     private ImageView mDisplayImage;
     private RecyclerView mThumbImagesRecyclerView;
     private TextView mProductName, mProductPrice, mProductMrp, mLotSize, mLotDescription,
             mProductFabric, mProductColor, mProductSizes, mProductBrand,
             mProductPattern, mProductStyle, mProductWork, mSellerLocation, mSellerSpeciality;
-    private ProgressBar mDisplayImageLoading;
 
     private static final int PRODUCT_LOADER = 10;
 
@@ -58,10 +53,8 @@ public class ProductDetailActivity extends AppCompatActivity implements
 
         initToolbar();
 
-        mImageLoader = VolleySingleton.getInstance(this).getImageLoader();
         mDisplayImage = (ImageView) findViewById(R.id.display_image);
-//        mDisplayImageLoading = (ProgressBar) findViewById(R.id.display_image_progress);
-
+        mDisplayImage.setOnClickListener(this);
         mThumbImagesRecyclerView = (RecyclerView) findViewById(R.id.thumb_images_recycler_view);
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
         mThumbImagesRecyclerView.setLayoutManager(mLinearLayoutManager);
@@ -95,7 +88,6 @@ public class ProductDetailActivity extends AppCompatActivity implements
     @Override
     protected void onStop() {
         super.onStop();
-        mProduct = null;
     }
 
     @Override
@@ -113,7 +105,6 @@ public class ProductDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
         finish();
     }
 
@@ -139,15 +130,16 @@ public class ProductDetailActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-        switch (view.getId()) {
-            default:
-                if (mDisplayImage.getDrawable() != null) {
-                    mDisplayImageLoading.setVisibility(View.INVISIBLE);
-                    mDisplayImage.removeOnLayoutChangeListener(this);
-                } else {
-                    mDisplayImageLoading.setVisibility(View.VISIBLE);
-                }
+    public void onClick(View view) {
+        final int id = view.getId();
+        switch (id) {
+            case R.id.display_image:
+
+                Intent intent = new Intent(this, ProductGalleryActivity.class);
+                intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME, mProductID);
+                startActivity(intent);
+
+                break;
         }
     }
 
@@ -156,7 +148,7 @@ public class ProductDetailActivity extends AppCompatActivity implements
                 .load(mProduct.getImageUrl(Constants.LARGE_IMAGE, mProduct.getProductImageNumbers()[position]))
                 .crossFade()
                 .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .thumbnail(0.05f)
                 .into(mDisplayImage);
     }
@@ -188,7 +180,7 @@ public class ProductDetailActivity extends AppCompatActivity implements
         ArrayList<String> imageUrls = mProduct.getAllImageUrls(Constants.EXTRA_SMALL_IMAGE);
         if (imageUrls.size() == 0) {
             // no Image is present, set dummy image
-            mDisplayImage.setImageResource(R.drawable.slide_1); /* TODO: Save Dummy Image */
+            mDisplayImage.setImageResource(R.drawable.image_not_available);
 
             // Remove Thumb Image Section from View
             mThumbImagesRecyclerView.setVisibility(View.GONE);

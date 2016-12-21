@@ -56,11 +56,9 @@ public class LoginFragment extends Fragment {
         }
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_login, container, false);
-
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         mLoginAPIServiceResponseReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -68,6 +66,12 @@ public class LoginFragment extends Fragment {
                 handleLoginAPIResponse(data);
             }
         };
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_login, container, false);
 
         Runnable runnable = new Runnable() {
             @Override
@@ -78,12 +82,6 @@ public class LoginFragment extends Fragment {
         new Thread(runnable).start();
 
         return rootView;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        listener = null;
     }
 
     @Override
@@ -103,6 +101,12 @@ public class LoginFragment extends Fragment {
     public void onStop() {
         super.onStop();
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mLoginAPIServiceResponseReceiver);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
     }
 
     private void initFragment(ViewGroup rootView) {
@@ -188,6 +192,7 @@ public class LoginFragment extends Fragment {
                         new LoginHelperAsyncTask.AsyncResponse() {
                             @Override
                             public void processFinish(Boolean output) {
+
                                 if (output) {
                                     listener.loginSuccess();
                                 } else {
