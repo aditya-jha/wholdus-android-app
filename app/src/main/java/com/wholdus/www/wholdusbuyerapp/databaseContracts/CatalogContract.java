@@ -36,7 +36,6 @@ public class CatalogContract {
         public static final String COLUMN_IMAGE_NUMBERS = "image_numbers";
         public static final String COLUMN_IMAGE_PATH = "image_path";
 
-        public static final String COLUMN_LIKE_STATUS = "like_status";
         public static final String COLUMN_WARRANTY = "warranty";
         public static final String COLUMN_SPECIAL_FEATURE = "special_feature";
         public static final String COLUMN_AVAILABILITY = "availability";
@@ -59,14 +58,29 @@ public class CatalogContract {
         public static final String COLUMN_PACKAGING_DETAILS = "packaging_details";
         public static final String COLUMN_LENGTH = "length";
 
-        public static final String COLUMN_CREATED_AT = "created_at";
-        public static final String COLUMN_UPDATED_AT = "updated_at";
+        public static final String COLUMN_PRODUCT_CREATED_AT = "created_at";
+        public static final String COLUMN_PRODUCT_UPDATED_AT = "updated_at";
+
+        public static final String COLUMN_BUYER_PRODUCT_ID = "buyerproductID";
+        public static final String COLUMN_BUYER_PRODUCT_CREATED_AT = "buyer_product_created_at";
+        public static final String COLUMN_BUYER_PRODUCT_UPDATED_AT = "buyer_product_updated_at";
+        public static final String COLUMN_BUYER_PRODUCT_IS_ACTIVE = "is_active";
+
+        public static final String COLUMN_BUYER_PRODUCT_RESPONSE_ID = "buyerproductresponseID";
+        public static final String COLUMN_STORE_MARGIN = "store_margin";
+        public static final String COLUMN_HAS_SWIPED = "has_swiped";
+        public static final String COLUMN_RESPONDED_FROM = "responded_from";
+        public static final String COLUMN_RESPONSE_CODE = "response_code";
+        public static final String COLUMN_BUYER_PRODUCT_RESPONSE_CREATED_AT = "buyer_product_response_created_at";
+        public static final String COLUMN_BUYER_PRODUCT_RESPONSE_UPDATED_AT = "buyer_product_response_updated_at";
+        public static final String COLUMN_SYNCED = "synced";
     }
 
     public static final class CategoriesTable implements BaseColumns {
         public static final String TABLE_NAME = "categories";
         public static final String COLUMN_CATEGORY_ID = "categoryID";
 
+        public static final String COLUMN_SHOW_ONLINE = "show_online";
         public static final String COLUMN_CATEGORY_NAME = "display_name";
         public static final String COLUMN_URL = "url";
         public static final String COLUMN_SLUG = "slug";

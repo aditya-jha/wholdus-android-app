@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -69,7 +71,9 @@ public class NavigationDrawerFragment extends Fragment {
                         String openActivity = mBundle.getString(getString(R.string.open_activity_key), "none");
                         if (!openActivity.equals(HomeActivity.class.getSimpleName())){
                             mBundle.putString(getString(R.string.open_activity_key), HomeActivity.class.getSimpleName());
-                            startActivity(new Intent(getContext(), HomeActivity.class));
+                            Intent intent = new Intent(getContext(), HomeActivity.class);
+                            intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
                         }
                         mDrawerLayout.closeDrawer(GravityCompat.START);
                         return true;

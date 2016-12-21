@@ -23,6 +23,8 @@ public final class UserProfileContract {
         public static final String COLUMN_BUSINESS_TYPE = "business_type";
         public static final String COLUMN_GENDER = "gender";
 
+        public static final String COLUMN_STORE_GLOBAL_MARGIN = "store_global_margin";
+
         public static final String COLUMN_CREATED_AT = "created_at";
         public static final String COLUMN_UPDATED_AT = "updated_at";
     }

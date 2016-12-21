@@ -29,22 +29,32 @@ public class ProductLoader extends AbstractLoader<Product> {
 
     @Override
     public Product loadInBackground() {
+        ArrayList<Integer> productIDs = new ArrayList<>();
+        productIDs.add(mProductID);
         CatalogDBHelper catalogDBHelper = new CatalogDBHelper(mContext);
         Cursor cursor = catalogDBHelper.getProductData(
-                mProductID,
+                productIDs,
+                null,
+                null,
+                null,
+                null,
+                null,
                 null,
                 null,
                 -1,
                 -1,
+                null,
                 null,
                 null,
                 null,
                 0,
                 1,
+                -1,
+                -1,
                 null,
                 -1,
                 -1,
-                null
+                null //TODO : Request only necessary columns
                 );
 
         if (cursor.getCount() == 0) {
