@@ -54,7 +54,7 @@ public class ProductLoader extends AbstractLoader<Product> {
                 null,
                 -1,
                 -1,
-                null //TODO : Request only necessary columns
+                null
                 );
 
         if (cursor.getCount() == 0) {

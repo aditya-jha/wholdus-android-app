@@ -31,7 +31,7 @@ import java.util.ArrayList;
 
 public class ProductDetailActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Product>, ItemClickListener,
-                    View.OnClickListener {
+        View.OnClickListener {
 
     private int mProductID;
     private Toolbar mToolbar;
@@ -88,7 +88,6 @@ public class ProductDetailActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-        mProduct = null;
     }
 
     @Override
@@ -135,8 +134,11 @@ public class ProductDetailActivity extends AppCompatActivity
         final int id = view.getId();
         switch (id) {
             case R.id.display_image:
-                Toast.makeText(this, "open image gallery", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(this, ProductGalleryActivity.class));
+
+                Intent intent = new Intent(this, ProductGalleryActivity.class);
+                intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME, mProductID);
+                startActivity(intent);
+
                 break;
         }
     }
