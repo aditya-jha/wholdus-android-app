@@ -64,6 +64,9 @@
             android:name=".services.CartService"
             android:exported="false" />
         <service
+            android:name=".services.BuyerProductService"
+            android:exported="false" />
+        <service
             android:name=".services.CatalogService"
             android:exported="false" />
 

@@ -460,11 +460,11 @@ public class CatalogDBHelper extends BaseDBHelper {
     public int saveProductData(JSONObject product) throws JSONException {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
         int productID = product.getInt(ProductsTable.COLUMN_PRODUCT_ID);
-        if (product.has("seller")) {
-            saveSellerData(product.getJSONObject("seller"));
-        }
         if (!product.has("details") || !product.has("image")) {
             return 0;
+        }
+        if (product.has("seller")) {
+            saveSellerData(product.getJSONObject("seller"));
         }
         int insertUpdated = 0;
         if (product.has("category")) {
@@ -488,6 +488,23 @@ public class CatalogDBHelper extends BaseDBHelper {
         }
         mDatabaseHelper.closeDatabase();
         return insertUpdated;
+    }
+
+    public void saveBuyerProductsDataFromJSONArray(JSONArray buyerProducts) throws JSONException{
+        SQLiteDatabase db = mDatabaseHelper.openDatabase();
+        try {
+            db.beginTransaction();
+            for (int i = 0; i < buyerProducts.length(); i++) {
+                saveBuyerProductData(buyerProducts.getJSONObject(i));
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+        }
+
+        mDatabaseHelper.closeDatabase();
     }
 
     public void saveBuyerProductData(JSONObject buyerProduct) throws JSONException{

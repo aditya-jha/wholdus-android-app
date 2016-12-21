@@ -13,9 +13,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,13 +42,23 @@ public class BuyerProductService extends IntentService {
         int todo = intent.getIntExtra("TODO", 0);
         switch (todo) {
             case R.string.fetch_buyer_products:
-                fetchBuyerProducts(todo);
+                fetchBuyerProducts(todo, 1);
         }
     }
 
-    private void fetchBuyerProducts(int todo) {
-        String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.fetch_buyer_products), null);
-        volleyStringRequest(todo, Request.Method.GET, endPoint, null);
+    private void fetchBuyerProducts(int todo, int pageNumber) {
+        HashMap<String,String> params = new HashMap<>();
+        //TODO : Save categories and seller data separately so that it doesn't have to requested here
+        //TODO : Also try that all products don't have to be requested every time
+        params.put("product_details", "1");
+        params.put("product_details_details","1");
+        params.put("product_image_details", "1");
+        params.put("category_details", "1");
+        params.put("seller_details", "1");
+        params.put("items_per_page", "20");
+        params.put("page_number", String.valueOf(pageNumber));
+        String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_product_url), params);
+        volleyStringRequest(todo, Request.Method.GET, url, null);
     }
 
     private void volleyStringRequest(final int todo, int method, String endPoint, final String jsonData) {
@@ -87,25 +99,23 @@ public class BuyerProductService extends IntentService {
     }
 
     private void onResponseHandler(int todo, String response) {
-        switch (todo) {
-            case R.string.fetch_buyer_products:
-                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
-                saveResponseToDB(response);
-
+        try {
+            switch (todo) {
+                case R.string.fetch_buyer_products:
+                    saveBuyerProductsToDB(response);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
-    private void saveResponseToDB(String response) {
-        /*
-        BuyerProductsDBHelper dbHelper = new BuyerProductsDBHelper(this);
-
-        try {
-            int insertedUpdated = dbHelper.updateBuyerProductsData(new JSONObject(response));
-        } catch (JSONException e) {
-
-        }
+    private void saveBuyerProductsToDB(String response) throws JSONException {
+        JSONObject data = new JSONObject(response);
+        // TODO Handle pagination
+        CatalogDBHelper dbHelper = new CatalogDBHelper(this);
+        JSONArray buyerProducts = data.getJSONArray("buyer_products");
+        dbHelper.saveBuyerProductsDataFromJSONArray(buyerProducts);
         sendBuyerProductDataUpdatedBroadCast(null);
-        */
     }
 
     private void sendBuyerProductDataUpdatedBroadCast(@Nullable String extra) {

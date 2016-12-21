@@ -145,10 +145,10 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     }
 
     private void fetchDataFromServer(){
-        /*
+
         Intent intent = new Intent(getContext(), BuyerProductService.class);
         intent.putExtra("TODO", R.string.fetch_buyer_products);
-        getContext().startService(intent);*/
+        getContext().startService(intent);
 
         Intent cartServiceIntent = new Intent(getContext(), CartService.class);
         cartServiceIntent.putExtra("TODO", R.string.fetch_cart);
@@ -193,6 +193,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             //TODO : only request products which are not in list
             ArrayList<Integer> responseCodes = new ArrayList<>();
             responseCodes.add(0);
+            // TODO : Also add condition so that buyer product Id is not 0
             return new ProductsLoader(getContext(), responseCodes);
         }
     }
