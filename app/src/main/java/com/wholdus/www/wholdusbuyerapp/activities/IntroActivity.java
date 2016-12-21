@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.IntroViewPagerAdapter;
 import com.wholdus.www.wholdusbuyerapp.fragments.IntroSlideFragment;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 
 public class IntroActivity extends FragmentActivity implements IntroSlideFragment.OnIntroSlideListener {
 
@@ -67,14 +68,6 @@ public class IntroActivity extends FragmentActivity implements IntroSlideFragmen
         });
     }
 
-    private int getPixelFromDPValue(int dpValue) {
-        return (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dpValue,
-                getResources().getDisplayMetrics()
-        );
-    }
-
     private void initIntroPagerDots() {
         mIntroPagerDots = (LinearLayout) findViewById(R.id.introPagerDots);
         mDots = new ImageView[TOTAL_DOTS];
@@ -87,7 +80,11 @@ public class IntroActivity extends FragmentActivity implements IntroSlideFragmen
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
-            params.setMargins(getPixelFromDPValue(10), 0, getPixelFromDPValue(10), 0);
+            params.setMargins(
+                    (int) HelperFunctions.convertPixelsToDp(10, this),
+                    0,
+                    (int) HelperFunctions.convertDpToPixel(10, this),
+                    0);
 
             mIntroPagerDots.addView(mDots[i], params);
         }
