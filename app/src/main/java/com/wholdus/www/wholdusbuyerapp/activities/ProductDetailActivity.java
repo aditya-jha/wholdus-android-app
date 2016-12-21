@@ -148,7 +148,7 @@ public class ProductDetailActivity extends AppCompatActivity
                 .load(mProduct.getImageUrl(Constants.LARGE_IMAGE, mProduct.getProductImageNumbers()[position]))
                 .crossFade()
                 .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .thumbnail(0.05f)
                 .into(mDisplayImage);
     }
