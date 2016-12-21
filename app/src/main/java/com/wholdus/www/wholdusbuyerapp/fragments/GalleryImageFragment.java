@@ -98,31 +98,6 @@ public class GalleryImageFragment extends Fragment {
 
     private void shareProduct() {
         TouchImageView imageView = (TouchImageView) getView();
-        if (hasExternalStoragePermission()) {
-            ShareIntentClass.shareImage(getContext(), imageView, "Product Title here", "");
-        }
-    }
-
-    private boolean hasExternalStoragePermission() {
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 0:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    shareProduct();
-                } else {
-                    Toast.makeText(getContext(), "Permission was required to share image", Toast.LENGTH_SHORT).show();
-                }
-                break;
-        }
+        ShareIntentClass.shareImage(getContext(), imageView, "Product Title here", "");
     }
 }
