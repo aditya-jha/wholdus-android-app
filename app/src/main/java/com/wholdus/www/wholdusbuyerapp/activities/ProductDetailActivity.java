@@ -136,6 +136,7 @@ public class ProductDetailActivity extends AppCompatActivity
         switch (id) {
             case R.id.display_image:
                 Toast.makeText(this, "open image gallery", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, ProductGalleryActivity.class));
                 break;
         }
     }
