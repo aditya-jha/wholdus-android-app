@@ -27,7 +27,8 @@
                 android:id="@+id/thumb_images_recycler_view"
                 style="@style/AppTheme.DefaultCard"
                 android:layout_width="wrap_content"
-                android:layout_height="80dp" />
+                android:layout_height="80dp"
+                android:paddingBottom="@dimen/card_padding_vertical" />
 
         </LinearLayout>
 

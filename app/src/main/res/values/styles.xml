@@ -47,7 +47,7 @@
     </style>
 
     <style name="AppTheme.BoldTextMedium" parent="AppTheme.BoldText">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:paddingTop">@dimen/secondary_text_padding_top</item>
     </style>
 

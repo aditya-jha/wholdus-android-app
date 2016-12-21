@@ -14,12 +14,10 @@ import android.widget.LinearLayout;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.IntroViewPagerAdapter;
 import com.wholdus.www.wholdusbuyerapp.fragments.IntroSlideFragment;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 
 public class IntroActivity extends FragmentActivity implements IntroSlideFragment.OnIntroSlideListener {
 
-    private LinearLayout mIntroPagerDots;
-    private ViewPager mViewPager;
-    private PagerAdapter mPagerAdapter;
     private static final int TOTAL_DOTS = 3;
     private ImageView[] mDots;
     private int mLastIntroPagerPosition;
@@ -29,10 +27,6 @@ public class IntroActivity extends FragmentActivity implements IntroSlideFragmen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
 
-        if(savedInstanceState != null) {
-            Log.v("bundle ", savedInstanceState.toString());
-            return;
-        }
         initIntroPagerDots();
         initViewPagerSettings();
     }
@@ -45,8 +39,8 @@ public class IntroActivity extends FragmentActivity implements IntroSlideFragmen
     }
 
     private void initViewPagerSettings() {
-        mViewPager = (ViewPager) findViewById(R.id.viewPager);
-        mPagerAdapter = new IntroViewPagerAdapter(getSupportFragmentManager(), TOTAL_DOTS, this);
+        ViewPager mViewPager = (ViewPager) findViewById(R.id.viewPager);
+        PagerAdapter mPagerAdapter = new IntroViewPagerAdapter(getSupportFragmentManager(), TOTAL_DOTS, this);
         mViewPager.setAdapter(mPagerAdapter);
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -67,16 +61,8 @@ public class IntroActivity extends FragmentActivity implements IntroSlideFragmen
         });
     }
 
-    private int getPixelFromDPValue(int dpValue) {
-        return (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dpValue,
-                getResources().getDisplayMetrics()
-        );
-    }
-
     private void initIntroPagerDots() {
-        mIntroPagerDots = (LinearLayout) findViewById(R.id.introPagerDots);
+        LinearLayout mIntroPagerDots = (LinearLayout) findViewById(R.id.introPagerDots);
         mDots = new ImageView[TOTAL_DOTS];
 
         for(int i=0; i<TOTAL_DOTS; i++) {
@@ -87,7 +73,11 @@ public class IntroActivity extends FragmentActivity implements IntroSlideFragmen
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
-            params.setMargins(getPixelFromDPValue(10), 0, getPixelFromDPValue(10), 0);
+            params.setMargins(
+                    (int) HelperFunctions.convertPixelsToDp(10, this),
+                    0,
+                    (int) HelperFunctions.convertDpToPixel(10, this),
+                    0);
 
             mIntroPagerDots.addView(mDots[i], params);
         }
