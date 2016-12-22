@@ -17,11 +17,16 @@
     <string name="orders_url">orders/</string>
 
     <!-- buyer products api -->
-    <string name="buyer_products">users/buyer/buyerproducts/response/</string>
+    <string name="buyer_product_url">users/buyer/buyerproducts/</string>
+    <string name="buyer_product_response_url">users/buyer/buyerproducts/response/</string>
 
     <!-- catalog api -->
     <string name="category_url">category/</string>
 
     <!-- product api -->
     <string name="product_url">products/</string>
+
+    <!-- cart api -->
+    <string name="cart_url">cart/</string>
+    <string name="cart_item_url">cart/item/</string>
 </resources>

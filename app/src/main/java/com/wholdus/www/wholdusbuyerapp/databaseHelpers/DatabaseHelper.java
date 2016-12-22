@@ -4,6 +4,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract.CartTable;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract.SubCartsTable;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract.CartItemsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategorySellersTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.SellerAddressTable;
 
@@ -296,6 +299,59 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SQL_DROP_CATEGORY_SELLER_TABLE =
             "DROP TABLE IF EXISTS " + CategorySellersTable.TABLE_NAME;
 
+    private static final String SQL_CREATE_CART_TABLE =
+            "CREATE TABLE " + CartTable.TABLE_NAME + " (" +
+                    CartTable.COLUMN_CART_ID + INT_TYPE + COMMA_SEP +
+                    CartTable.COLUMN_PRODUCT_COUNT + INT_TYPE + COMMA_SEP +
+                    CartTable.COLUMN_PIECES + INT_TYPE + COMMA_SEP +
+                    CartTable.COLUMN_RETAIL_PRICE + REAL_TYPE + COMMA_SEP +
+                    CartTable.COLUMN_CALCULATED_PRICE + REAL_TYPE + COMMA_SEP +
+                    CartTable.COLUMN_SHIPPING_CHARGE + REAL_TYPE + COMMA_SEP +
+                    CartTable.COLUMN_FINAL_PRICE + REAL_TYPE + COMMA_SEP +
+                    CartTable.COLUMN_CREATED_AT + TEXT_TYPE + COMMA_SEP +
+                    CartTable.COLUMN_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
+                    CartTable.COLUMN_SYNCED + TEXT_TYPE + " )";
+
+    private static final String SQL_DROP_CART_TABLE =
+            "DROP TABLE IF EXISTS " + CartTable.TABLE_NAME;
+
+    private static final String SQL_CREATE_SUBCART_TABLE =
+            "CREATE TABLE " + SubCartsTable.TABLE_NAME + " (" +
+                    SubCartsTable.COLUMN_CART_ID + INT_TYPE + COMMA_SEP +
+                    SubCartsTable.COLUMN_SELLER_ID + INT_TYPE + COMMA_SEP +
+                    SubCartsTable.COLUMN_SUBCART_ID + INT_TYPE + COMMA_SEP +
+                    SubCartsTable.COLUMN_PRODUCT_COUNT + INT_TYPE + COMMA_SEP +
+                    SubCartsTable.COLUMN_PIECES + INT_TYPE + COMMA_SEP +
+                    SubCartsTable.COLUMN_RETAIL_PRICE + REAL_TYPE + COMMA_SEP +
+                    SubCartsTable.COLUMN_CALCULATED_PRICE + REAL_TYPE + COMMA_SEP +
+                    SubCartsTable.COLUMN_SHIPPING_CHARGE + REAL_TYPE + COMMA_SEP +
+                    SubCartsTable.COLUMN_FINAL_PRICE + REAL_TYPE + COMMA_SEP +
+                    SubCartsTable.COLUMN_CREATED_AT + TEXT_TYPE + COMMA_SEP +
+                    SubCartsTable.COLUMN_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
+                    SubCartsTable.COLUMN_SYNCED + TEXT_TYPE + " )";
+
+    private static final String SQL_DROP_SUBCART_TABLE =
+            "DROP TABLE IF EXISTS " + SubCartsTable.TABLE_NAME;
+
+    private static final String SQL_CREATE_CART_ITEMS_TABLE =
+            "CREATE TABLE " + CartItemsTable.TABLE_NAME + " (" +
+                    CartItemsTable.COLUMN_CART_ITEM_ID + INT_TYPE + COMMA_SEP +
+                    CartItemsTable.COLUMN_PRODUCT_ID + INT_TYPE + COMMA_SEP +
+                    CartItemsTable.COLUMN_SUBCART_ID + INT_TYPE + COMMA_SEP +
+                    CartItemsTable.COLUMN_LOTS + INT_TYPE + COMMA_SEP +
+                    CartItemsTable.COLUMN_PIECES + INT_TYPE + COMMA_SEP +
+                    CartItemsTable.COLUMN_LOT_SIZE + INT_TYPE + COMMA_SEP +
+                    CartItemsTable.COLUMN_RETAIL_PRICE_PER_PIECE + REAL_TYPE + COMMA_SEP +
+                    CartItemsTable.COLUMN_CALCULATED_PRICE_PER_PIECE + REAL_TYPE + COMMA_SEP +
+                    CartItemsTable.COLUMN_SHIPPING_CHARGE + REAL_TYPE + COMMA_SEP +
+                    CartItemsTable.COLUMN_FINAL_PRICE + REAL_TYPE + COMMA_SEP +
+                    CartItemsTable.COLUMN_CREATED_AT + TEXT_TYPE + COMMA_SEP +
+                    CartItemsTable.COLUMN_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
+                    CartItemsTable.COLUMN_SYNCED + TEXT_TYPE + " )";
+
+    private static final String SQL_DROP_CART_ITEMS_TABLE =
+            "DROP TABLE IF EXISTS " + CartItemsTable.TABLE_NAME;
+
     private static DatabaseHelper instance;
 
     //TODO : CREATE indexes on certain columns if necessary like product_id
@@ -341,6 +397,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_SELLER_ADDRESS_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_CATEGORY_SELLER_TABLE);
 
+        sqLiteDatabase.execSQL(SQL_CREATE_CART_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_SUBCART_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_CART_ITEMS_TABLE);
+
     }
 
     @Override
@@ -360,6 +420,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_DROP_SELLER_ADDRESS_TABLE);
         sqLiteDatabase.execSQL(SQL_DROP_CATEGORY_SELLER_TABLE);
 
+        sqLiteDatabase.execSQL(SQL_DROP_CART_TABLE);
+        sqLiteDatabase.execSQL(SQL_DROP_SUBCART_TABLE);
+        sqLiteDatabase.execSQL(SQL_DROP_CART_ITEMS_TABLE);
 
         onCreate(sqLiteDatabase);
     }

@@ -45,7 +45,7 @@ public class OrderDBHelper extends BaseDBHelper {
             whereApplied = true;
         }
         if (orderStatusValues != null && !orderStatusValues.isEmpty()) {
-            query += whereClauseHelper(whereApplied) + OrdersContract.OrdersTable.COLUMN_ORDER_STATUS_VALUE + " IN " + TextUtils.join(", ", orderStatusValues);
+            query += whereClauseHelper(whereApplied) + OrdersContract.OrdersTable.COLUMN_ORDER_STATUS_VALUE + " IN (" + TextUtils.join(", ", orderStatusValues) + ") ";
         }
 
         return getCursor(query);
@@ -66,7 +66,7 @@ public class OrderDBHelper extends BaseDBHelper {
             whereApplied = true;
         }
         if (subOrderStatusValues != null && !subOrderStatusValues.isEmpty()) {
-            query += whereClauseHelper(whereApplied) + OrdersContract.SubordersTable.COLUMN_SUBORDER_STATUS_VALUE + " IN " + TextUtils.join(", ", subOrderStatusValues);
+            query += whereClauseHelper(whereApplied) + OrdersContract.SubordersTable.COLUMN_SUBORDER_STATUS_VALUE + " IN (" + TextUtils.join(", ", subOrderStatusValues) + ") ";
         }
 
         return getCursor(query);
@@ -87,7 +87,7 @@ public class OrderDBHelper extends BaseDBHelper {
             whereApplied = true;
         }
         if (orderItemStatusValues != null && !orderItemStatusValues.isEmpty()) {
-            query += whereClauseHelper(whereApplied) + OrdersContract.OrderItemsTable.COLUMN_ORDER_ITEM_STATUS_VALUE + " IN " + TextUtils.join(", ", orderItemStatusValues);
+            query += whereClauseHelper(whereApplied) + OrdersContract.OrderItemsTable.COLUMN_ORDER_ITEM_STATUS_VALUE + " IN (" + TextUtils.join(", ", orderItemStatusValues) + ")";
         }
 
         return getCursor(query);

@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -38,6 +39,7 @@ public class OrderService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.w("ORDERSERVICE", "STARTED");
         switch (intent.getIntExtra("TODO", 0)) {
             case R.string.fetch_orders:
                 fetchOrders(R.string.fetch_orders, 1);
