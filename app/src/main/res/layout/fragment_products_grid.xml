@@ -16,19 +16,11 @@
             android:layout_height="wrap_content" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <LinearLayout
-        style="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/primary_dark"
-        android:orientation="horizontal">
+    <LinearLayout style="@style/AppTheme.BottomBar">
 
         <Button
             android:id="@+id/sort_button"
-            style="@style/AppTheme.BorderlessButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            style="@style/AppTheme.HomeBottomButton"
             android:drawableLeft="@drawable/ic_sort_white_24dp"
             android:drawableStart="@drawable/ic_sort_white_24dp"
             android:text="@string/sort_text" />
@@ -40,10 +32,7 @@
 
         <Button
             android:id="@+id/filter_button"
-            style="@style/AppTheme.BorderlessButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            style="@style/AppTheme.HomeBottomButton"
             android:drawableLeft="@drawable/ic_filter_list_white_24dp"
             android:drawableStart="@drawable/ic_filter_list_white_24dp"
             android:text="@string/filter_text" />

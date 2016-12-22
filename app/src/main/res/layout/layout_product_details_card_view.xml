@@ -161,7 +161,7 @@
                     android:layout_weight="1"
                     android:drawableLeft="@drawable/nonselected_dot_6dp"
                     android:drawableStart="@drawable/nonselected_dot_6dp"
-                    android:text="@string/fabric_key" />
+                    android:text="@string/color_key" />
 
                 <TextView
                     android:id="@+id/colors"
