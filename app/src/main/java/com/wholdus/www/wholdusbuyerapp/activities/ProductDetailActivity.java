@@ -157,7 +157,7 @@ public class ProductDetailActivity extends AppCompatActivity
         mToolbar = (Toolbar) findViewById(R.id.default_toolbar);
         setSupportActionBar(mToolbar);
 
-        mToolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_white_32dp);
+        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -186,21 +186,16 @@ public class ProductDetailActivity extends AppCompatActivity
             mThumbImagesRecyclerView.setVisibility(View.GONE);
         } else {
             loadDisplayImage(0); // load image
-
-            if (imageUrls.size() == 1) {
-                // Remove Thumb Image Section from View
+            mThumbImagesRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+                @Override
+                public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                    outRect.left = 15;
+                }
+            });
+            ThumbImageAdapter mThumbImageAdapter = new ThumbImageAdapter(this, imageUrls, this);
+            mThumbImagesRecyclerView.setAdapter(mThumbImageAdapter);
+            if (imageUrls.size() == 1) { // Remove Thumb Image Section from View
                 mThumbImagesRecyclerView.setVisibility(View.GONE);
-            } else {
-                mThumbImagesRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
-                    @Override
-                    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                        outRect.left = 15;
-                    }
-                });
-                Log.d("image urls", imageUrls.size() + "");
-
-                ThumbImageAdapter mThumbImageAdapter = new ThumbImageAdapter(this, imageUrls, this);
-                mThumbImagesRecyclerView.setAdapter(mThumbImageAdapter);
             }
         }
 

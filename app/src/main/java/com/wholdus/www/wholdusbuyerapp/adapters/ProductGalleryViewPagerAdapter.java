@@ -16,19 +16,24 @@ import java.util.List;
 
 public class ProductGalleryViewPagerAdapter extends FragmentStatePagerAdapter {
 
-    private Context mContext;
     private List<String> mImages;
+    private String mProductName, mProductUrl;
 
-    public ProductGalleryViewPagerAdapter(FragmentManager fm, Context context, ArrayList<String> images) {
+    public ProductGalleryViewPagerAdapter(
+            FragmentManager fm,
+            ArrayList<String> images,
+            String productName,
+            String productUrl) {
         super(fm);
-        mContext = context;
         mImages = images;
+        mProductName = productName;
+        mProductUrl = productUrl;
     }
 
     @Override
     public Fragment getItem(int position) {
         GalleryImageFragment fragment = new GalleryImageFragment();
-        fragment.setImageUrl(mImages.get(position));
+        fragment.setData(mImages.get(position), mProductName, mProductUrl);
         return fragment;
     }
 

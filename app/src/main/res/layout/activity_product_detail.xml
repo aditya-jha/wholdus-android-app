@@ -63,6 +63,6 @@
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_share_white_28dp" />
+            android:src="@drawable/ic_share_white_24dp" />
     </LinearLayout>
 </LinearLayout>
