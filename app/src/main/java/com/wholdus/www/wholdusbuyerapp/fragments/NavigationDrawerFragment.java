@@ -16,7 +16,7 @@ import com.wholdus.www.wholdusbuyerapp.activities.AccountActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HomeActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.LoginSignupActivity;
-import com.wholdus.www.wholdusbuyerapp.adapters.ExpandableListViewAdapter;
+import com.wholdus.www.wholdusbuyerapp.adapters.NavigationDrawerAdapter;
 import com.wholdus.www.wholdusbuyerapp.asynctasks.LoginHelperAsyncTask;
 import com.wholdus.www.wholdusbuyerapp.dataSource.NavigationDrawerData;
 
@@ -56,10 +56,10 @@ public class NavigationDrawerFragment extends Fragment {
         mNavigationDrawerData = NavigationDrawerData.getData();
         ArrayList<String> mNavigationDrawerDataTitles = new ArrayList<>(mNavigationDrawerData.keySet());
 
-        ExpandableListViewAdapter mExpandableListViewAdapter = new ExpandableListViewAdapter(getContext(),
+        NavigationDrawerAdapter mNavigationDrawerAdapter = new NavigationDrawerAdapter(getContext(),
                 mNavigationDrawerDataTitles, mNavigationDrawerData,
                 R.layout.navigation_drawer_list_group, R.layout.navigation_drawer_list_item);
-        mExpandableListView.setAdapter(mExpandableListViewAdapter);
+        mExpandableListView.setAdapter(mNavigationDrawerAdapter);
 
         /* TODO: functionality should not be handled based on the postion, some Id or tag mus tbe used */
         mExpandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {

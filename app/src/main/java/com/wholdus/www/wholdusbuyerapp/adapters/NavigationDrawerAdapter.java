@@ -19,7 +19,7 @@ import java.util.List;
  * Created by aditya on 16/11/16.
  */
 
-public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
+public class NavigationDrawerAdapter extends BaseExpandableListAdapter {
 
     private int mGroupView;
     private int mListView;
@@ -27,8 +27,8 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
     private LinkedHashMap<String, List<String>> mListData;
     private Context mContext;
 
-    public ExpandableListViewAdapter(Context context, ArrayList<String> titles,
-                                     LinkedHashMap<String, List<String>> data, int groupView, int listView) {
+    public NavigationDrawerAdapter(Context context, ArrayList<String> titles,
+                                   LinkedHashMap<String, List<String>> data, int groupView, int listView) {
         mContext = context;
         mListView = listView;
         mGroupView = groupView;
@@ -73,6 +73,8 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
             } else {
                 imageView.setImageResource(R.drawable.ic_expand_more_black_24dp);
             }
+        } else {
+            imageView.setImageDrawable(null);
         }
 
         return convertView;
