@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.AccountActivity;
@@ -23,6 +24,8 @@ import com.wholdus.www.wholdusbuyerapp.dataSource.NavigationDrawerData;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import rx.observers.TestObserver;
 
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 
@@ -82,6 +85,9 @@ public class NavigationDrawerFragment extends Fragment {
                         mDrawerLayout.closeDrawer(GravityCompat.START);
                         return true;
                     case 5:
+                        Toast.makeText(getContext(), "Notification clicked", Toast.LENGTH_SHORT).show();
+                        return true;
+                    case 6:
                         logout();
                         mDrawerLayout.closeDrawer(GravityCompat.START);
                         return true;
