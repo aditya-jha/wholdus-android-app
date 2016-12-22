@@ -102,21 +102,18 @@ public class CartService extends IntentService {
             switch (todo) {
                 case R.string.fetch_cart:
                     JSONArray carts = data.getJSONArray("carts");
+                    CartDBHelper cartDBHelper = new CartDBHelper(this);
                     if (carts.length() > 0) {
                         JSONObject cart = carts.getJSONObject(0);
-                        saveCartToDB(cart);
+                        cartDBHelper.saveCartDataFromJSONObject(cart);
+                    } else {
+                        cartDBHelper.deleteCart(-1);
                     }
                     break;
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
-
-    private void saveCartToDB(JSONObject cart) throws JSONException{
-        CartDBHelper cartDBHelper = new CartDBHelper(this);
-        cartDBHelper.saveCartDataFromJSONObject(cart);
-        //TODO : Send cart updated broadcast
     }
 
 }

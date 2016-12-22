@@ -64,12 +64,6 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mProductServiceResponseReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                handleAPIResponse();
-            }
-        };
     }
 
     @Nullable
@@ -77,7 +71,12 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_handpicked, container, false);
         initReferences(rootView);
-
+        mProductServiceResponseReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                handleAPIResponse();
+            }
+        };
         fetchDataFromServer();
         return rootView;
     }
@@ -95,7 +94,9 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     }
 
     private void handleAPIResponse() {
-        getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, mProductsLoader);
+        if (getActivity()!= null) {
+            getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, mProductsLoader);
+        }
     }
 
     private void initReferences(ViewGroup rootView){
