@@ -2,7 +2,10 @@ package com.wholdus.www.wholdusbuyerapp.services;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -13,8 +16,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.wallet.Cart;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract.CartItemsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CartDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
+import com.wholdus.www.wholdusbuyerapp.loaders.CartItemLoader;
+import com.wholdus.www.wholdusbuyerapp.models.CartItem;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
 import org.json.JSONArray;
@@ -22,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,9 +36,12 @@ import java.util.Map;
  * Created by kaustubh on 21/12/16.
  */
 
-public class CartService extends IntentService {
+public class CartService extends IntentService implements CartItemLoader.OnLoadCompleteListener<ArrayList<CartItem>>{
 
     public static final String REQUEST_TAG = "CART_API_REQUESTS";
+    private final int CART_ITEM_DB_LOADER = 90;
+    private CartItemLoader cartItemLoader;
+    // TODO : Set all LOADER values in constants
 
     public CartService() {
         super("CartService");
@@ -40,6 +50,13 @@ public class CartService extends IntentService {
         switch (intent.getIntExtra("TODO", 0)) {
             case R.string.fetch_cart:
                 fetchCart(R.string.fetch_cart);
+                break;
+            case R.string.post_cart_item:
+                // TODO : Also add added from column
+                //String[] columns = {CartItemsTable.COLUMN_PRODUCT_ID, CartItemsTable.COLUMN_LOTS};
+                cartItemLoader = new CartItemLoader(getApplicationContext(), -1, null, -1, -1, 0, null);
+                cartItemLoader.registerListener(CART_ITEM_DB_LOADER, this);
+                cartItemLoader.startLoading();
                 break;
         }
     }
@@ -100,7 +117,7 @@ public class CartService extends IntentService {
         try {
             JSONObject data = new JSONObject(response);
             switch (todo) {
-                case R.string.fetch_cart:
+                default:
                     JSONArray carts = data.getJSONArray("carts");
                     CartDBHelper cartDBHelper = new CartDBHelper(this);
                     if (carts.length() > 0) {
@@ -116,4 +133,45 @@ public class CartService extends IntentService {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (cartItemLoader != null) {
+            cartItemLoader.unregisterListener(this);
+            cartItemLoader.cancelLoad();
+            cartItemLoader.stopLoading();
+        }
+    }
+
+    @Override
+    public void onLoadComplete(Loader<ArrayList<CartItem>> loader, ArrayList<CartItem> data) {
+        if (data.isEmpty()){
+            return;
+        }
+        HashMap<String,String> params = new HashMap<>();
+        params.put("sub_cart_details", "1");
+        params.put("cart_item_details", "1");
+        //params.put("product_details", "1");
+        //params.put("product_details_details","1");
+        //params.put("product_image_details", "1");
+        //params.put("category_details", "1");
+        //params.put("seller_details", "1");
+        String url = GlobalAccessHelper.generateUrl(getString(R.string.cart_item_url), params);
+        JSONObject jsonData = new JSONObject();
+        JSONArray products = new JSONArray();
+        JSONObject product = new JSONObject();
+        try {
+            for (CartItem cartItem : data) {
+                product.put(CartItemsTable.COLUMN_PRODUCT_ID, cartItem.getProductID());
+                product.put(CartItemsTable.COLUMN_LOTS, cartItem.getLots());
+                products.put(product);
+            }
+            jsonData.put("products", products);
+        } catch (JSONException e){
+            e.printStackTrace();
+            return;
+        }
+
+        volleyStringRequest(R.string.post_cart_item, Request.Method.POST, url, jsonData.toString());
+    }
 }
