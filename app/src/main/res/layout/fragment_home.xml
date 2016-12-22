@@ -18,15 +18,27 @@
     <LinearLayout style="@style/AppTheme.BottomBar">
 
         <Button
-            android:id="@+id/sort_button"
-            style="@style/AppTheme.HomeBottomButton"
-            android:drawableTop="@drawable/ic_help_outline_white_24dp"
-            android:text="@string/help_key" />
-
-        <Button
             android:id="@+id/categories"
             style="@style/AppTheme.HomeBottomButton"
             android:drawableTop="@drawable/ic_list_black_24dp"
             android:text="@string/categories_key" />
+
+        <Button
+            android:id="@+id/help"
+            style="@style/AppTheme.BorderlessButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:drawableTop="@drawable/ic_help_outline_white_24dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:text="@string/help_key" />
+
+        <Button
+            android:id="@+id/notification"
+            style="@style/AppTheme.HomeBottomButton"
+            android:drawableTop="@drawable/ic_list_black_24dp"
+            android:text="@string/notification_key" />
     </LinearLayout>
 </LinearLayout>

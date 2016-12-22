@@ -76,6 +76,7 @@
     <string name="state_key">State</string>
     <string name="help_key">Help</string>
     <string name="categories_key">Categories</string>
+    <string name="notification_key">Notification</string>
 
     <!-- messages -->
     <string name="back_press_message">Press again to exit Wholdus</string>
