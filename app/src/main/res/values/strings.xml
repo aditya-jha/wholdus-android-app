@@ -137,4 +137,6 @@
     <string name="price_format">Rs. %1$s</string>
 
     <string name="share_description">Share</string>
+
+    <string name="product_share_text">%1$s. More Details at %2$s</string>
 </resources>

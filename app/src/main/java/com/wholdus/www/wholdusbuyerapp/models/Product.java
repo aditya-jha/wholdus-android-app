@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.text.TextUtils;
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 
 import java.util.ArrayList;
@@ -116,7 +117,7 @@ public class Product {
     }
 
     public String getUrl() {
-        return mUrl;
+        return Constants.WEBSITE_URL + mUrl;
     }
 
     public String[] getProductImageNumbers() {

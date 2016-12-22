@@ -1,22 +1,16 @@
 package com.wholdus.www.wholdusbuyerapp.fragments;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -33,7 +27,7 @@ import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 
 public class GalleryImageFragment extends Fragment {
 
-    private String mImageUrl;
+    private String mImageUrl, mName, mUrl;
     private ItemClickListener mListener;
 
     public GalleryImageFragment() {
@@ -92,12 +86,15 @@ public class GalleryImageFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    public void setImageUrl(String url) {
+    public void setData(String url, String name, String productUrl) {
         mImageUrl = url;
+        mName = name;
+        mUrl = productUrl;
     }
 
     private void shareProduct() {
         TouchImageView imageView = (TouchImageView) getView();
-        ShareIntentClass.shareImage(getContext(), imageView, "Product Title here", "");
+        String title = String.format(getString(R.string.product_share_text), mName, mUrl);
+        ShareIntentClass.shareImage(getContext(), imageView, title, null);
     }
 }
