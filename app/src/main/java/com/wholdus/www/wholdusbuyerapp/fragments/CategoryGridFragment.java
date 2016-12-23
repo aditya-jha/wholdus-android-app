@@ -110,6 +110,11 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
     }

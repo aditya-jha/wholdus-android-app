@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseArray;
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategoriesTable;
@@ -17,9 +16,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategorySellersTable;
@@ -72,15 +69,15 @@ public class CatalogDBHelper extends BaseDBHelper {
         return getCursor(query);
     }
 
-    public Cursor getCategoryData(int categoryID, int showOnline, @Nullable String[] columns){
+    public Cursor getCategoryData(int categoryID, int showOnline, @Nullable String[] columns) {
         String columnNames = getColumnNamesString(columns);
         String query = "SELECT " + columnNames + " FROM " + CategoriesTable.TABLE_NAME;
         boolean whereApplied = false;
-        if (categoryID != -1){
+        if (categoryID != -1) {
             query += " WHERE " + CategoriesTable.COLUMN_CATEGORY_ID + " = " + categoryID;
             whereApplied = true;
         }
-        if (showOnline != -1){
+        if (showOnline != -1) {
             query += whereClauseHelper(whereApplied) + CategoriesTable.COLUMN_SHOW_ONLINE + " = " + showOnline;
         }
         return getCursor(query);
@@ -281,14 +278,14 @@ public class CatalogDBHelper extends BaseDBHelper {
         return productIDs;
     }
 
-    public SparseArray<String> getPresentBuyerProductIDs(){
-        if (mPresentBuyerProductIDs!= null){
+    public SparseArray<String> getPresentBuyerProductIDs() {
+        if (mPresentBuyerProductIDs != null) {
             return mPresentBuyerProductIDs;
         }
         String[] columns = {ProductsTable.COLUMN_BUYER_PRODUCT_ID, ProductsTable.COLUMN_BUYER_PRODUCT_UPDATED_AT};
         ArrayList<Integer> excludeBuyerProductIDs = new ArrayList<>();
         excludeBuyerProductIDs.add(0);
-        Cursor cursor = getProductData(null, null, null, excludeBuyerProductIDs,null, null, null, null, -1, -1, null, null, null, null, -1, -1, -1, -1, null, -1, -1, columns);
+        Cursor cursor = getProductData(null, null, null, excludeBuyerProductIDs, null, null, null, null, -1, -1, null, null, null, null, -1, -1, -1, -1, null, -1, -1, columns);
         SparseArray<String> buyerProductsIDs = new SparseArray<>();
         while (cursor.moveToNext()) {
             buyerProductsIDs.put(cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_BUYER_PRODUCT_ID)),
@@ -298,15 +295,15 @@ public class CatalogDBHelper extends BaseDBHelper {
         return buyerProductsIDs;
     }
 
-    public SparseArray<String> getPresentBuyerResponseProductIDs(){
-        if (mPresentBuyerProductResponseIDs!= null){
+    public SparseArray<String> getPresentBuyerResponseProductIDs() {
+        if (mPresentBuyerProductResponseIDs != null) {
             return mPresentBuyerProductResponseIDs;
         }
         String[] columns = {ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID, ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_UPDATED_AT};
         ArrayList<Integer> excludeBuyerProductResponseIDs = new ArrayList<>();
         excludeBuyerProductResponseIDs.add(0);
         excludeBuyerProductResponseIDs.add(-1);
-        Cursor cursor = getProductData(null, null, null, null,null, excludeBuyerProductResponseIDs, null, null, -1, -1, null, null, null, null, -1, -1, -1, -1, null, -1, -1, columns);
+        Cursor cursor = getProductData(null, null, null, null, null, excludeBuyerProductResponseIDs, null, null, -1, -1, null, null, null, null, -1, -1, -1, -1, null, -1, -1, columns);
         SparseArray<String> buyerProductResponseIDs = new SparseArray<>();
         while (cursor.moveToNext()) {
             buyerProductResponseIDs.put(cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID)),
@@ -317,7 +314,7 @@ public class CatalogDBHelper extends BaseDBHelper {
     }
 
     private SparseArray<String> getPresentCategoryIDs() {
-        if (mPresentCategoryIDs != null){
+        if (mPresentCategoryIDs != null) {
             return mPresentCategoryIDs;
         }
         String[] columns = {CategoriesTable.COLUMN_CATEGORY_ID, CategoriesTable.COLUMN_UPDATED_AT};
@@ -428,7 +425,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         return insertedUpdated;
     }
 
-    public int saveCategoryData(JSONObject category) throws JSONException{
+    public int saveCategoryData(JSONObject category) throws JSONException {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
         int insertUpdated = 0;
         if (!category.has(CategoriesTable.COLUMN_UPDATED_AT)) {
@@ -490,7 +487,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         return insertUpdated;
     }
 
-    public void saveBuyerProductsDataFromJSONArray(JSONArray buyerProducts) throws JSONException{
+    public void saveBuyerProductsDataFromJSONArray(JSONArray buyerProducts) throws JSONException {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
         try {
             db.beginTransaction();
@@ -507,9 +504,9 @@ public class CatalogDBHelper extends BaseDBHelper {
         mDatabaseHelper.closeDatabase();
     }
 
-    public void saveBuyerProductData(JSONObject buyerProduct) throws JSONException{
+    public void saveBuyerProductData(JSONObject buyerProduct) throws JSONException {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
-        if (!buyerProduct.has("product")){
+        if (!buyerProduct.has("product")) {
             return;
         }
         JSONObject product = buyerProduct.getJSONObject("product");
@@ -527,9 +524,9 @@ public class CatalogDBHelper extends BaseDBHelper {
         mDatabaseHelper.closeDatabase();
     }
 
-    public void saveBuyerProductResponseData(JSONObject buyerProductResponse) throws JSONException{
+    public void saveBuyerProductResponseData(JSONObject buyerProductResponse) throws JSONException {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
-        if (!buyerProductResponse.has("product")){
+        if (!buyerProductResponse.has("product")) {
             return;
         }
         JSONObject product = buyerProductResponse.getJSONObject("product");
@@ -537,7 +534,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         int productID = product.getInt(ProductsTable.COLUMN_PRODUCT_ID);
         int buyerProductResponseID = buyerProductResponse.getInt(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID);
         // Send buyer product response Id as -1 if being created locally
-        if (buyerProductResponseID == -1){
+        if (buyerProductResponseID == -1) {
             ContentValues values = getBuyerProductResponseContentValuesFromJSONObject(buyerProductResponse);
             String selection = ProductsTable.COLUMN_PRODUCT_ID + " = " + productID;
             db.update(ProductsTable.TABLE_NAME, values, selection, null);
@@ -556,7 +553,7 @@ public class CatalogDBHelper extends BaseDBHelper {
     }
 
     public void saveSellerAddressFromJsonArray(JSONArray sellerAddress) throws JSONException {
-        for (int i=0; i<sellerAddress.length(); i++) {
+        for (int i = 0; i < sellerAddress.length(); i++) {
             saveSellerAddressData(sellerAddress.getJSONObject(i), false);
         }
     }
@@ -664,12 +661,12 @@ public class CatalogDBHelper extends BaseDBHelper {
         cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_ID, data.getInt(ProductsTable.COLUMN_BUYER_PRODUCT_ID));
         cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_CREATED_AT, data.getString(ProductsTable.COLUMN_PRODUCT_CREATED_AT));
         cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_UPDATED_AT, data.getString(ProductsTable.COLUMN_PRODUCT_UPDATED_AT));
-        cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_IS_ACTIVE, data.getBoolean(ProductsTable.COLUMN_BUYER_PRODUCT_IS_ACTIVE)?1:0);
+        cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_IS_ACTIVE, data.getBoolean(ProductsTable.COLUMN_BUYER_PRODUCT_IS_ACTIVE) ? 1 : 0);
 
         return cv;
     }
 
-    private ContentValues getEmptyBuyerProductContentValues(){
+    private ContentValues getEmptyBuyerProductContentValues() {
         ContentValues values = new ContentValues();
         values.put(ProductsTable.COLUMN_BUYER_PRODUCT_ID, 0);
         values.put(ProductsTable.COLUMN_BUYER_PRODUCT_CREATED_AT, "");
@@ -684,21 +681,21 @@ public class CatalogDBHelper extends BaseDBHelper {
 
         cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID, data.getInt(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID));
         cv.put(ProductsTable.COLUMN_STORE_MARGIN, data.getDouble(ProductsTable.COLUMN_STORE_MARGIN));
-        cv.put(ProductsTable.COLUMN_HAS_SWIPED, data.getBoolean(ProductsTable.COLUMN_HAS_SWIPED)?1:0);
+        cv.put(ProductsTable.COLUMN_HAS_SWIPED, data.getBoolean(ProductsTable.COLUMN_HAS_SWIPED) ? 1 : 0);
         cv.put(ProductsTable.COLUMN_RESPONDED_FROM, data.getInt(ProductsTable.COLUMN_RESPONDED_FROM));
         cv.put(ProductsTable.COLUMN_RESPONSE_CODE, data.getInt(ProductsTable.COLUMN_RESPONSE_CODE));
         cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_CREATED_AT, data.getString(ProductsTable.COLUMN_PRODUCT_CREATED_AT));
         cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_UPDATED_AT, data.getString(ProductsTable.COLUMN_PRODUCT_UPDATED_AT));
         if (data.has(ProductsTable.COLUMN_SYNCED)) {
             cv.put(ProductsTable.COLUMN_SYNCED, data.getInt(ProductsTable.COLUMN_SYNCED));
-        }else {
+        } else {
             cv.put(ProductsTable.COLUMN_SYNCED, 1);
         }
 
         return cv;
     }
 
-    private ContentValues getEmptyBuyerProductResponseContentValues(){
+    private ContentValues getEmptyBuyerProductResponseContentValues() {
         ContentValues values = new ContentValues();
         values.put(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID, 0);
         //values.put(ProductsTable.COLUMN_STORE_MARGIN, -1);
@@ -707,7 +704,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         values.put(ProductsTable.COLUMN_RESPONSE_CODE, 0);
         values.put(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_CREATED_AT, "");
         values.put(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_UPDATED_AT, "");
-        values.put(ProductsTable.COLUMN_SYNCED,1);
+        values.put(ProductsTable.COLUMN_SYNCED, 1);
 
         return values;
     }
@@ -737,9 +734,9 @@ public class CatalogDBHelper extends BaseDBHelper {
         ContentValues cv = new ContentValues();
 
         cv.put(CategoriesTable.COLUMN_CATEGORY_ID, category.getLong(CategoriesTable.COLUMN_CATEGORY_ID));
-        cv.put(CategoriesTable.COLUMN_SHOW_ONLINE, category.getBoolean(CategoriesTable.COLUMN_SHOW_ONLINE)?1:0);
+        cv.put(CategoriesTable.COLUMN_SHOW_ONLINE, category.getBoolean(CategoriesTable.COLUMN_SHOW_ONLINE) ? 1 : 0);
         cv.put(CategoriesTable.COLUMN_CATEGORY_NAME, category.getString(CategoriesTable.COLUMN_CATEGORY_NAME));
-        cv.put(CategoriesTable.COLUMN_IMAGE_URL, "https://dummyimage.com/300x300/98f082/000000.png");
+        cv.put(CategoriesTable.COLUMN_IMAGE_URL, category.getString(CategoriesTable.COLUMN_IMAGE_URL));
         cv.put(CategoriesTable.COLUMN_CREATED_AT, category.getString(CategoriesTable.COLUMN_CREATED_AT));
         cv.put(CategoriesTable.COLUMN_UPDATED_AT, category.getString(CategoriesTable.COLUMN_UPDATED_AT));
         cv.put(CategoriesTable.COLUMN_SLUG, category.getString(CategoriesTable.COLUMN_SLUG));
