@@ -177,7 +177,7 @@ public class CategoryProductActivity extends AppCompatActivity
     }
 
     private void showMenuButtonInToolbar() {
-        mToolbar.setNavigationIcon(R.drawable.ic_menu_white_32dp);
+        mToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
