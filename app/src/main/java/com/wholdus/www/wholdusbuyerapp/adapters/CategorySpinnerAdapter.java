@@ -1,6 +1,7 @@
 package com.wholdus.www.wholdusbuyerapp.adapters;
 
 import android.content.Context;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,7 +70,7 @@ public class CategorySpinnerAdapter extends BaseAdapter implements SpinnerAdapte
                     parent, false);
         }
         if (color == -1) {
-            dataTextView.setTextSize(HelperFunctions.convertDpToPixel(7, mContext));
+            dataTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
             dataTextView.setTextColor(mContext.getResources().getColor(android.R.color.white));
         } else {
             dataTextView.setBackgroundColor(mContext.getResources().getColor(color));

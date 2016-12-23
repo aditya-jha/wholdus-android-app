@@ -10,15 +10,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.AccountActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HomeActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.LoginSignupActivity;
+import com.wholdus.www.wholdusbuyerapp.activities.StoreActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.NavigationDrawerAdapter;
 import com.wholdus.www.wholdusbuyerapp.asynctasks.LoginHelperAsyncTask;
 import com.wholdus.www.wholdusbuyerapp.dataSource.NavigationDrawerData;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -40,20 +43,23 @@ public class NavigationDrawerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
 
-        initNavigationDrawer(rootView);
-
         mBundle = getArguments();
         if (mBundle == null) {
             mBundle = new Bundle();
         }
+
+        initNavigationDrawer(rootView);
+
         return rootView;
     }
 
     private void initNavigationDrawer(ViewGroup rootView) {
         final DrawerLayout mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
         ExpandableListView mExpandableListView = (ExpandableListView) rootView.findViewById(R.id.expandable_list_view);
+
         LinkedHashMap<String, List<String>> mNavigationDrawerData;
         mNavigationDrawerData = NavigationDrawerData.getData();
+
         ArrayList<String> mNavigationDrawerDataTitles = new ArrayList<>(mNavigationDrawerData.keySet());
 
         NavigationDrawerAdapter mNavigationDrawerAdapter = new NavigationDrawerAdapter(getContext(),
@@ -65,29 +71,31 @@ public class NavigationDrawerFragment extends Fragment {
         mExpandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+
                 switch (groupPosition) {
                     case 0:
-                        // go to home
-                        String openActivity = mBundle.getString(getString(R.string.open_activity_key), "none");
-                        if (!openActivity.equals(HomeActivity.class.getSimpleName())){
-                            mBundle.putString(getString(R.string.open_activity_key), HomeActivity.class.getSimpleName());
+                        String openActivity = mBundle.getString(Constants.OPEN_ACTIVITY_KEY, "none");
+                        if (!openActivity.equals(HomeActivity.class.getSimpleName())) {
+                            mBundle.putString(Constants.OPEN_ACTIVITY_KEY, HomeActivity.class.getSimpleName());
                             Intent intent = new Intent(getContext(), HomeActivity.class);
                             intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
                         }
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
-                        return true;
+                        break;
                     case 1:
                         startActivity(new Intent(getContext(), HandPickedActivity.class));
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
-                        return true;
+                        break;
                     case 5:
+                        Toast.makeText(getContext(), "Notification clicked", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 6:
                         logout();
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
-                        return true;
+                        break;
                     default:
                         return false;
                 }
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                return true;
             }
         });
 
@@ -115,11 +123,18 @@ public class NavigationDrawerFragment extends Fragment {
 
     private boolean handleStoreCase(int childPosition) {
         switch (childPosition) {
+            case 0:
+                if (!mBundle.getString(Constants.OPEN_ACTIVITY_KEY, "none").equals(StoreActivity.class.getSimpleName())) {
+                    Intent intent = new Intent(getContext(), StoreActivity.class);
+                    startActivity(intent);
+                }
+                break;
             case 4:
                 return true;
             default:
                 return false;
         }
+        return true;
     }
 
     private boolean handleAccountCase(int childPosition) {
@@ -127,30 +142,30 @@ public class NavigationDrawerFragment extends Fragment {
 
         String openFragmentName = "";
         if (mBundle != null) {
-            openFragmentName = mBundle.getString(getString(R.string.open_fragment_key), "none");
+            openFragmentName = mBundle.getString(Constants.OPEN_FRAGMENT_KEY, "none");
         }
 
         switch (childPosition) {
             case 0:
                 // open profile fragment
-                intent.putExtra(getString(R.string.open_fragment_key), "profile");
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "profile");
                 break;
             case 1:
                 // open orders fragment
-                intent.putExtra(getString(R.string.open_fragment_key), "orders");
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "orders");
                 break;
             case 2:
-                intent.putExtra(getString(R.string.open_fragment_key), "buyerInterests");
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "buyerInterests");
                 break;
             case 3:
                 // open rejected products
-                intent.putExtra(getString(R.string.open_fragment_key), "rejectedProducts");
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "rejectedProducts");
                 break;
             default:
                 return false;
         }
 
-        if (intent.getExtras().getString(getString(R.string.open_fragment_key), "none").equals(openFragmentName)) {
+        if (intent.getExtras().getString(Constants.OPEN_FRAGMENT_KEY, "none").equals(openFragmentName)) {
             return false;
         }
 

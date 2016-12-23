@@ -18,7 +18,6 @@ public class NavigationDrawerData {
         ArrayList<String> store = new ArrayList<>();
         store.add("Store Home");
         store.add("Store Products");
-        store.add("Purchase Requests");
         data.put("My Store", store);
 
         ArrayList<String> account = new ArrayList<>();
@@ -35,6 +34,7 @@ public class NavigationDrawerData {
         helpSupport.add("About Us");
         data.put("Help And Support", helpSupport);
 
+        data.put("Updates", new ArrayList<String>());
         data.put("Logout", new ArrayList<String>());
 
         return data;

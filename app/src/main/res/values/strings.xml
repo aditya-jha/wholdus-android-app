@@ -76,7 +76,7 @@
     <string name="state_key">State</string>
     <string name="help_key">Help</string>
     <string name="categories_key">Categories</string>
-    <string name="notification_key">Notification</string>
+    <string name="notification_key">Updates</string>
 
     <!-- messages -->
     <string name="back_press_message">Press again to exit Wholdus</string>
@@ -142,4 +142,10 @@
     <string name="share_description">Share</string>
 
     <string name="product_share_text">%1$s. More Details at %2$s</string>
+    <string name="store_share_text">Hey! Check out %1$s online store %2$s at: %3$s</string>
+
+    <string name="store_title">Your Store</string>
+    <string name="edit_store_title">Edit Store Details</string>
+    <string name="share_store">Share Your Store</string>
+    <string name="store_products">My Products</string>
 </resources>

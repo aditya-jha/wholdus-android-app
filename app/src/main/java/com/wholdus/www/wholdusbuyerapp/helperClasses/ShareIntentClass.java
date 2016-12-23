@@ -23,8 +23,7 @@ public final class ShareIntentClass {
     public static void shareImage(
             final Context context,
             final ImageView imageView,
-            final String title,
-            final String description) {
+            final String title) {
 
         new Handler().post(new Runnable() {
             @Override

@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +25,7 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.ThumbImageAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.ShareIntentClass;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProductLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
@@ -75,6 +78,15 @@ public class ProductDetailActivity extends AppCompatActivity
 
         mSellerLocation = (TextView) findViewById(R.id.seller_location);
         mSellerSpeciality = (TextView) findViewById(R.id.seller_speciality);
+
+        ImageButton shareButton = (ImageButton) findViewById(R.id.share_button);
+        shareButton.setOnClickListener(this);
+
+        ImageButton favButton = (ImageButton) findViewById(R.id.fav_icon);
+        favButton.setOnClickListener(this);
+
+        Button cartButton = (Button) findViewById(R.id.cart_button);
+        cartButton.setOnClickListener(this);
 
         getSupportLoaderManager().initLoader(PRODUCT_LOADER, null, this);
     }
@@ -131,14 +143,21 @@ public class ProductDetailActivity extends AppCompatActivity
 
     @Override
     public void onClick(View view) {
-        final int id = view.getId();
-        switch (id) {
+        final int ID = view.getId();
+        switch (ID) {
             case R.id.display_image:
-
                 Intent intent = new Intent(this, ProductGalleryActivity.class);
                 intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME, mProductID);
                 startActivity(intent);
-
+                break;
+            case R.id.fav_icon:
+                Toast.makeText(this, "fav button clicked", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.cart_button:
+                Toast.makeText(this, "cart button clicked", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.share_button:
+                ShareIntentClass.shareImage(this, mDisplayImage, mProduct.getProductDetails().getDisplayName());
                 break;
         }
     }
@@ -146,9 +165,9 @@ public class ProductDetailActivity extends AppCompatActivity
     private void loadDisplayImage(int position) {
         Glide.with(this)
                 .load(mProduct.getImageUrl(Constants.LARGE_IMAGE, mProduct.getProductImageNumbers()[position]))
-                .crossFade()
-                .skipMemoryCache(true)
+                .asBitmap()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .skipMemoryCache(true)
                 .thumbnail(0.05f)
                 .into(mDisplayImage);
     }
