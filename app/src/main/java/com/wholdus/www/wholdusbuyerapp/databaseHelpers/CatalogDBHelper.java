@@ -437,6 +437,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         if (categoryUpdatedAtLocal == null) { // categoryID not present
             ContentValues cv = getCategoryContentValueFromJSON(category);
             db.insert(CategoriesTable.TABLE_NAME, null, cv);
+            mPresentCategoryIDs.put(categoryID, categoryUpdatedAtServer);
             insertUpdated = 1;
         } else if (!categoryUpdatedAtLocal.equals(categoryUpdatedAtServer)) {
             ContentValues cv = getCategoryContentValueFromJSON(category);
