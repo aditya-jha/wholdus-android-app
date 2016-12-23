@@ -142,4 +142,7 @@
     <string name="share_description">Share</string>
 
     <string name="product_share_text">%1$s. More Details at %2$s</string>
+
+    <string name="create_store_title">Create Store</string>
+    <string name="edit_store_title">Edit Store Details</string>
 </resources>

@@ -22,4 +22,7 @@ public final class Constants {
     public static final String INSERTED_UPDATED = "insertedUpdated";
 
     public static final String ACTIVE_POSITION = "ActivePosition";
+
+    public static final String OPEN_FRAGMENT_KEY = "openFragment";
+
 }

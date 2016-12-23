@@ -17,9 +17,11 @@ import com.wholdus.www.wholdusbuyerapp.activities.AccountActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HomeActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.LoginSignupActivity;
+import com.wholdus.www.wholdusbuyerapp.activities.StoreActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.NavigationDrawerAdapter;
 import com.wholdus.www.wholdusbuyerapp.asynctasks.LoginHelperAsyncTask;
 import com.wholdus.www.wholdusbuyerapp.dataSource.NavigationDrawerData;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -78,22 +80,21 @@ public class NavigationDrawerFragment extends Fragment {
                             intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
                         }
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
-                        return true;
+                        break;
                     case 1:
                         startActivity(new Intent(getContext(), HandPickedActivity.class));
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
-                        return true;
+                        break;
                     case 5:
                         Toast.makeText(getContext(), "Notification clicked", Toast.LENGTH_SHORT).show();
-                        return true;
+                        break;
                     case 6:
                         logout();
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
-                        return true;
+                        break;
                     default:
                         return false;
                 }
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                return true;
             }
         });
 
@@ -120,12 +121,28 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     private boolean handleStoreCase(int childPosition) {
+        Intent intent = new Intent(getContext(), StoreActivity.class);
+
+        String openFragmentName = "";
+        if (mBundle != null) {
+            openFragmentName = mBundle.getString(Constants.OPEN_FRAGMENT_KEY, "none");
+        }
         switch (childPosition) {
+            case 0:
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "createStore");
+                break;
             case 4:
                 return true;
             default:
                 return false;
         }
+        if (intent.getExtras().getString(Constants.OPEN_FRAGMENT_KEY, "none").equals(openFragmentName)) {
+            return false;
+        }
+
+        startActivity(intent);
+
+        return true;
     }
 
     private boolean handleAccountCase(int childPosition) {
@@ -133,30 +150,30 @@ public class NavigationDrawerFragment extends Fragment {
 
         String openFragmentName = "";
         if (mBundle != null) {
-            openFragmentName = mBundle.getString(getString(R.string.open_fragment_key), "none");
+            openFragmentName = mBundle.getString(Constants.OPEN_FRAGMENT_KEY, "none");
         }
 
         switch (childPosition) {
             case 0:
                 // open profile fragment
-                intent.putExtra(getString(R.string.open_fragment_key), "profile");
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "profile");
                 break;
             case 1:
                 // open orders fragment
-                intent.putExtra(getString(R.string.open_fragment_key), "orders");
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "orders");
                 break;
             case 2:
-                intent.putExtra(getString(R.string.open_fragment_key), "buyerInterests");
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "buyerInterests");
                 break;
             case 3:
                 // open rejected products
-                intent.putExtra(getString(R.string.open_fragment_key), "rejectedProducts");
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "rejectedProducts");
                 break;
             default:
                 return false;
         }
 
-        if (intent.getExtras().getString(getString(R.string.open_fragment_key), "none").equals(openFragmentName)) {
+        if (intent.getExtras().getString(Constants.OPEN_FRAGMENT_KEY, "none").equals(openFragmentName)) {
             return false;
         }
 

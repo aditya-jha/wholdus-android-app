@@ -126,7 +126,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
                 }
             });
         } else if (!backEnabled && mToolbar.getNavigationContentDescription() != "default") {
-            mToolbar.setNavigationIcon(R.drawable.ic_menu_white_32dp);
+            mToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
             mToolbar.setNavigationContentDescription("default");
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
