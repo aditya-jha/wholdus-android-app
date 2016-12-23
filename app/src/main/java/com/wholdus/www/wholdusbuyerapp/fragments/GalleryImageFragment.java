@@ -95,6 +95,6 @@ public class GalleryImageFragment extends Fragment {
     private void shareProduct() {
         TouchImageView imageView = (TouchImageView) getView();
         String title = String.format(getString(R.string.product_share_text), mName, mUrl);
-        ShareIntentClass.shareImage(getContext(), imageView, title, null);
+        ShareIntentClass.shareImage(getContext(), imageView, title);
     }
 }
