@@ -139,6 +139,47 @@ public class CartDBHelper extends BaseDBHelper {
         return cartItemProductIDs;
     }
 
+    public void deleteCart(int cartID) throws JSONException{
+        SQLiteDatabase db = mDatabaseHelper.openDatabase();
+        String selection = null;
+        if (cartID != - 1){
+            selection = CartTable.COLUMN_CART_ID + " = " + cartID;
+        }
+        db.delete(CartTable.TABLE_NAME, selection, null);
+        deleteSubCarts(null);
+        mDatabaseHelper.closeDatabase();
+    }
+
+    public void deleteSubCarts(@Nullable ArrayList<Integer> excludeSubCartIDs) throws JSONException{
+        SQLiteDatabase db = mDatabaseHelper.openDatabase();
+        String selection = null;
+        if (excludeSubCartIDs != null && !excludeSubCartIDs.isEmpty()) {
+            selection = SubCartsTable.COLUMN_SUBCART_ID + " NOT IN (" + TextUtils.join(", ", excludeSubCartIDs) + ")";
+        }
+        db.delete(SubCartsTable.TABLE_NAME, selection, null);
+        mPresentSubCartIds = null;
+        deleteCartItems(-1, excludeSubCartIDs, null);
+        mDatabaseHelper.closeDatabase();
+    }
+
+    public void deleteCartItems(int subCartID, @Nullable ArrayList<Integer> excludeSubCartIDs, @Nullable ArrayList<Integer> excludeCartItemIDs) throws JSONException{
+        SQLiteDatabase db = mDatabaseHelper.openDatabase();
+        if (excludeCartItemIDs == null){
+            excludeCartItemIDs = new ArrayList<>();
+        }
+        excludeCartItemIDs.add(0);
+        String selection = CartItemsTable.COLUMN_CART_ITEM_ID + " NOT IN (" + TextUtils.join(", ", excludeCartItemIDs) + ")";
+        if (subCartID != -1){
+            selection += " AND " + CartItemsTable.COLUMN_SUBCART_ID + " = " + subCartID;
+        }
+        if(excludeSubCartIDs != null && !excludeSubCartIDs.isEmpty()){
+            selection += " AND " + CartItemsTable.COLUMN_SUBCART_ID + " NOT IN (" + TextUtils.join(", ", excludeSubCartIDs) + ")";
+        }
+        db.delete(CartItemsTable.TABLE_NAME,selection,null);
+        mPresentCartItemProductIds = null;
+        mDatabaseHelper.closeDatabase();
+    }
+
     public void saveCartDataFromJSONObject(JSONObject cart) throws JSONException{
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
         String[] columns = {CartTable.COLUMN_UPDATED_AT};
@@ -167,9 +208,7 @@ public class CartDBHelper extends BaseDBHelper {
                     saveSubCartDataFromJSONObject(subCart);
                     subCartIDs.add(subCart.getInt(SubCartsTable.COLUMN_SUBCART_ID));
                 }
-                String selection = SubCartsTable.COLUMN_SUBCART_ID + " NOT IN (" + TextUtils.join(", ", subCartIDs) + ")";
-                db.delete(SubCartsTable.TABLE_NAME, selection, null);
-                mPresentSubCartIds = null;
+                deleteSubCarts(subCartIDs);
             }
             db.setTransactionSuccessful();
         }catch (Exception e) {
@@ -206,11 +245,7 @@ public class CartDBHelper extends BaseDBHelper {
                 saveCartItemDataFromJSONObject(cartItem);
                 cartItemIDs.add(cartItem.getInt(CartItemsTable.COLUMN_CART_ITEM_ID));
             }
-            cartItemIDs.add(0);
-            String selection = CartItemsTable.COLUMN_CART_ITEM_ID + " NOT IN (" + TextUtils.join(", ", cartItemIDs) + ")";
-            db.delete(CartItemsTable.TABLE_NAME,selection,null);
-            mPresentCartItemProductIds = null;
-            //TODO Check for more efficiency here
+            deleteCartItems(subCartID, null, cartItemIDs);
         }
 
         mDatabaseHelper.closeDatabase();
@@ -247,8 +282,10 @@ public class CartDBHelper extends BaseDBHelper {
                 db.insert(CartItemsTable.TABLE_NAME, null, values);
             } else if (!cartItemUpdatedAtLocal.equals(cartItemUpdatedAtServer)) {
                 ContentValues values = getCartItemContentValues(cartItem);
-                String selection = CartItemsTable.COLUMN_CART_ITEM_ID + " = " + cartItemID + " AND " +
-                        CartItemsTable.COLUMN_PIECES + " = " + cartItem.getInt(CartItemsTable.COLUMN_PIECES);
+                String selection = CartItemsTable.COLUMN_CART_ITEM_ID + " = " + cartItemID + " AND (( " +
+                        CartItemsTable.COLUMN_SYNCED + " = 1) OR ( " +
+                        CartItemsTable.COLUMN_SYNCED + " = 0 AND " +
+                        CartItemsTable.COLUMN_PIECES + " = " + cartItem.getInt(CartItemsTable.COLUMN_PIECES) + ")) ";
                 db.update(CartItemsTable.TABLE_NAME, values, selection, null);
             }
         }
