@@ -739,7 +739,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         cv.put(CategoriesTable.COLUMN_CATEGORY_ID, category.getLong(CategoriesTable.COLUMN_CATEGORY_ID));
         cv.put(CategoriesTable.COLUMN_SHOW_ONLINE, category.getBoolean(CategoriesTable.COLUMN_SHOW_ONLINE)?1:0);
         cv.put(CategoriesTable.COLUMN_CATEGORY_NAME, category.getString(CategoriesTable.COLUMN_CATEGORY_NAME));
-        cv.put(CategoriesTable.COLUMN_IMAGE_URL, "https://dummyimage.com/300x300/98f082/000000.png");
+        cv.put(CategoriesTable.COLUMN_IMAGE_URL, category.getString(CategoriesTable.COLUMN_IMAGE_URL));
         cv.put(CategoriesTable.COLUMN_CREATED_AT, category.getString(CategoriesTable.COLUMN_CREATED_AT));
         cv.put(CategoriesTable.COLUMN_UPDATED_AT, category.getString(CategoriesTable.COLUMN_UPDATED_AT));
         cv.put(CategoriesTable.COLUMN_SLUG, category.getString(CategoriesTable.COLUMN_SLUG));

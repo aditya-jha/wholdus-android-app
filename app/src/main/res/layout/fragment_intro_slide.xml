@@ -31,17 +31,20 @@
             tools:text="something great about wholdus goes here"
             tools:textColor="@android:color/black" />
 
-        <Button
-            android:id="@+id/startButton"
-            style="@style/AppTheme.ColoredButton"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:padding="@dimen/activity_vertical_margin"
-            android:text="@string/start_button"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/intro_text_size" />
+            android:background="@color/accent">
+            <Button
+                android:id="@+id/startButton"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:text="@string/start_button"
+                android:textColor="@android:color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackgroundBorderless" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>
