@@ -30,7 +30,7 @@
 
     <style name="AppTheme.TitleText" parent="AppTheme">
         <item name="android:textSize">16sp</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@android:color/black</item>
         <item name="android:fontFamily">@string/font_family_black</item>
         <item name="android:padding">@dimen/title_text_padding</item>
     </style>
@@ -41,7 +41,6 @@
     </style>
 
     <style name="AppTheme.BoldText" parent="AppTheme">
-        <item name="android:textStyle">bold</item>
         <item name="android:paddingLeft">@dimen/title_text_padding</item>
         <item name="android:paddingBottom">@dimen/title_text_padding</item>
     </style>
