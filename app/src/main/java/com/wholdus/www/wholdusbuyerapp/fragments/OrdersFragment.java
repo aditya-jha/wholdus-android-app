@@ -155,7 +155,7 @@ public class OrdersFragment extends Fragment implements ItemClickListener {
    }
 
     @Override
-    public void itemClicked(View view, int position) {
+    public void itemClicked(View view, int position, int id) {
         mListener.openOrderDetails(mOrderArrayList.get(position).getOrderID());
     }
 }

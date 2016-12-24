@@ -96,7 +96,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
             if (position == RecyclerView.NO_POSITION) return;
 
             if (mListener != null) {
-                mListener.itemClicked(view, position);
+                mListener.itemClicked(view, position, -1);
             }
 
         }

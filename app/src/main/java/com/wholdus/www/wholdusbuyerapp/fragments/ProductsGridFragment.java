@@ -50,7 +50,7 @@ import com.wholdus.www.wholdusbuyerapp.services.CatalogService;
 
 import java.util.ArrayList;
 
-import static android.R.attr.id;
+import static android.os.Build.ID;
 
 /**
  * Created by aditya on 8/12/16.
@@ -296,8 +296,13 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
-    public void itemClicked(View view, int position) {
-        final int ID = view.getId();
+    public void itemClicked(View view, int position, int id) {
+        int ID;
+        if (id == -1) {
+            ID = view.getId();
+        } else {
+            ID = id;
+        }
         switch (ID) {
             case R.id.share_image_view:
                 ShareIntentClass.shareImage(getContext(), (ImageView) view, mProducts.get(position).getName());

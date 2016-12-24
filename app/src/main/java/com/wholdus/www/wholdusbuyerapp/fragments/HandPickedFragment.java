@@ -200,7 +200,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     }
 
     @Override
-    public void itemClicked(View view, int position) {
+    public void itemClicked(View view, int position, int id) {
         mListener.openProductDetails(mProductsArrayList.get(position).getProductID());
     }
 }

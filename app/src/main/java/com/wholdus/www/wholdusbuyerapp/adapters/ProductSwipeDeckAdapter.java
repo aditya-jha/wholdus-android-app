@@ -88,7 +88,7 @@ public class ProductSwipeDeckAdapter extends BaseAdapter {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mItemClickListener.itemClicked(view, position);
+                mItemClickListener.itemClicked(view, position, -1);
             }
         });
 

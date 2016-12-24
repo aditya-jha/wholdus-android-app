@@ -137,7 +137,7 @@ public class ProductDetailActivity extends AppCompatActivity
     }
 
     @Override
-    public void itemClicked(View view, int position) {
+    public void itemClicked(View view, int position, int id) {
         loadDisplayImage(position);
     }
 

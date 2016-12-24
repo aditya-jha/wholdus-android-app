@@ -134,10 +134,11 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if (position == RecyclerView.NO_POSITION) return;
 
             if (mListener != null) {
-                if (view.getId() == R.id.share_image_view) {
-                    mListener.itemClicked(mProductImage, position);
+                final int id = view.getId();
+                if (id == R.id.share_image_view) {
+                    mListener.itemClicked(mProductImage, position, id);
                 } else {
-                    mListener.itemClicked(view, position);
+                    mListener.itemClicked(view, position, id);
                 }
             }
         }
