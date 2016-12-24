@@ -1,6 +1,7 @@
 package com.wholdus.www.wholdusbuyerapp.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +12,11 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.models.Category;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
@@ -58,23 +63,24 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
             holder.mFavIconimageView.setImageResource(R.drawable.ic_favorite_red_24dp);
         }
 
-        holder.mIconImageView.setImageUrl(category.getImageURL(), mImageLoader);
-        holder.mIconImageView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-                if(holder.mIconImageView.getDrawable() != null) {
-                    holder.mProgressBar.setVisibility(View.GONE);
-                }
-            }
-        });
-
+        Glide.with(mContext)
+                .load(category.getImageURL())
+                .asBitmap()
+                .skipMemoryCache(true)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        holder.mIconImageView.setImageBitmap(resource);
+                        holder.mProgressBar.setVisibility(View.GONE);
+                    }
+                });
         holder.mListener = mListener;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView mNameTextView;
-        NetworkImageView mIconImageView;
+        ImageView mIconImageView;
         ProgressBar mProgressBar;
         ImageView mFavIconimageView;
 
@@ -84,7 +90,7 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
             super(itemView);
 
             mNameTextView = (TextView) itemView.findViewById(R.id.name_textView);
-            mIconImageView = (NetworkImageView) itemView.findViewById(R.id.icon_imageView);
+            mIconImageView = (ImageView) itemView.findViewById(R.id.icon_imageView);
             mProgressBar = (ProgressBar) itemView.findViewById(R.id.loading_indicator);
             mFavIconimageView = (ImageView) itemView.findViewById(R.id.fav_icon_image_view);
 

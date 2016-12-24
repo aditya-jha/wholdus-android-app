@@ -20,9 +20,6 @@
     <string name="buyer_product_url">users/buyer/buyerproducts/</string>
     <string name="buyer_product_response_url">users/buyer/buyerproducts/response/</string>
 
-    <!-- catalog api -->
-    <string name="category_url">category/</string>
-
     <!-- product api -->
     <string name="product_url">products/</string>
 
