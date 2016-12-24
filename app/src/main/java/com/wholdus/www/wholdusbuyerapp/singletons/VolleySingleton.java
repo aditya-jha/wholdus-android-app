@@ -18,7 +18,7 @@ public class VolleySingleton {
     private static VolleySingleton mVolleySingleton;
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
-    private static Context mContext;
+    private Context mContext;
 
     private VolleySingleton(Context context) {
         mContext = context;
@@ -55,7 +55,7 @@ public class VolleySingleton {
         return mVolleySingleton;
     }
 
-    public RequestQueue getRequestQueue() {
+    private RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
             // getApplicationContext() is key, it keeps you from leaking the
             // Activity or BroadcastReceiver if someone passes one in.

@@ -36,4 +36,8 @@ public class CategoriesGridLoader extends AbstractLoader<ArrayList<Category>> {
 
         return categories;
     }
+
+    public void deleteData() {
+        mResult = null;
+    }
 }
