@@ -10,16 +10,12 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.wholdus.www.wholdusbuyerapp.R;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.models.Category;
-import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
 import java.util.List;
 
@@ -32,13 +28,11 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
 
     private List<Category> mCategories;
     private Context mContext;
-    private ImageLoader mImageLoader;
     private ItemClickListener mListener;
 
     public CategoriesGridAdapter(Context context, List<Category> categories, final ItemClickListener listener) {
         mContext = context;
         mCategories = categories;
-        mImageLoader = VolleySingleton.getInstance(context).getImageLoader();
         mListener = listener;
     }
 

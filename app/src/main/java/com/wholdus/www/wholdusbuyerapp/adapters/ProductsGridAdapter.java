@@ -2,9 +2,7 @@ package com.wholdus.www.wholdusbuyerapp.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +11,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -22,7 +18,6 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.models.GridProductModel;
-import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
 import java.util.ArrayList;
 
@@ -34,7 +29,6 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private Context mContext;
     private ArrayList<GridProductModel> mData;
-    private ImageLoader mImageLoader;
     private ItemClickListener mListener;
 
     private static final int PRODUCT_VIEW = 0;
@@ -43,7 +37,6 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public ProductsGridAdapter(Context context, ArrayList<GridProductModel> products, final ItemClickListener listener) {
         mContext = context;
         mData = products;
-        mImageLoader = VolleySingleton.getInstance(context).getImageLoader();
         mListener = listener;
     }
 
@@ -148,8 +141,6 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private static class ProgressViewHolder extends RecyclerView.ViewHolder {
-
-
         ProgressViewHolder(View itemView) {
             super(itemView);
         }
