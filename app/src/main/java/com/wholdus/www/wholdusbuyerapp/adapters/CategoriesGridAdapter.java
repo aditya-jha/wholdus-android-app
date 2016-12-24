@@ -98,7 +98,7 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
             if (position == RecyclerView.NO_POSITION) return;
 
             if (mListener != null) {
-                mListener.itemClicked(position, view.getId());
+                mListener.itemClicked(view, position);
             }
         }
     }

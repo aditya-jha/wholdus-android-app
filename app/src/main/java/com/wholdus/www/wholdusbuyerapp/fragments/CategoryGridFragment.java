@@ -37,6 +37,8 @@ import com.wholdus.www.wholdusbuyerapp.services.CatalogService;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.R.attr.id;
+
 /**
  * Created by aditya on 10/12/16.
  * Fragment to Display Categories present on wholdus
@@ -151,7 +153,8 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
-    public void itemClicked(int position, int id) {
+    public void itemClicked(View view, int position) {
+        final int id = view.getId();
         switch (id) {
             case R.id.fav_icon_image_view:
                 /* TODO: add the category at position to buyer interests */
@@ -225,15 +228,6 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
     }
 
     private void showErrorMessage() {
-        final View.OnClickListener onClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mPageLoader.getVisibility() != View.VISIBLE) {
-                    mPageLoader.setVisibility(View.VISIBLE);
-                }
-                fetchDataFromServer();
-            }
-        };
         new Thread(new Runnable() {
             @Override
             public void run() {

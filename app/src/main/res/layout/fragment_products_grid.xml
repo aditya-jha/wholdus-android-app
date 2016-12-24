@@ -1,40 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_container"
+    <ProgressBar
+        android:id="@+id/page_loader"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="100dp"
+        android:layout_centerVertical="true" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/products_recycler_view"
+    <LinearLayout
+        android:id="@+id/page_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-    <LinearLayout style="@style/AppTheme.BottomBar">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/products_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </android.support.v4.widget.SwipeRefreshLayout>
 
-        <Button
-            android:id="@+id/sort_button"
-            style="@style/AppTheme.HomeBottomButton"
-            android:drawableLeft="@drawable/ic_sort_white_24dp"
-            android:drawableStart="@drawable/ic_sort_white_24dp"
-            android:text="@string/sort_text" />
+        <LinearLayout style="@style/AppTheme.BottomBar">
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@android:color/white" />
+            <Button
+                android:id="@+id/sort_button"
+                style="@style/AppTheme.HomeBottomButton"
+                android:drawableLeft="@drawable/ic_sort_white_24dp"
+                android:drawableStart="@drawable/ic_sort_white_24dp"
+                android:text="@string/sort_text" />
 
-        <Button
-            android:id="@+id/filter_button"
-            style="@style/AppTheme.HomeBottomButton"
-            android:drawableLeft="@drawable/ic_filter_list_white_24dp"
-            android:drawableStart="@drawable/ic_filter_list_white_24dp"
-            android:text="@string/filter_text" />
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/white" />
+
+            <Button
+                android:id="@+id/filter_button"
+                style="@style/AppTheme.HomeBottomButton"
+                android:drawableLeft="@drawable/ic_filter_list_white_24dp"
+                android:drawableStart="@drawable/ic_filter_list_white_24dp"
+                android:text="@string/filter_text" />
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

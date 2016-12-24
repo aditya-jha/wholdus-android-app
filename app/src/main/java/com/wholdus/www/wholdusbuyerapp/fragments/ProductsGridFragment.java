@@ -4,8 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -21,7 +23,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.CheckoutActivity;
@@ -33,6 +38,9 @@ import com.wholdus.www.wholdusbuyerapp.decorators.GridItemDecorator;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.ShareIntentClass;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.EndlessRecyclerViewScrollListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
@@ -41,6 +49,8 @@ import com.wholdus.www.wholdusbuyerapp.models.GridProductModel;
 import com.wholdus.www.wholdusbuyerapp.services.CatalogService;
 
 import java.util.ArrayList;
+
+import static android.R.attr.id;
 
 /**
  * Created by aditya on 8/12/16.
@@ -58,6 +68,11 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     private EndlessRecyclerViewScrollListener mOnScrollListener;
     private BroadcastReceiver mReceiver;
     private GridLayoutManager mGridLayoutManager;
+    private ProgressBar mPageLoader;
+    private LinearLayout mPageLayout;
+    private ViewGroup mRootView;
+    private Snackbar mSnackbar;
+    private boolean mLoaderLoading, mLoadMore;
 
     private int mPageNumber, mTotalPages, mRecyclerViewPosition;
 
@@ -81,15 +96,12 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (mProducts == null) {
-            mProducts = new ArrayList<>();
-        } else {
-            Toast.makeText(getContext(), "products already when created - " + mProducts.size(), Toast.LENGTH_SHORT).show();
-        }
-
+        mProducts = new ArrayList<>();
         mRecyclerViewPosition = 0;
         mPageNumber = 1;
         mTotalPages = -1;
+        mLoaderLoading = false;
+        mLoadMore = false;
 
         mReceiver = new BroadcastReceiver() {
             @Override
@@ -97,32 +109,35 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 handleOnBroadcastReceive(intent);
             }
         };
-
-        Log.d(this.getClass().getSimpleName(), "oncreate");
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_products_grid, container, false);
+        mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_products_grid, container, false);
         setHasOptionsMenu(true);
 
-        Button filterButton = (Button) rootView.findViewById(R.id.filter_button);
+        mPageLoader = (ProgressBar) mRootView.findViewById(R.id.page_loader);
+        mPageLayout = (LinearLayout) mRootView.findViewById(R.id.page_layout);
+
+        Button filterButton = (Button) mRootView.findViewById(R.id.filter_button);
         filterButton.setOnClickListener(this);
 
-        Button sortButton = (Button) rootView.findViewById(R.id.sort_button);
+        Button sortButton = (Button) mRootView.findViewById(R.id.sort_button);
         sortButton.setOnClickListener(this);
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) mRootView.findViewById(R.id.swipe_container);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                final int oldTotalPages = mTotalPages;
+                refreshData();
+                mTotalPages = oldTotalPages;
                 mSwipeRefreshLayout.setRefreshing(false);
-                updateData();
             }
         });
 
-        mProductsRecyclerView = (RecyclerView) rootView.findViewById(R.id.products_recycler_view);
+        mProductsRecyclerView = (RecyclerView) mRootView.findViewById(R.id.products_recycler_view);
         mProductsRecyclerView.addItemDecoration(new GridItemDecorator(2, getResources().getDimensionPixelSize(R.dimen.card_margin_horizontal), true, 0));
         mGridLayoutManager = new GridLayoutManager(getContext(), 2);
         mGridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -142,14 +157,17 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         mOnScrollListener = new EndlessRecyclerViewScrollListener(mGridLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                Toast.makeText(getContext(), "load more - " + page, Toast.LENGTH_SHORT).show();
-                updateData();
+                if (mLoaderLoading) {
+                    mLoadMore = true;
+                } else {
+                    mLoadMore = false;
+                    updateData();
+                }
             }
         };
         mProductsRecyclerView.addOnScrollListener(mOnScrollListener);
 
-        Log.d(this.getClass().getSimpleName(), "onCreateview");
-        return rootView;
+        return mRootView;
     }
 
     @Override
@@ -178,8 +196,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(this.getClass().getSimpleName(), "onresume");
-        IntentFilter intentFilter = new IntentFilter(getString(R.string.category_data_updated));
+        IntentFilter intentFilter = new IntentFilter(IntentFilters.PRODUCT_DATA);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
         restoreRecyclerViewPosition();
     }
@@ -187,7 +204,6 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(this.getClass().getSimpleName(), "onpause");
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
         saveRecyclerViewPosition();
     }
@@ -195,13 +211,11 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onStop() {
         super.onStop();
-        Log.d(this.getClass().getSimpleName(), "onstop");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d(this.getClass().getSimpleName(), "onDestryview");
     }
 
     @Override
@@ -234,28 +248,34 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         ArrayList<Integer> responseCodes = new ArrayList<>();
         responseCodes.add(0);
         responseCodes.add(1);
+        mLoaderLoading = true;
         return new GridProductsLoader(getContext(), mPageNumber, mLimit, responseCodes);
     }
 
     @Override
     public void onLoadFinished(Loader<ArrayList<GridProductModel>> loader, final ArrayList<GridProductModel> data) {
-        int oldPosition = mProducts.size();
-
-        if (oldPosition != 0) {
-            oldPosition--;
-            mProducts.remove(oldPosition);
-            mProductsGridAdapter.notifyItemRemoved(oldPosition);
-        }
-
+        mLoaderLoading = false;
         if (data.size() != 0) {
+            if (mPageLoader.getVisibility() == View.VISIBLE) {
+                mPageLoader.setVisibility(View.GONE);
+                mPageLayout.setVisibility(View.VISIBLE);
+            }
+            final int oldPosition = mProducts.size();
+            removeDummyObject();
             mProducts.addAll(data);
-            mProducts.add(new GridProductModel());
-            mProductsGridAdapter.notifyItemRangeInserted(oldPosition, data.size() + 1);
+            if (mTotalPages == 1 || (mTotalPages == mPageNumber)) {
+                mProductsGridAdapter.notifyItemRangeInserted(oldPosition, data.size());
+            } else {
+                mProducts.add(new GridProductModel());
+                mProductsGridAdapter.notifyItemRangeInserted(oldPosition, data.size() + 1);
+            }
         } else {
-            mTotalPages = 0;
+            removeDummyObject();
         }
-
-        Log.d("on load", mProducts.size() + "");
+        if (mLoadMore) {
+            mLoadMore = false;
+            updateData();
+        }
     }
 
     @Override
@@ -276,10 +296,11 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
-    public void itemClicked(int position, int id) {
-        switch (id) {
+    public void itemClicked(View view, int position) {
+        final int ID = view.getId();
+        switch (ID) {
             case R.id.share_image_view:
-                /* TODO: handle share button click */
+                ShareIntentClass.shareImage(getContext(), (ImageView) view, mProducts.get(position).getName());
                 break;
             case R.id.cart_image_view:
                 /* TODO: handle cart button click */
@@ -323,33 +344,47 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     }
 
     private void handleOnBroadcastReceive(final Intent intent) {
-        String type = intent.getStringExtra("type");
-        if (type.equals("ProductResponse")) {
-            int pageNumber = intent.getIntExtra(APIConstants.API_PAGE_NUMBER_KEY, -1);
-            int totalPages = intent.getIntExtra(APIConstants.API_TOTAL_PAGES_KEY, 1);
-            int updatedInserted = intent.getIntExtra(Constants.INSERTED_UPDATED, 0);
-
-            if (updatedInserted > 0) {
-                if (mPageNumber > pageNumber && mPageNumber != 1) {
-                    /* TODO: show button to refresh data */
-                } else if (pageNumber == 1 && mPageNumber == pageNumber){
-                    refreshData();
-                }
+        Bundle extras = intent.getExtras();
+        if (extras.getString(Constants.ERROR_RESPONSE) != null && mPageLoader.getVisibility() == View.VISIBLE) {
+            mPageLoader.setVisibility(View.INVISIBLE);
+            showErrorMessage();
+            return;
+        }
+        final int pageNumber = intent.getIntExtra(APIConstants.API_PAGE_NUMBER_KEY, -1);
+        final int totalPages = intent.getIntExtra(APIConstants.API_TOTAL_PAGES_KEY, 1);
+        final int updatedInserted = intent.getIntExtra(Constants.INSERTED_UPDATED, 0);
+        Log.d(this.getClass().getSimpleName(), "page number from api: " + pageNumber);
+        Log.d(this.getClass().getSimpleName(), "total pages: " + totalPages);
+        if (updatedInserted > 0) {
+            if (mPageNumber == 1 && pageNumber == 1) {
+                refreshData();
+            } else if (mPageNumber > pageNumber){
+                showSnackbarToUpdateUI(totalPages);
+            } else if (mPageNumber == pageNumber) {
+                getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
+                mPageNumber++;
             }
-            mTotalPages = totalPages;
+        }
+        mTotalPages = totalPages;
+        if (mTotalPages == 1) {
+            removeDummyObject();
         }
     }
 
     private boolean hasNextPage() {
-        return mTotalPages == -1 || mTotalPages > mPageNumber;
+        return mTotalPages == -1 || mPageNumber <= mTotalPages;
     }
 
+    /*
+        Reset page number and total pages
+        Remove all Items from Adapter and notify it
+        Restart Loader
+     */
     public void refreshData() {
         mPageNumber = 1;
         mTotalPages = -1;
         resetAdapterState();
         getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
-        Toast.makeText(getContext(), "Products updated", Toast.LENGTH_SHORT).show();
     }
 
     public void resetAdapterState() {
@@ -366,5 +401,78 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
     private void restoreRecyclerViewPosition() {
         mProductsRecyclerView.scrollToPosition(mRecyclerViewPosition);
+    }
+
+    private void showErrorMessage() {
+        if (mSnackbar != null && mSnackbar.isShownOrQueued()) {
+            mSnackbar.dismiss();
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String message;
+                if (HelperFunctions.isNetworkAvailable(getContext())) {
+                    message = getString(R.string.api_error_message);
+                } else {
+                    message = getString(R.string.no_internet_access);
+                }
+                mSnackbar = Snackbar.make(mRootView, message, Snackbar.LENGTH_INDEFINITE)
+                        .setAction(R.string.retry_text, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if (mPageNumber == 1) {
+                                    mPageLoader.setVisibility(View.VISIBLE);
+                                }
+                                fetchProductsFromServer();
+                            }
+                        });
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((TextView) mSnackbar.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(Color.WHITE);
+                        mSnackbar.show();
+                    }
+                });
+            }
+        }).start();
+    }
+
+    private void showSnackbarToUpdateUI(final int totalPages) {
+        if (mSnackbar != null && mSnackbar.isShownOrQueued()) {
+            mSnackbar.dismiss();
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                mSnackbar = Snackbar.make(mRootView, getString(R.string.new_products_message), Snackbar.LENGTH_INDEFINITE)
+                        .setAction(R.string.show_text, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                refreshData();
+                                mTotalPages = totalPages;
+                                getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, ProductsGridFragment.this);
+                            }
+                        });
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((TextView) mSnackbar.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(Color.WHITE);
+                        mSnackbar.show();
+                    }
+                });
+            }
+        }).start();
+    }
+
+    private void removeDummyObject() {
+        int oldPosition = mProducts.size();
+        if (oldPosition != 0) {
+            oldPosition--;
+            mProducts.remove(oldPosition);
+            mProductsGridAdapter.notifyItemRemoved(oldPosition);
+        }
     }
 }

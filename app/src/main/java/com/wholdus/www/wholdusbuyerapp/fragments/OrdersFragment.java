@@ -4,43 +4,29 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
-import com.wholdus.www.wholdusbuyerapp.WholdusApplication;
 import com.wholdus.www.wholdusbuyerapp.adapters.OrdersAdapter;
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
-import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
 import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewVerticalSpaceItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.OrdersLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Order;
 import com.wholdus.www.wholdusbuyerapp.services.OrderService;
-import com.wholdus.www.wholdusbuyerapp.services.UserService;
-
-import org.json.JSONException;
 
 import java.util.ArrayList;
-
-import static android.support.v7.recyclerview.R.attr.layoutManager;
 
 /**
  * Created by aditya on 19/11/16.
@@ -169,7 +155,7 @@ public class OrdersFragment extends Fragment implements ItemClickListener {
    }
 
     @Override
-    public void itemClicked(int position, int id) {
+    public void itemClicked(View view, int position) {
         mListener.openOrderDetails(mOrderArrayList.get(position).getOrderID());
     }
 }

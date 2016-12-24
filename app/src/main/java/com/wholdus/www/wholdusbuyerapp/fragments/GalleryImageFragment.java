@@ -58,7 +58,7 @@ public class GalleryImageFragment extends Fragment {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.itemClicked(-1, 0);
+                mListener.itemClicked(view, -1);
             }
         });
         return imageView;
