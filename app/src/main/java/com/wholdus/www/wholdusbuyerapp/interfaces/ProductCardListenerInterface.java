@@ -6,6 +6,6 @@ package com.wholdus.www.wholdusbuyerapp.interfaces;
 
 public interface ProductCardListenerInterface {
 
-    void cardCreated(String productName);
+    void cardCreated();
 
 }
