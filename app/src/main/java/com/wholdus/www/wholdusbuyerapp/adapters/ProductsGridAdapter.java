@@ -1,23 +1,23 @@
 package com.wholdus.www.wholdusbuyerapp.adapters;
 
 import android.content.Context;
-import android.support.v4.widget.ContentLoadingProgressBar;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.models.GridProductModel;
-import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
 import java.util.ArrayList;
 
@@ -29,7 +29,6 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private Context mContext;
     private ArrayList<GridProductModel> mData;
-    private ImageLoader mImageLoader;
     private ItemClickListener mListener;
 
     private static final int PRODUCT_VIEW = 0;
@@ -38,7 +37,6 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public ProductsGridAdapter(Context context, ArrayList<GridProductModel> products, final ItemClickListener listener) {
         mContext = context;
         mData = products;
-        mImageLoader = VolleySingleton.getInstance(context).getImageLoader();
         mListener = listener;
     }
 
@@ -90,22 +88,23 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.mProductName.setText(product.getName());
         holder.mProductFabric.setText(product.getFabric());
         holder.mProductPrice.setText(String.format(mContext.getString(R.string.price_per_pcs_format), product.getPrice().toString()));
-        holder.mProductImage.setImageUrl(product.getImageUrl(Constants.SMALL_IMAGE, "1"), mImageLoader);
-        holder.mProductImage.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-                if(holder.mProductImage.getDrawable() != null) {
-                    holder.mProgressBar.setVisibility(View.GONE);
-                }
-            }
-        });
-
+        Glide.with(mContext)
+                .load(product.getImageUrl(Constants.SMALL_IMAGE, "1"))
+                .asBitmap()
+                .skipMemoryCache(true)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        holder.mProductImage.setImageBitmap(resource);
+                        holder.mProgressBar.setVisibility(View.GONE);
+                    }
+                });
         holder.mListener = mListener;
     }
 
     private static class ProductViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        NetworkImageView mProductImage;
+        ImageView mProductImage;
         TextView mProductName, mProductFabric, mProductPrice;
         ImageButton mFabButton, mShareButton, mCartButton;
         ProgressBar mProgressBar;
@@ -115,7 +114,7 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         ProductViewHolder(View itemView) {
             super(itemView);
 
-            mProductImage = (NetworkImageView) itemView.findViewById(R.id.product_image);
+            mProductImage = (ImageView) itemView.findViewById(R.id.product_image);
             mProductName = (TextView) itemView.findViewById(R.id.product_name);
             mProductFabric = (TextView) itemView.findViewById(R.id.product_fabric);
             mProductPrice = (TextView) itemView.findViewById(R.id.product_price);
@@ -142,8 +141,6 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private static class ProgressViewHolder extends RecyclerView.ViewHolder {
-
-
         ProgressViewHolder(View itemView) {
             super(itemView);
         }

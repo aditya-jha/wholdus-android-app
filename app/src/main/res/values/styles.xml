@@ -82,6 +82,12 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="AppTheme.CardImageButton" parent="Base.Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
     <style name="AppTheme.SecondaryText" parent="AppTheme">
         <item name="android:textColor">@color/secondary_text</item>
         <item name="android:textSize">14sp</item>

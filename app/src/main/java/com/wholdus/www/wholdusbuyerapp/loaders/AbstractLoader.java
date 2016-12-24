@@ -66,6 +66,7 @@ public abstract class AbstractLoader<T> extends AsyncTaskLoader<T> {
     }
 
     protected void releaseResources(T result) {
+        result = null;
     }
 }
 
