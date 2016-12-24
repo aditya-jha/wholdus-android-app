@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -65,6 +66,7 @@ public class CatalogService extends IntentService {
         params.put("product_show_online", "1");
         params.put("seller_details", "1");
         String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.product_url), params);
+        Log.d(this.getClass().getSimpleName(), "making call for page: " + pageNumber);
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }
 
@@ -155,15 +157,18 @@ public class CatalogService extends IntentService {
     }
 
     private void updateProducts(JSONObject response) throws JSONException {
-        CatalogDBHelper catalogDBHelper = new CatalogDBHelper(this);
-        int updatedInserted = catalogDBHelper.saveProductsFromJSONArray(response.getJSONArray(ProductsTable.TABLE_NAME));
+        Intent intent = new Intent(IntentFilters.PRODUCT_DATA);
+        if (response == null) {
+            // error response
+            intent.putExtra(Constants.ERROR_RESPONSE, "Error");
+        } else {
+            CatalogDBHelper catalogDBHelper = new CatalogDBHelper(this);
+            int updatedInserted = catalogDBHelper.saveProductsFromJSONArray(response.getJSONArray(ProductsTable.TABLE_NAME));
 
-        Intent intent = new Intent(getString(R.string.category_data_updated));
-        intent.putExtra("type", Constants.PRODUCT_RESPONSE);
-        intent.putExtra(Constants.INSERTED_UPDATED, updatedInserted);
-        intent.putExtra(APIConstants.API_PAGE_NUMBER_KEY, response.getInt(APIConstants.API_PAGE_NUMBER_KEY));
-        intent.putExtra(APIConstants.API_TOTAL_PAGES_KEY, response.getInt(APIConstants.API_TOTAL_PAGES_KEY));
-
+            intent.putExtra(Constants.INSERTED_UPDATED, updatedInserted);
+            intent.putExtra(APIConstants.API_PAGE_NUMBER_KEY, response.getInt(APIConstants.API_PAGE_NUMBER_KEY));
+            intent.putExtra(APIConstants.API_TOTAL_PAGES_KEY, response.getInt(APIConstants.API_TOTAL_PAGES_KEY));
+        }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }
