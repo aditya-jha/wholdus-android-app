@@ -2,6 +2,7 @@ package com.wholdus.www.wholdusbuyerapp.services;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -13,8 +14,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.ProductsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
+import com.wholdus.www.wholdusbuyerapp.models.Buyer;
+import com.wholdus.www.wholdusbuyerapp.models.BuyerProductResponse;
+import com.wholdus.www.wholdusbuyerapp.models.Product;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
 import org.json.JSONArray;
@@ -22,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +49,10 @@ public class BuyerProductService extends IntentService {
         switch (todo) {
             case R.string.fetch_buyer_products:
                 fetchBuyerProducts(todo, 1);
+                break;
+            case R.string.update_product_response:
+                updateProductResponseInDB(intent);
+
         }
     }
 
@@ -103,6 +113,10 @@ public class BuyerProductService extends IntentService {
             switch (todo) {
                 case R.string.fetch_buyer_products:
                     saveBuyerProductsToDB(response);
+                    break;
+                case R.string.update_product_response:
+                    saveBuyerProductResponseToDB(response);
+                    break;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -116,6 +130,7 @@ public class BuyerProductService extends IntentService {
         JSONArray buyerProducts = data.getJSONArray("buyer_products");
         dbHelper.saveBuyerProductsDataFromJSONArray(buyerProducts);
         sendBuyerProductDataUpdatedBroadCast(null);
+        //TODO : Possibly fetch a minimum of 50 buyer products
     }
 
     private void sendBuyerProductDataUpdatedBroadCast(@Nullable String extra) {
@@ -124,5 +139,73 @@ public class BuyerProductService extends IntentService {
             intent.putExtra("extra", extra);
         }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    private void updateProductResponseInDB(Intent intent){
+        try {
+            CatalogDBHelper dbHelper = new CatalogDBHelper(this);
+            JSONObject buyerProductResponse = new JSONObject();
+            JSONObject product = new JSONObject();
+            Integer productID = intent.getIntExtra(ProductsTable.COLUMN_PRODUCT_ID, -1);
+            Integer responseCode = intent.getIntExtra(ProductsTable.COLUMN_RESPONSE_CODE, -1);
+            if (productID == -1 || responseCode == -1){
+                return;
+            }
+            product.put(ProductsTable.COLUMN_PRODUCT_ID, productID);
+            buyerProductResponse.put("product", product);
+            buyerProductResponse.put(ProductsTable.COLUMN_RESPONSE_CODE, responseCode);
+            buyerProductResponse.put(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID, -1);
+            Float storeMargin = intent.getFloatExtra(ProductsTable.COLUMN_STORE_MARGIN, -1);
+            if (storeMargin > 0){
+                buyerProductResponse.put(ProductsTable.COLUMN_STORE_MARGIN, storeMargin);
+            } else {
+                buyerProductResponse.put(ProductsTable.COLUMN_STORE_MARGIN, -1.0);
+            }
+            buyerProductResponse.put(ProductsTable.COLUMN_HAS_SWIPED, intent.getBooleanExtra(ProductsTable.COLUMN_HAS_SWIPED, true)?1:0);
+            buyerProductResponse.put(ProductsTable.COLUMN_RESPONDED_FROM, intent.getIntExtra(ProductsTable.COLUMN_RESPONDED_FROM, 0));
+            buyerProductResponse.put(ProductsTable.COLUMN_PRODUCT_CREATED_AT, "");
+            buyerProductResponse.put(ProductsTable.COLUMN_PRODUCT_UPDATED_AT, "");
+            buyerProductResponse.put(ProductsTable.COLUMN_SYNCED, 0);
+            dbHelper.saveBuyerProductResponseData(buyerProductResponse);
+            updateAllUnsyncedBuyerProductResponses();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void saveBuyerProductResponseToDB(String response) throws JSONException{
+        JSONObject data = new JSONObject(response);
+        CatalogDBHelper dbHelper = new CatalogDBHelper(this);
+        dbHelper.saveBuyerProductResponseData(data.getJSONObject("buyer_product_response"));
+    }
+
+    private void sendBuyerProductResponseToServer(BuyerProductResponse buyerProductResponse){
+        HashMap<String,String> params = new HashMap<>();
+        String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_product_url), params);
+        JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put(ProductsTable.COLUMN_PRODUCT_ID, buyerProductResponse.getProductID());
+            requestBody.put("responded", buyerProductResponse.getResponseCode());
+            requestBody.put(ProductsTable.COLUMN_HAS_SWIPED, buyerProductResponse.getHasSwiped());
+            requestBody.put(ProductsTable.COLUMN_RESPONDED_FROM, buyerProductResponse.getRespondedFrom());
+            if (buyerProductResponse.getStoreMargin() > 0){
+                requestBody.put(ProductsTable.COLUMN_STORE_MARGIN, buyerProductResponse.getStoreMargin());
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
+            return;
+        }
+        volleyStringRequest(R.string.update_product_response, Request.Method.PUT, url, requestBody.toString());
+    }
+
+    private void updateAllUnsyncedBuyerProductResponses(){
+        CatalogDBHelper catalogDBHelper = new CatalogDBHelper(getApplicationContext());
+        String[] columns = {ProductsTable.COLUMN_PRODUCT_ID, ProductsTable.COLUMN_RESPONSE_CODE
+                , ProductsTable.COLUMN_RESPONDED_FROM, ProductsTable.COLUMN_HAS_SWIPED, ProductsTable.COLUMN_STORE_MARGIN};
+        Cursor cursor = catalogDBHelper.getProductData(null, null, null, null, null, null, null,null,-1,-1,null,null,null,null,-1,-1,-1,0,null,-1,-1,columns);
+        ArrayList<BuyerProductResponse> buyerProductResponses = BuyerProductResponse.getDataFromCursorForSendingToServer(cursor);
+        for (BuyerProductResponse buyerProductResponse: buyerProductResponses){
+            sendBuyerProductResponseToServer(buyerProductResponse);
+        }
     }
 }

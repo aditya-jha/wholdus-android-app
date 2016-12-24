@@ -14,29 +14,45 @@ public class BuyerProductResponse {
 
     private int m_ID;
     private int mBuyerProductResponseID;
+    private int mProductID;
     private Product mProduct;
     private int mHasSwiped;
     private int mRespondedFrom;
     private String mCreatedAt;
     private String mUpdatedAt;
     private int mResponseCode;
-    private double mStoreMargin;
+    private Float mStoreMargin;
     private int mSynced;
 
     public BuyerProductResponse() {
     }
 
-    public BuyerProductResponse(Cursor cursor) {
-        m_ID = cursor.getInt(cursor.getColumnIndex(ProductsTable._ID));
-        mBuyerProductResponseID = cursor.getInt(cursor.getColumnIndex(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID));
-        mHasSwiped = cursor.getInt(cursor.getColumnIndex(ProductsTable.COLUMN_HAS_SWIPED));
-        mRespondedFrom = cursor.getInt(cursor.getColumnIndex(ProductsTable.COLUMN_RESPONDED_FROM));
-        mCreatedAt = cursor.getString(cursor.getColumnIndex(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_CREATED_AT));
-        mUpdatedAt = cursor.getString(cursor.getColumnIndex(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_UPDATED_AT));
-        mResponseCode = cursor.getInt(cursor.getColumnIndex(ProductsTable.COLUMN_RESPONSE_CODE));
-        mStoreMargin = cursor.getDouble(cursor.getColumnIndex(ProductsTable.COLUMN_MARGIN));
-        mSynced = cursor.getInt(cursor.getColumnIndex(ProductsTable.COLUMN_SYNCED));
-        setProduct(cursor);
+    public BuyerProductResponse(Cursor cursor, boolean allData) {
+        if (allData) {
+            setDataAllDataFromCursor(cursor);
+        }else {
+            setBasicDataFromCursor(cursor);
+        }
+    }
+
+    public void setDataAllDataFromCursor(Cursor cursor){
+        m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable._ID));
+        mBuyerProductResponseID = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID));
+        mHasSwiped = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_HAS_SWIPED));
+        mRespondedFrom = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_RESPONDED_FROM));
+        mCreatedAt = cursor.getString(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_CREATED_AT));
+        mUpdatedAt = cursor.getString(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_UPDATED_AT));
+        mResponseCode = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_RESPONSE_CODE));
+        mStoreMargin = cursor.getFloat(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_MARGIN));
+        mSynced = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_SYNCED));
+    }
+
+    public void setBasicDataFromCursor(Cursor cursor){
+        mProductID = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_PRODUCT_ID));
+        mHasSwiped = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_HAS_SWIPED));
+        mRespondedFrom = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_RESPONDED_FROM));
+        mResponseCode = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_RESPONSE_CODE));
+        mStoreMargin = cursor.getFloat(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_STORE_MARGIN));
     }
 
     private void setProduct(Cursor cursor) {
@@ -50,6 +66,8 @@ public class BuyerProductResponse {
     public double getStoreMargin() {
         return mStoreMargin;
     }
+
+    public int getProductID(){return mProductID;}
 
     public Product getProduct() {
         return mProduct;
@@ -76,7 +94,15 @@ public class BuyerProductResponse {
     public static ArrayList<BuyerProductResponse> getDataFromCursor(Cursor cursor) {
         ArrayList<BuyerProductResponse> buyerProducts = new ArrayList<>();
         while (cursor.moveToNext()) {
-            buyerProducts.add(new BuyerProductResponse(cursor));
+            buyerProducts.add(new BuyerProductResponse(cursor, true));
+        }
+        return buyerProducts;
+    }
+
+    public static ArrayList<BuyerProductResponse> getDataFromCursorForSendingToServer(Cursor cursor){
+        ArrayList<BuyerProductResponse> buyerProducts = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            buyerProducts.add(new BuyerProductResponse(cursor, false));
         }
         return buyerProducts;
     }

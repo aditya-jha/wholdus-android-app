@@ -86,7 +86,7 @@ public class ProductSwipeDeckAdapter extends BaseAdapter {
             }
         });
 
-        mListener.cardCreated(product.getName());
+        mListener.cardCreated();
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

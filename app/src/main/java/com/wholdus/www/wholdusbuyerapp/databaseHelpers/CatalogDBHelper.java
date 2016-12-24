@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategoriesTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.ProductsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.SellerAddressTable;
@@ -479,13 +480,12 @@ public class CatalogDBHelper extends BaseDBHelper {
             insertUpdated = 1;
         } else if (!productUpdatedAtLocal.equals(productUpdatedAtServer)) {
             ContentValues values = getProductContentValues(product);
-            String selection = ProductsTable.COLUMN_PRODUCT_ID + " = " + productID;
-            db.update(ProductsTable.TABLE_NAME, values, selection, null);
-            mPresentProductIDs.put(productID, productUpdatedAtServer);
-            insertUpdated = 1;
-        }
-        if (product.has("response")){
-
+            String selection = ProductsTable.COLUMN_PRODUCT_ID + " = " + productID +
+                    " AND " + ProductsTable.COLUMN_SYNCED + " = 1";
+            if (db.update(ProductsTable.TABLE_NAME, values, selection, null) > 0) {
+                mPresentProductIDs.put(productID, productUpdatedAtServer);
+                insertUpdated = 1;
+            }
         }
         mDatabaseHelper.closeDatabase();
         return insertUpdated;
@@ -547,10 +547,14 @@ public class CatalogDBHelper extends BaseDBHelper {
             // Put buyerproductresponse updated at server as previous value for local update
             String buyerProductResponseUpdatedAtServer = buyerProductResponse.getString(ProductsTable.COLUMN_PRODUCT_UPDATED_AT);
             if (buyerProductResponseUpdatedAtLocal == null || !buyerProductResponseUpdatedAtLocal.equals(buyerProductResponseUpdatedAtServer)) {
-                ContentValues values = getBuyerProductContentValuesFromJSONObject(product);
-                String selection = ProductsTable.COLUMN_PRODUCT_ID + " = " + productID;
-                db.update(ProductsTable.TABLE_NAME, values, selection, null);
-                mPresentBuyerProductResponseIDs.put(buyerProductResponseID, buyerProductResponseUpdatedAtServer);
+                ContentValues values = getBuyerProductResponseContentValuesFromJSONObject(buyerProductResponse);
+                String selection = ProductsTable.COLUMN_PRODUCT_ID + " = " + productID + " AND (( " +
+                        ProductsTable.COLUMN_SYNCED + " = 1) OR ( " +
+                        ProductsTable.COLUMN_SYNCED + " = 0 AND " +
+                        ProductsTable.COLUMN_RESPONSE_CODE + " = " + values.getAsInteger(ProductsTable.COLUMN_RESPONSE_CODE) + ")) ";
+                if (db.update(ProductsTable.TABLE_NAME, values, selection, null) > 0) {
+                    mPresentBuyerProductResponseIDs.put(buyerProductResponseID, buyerProductResponseUpdatedAtServer);
+                }
             }
         }
         mDatabaseHelper.closeDatabase();
@@ -655,8 +659,12 @@ public class CatalogDBHelper extends BaseDBHelper {
         values.put(ProductsTable.COLUMN_LENGTH, productDetails.getString(ProductsTable.COLUMN_LENGTH));
         values.put(ProductsTable.COLUMN_PRODUCT_CREATED_AT, product.getString(ProductsTable.COLUMN_PRODUCT_CREATED_AT));
         values.put(ProductsTable.COLUMN_PRODUCT_UPDATED_AT, product.getString(ProductsTable.COLUMN_PRODUCT_UPDATED_AT));
-        JSONObject response = product.getJSONObject("response");
-        values.put(ProductsTable.COLUMN_RESPONSE_CODE, response.getInt(ProductsTable.COLUMN_RESPONSE_CODE));
+        if (product.has("response")) {
+            JSONObject response = product.getJSONObject("response");
+            values.put(ProductsTable.COLUMN_RESPONSE_CODE, response.getInt(ProductsTable.COLUMN_RESPONSE_CODE));
+        }else {
+            values.put(ProductsTable.COLUMN_RESPONSE_CODE, 0);
+        }
         return values;
     }
 
@@ -677,7 +685,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         values.put(ProductsTable.COLUMN_BUYER_PRODUCT_CREATED_AT, "");
         values.put(ProductsTable.COLUMN_BUYER_PRODUCT_UPDATED_AT, "");
         values.put(ProductsTable.COLUMN_BUYER_PRODUCT_IS_ACTIVE, 1);
-
+        values.put(ProductsTable.COLUMN_STORE_MARGIN, -1.0);
         return values;
     }
 
@@ -685,10 +693,14 @@ public class CatalogDBHelper extends BaseDBHelper {
         ContentValues cv = new ContentValues();
 
         cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID, data.getInt(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID));
-        cv.put(ProductsTable.COLUMN_STORE_MARGIN, data.getDouble(ProductsTable.COLUMN_STORE_MARGIN));
-        cv.put(ProductsTable.COLUMN_HAS_SWIPED, data.getBoolean(ProductsTable.COLUMN_HAS_SWIPED) ? 1 : 0);
+        if (data.has(ProductsTable.COLUMN_STORE_MARGIN) && !data.isNull(ProductsTable.COLUMN_STORE_MARGIN)) {
+            cv.put(ProductsTable.COLUMN_STORE_MARGIN, data.getDouble(ProductsTable.COLUMN_STORE_MARGIN));
+        }else {
+            cv.put(ProductsTable.COLUMN_STORE_MARGIN, -1.0);
+        }
+        cv.put(ProductsTable.COLUMN_HAS_SWIPED, data.getInt(ProductsTable.COLUMN_HAS_SWIPED));
         cv.put(ProductsTable.COLUMN_RESPONDED_FROM, data.getInt(ProductsTable.COLUMN_RESPONDED_FROM));
-        //cv.put(ProductsTable.COLUMN_RESPONSE_CODE, data.getInt(ProductsTable.COLUMN_RESPONSE_CODE));
+        cv.put(ProductsTable.COLUMN_RESPONSE_CODE, data.getInt(ProductsTable.COLUMN_RESPONSE_CODE));
         cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_CREATED_AT, data.getString(ProductsTable.COLUMN_PRODUCT_CREATED_AT));
         cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_UPDATED_AT, data.getString(ProductsTable.COLUMN_PRODUCT_UPDATED_AT));
         if (data.has(ProductsTable.COLUMN_SYNCED)) {
@@ -706,7 +718,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         //values.put(ProductsTable.COLUMN_STORE_MARGIN, -1);
         values.put(ProductsTable.COLUMN_HAS_SWIPED, 0);
         values.put(ProductsTable.COLUMN_RESPONDED_FROM, -1);
-        values.put(ProductsTable.COLUMN_RESPONSE_CODE, 0);
+        //values.put(ProductsTable.COLUMN_RESPONSE_CODE, 0);
         values.put(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_CREATED_AT, "");
         values.put(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_UPDATED_AT, "");
         values.put(ProductsTable.COLUMN_SYNCED, 1);

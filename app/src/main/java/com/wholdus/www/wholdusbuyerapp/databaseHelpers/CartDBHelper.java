@@ -285,7 +285,7 @@ public class CartDBHelper extends BaseDBHelper {
                 String selection = CartItemsTable.COLUMN_CART_ITEM_ID + " = " + cartItemID + " AND (( " +
                         CartItemsTable.COLUMN_SYNCED + " = 1) OR ( " +
                         CartItemsTable.COLUMN_SYNCED + " = 0 AND " +
-                        CartItemsTable.COLUMN_PIECES + " = " + cartItem.getInt(CartItemsTable.COLUMN_PIECES) + ")) ";
+                        CartItemsTable.COLUMN_LOTS + " = " + cartItem.getInt(CartItemsTable.COLUMN_LOTS) + ")) ";
                 db.update(CartItemsTable.TABLE_NAME, values, selection, null);
             }
         }
