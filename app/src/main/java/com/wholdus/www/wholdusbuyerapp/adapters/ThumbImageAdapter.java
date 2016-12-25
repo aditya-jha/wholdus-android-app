@@ -66,7 +66,7 @@ public class ThumbImageAdapter extends RecyclerView.Adapter<ThumbImageAdapter.Vi
             if (position == RecyclerView.NO_POSITION) return;
 
             if (mListener != null) {
-                mListener.itemClicked(position, view.getId());
+                mListener.itemClicked(view, position, -1);
             }
         }
     }

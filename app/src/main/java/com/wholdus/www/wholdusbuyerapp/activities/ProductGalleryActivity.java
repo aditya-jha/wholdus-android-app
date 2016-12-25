@@ -60,7 +60,7 @@ public class ProductGalleryActivity extends AppCompatActivity
     }
 
     @Override
-    public void itemClicked(final int position, int id) {
+    public void itemClicked(View view, final int position, int id) {
         if (position == -1) {
             new Handler().postDelayed(new Runnable() {
                 @Override

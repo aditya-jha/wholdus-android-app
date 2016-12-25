@@ -91,7 +91,6 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Glide.with(mContext)
                 .load(product.getImageUrl(Constants.SMALL_IMAGE, "1"))
                 .asBitmap()
-                .skipMemoryCache(true)
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
@@ -135,7 +134,12 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if (position == RecyclerView.NO_POSITION) return;
 
             if (mListener != null) {
-                mListener.itemClicked(position, view.getId());
+                final int id = view.getId();
+                if (id == R.id.share_image_view) {
+                    mListener.itemClicked(mProductImage, position, id);
+                } else {
+                    mListener.itemClicked(view, position, id);
+                }
             }
         }
     }

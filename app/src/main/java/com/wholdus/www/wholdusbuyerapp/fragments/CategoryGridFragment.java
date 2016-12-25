@@ -151,8 +151,9 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
-    public void itemClicked(int position, int id) {
-        switch (id) {
+    public void itemClicked(View view, int position, int id) {
+        final int ID = view.getId();
+        switch (ID) {
             case R.id.fav_icon_image_view:
                 /* TODO: add the category at position to buyer interests */
                 break;
@@ -225,15 +226,6 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
     }
 
     private void showErrorMessage() {
-        final View.OnClickListener onClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mPageLoader.getVisibility() != View.VISIBLE) {
-                    mPageLoader.setVisibility(View.VISIBLE);
-                }
-                fetchDataFromServer();
-            }
-        };
         new Thread(new Runnable() {
             @Override
             public void run() {

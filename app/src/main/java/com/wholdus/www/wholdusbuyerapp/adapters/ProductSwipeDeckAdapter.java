@@ -1,12 +1,10 @@
 package com.wholdus.www.wholdusbuyerapp.adapters;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -90,7 +88,7 @@ public class ProductSwipeDeckAdapter extends BaseAdapter {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mItemClickListener.itemClicked(position, 0);
+                mItemClickListener.itemClicked(view, position, -1);
             }
         });
 
