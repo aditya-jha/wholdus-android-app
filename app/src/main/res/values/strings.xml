@@ -132,11 +132,11 @@
     <string name="no_products_left">Return in some time for more products</string>
 
     <!-- cart dialog fragment -->
-    <string name="lot_size_key">Lot Size</string>
+    <string name="lot_size_key">Lot Size :</string>
     <string name="lot_details_key">Details :</string>
-    <string name="price_per_piece">Price/pc</string>
+    <string name="price_per_piece">Price/ pc</string>
     <string name="pieces_key">Pieces</string>
-    <string name="total_price_key">Total Price</string>
+    <string name="total_price_key">Total</string>
     <string name="cart_dialog_shipping_condition">*Shipping charge extra = Rs.35/kg</string>
     <string name="cart_dialog_add_to_cart">ADD TO CART</string>
 

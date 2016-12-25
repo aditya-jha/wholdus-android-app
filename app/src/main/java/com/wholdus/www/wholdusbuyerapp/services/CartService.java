@@ -2,6 +2,7 @@ package com.wholdus.www.wholdusbuyerapp.services;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -17,6 +18,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.wallet.Cart;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract.CartItemsTable;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CartDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.loaders.CartItemLoader;
@@ -36,12 +38,9 @@ import java.util.Map;
  * Created by kaustubh on 21/12/16.
  */
 
-public class CartService extends IntentService implements CartItemLoader.OnLoadCompleteListener<ArrayList<CartItem>>{
+public class CartService extends IntentService{
 
     public static final String REQUEST_TAG = "CART_API_REQUESTS";
-    private final int CART_ITEM_DB_LOADER = 90;
-    private CartItemLoader cartItemLoader;
-    // TODO : Set all LOADER values in constants
 
     public CartService() {
         super("CartService");
@@ -54,9 +53,10 @@ public class CartService extends IntentService implements CartItemLoader.OnLoadC
             case R.string.post_cart_item:
                 // TODO : Also add added from column
                 //String[] columns = {CartItemsTable.COLUMN_PRODUCT_ID, CartItemsTable.COLUMN_LOTS};
-                cartItemLoader = new CartItemLoader(getApplicationContext(), -1, null, -1, -1, 0, null);
-                cartItemLoader.registerListener(CART_ITEM_DB_LOADER, this);
-                cartItemLoader.startLoading();
+                startLoaderForSendingCartItems();
+                break;
+            case R.string.write_cart_item:
+                saveCartItem(intent);
                 break;
         }
     }
@@ -73,6 +73,35 @@ public class CartService extends IntentService implements CartItemLoader.OnLoadC
         params.put("seller_details", "1");
         String url = GlobalAccessHelper.generateUrl(getString(R.string.cart_url), params);
         volleyStringRequest(todo, Request.Method.GET, url, null);
+    }
+
+    public void startLoaderForSendingCartItems(){
+        CartDBHelper cartDBHelper = new CartDBHelper(getApplicationContext());
+        Cursor cursor = cartDBHelper.getCartItemsData(-1, null, -1, -1, 0, null);
+        ArrayList<CartItem> cartItems= CartItem.getCartItemsFromCursor(cursor);
+        if (cartItems.isEmpty()){
+            return;
+        }
+        HashMap<String,String> params = new HashMap<>();
+        params.put("sub_cart_details", "1");
+        params.put("cart_item_details", "1");
+        String url = GlobalAccessHelper.generateUrl(getString(R.string.cart_item_url), params);
+        JSONObject jsonData = new JSONObject();
+        JSONArray products = new JSONArray();
+        JSONObject product = new JSONObject();
+        try {
+            for (CartItem cartItem : cartItems) {
+                product.put(CartItemsTable.COLUMN_PRODUCT_ID, cartItem.getProductID());
+                product.put(CartItemsTable.COLUMN_LOTS, cartItem.getLots());
+                products.put(product);
+            }
+            jsonData.put("products", products);
+        } catch (JSONException e){
+            e.printStackTrace();
+            return;
+        }
+
+        volleyStringRequest(R.string.post_cart_item, Request.Method.POST, url, jsonData.toString());
     }
 
     public void volleyStringRequest(final int todo, int method, String endPoint, final String jsonData) {
@@ -133,40 +162,34 @@ public class CartService extends IntentService implements CartItemLoader.OnLoadC
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (cartItemLoader != null) {
-            cartItemLoader.unregisterListener(this);
-            cartItemLoader.cancelLoad();
-            cartItemLoader.stopLoading();
-        }
-    }
-
-    @Override
-    public void onLoadComplete(Loader<ArrayList<CartItem>> loader, ArrayList<CartItem> data) {
-        if (data.isEmpty()){
-            return;
-        }
-        HashMap<String,String> params = new HashMap<>();
-        params.put("sub_cart_details", "1");
-        params.put("cart_item_details", "1");
-        String url = GlobalAccessHelper.generateUrl(getString(R.string.cart_item_url), params);
-        JSONObject jsonData = new JSONObject();
-        JSONArray products = new JSONArray();
+    private void saveCartItem(Intent intent){
+        CartDBHelper cartDBHelper = new CartDBHelper(getApplicationContext());
+        JSONObject cartItem = new JSONObject();
         JSONObject product = new JSONObject();
         try {
-            for (CartItem cartItem : data) {
-                product.put(CartItemsTable.COLUMN_PRODUCT_ID, cartItem.getProductID());
-                product.put(CartItemsTable.COLUMN_LOTS, cartItem.getLots());
-                products.put(product);
+            cartItem.put(CartItemsTable.COLUMN_CART_ITEM_ID, 0);
+            cartItem.put(CartItemsTable.COLUMN_SUBCART_ID, -1);
+            Integer productID = intent.getIntExtra(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, -1);
+            if (productID == -1){
+                return;
             }
-            jsonData.put("products", products);
-        } catch (JSONException e){
-            e.printStackTrace();
-            return;
-        }
+            product.put(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, productID);
+            cartItem.put("product", product);
+            cartItem.put(CartItemsTable.COLUMN_LOTS, intent.getIntExtra(CartItemsTable.COLUMN_LOTS, 1));
+            cartItem.put(CartItemsTable.COLUMN_PIECES, intent.getIntExtra(CartItemsTable.COLUMN_PIECES, 1));
+            cartItem.put(CartItemsTable.COLUMN_LOT_SIZE, intent.getIntExtra(CartItemsTable.COLUMN_LOT_SIZE, 1));
+            cartItem.put(CartItemsTable.COLUMN_RETAIL_PRICE_PER_PIECE, intent.getFloatExtra(CartItemsTable.COLUMN_RETAIL_PRICE_PER_PIECE, 1));
+            cartItem.put(CartItemsTable.COLUMN_CALCULATED_PRICE_PER_PIECE, intent.getFloatExtra(CartItemsTable.COLUMN_CALCULATED_PRICE_PER_PIECE, 1));
+            cartItem.put(CartItemsTable.COLUMN_SHIPPING_CHARGE, 0);
+            cartItem.put(CartItemsTable.COLUMN_FINAL_PRICE, intent.getFloatExtra(CartItemsTable.COLUMN_FINAL_PRICE, 1));
+            cartItem.put(CartItemsTable.COLUMN_CREATED_AT, "");
+            cartItem.put(CartItemsTable.COLUMN_UPDATED_AT, "");
+            cartItem.put(CartItemsTable.COLUMN_SYNCED, 0);
 
-        volleyStringRequest(R.string.post_cart_item, Request.Method.POST, url, jsonData.toString());
+            cartDBHelper.saveCartItemDataFromJSONObject(cartItem);
+            startLoaderForSendingCartItems();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

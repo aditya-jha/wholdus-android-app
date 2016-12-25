@@ -157,9 +157,14 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         mAddToCartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentManager fm = getFragmentManager();
+                FragmentManager fragmentManager = getFragmentManager();
                 CartDialogFragment dialogFragment = new CartDialogFragment();
-                dialogFragment.show(fm, "Sample Fragment");
+                Bundle args = new Bundle();
+                args.putInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, mProductsArrayList.get(mPosition).getProductID());
+                //args.putInt("LayoutWidth", );
+                //args.putInt("LayoutHeight", );
+                dialogFragment.setArguments(args);
+                dialogFragment.show(fragmentManager, dialogFragment.getClass().getSimpleName());
             }
         });
 

@@ -14,6 +14,7 @@ public class CartItem {
     private int mCartItemID;
     private int mSubCartID;
     private int mProductID;
+    private Product mProduct;
     private int mPieces;
     private int mLots;
     private int mLotSize;
@@ -27,6 +28,10 @@ public class CartItem {
 
     public CartItem(Cursor cursor){
         setDataFromCursor(cursor);
+    }
+
+    public CartItem(){
+
     }
 
     public void setDataFromCursor(Cursor cursor){
@@ -56,6 +61,10 @@ public class CartItem {
     public int getCartItemID(){return mCartItemID;}
 
     public int getSubCartID(){return mSubCartID;}
+
+    public Product getProduct(){return mProduct;}
+
+    public void setProduct(Product product){mProduct = product;}
 
     public int getProductID(){return mProductID;}
 
