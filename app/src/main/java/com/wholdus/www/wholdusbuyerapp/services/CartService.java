@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -152,6 +153,7 @@ public class CartService extends IntentService{
                     if (carts.length() > 0) {
                         JSONObject cart = carts.getJSONObject(0);
                         cartDBHelper.saveCartDataFromJSONObject(cart);
+                        sendCartDataUpdatedBroadCast(null);
                     } else {
                         cartDBHelper.deleteCart(-1);
                     }
@@ -191,5 +193,13 @@ public class CartService extends IntentService{
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    private void sendCartDataUpdatedBroadCast(@Nullable String extra) {
+        Intent intent = new Intent(getString(R.string.cart_data_updated));
+        if (extra != null) {
+            intent.putExtra("extra", extra);
+        }
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

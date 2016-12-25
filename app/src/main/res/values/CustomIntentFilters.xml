@@ -9,4 +9,6 @@
     <string name="category_data_updated">intentFilter.CATEGORIES_DATA_UPDATED</string>
 
     <string name="buyer_product_data_updated">intentFilter.BUYER_PRODUCTS_DATA_UPDATED</string>
+
+    <string name="cart_data_updated">intentFilter.CART_DATA_UPDATED</string>
 </resources>

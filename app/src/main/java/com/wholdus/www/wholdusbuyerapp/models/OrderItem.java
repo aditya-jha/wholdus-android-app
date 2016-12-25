@@ -88,6 +88,8 @@ public class OrderItem {
         return mProduct;
     }
 
+    public void setProduct(Product product){mProduct = product;}
+
     public int getOrderShipmentID() {
         return mOrderShipmentID;
     }

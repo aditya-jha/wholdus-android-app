@@ -71,7 +71,13 @@ public class OrdersLoader extends AbstractLoader<ArrayList<Order>>{
 
                         if (mInitialiseProduct){
                             for (OrderItem orderItem:suborder.getOrderItems()){
-                                //TODO: Initialise product
+                                ArrayList<Integer> productIDs = new ArrayList<>();
+                                productIDs.add(orderItem.getProductID());
+                                Cursor productCursor = catalogDBHelper.getProductData(productIDs, null, null, null, null, null, null, null, -1, -1, null, null, null, null, -1, -1, -1, -1, null, -1, -1, catalogDBHelper.BasicProductColumns);
+                                if (productCursor.getCount() > 0) {
+                                    productCursor.moveToNext();
+                                    orderItem.setProduct(new Product(productCursor));
+                                }
                             }
                         }
                     }

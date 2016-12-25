@@ -184,12 +184,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     }
 
     private void fetchDataFromServer(){
-
         fetchBuyerProducts();
-
-        Intent cartServiceIntent = new Intent(getContext(), CartService.class);
-        cartServiceIntent.putExtra("TODO", R.string.fetch_cart);
-        getContext().startService(cartServiceIntent);
     }
 
     private void fetchBuyerProducts(){

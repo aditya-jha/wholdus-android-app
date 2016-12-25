@@ -1,6 +1,7 @@
 package com.wholdus.www.wholdusbuyerapp.loaders;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.annotation.Nullable;
 
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CartDBHelper;
@@ -53,7 +54,11 @@ public class CartItemLoader extends AbstractLoader<ArrayList<CartItem>> {
             for (CartItem cartItem : cartItems) {
                 ArrayList<Integer> productIDs = new ArrayList<>();
                 productIDs.add(cartItem.getProductID());
-                cartItem.setProduct(new Product(catalogDBHelper.getProductData(productIDs, null, null, null, null, null, null, null, -1, -1, null, null, null, null, -1, -1, -1, -1, null, -1, -1, catalogDBHelper.BasicProductColumns)));
+                Cursor productCursor = catalogDBHelper.getProductData(productIDs, null, null, null, null, null, null, null, -1, -1, null, null, null, null, -1, -1, -1, -1, null, -1, -1, catalogDBHelper.BasicProductColumns);
+                if (productCursor.getCount() > 0) {
+                    productCursor.moveToNext();
+                    cartItem.setProduct(new Product(productCursor));
+                }
             }
         }
         return cartItems;
