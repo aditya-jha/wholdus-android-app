@@ -42,10 +42,12 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ShareIntentClass;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.GridProductsLoader;
 import com.wholdus.www.wholdusbuyerapp.models.GridProductModel;
+import com.wholdus.www.wholdusbuyerapp.services.BuyerProductService;
 import com.wholdus.www.wholdusbuyerapp.services.CatalogService;
 
 import java.util.ArrayList;
@@ -169,6 +171,18 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (mProducts.size() > 0) {
+            mPageLoader.setVisibility(View.INVISIBLE);
+            mPageLayout.setVisibility(View.VISIBLE);
+        } else {
+            mPageLayout.setVisibility(View.INVISIBLE);
+            mPageLoader.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
@@ -196,6 +210,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         super.onResume();
         IntentFilter intentFilter = new IntentFilter(IntentFilters.PRODUCT_DATA);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
+
         restoreRecyclerViewPosition();
     }
 
@@ -220,6 +235,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        Log.d(this.getClass().getSimpleName(), "onstart");
     }
 
     @Override
@@ -252,7 +268,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         mLoaderLoading = false;
         if (data.size() != 0) {
             if (mPageLoader.getVisibility() == View.VISIBLE) {
-                mPageLoader.setVisibility(View.GONE);
+                mPageLoader.setVisibility(View.INVISIBLE);
                 mPageLayout.setVisibility(View.VISIBLE);
             }
             final int oldPosition = mProducts.size();
@@ -293,18 +309,40 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     @Override
     public void itemClicked(View view, int position, int id) {
         final int ID = id == -1 ? view.getId() : id;
+        Intent intent;
+
         switch (ID) {
             case R.id.share_image_view:
                 ShareIntentClass.shareImage(getContext(), (ImageView) view, mProducts.get(position).getName());
                 break;
             case R.id.cart_image_view:
-                /* TODO: handle cart button click */
+                if (mProducts.get(position).getCartCount() > 0) {
+                    /* TODO: go to checkout */
+
+                } else {
+                    CartDialogFragment cartDialog = new CartDialogFragment();
+                    Bundle args = new Bundle();
+                    args.putInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, mProducts.get(position).getProductID());
+                    cartDialog.setArguments(args);
+                    cartDialog.show(getFragmentManager(), cartDialog.getClass().getSimpleName());
+                }
                 break;
             case R.id.fav_icon_image_view:
+                GridProductModel product = mProducts.get(position);
+                product.toggleLikeStatus();
+                mProductsGridAdapter.notifyItemChanged(position, product);
 
+                intent = new Intent(getContext(), BuyerProductService.class);
+                intent.putExtra("TODO", TODO.UPDATE_PRODUCT_RESPONSE);
+                intent.putExtra(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, product.getProductID());
+                intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONDED_FROM, 0);
+                intent.putExtra(CatalogContract.ProductsTable.COLUMN_HAS_SWIPED, false);
+                intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONSE_CODE, product.getLikeStatus() ? 1 : 0);
+
+                getContext().startService(intent);
                 break;
             default:
-                Intent intent = new Intent(getContext(), ProductDetailActivity.class);
+                intent = new Intent(getContext(), ProductDetailActivity.class);
                 intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME, mProducts.get(position).getProductID());
                 startActivity(intent);
         }

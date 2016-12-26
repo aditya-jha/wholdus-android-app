@@ -2,6 +2,7 @@ package com.wholdus.www.wholdusbuyerapp.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,18 +16,24 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
 
+import static android.os.Build.ID;
+
 /**
  * Created by aditya on 15/12/16.
  */
 
 public class SortBottomSheetFragment extends BottomSheetDialogFragment {
 
+    private static SortBottomSheetFragment mInstance;
+
     private int mSelectedSort;
     private CategoryProductListenerInterface mListener;
 
     public static synchronized SortBottomSheetFragment newInstance() {
-        SortBottomSheetFragment sortBottomSheetFragment = new SortBottomSheetFragment();
-        return sortBottomSheetFragment;
+        if (mInstance == null) {
+            mInstance = new SortBottomSheetFragment();
+        }
+        return mInstance;
     }
 
     public SortBottomSheetFragment() {
@@ -51,16 +58,12 @@ public class SortBottomSheetFragment extends BottomSheetDialogFragment {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                FilterClass.setSelectedSort(i);
+                FilterClass.setSelectedSort(getIndexForSelectedSort(i));
             }
         });
 
         mSelectedSort = FilterClass.getSelectSort();
-        if (mSelectedSort == -1) {
-            mSelectedSort = R.id.newest_first;
-            FilterClass.setSelectedSort(R.id.newest_first);
-        }
-        RadioButton radioButton = (RadioButton) rootView.findViewById(mSelectedSort);
+        RadioButton radioButton = (RadioButton) rootView.findViewById(getIDForSelectedSort());
         radioButton.setChecked(true);
 
         Button sortButton = (Button) rootView.findViewById(R.id.sort_button);
@@ -77,8 +80,40 @@ public class SortBottomSheetFragment extends BottomSheetDialogFragment {
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private int getIDForSelectedSort() {
+        int ID;
+        switch (mSelectedSort) {
+            case 1:
+                ID = R.id.price_low_to_high;
+                break;
+            case 2:
+                ID = R.id.price_high_to_low;
+                break;
+            default:
+                ID = R.id.newest_first;
+        }
+        return ID;
+    }
+
+    private int getIndexForSelectedSort(int id) {
+        switch (id) {
+            case R.id.newest_first:
+                return 0;
+            case R.id.price_high_to_low:
+                return 2;
+            case R.id.price_low_to_high:
+                return 1;
+        }
+        return 0;
     }
 }
