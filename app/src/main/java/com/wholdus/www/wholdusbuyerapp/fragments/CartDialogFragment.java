@@ -36,7 +36,7 @@ import java.util.ArrayList;
  * Created by kaustubh on 19/12/16.
  */
 
-public class CartDialogFragment extends DialogFragment {
+public class CartDialogFragment extends DialogFragment implements View.OnClickListener {
 
     private TextView mLotSize;
     private TextView mProductName;
@@ -78,8 +78,14 @@ public class CartDialogFragment extends DialogFragment {
         Bundle mArgs = getArguments();
         mProductID = mArgs.getInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID);
         mLots = 1;
-        initReferences(rootView);
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initReferences((ViewGroup) getView());
+        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
     }
 
     @Override
@@ -89,6 +95,16 @@ public class CartDialogFragment extends DialogFragment {
         getLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, new ProductLoaderManager());
     }
 
+    @Override
+    public void onClick(View view) {
+        final int ID = view.getId();
+        switch (ID) {
+            case R.id.cart_dialog_add_to_cart_button:
+                addProductToCart();
+                break;
+        }
+    }
+
     public void initReferences(ViewGroup rootView) {
         mLotSize = (TextView) rootView.findViewById(R.id.cart_dialog_lot_size_text_view);
         mProductName = (TextView) rootView.findViewById(R.id.cart_dialog_product_name_text_view);
@@ -96,17 +112,12 @@ public class CartDialogFragment extends DialogFragment {
         mPricePerPiece = (TextView) rootView.findViewById(R.id.cart_dialog_price_per_piece_text_view);
         mTotalPrice = (TextView) rootView.findViewById(R.id.cart_dialog_total_price_text_view);
         mPiecesSpinner = (Spinner) rootView.findViewById(R.id.cart_dialog_pieces_spinner);
+
         mAddtoCart = (Button) rootView.findViewById(R.id.cart_dialog_add_to_cart_button);
+        mAddtoCart.setOnClickListener(this);
     }
 
     public void setViewOnLoad() {
-
-        mAddtoCart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addProductToCart();
-            }
-        });
 
         mPiecesAdapter = new ArrayAdapter<>(getContext(), R.layout.cart_dialog_spinner_text_view);
         for (int i = 1; i < 11; i++) {
@@ -118,6 +129,7 @@ public class CartDialogFragment extends DialogFragment {
         mPiecesSpinner.setSelection(mPiecesAdapter.getPosition(mLots * mProduct.getLotSize()));
 
         mLotSize.setText(String.valueOf(mProduct.getLotSize()));
+//        getDialog().setTitle(mProduct.getName());
         mProductName.setText(mProduct.getName());
         String lotDetails = mProduct.getProductDetails().getLotDescription();
         if (lotDetails.equals("")) {
