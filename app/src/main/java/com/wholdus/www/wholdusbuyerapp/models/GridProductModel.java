@@ -80,4 +80,8 @@ public class GridProductModel {
     public boolean getLikeStatus() {
         return mLiked;
     }
+
+    public void toggleLikeStatus() {
+        mLiked = !mLiked;
+    }
 }

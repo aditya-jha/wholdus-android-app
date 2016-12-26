@@ -68,7 +68,7 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
                 1,
                 1,
                 1,
-                null, // ORDER BY
+                new String[] {FilterClass.getSortString()}, // ORDER BY
                 mLimit,
                 mOffset,
                 columns);

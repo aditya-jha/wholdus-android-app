@@ -137,12 +137,22 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Category>> loader, final ArrayList<Category> data) {
-        mLoaderDataLoaded = true;
-        if (data.size() > 0) {
-            mPageLoader.setVisibility(View.GONE);
-            mSwipeRefreshLayout.setVisibility(View.VISIBLE);
-            setDataToView(data);
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mLoaderDataLoaded = true;
+                if (data.size() > 0) {
+                    setDataToView(data);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mPageLoader.setVisibility(View.GONE);
+                            mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+                        }
+                    });
+                }
+            }
+        }).start();
     }
 
     @Override
@@ -214,15 +224,10 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
     }
 
     private void setDataToView(final List<Category> data) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (mCategoriesData.size() == 0 && data.size() != 0) {
-                    mCategoriesData.addAll(data);
-                    mCategoriesGridAdapter.notifyItemRangeInserted(0, mCategoriesData.size());
-                }
-            }
-        }).start();
+        if (mCategoriesData.size() == 0 && data.size() != 0) {
+            mCategoriesData.addAll(data);
+            mCategoriesGridAdapter.notifyItemRangeInserted(0, mCategoriesData.size());
+        }
     }
 
     private void showErrorMessage() {
