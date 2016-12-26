@@ -23,6 +23,7 @@ import com.daprlabs.aaron.swipedeck.SwipeDeck;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductSwipeDeckAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HandPickedListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProductCardListenerInterface;
@@ -184,13 +185,13 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
 
     private void fetchBuyerProducts() {
         Intent intent = new Intent(getContext(), BuyerProductService.class);
-        intent.putExtra("TODO", R.string.fetch_buyer_products);
+        intent.putExtra("TODO", TODO.FETCH_BUYER_PRODUCTS);
         getContext().startService(intent);
     }
 
     private void actionAfterSwipe(boolean liked) {
         Intent intent = new Intent(getContext(), BuyerProductService.class);
-        intent.putExtra("TODO", R.string.update_product_response);
+        intent.putExtra("TODO", TODO.UPDATE_PRODUCT_RESPONSE);
         intent.putExtra(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, mProductsArrayList.get(mPosition).getProductID());
         if (mStoreMargin != null) {
             intent.putExtra(CatalogContract.ProductsTable.COLUMN_STORE_MARGIN, mStoreMargin);

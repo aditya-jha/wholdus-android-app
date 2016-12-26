@@ -35,13 +35,13 @@
                 android:id="@+id/fav_icon_image_view"
                 style="@style/AppTheme.CardImageButton"
                 android:contentDescription="like"
-                android:src="@drawable/ic_favorite_border_black_24dp" />
+                tools:src="@drawable/ic_favorite_border_black_24dp" />
 
             <ImageButton
                 android:id="@+id/cart_image_view"
                 style="@style/AppTheme.CardImageButton"
                 android:contentDescription="@string/add_to_cart"
-                android:src="@drawable/ic_add_shopping_cart_black_24dp" />
+                tools:src="@drawable/ic_add_shopping_cart_black_24dp" />
 
             <ImageButton
                 android:id="@+id/share_image_view"

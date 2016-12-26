@@ -37,20 +37,18 @@ import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.decorators.GridItemDecorator;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.EndlessRecyclerViewScrollListener;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ShareIntentClass;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.EndlessRecyclerViewScrollListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.GridProductsLoader;
 import com.wholdus.www.wholdusbuyerapp.models.GridProductModel;
 import com.wholdus.www.wholdusbuyerapp.services.CatalogService;
 
 import java.util.ArrayList;
-
-import static android.os.Build.ID;
 
 /**
  * Created by aditya on 8/12/16.
@@ -245,11 +243,8 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public Loader<ArrayList<GridProductModel>> onCreateLoader(int id, Bundle args) {
-        ArrayList<Integer> responseCodes = new ArrayList<>();
-        responseCodes.add(0);
-        responseCodes.add(1);
         mLoaderLoading = true;
-        return new GridProductsLoader(getContext(), mPageNumber, mLimit, responseCodes);
+        return new GridProductsLoader(getContext(), mPageNumber, mLimit);
     }
 
     @Override
@@ -297,12 +292,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void itemClicked(View view, int position, int id) {
-        int ID;
-        if (id == -1) {
-            ID = view.getId();
-        } else {
-            ID = id;
-        }
+        final int ID = id == -1 ? view.getId() : id;
         switch (ID) {
             case R.id.share_image_view:
                 ShareIntentClass.shareImage(getContext(), (ImageView) view, mProducts.get(position).getName());
@@ -311,7 +301,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 /* TODO: handle cart button click */
                 break;
             case R.id.fav_icon_image_view:
-                /* TODO: handle fav button click */
+
                 break;
             default:
                 Intent intent = new Intent(getContext(), ProductDetailActivity.class);
