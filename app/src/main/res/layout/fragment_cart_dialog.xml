@@ -79,7 +79,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="0dp"
-                tools:text="Rs. 1000" />
+                tools:text="Rs. 100000" />
 
         </LinearLayout>
 
@@ -135,7 +135,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="0dp"
-                tools:text="Rs. 1000" />
+                tools:text="Rs. 100000" />
         </LinearLayout>
 
     </LinearLayout>
