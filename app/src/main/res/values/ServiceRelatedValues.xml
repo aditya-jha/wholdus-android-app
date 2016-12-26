@@ -19,10 +19,6 @@
     <!-- orders -->
     <string name="fetch_orders">fetchOrders</string>
 
-    <!--buyer products -->
-    <string name="fetch_buyer_products">fetchBuyerProducts</string>
-    <string name="update_product_response">updateProductResonse</string>
-
     <!-- cart -->
     <string name="fetch_cart">fetchCart</string>
     <string name="post_cart_item">postCartItem</string>

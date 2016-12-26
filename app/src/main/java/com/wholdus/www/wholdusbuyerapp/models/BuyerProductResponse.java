@@ -36,36 +36,40 @@ public class BuyerProductResponse {
             m_ID = cursor.getInt(cursor.getColumnIndex(ProductsTable._ID));
         }
 
+        if (cursor.getColumnIndex(ProductsTable.COLUMN_PRODUCT_ID) != -1) {
+            mProductID = cursor.getInt(cursor.getColumnIndex(ProductsTable.COLUMN_PRODUCT_ID));
+        }
+
         if (cursor.getColumnIndex(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID) != -1) {
             mBuyerProductResponseID = cursor.getInt(cursor.getColumnIndex(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID));
         }
 
-        if (cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_HAS_SWIPED) != -1) {
-            mHasSwiped = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_HAS_SWIPED));
+        if (cursor.getColumnIndex(ProductsTable.COLUMN_HAS_SWIPED) != -1) {
+            mHasSwiped = cursor.getInt(cursor.getColumnIndex(ProductsTable.COLUMN_HAS_SWIPED));
         }
 
-        if (cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_RESPONDED_FROM) != -1) {
-            mRespondedFrom = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_RESPONDED_FROM));
+        if (cursor.getColumnIndex(ProductsTable.COLUMN_RESPONDED_FROM) != -1) {
+            mRespondedFrom = cursor.getInt(cursor.getColumnIndex(ProductsTable.COLUMN_RESPONDED_FROM));
         }
 
-        if (cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_CREATED_AT) != -1) {
-            mCreatedAt = cursor.getString(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_CREATED_AT));
+        if (cursor.getColumnIndex(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_CREATED_AT) != -1) {
+            mCreatedAt = cursor.getString(cursor.getColumnIndex(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_CREATED_AT));
         }
 
-        if (cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_UPDATED_AT) != -1) {
-            mUpdatedAt = cursor.getString(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_UPDATED_AT));
+        if (cursor.getColumnIndex(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_UPDATED_AT) != -1) {
+            mUpdatedAt = cursor.getString(cursor.getColumnIndex(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_UPDATED_AT));
         }
 
-        if (cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_RESPONSE_CODE) != -1) {
-            mResponseCode = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_RESPONSE_CODE));
+        if (cursor.getColumnIndex(ProductsTable.COLUMN_RESPONSE_CODE) != -1) {
+            mResponseCode = cursor.getInt(cursor.getColumnIndex(ProductsTable.COLUMN_RESPONSE_CODE));
         }
 
-        if (cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_MARGIN) != -1) {
-            mStoreMargin = cursor.getFloat(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_MARGIN));
+        if (cursor.getColumnIndex(ProductsTable.COLUMN_STORE_MARGIN) != -1) {
+            mStoreMargin = cursor.getFloat(cursor.getColumnIndex(ProductsTable.COLUMN_STORE_MARGIN));
         }
 
-        if (cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_SYNCED) != -1) {
-            mSynced = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_SYNCED));
+        if (cursor.getColumnIndex(ProductsTable.COLUMN_SYNCED) != -1) {
+            mSynced = cursor.getInt(cursor.getColumnIndex(ProductsTable.COLUMN_SYNCED));
         }
     }
 
@@ -77,7 +81,7 @@ public class BuyerProductResponse {
         return m_ID;
     }
 
-    public double getStoreMargin() {
+    public float getStoreMargin() {
         return mStoreMargin;
     }
 

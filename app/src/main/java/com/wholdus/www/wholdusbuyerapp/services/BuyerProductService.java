@@ -16,6 +16,7 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.ProductsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.models.BuyerProductResponse;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
@@ -42,14 +43,14 @@ public class BuyerProductService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        int todo = intent.getIntExtra("TODO", 0);
+        int todo = intent.getIntExtra("TODO", -1);
         switch (todo) {
-            case R.string.fetch_buyer_products:
+            case TODO.FETCH_BUYER_PRODUCTS:
                 fetchBuyerProducts(todo, 1);
                 break;
-            case R.string.update_product_response:
+            case TODO.UPDATE_PRODUCT_RESPONSE:
                 updateProductResponseInDB(intent);
-
+                break;
         }
     }
 
@@ -108,10 +109,10 @@ public class BuyerProductService extends IntentService {
     private void onResponseHandler(int todo, String response) {
         try {
             switch (todo) {
-                case R.string.fetch_buyer_products:
+                case TODO.FETCH_BUYER_PRODUCTS:
                     saveBuyerProductsToDB(response);
                     break;
-                case R.string.update_product_response:
+                case TODO.UPDATE_PRODUCT_RESPONSE:
                     saveBuyerProductResponseToDB(response);
                     break;
             }
@@ -140,31 +141,38 @@ public class BuyerProductService extends IntentService {
 
     private void updateProductResponseInDB(Intent intent) {
         try {
-            CatalogDBHelper dbHelper = new CatalogDBHelper(this);
             JSONObject buyerProductResponse = new JSONObject();
             JSONObject product = new JSONObject();
-            Integer productID = intent.getIntExtra(ProductsTable.COLUMN_PRODUCT_ID, -1);
-            Integer responseCode = intent.getIntExtra(ProductsTable.COLUMN_RESPONSE_CODE, -1);
+
+            int productID = intent.getIntExtra(ProductsTable.COLUMN_PRODUCT_ID, -1);
+            int responseCode = intent.getIntExtra(ProductsTable.COLUMN_RESPONSE_CODE, -1);
+
             if (productID == -1 || responseCode == -1) {
                 return;
             }
+
             product.put(ProductsTable.COLUMN_PRODUCT_ID, productID);
             buyerProductResponse.put("product", product);
             buyerProductResponse.put(ProductsTable.COLUMN_RESPONSE_CODE, responseCode);
             buyerProductResponse.put(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID, -1);
-            Float storeMargin = intent.getFloatExtra(ProductsTable.COLUMN_STORE_MARGIN, -1);
+
+            float storeMargin = intent.getFloatExtra(ProductsTable.COLUMN_STORE_MARGIN, -1);
             if (storeMargin > 0) {
                 buyerProductResponse.put(ProductsTable.COLUMN_STORE_MARGIN, storeMargin);
             } else {
-                buyerProductResponse.put(ProductsTable.COLUMN_STORE_MARGIN, -1.0);
+                buyerProductResponse.put(ProductsTable.COLUMN_STORE_MARGIN, -1);
             }
+
             buyerProductResponse.put(ProductsTable.COLUMN_HAS_SWIPED, intent.getBooleanExtra(ProductsTable.COLUMN_HAS_SWIPED, true) ? 1 : 0);
             buyerProductResponse.put(ProductsTable.COLUMN_RESPONDED_FROM, intent.getIntExtra(ProductsTable.COLUMN_RESPONDED_FROM, 0));
             buyerProductResponse.put(ProductsTable.COLUMN_PRODUCT_CREATED_AT, "");
             buyerProductResponse.put(ProductsTable.COLUMN_PRODUCT_UPDATED_AT, "");
             buyerProductResponse.put(ProductsTable.COLUMN_SYNCED, 0);
+
+            CatalogDBHelper dbHelper = new CatalogDBHelper(this);
             dbHelper.saveBuyerProductResponseData(buyerProductResponse);
-            updateAllUnsyncedBuyerProductResponses();
+
+            updateAllUnsyncedBuyerProductResponses(dbHelper);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -192,11 +200,11 @@ public class BuyerProductService extends IntentService {
             e.printStackTrace();
             return;
         }
-        volleyStringRequest(R.string.update_product_response, Request.Method.PUT, url, requestBody.toString());
+        volleyStringRequest(TODO.UPDATE_PRODUCT_RESPONSE, Request.Method.PUT, url, requestBody.toString());
     }
 
-    private void updateAllUnsyncedBuyerProductResponses() {
-        CatalogDBHelper catalogDBHelper = new CatalogDBHelper(this);
+    private void updateAllUnsyncedBuyerProductResponses(@Nullable CatalogDBHelper catalogDBHelper) {
+        catalogDBHelper  = catalogDBHelper == null ? new CatalogDBHelper(this) : catalogDBHelper;
         String[] columns = {
                 ProductsTable.COLUMN_PRODUCT_ID,
                 ProductsTable.COLUMN_RESPONSE_CODE,
@@ -204,7 +212,29 @@ public class BuyerProductService extends IntentService {
                 ProductsTable.COLUMN_HAS_SWIPED,
                 ProductsTable.COLUMN_STORE_MARGIN
         };
-        Cursor cursor = catalogDBHelper.getProductData(null, null, null, null, null, null, null, null, -1, -1, null, null, null, null, -1, -1, -1, 0, null, -1, -1, columns);
+        Cursor cursor = catalogDBHelper.getProductData(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                -1,
+                -1,
+                null,
+                null,
+                null,
+                null,
+                -1,
+                -1,
+                -1,
+                0,
+                null,
+                -1,
+                -1,
+                columns);
         ArrayList<BuyerProductResponse> buyerProductResponses = BuyerProductResponse.getDataFromCursor(cursor);
         for (BuyerProductResponse buyerProductResponse : buyerProductResponses) {
             sendBuyerProductResponseToServer(buyerProductResponse);
