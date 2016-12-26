@@ -263,6 +263,7 @@ public class CartDBHelper extends BaseDBHelper {
         int productID = product.getInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID);
         String cartItemUpdatedAtLocal = getPresentCartItemProductIds().get(productID);
         String cartItemUpdatedAtServer = cartItem.getString(CartItemsTable.COLUMN_UPDATED_AT);
+        // Local save cart item ID = 0 and updated at is blank string
         if (cartItemID == 0){
             ContentValues values = getCartItemContentValues(cartItem);
             if (cartItemUpdatedAtLocal == null) {

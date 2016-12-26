@@ -1,25 +1,42 @@
 package com.wholdus.www.wholdusbuyerapp.fragments;
 
-import android.content.Context;
+import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
+import com.wholdus.www.wholdusbuyerapp.loaders.CartItemLoader;
+import com.wholdus.www.wholdusbuyerapp.loaders.ProductLoader;
+import com.wholdus.www.wholdusbuyerapp.models.CartItem;
+import com.wholdus.www.wholdusbuyerapp.models.Product;
+import com.wholdus.www.wholdusbuyerapp.services.CartService;
+
+import java.util.ArrayList;
 
 /**
  * Created by kaustubh on 19/12/16.
  */
 
-public class CartDialogFragment extends DialogFragment {
+public class CartDialogFragment extends DialogFragment{
 
     private TextView mLotSize;
     private TextView mProductName;
@@ -28,21 +45,48 @@ public class CartDialogFragment extends DialogFragment {
     private Spinner mPiecesSpinner;
     private TextView mTotalPrice;
     private Button mAddtoCart;
-    private Context mContext;
+    private int mProductID;
+    private Product mProduct;
+    private int mLots;
+    ArrayAdapter<Integer> mPiecesAdapter;
 
     private final int PRODUCTS_DB_LOADER = 50;
     private final int CART_DB_LOADER = 51;
 
     public CartDialogFragment(){
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        Window window = getDialog().getWindow();
+        Point size = new Point();
+
+        Display display = window.getWindowManager().getDefaultDisplay();
+        display.getSize(size);
+
+        int width = size.x;
+
+        window.setLayout((int) (width * 1), WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setGravity(Gravity.CENTER);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_cart_dialog, container, false);
+        Bundle mArgs = getArguments();
+        mProductID = mArgs.getInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID);
+        mLots = 1;
         initReferences(rootView);
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().restartLoader(CART_DB_LOADER, null, new CartItemLoaderManager());
+        getLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, new ProductLoaderManager());
     }
 
     public void initReferences(ViewGroup rootView){
@@ -53,30 +97,102 @@ public class CartDialogFragment extends DialogFragment {
         mTotalPrice = (TextView) rootView.findViewById(R.id.cart_dialog_total_price_text_view);
         mPiecesSpinner = (Spinner) rootView.findViewById(R.id.cart_dialog_pieces_spinner);
         mAddtoCart = (Button) rootView.findViewById(R.id.cart_dialog_add_to_cart_button);
+    }
+    public void setViewOnLoad(){
 
         mAddtoCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: Add to cart
+                addProductToCart();
             }
         });
 
-        ArrayAdapter<Integer> piecesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1);
-        piecesAdapter.addAll(new Integer[] {1, 2, 3});
-        piecesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mPiecesSpinner.setAdapter(piecesAdapter);
+        mPiecesAdapter = new ArrayAdapter<>(getContext(), R.layout.cart_dialog_spinner_text_view);
+        for (int i =1; i <11; i++){
+            mPiecesAdapter.add(mProduct.getLotSize()*i);
+        }
+        //mPiecesAdapter.setDropDownViewResource(R.layout.cart_dialog_spinner_text_view);
+        mPiecesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mPiecesSpinner.setAdapter(mPiecesAdapter);
+        mPiecesSpinner.setSelection(mPiecesAdapter.getPosition(mLots*mProduct.getLotSize()));
+
+        mLotSize.setText(String.valueOf(mProduct.getLotSize()));
+        mProductName.setText(mProduct.getName());
+        String lotDetails = mProduct.getProductDetails().getLotDescription();
+        if (lotDetails.equals("")){ lotDetails = mProduct.getLotSize() + " pieces per lot";}
+        mLotDescription.setText(lotDetails);
+        mPricePerPiece.setText("Rs. "+String.format("%.0f",mProduct.getMinPricePerUnit()));
 
         mPiecesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                mTotalPrice.setText(String.valueOf(adapterView.getItemAtPosition(i)));
+                mLots = (int) (((int)(adapterView.getItemAtPosition(i)))/mProduct.getLotSize());
+                float finalPrice = ((int)adapterView.getItemAtPosition(i))*mProduct.getMinPricePerUnit();
+                mTotalPrice.setText("Rs. "+ String.format("%.0f",finalPrice));
+                mPiecesSpinner.setSelection(i);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
-
     }
 
+    public void addProductToCart(){
+        Intent intent = new Intent(getContext(), CartService.class);
+        intent.putExtra("TODO", R.string.write_cart_item);
+        intent.putExtra(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, mProduct.getProductID());
+        intent.putExtra(CartContract.CartItemsTable.COLUMN_LOTS, mLots);
+        intent.putExtra(CartContract.CartItemsTable.COLUMN_PIECES, mProduct.getLotSize()*mLots);
+        intent.putExtra(CartContract.CartItemsTable.COLUMN_LOT_SIZE, mProduct.getLotSize());
+        intent.putExtra(CartContract.CartItemsTable.COLUMN_RETAIL_PRICE_PER_PIECE, mProduct.getPricePerUnit());
+        intent.putExtra(CartContract.CartItemsTable.COLUMN_CALCULATED_PRICE_PER_PIECE, mProduct.getMinPricePerUnit());
+        intent.putExtra(CartContract.CartItemsTable.COLUMN_FINAL_PRICE, mProduct.getMinPricePerUnit()*mLots*mProduct.getLotSize());
+        getContext().startService(intent);
+        Toast.makeText(getContext(),"Added to Cart", Toast.LENGTH_SHORT).show();
+        dismiss();
+    }
+
+    private class CartItemLoaderManager implements LoaderManager.LoaderCallbacks<ArrayList<CartItem>> {
+        @Override
+        public void onLoaderReset(Loader<ArrayList<CartItem>> loader) {
+
+        }
+
+        @Override
+        public void onLoadFinished(Loader<ArrayList<CartItem>> loader, ArrayList<CartItem> data) {
+            if (!data.isEmpty()) {
+                mLots = data.get(0).getLots();
+                if (mPiecesAdapter!= null) {
+                    mPiecesSpinner.setSelection(mPiecesAdapter.getPosition(mLots * mProduct.getLotSize()));
+                }
+            }
+        }
+
+        @Override
+        public Loader<ArrayList<CartItem>> onCreateLoader(int id, Bundle args) {
+            return new CartItemLoader(getContext(), -1, null, -1, mProductID, -1,false, null);
+        }
+    }
+
+    private class ProductLoaderManager implements LoaderManager.LoaderCallbacks<Product>{
+        @Override
+        public Loader<Product> onCreateLoader(int id, Bundle args) {
+            return new ProductLoader(getContext(), mProductID);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Product> loader, Product data) {
+            if (data != null){
+                mProduct = data;
+                setViewOnLoad();
+            }
+            // TODO : Handle case for null product
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Product> loader) {
+
+        }
+    }
 }

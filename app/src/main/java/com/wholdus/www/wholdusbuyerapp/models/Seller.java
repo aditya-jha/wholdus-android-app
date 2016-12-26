@@ -12,7 +12,6 @@ import static com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.
 
 public class Seller {
 
-    private int m_ID;
     private int mSellerID;
     private String mCompanyName;
     private String mName;
@@ -29,7 +28,6 @@ public class Seller {
     }
 
     public void setDataFromCursor(Cursor cursor) {
-        m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(SellersTable._ID));
         mSellerID = cursor.getInt(cursor.getColumnIndexOrThrow(SellersTable.COLUMN_SELLER_ID));
         mCompanyName = cursor.getString(cursor.getColumnIndexOrThrow(SellersTable.COLUMN_COMPANY_NAME));
         mName = cursor.getString(cursor.getColumnIndexOrThrow(SellersTable.COLUMN_NAME));
@@ -39,9 +37,6 @@ public class Seller {
         mUpdatedAt = cursor.getString(cursor.getColumnIndexOrThrow(SellersTable.COLUMN_UPDATED_AT));
     }
 
-    public int getID() {
-        return m_ID;
-    }
 
     public int getSellerID() {
         return mSellerID;
