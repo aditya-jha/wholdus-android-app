@@ -28,6 +28,10 @@ public final class ShareIntentClass {
         new Handler().post(new Runnable() {
             @Override
             public void run() {
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+
+                shareIntent.putExtra(Intent.EXTRA_TEXT, title);
+                shareIntent.setType("text/plain");
 
                 try {
                     Drawable drawable = imageView.getDrawable();
@@ -45,21 +49,17 @@ public final class ShareIntentClass {
 
                     Uri pathUri = FileProvider.getUriForFile(context, "com.wholdus.www.wholdusbuyerapp.fileprovider", new File(filePath));
 
-                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
-
-                    shareIntent.putExtra(Intent.EXTRA_TEXT, title);
-                    shareIntent.setType("text/plain");
-
                     shareIntent.putExtra(Intent.EXTRA_STREAM, pathUri);
                     shareIntent.setType("image/*");
 
                     shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-                    context.startActivity(Intent.createChooser(shareIntent, "Share this image"));
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Toast.makeText(context, "Unable to share. Please try again!", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "Unable to share. Please try again!", Toast.LENGTH_SHORT).show();
+                } finally {
+                    context.startActivity(Intent.createChooser(shareIntent, "Share this image"));
                 }
+
             }
         });
     }
