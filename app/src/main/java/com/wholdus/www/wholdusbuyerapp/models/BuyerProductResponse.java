@@ -27,32 +27,46 @@ public class BuyerProductResponse {
     public BuyerProductResponse() {
     }
 
-    public BuyerProductResponse(Cursor cursor, boolean allData) {
-        if (allData) {
-            setDataAllDataFromCursor(cursor);
-        }else {
-            setBasicDataFromCursor(cursor);
+    public BuyerProductResponse(Cursor cursor) {
+        setDataFromCursor(cursor);
+    }
+
+    public void setDataFromCursor(Cursor cursor) {
+        if (cursor.getColumnIndex(ProductsTable._ID) != -1) {
+            m_ID = cursor.getInt(cursor.getColumnIndex(ProductsTable._ID));
         }
-    }
 
-    public void setDataAllDataFromCursor(Cursor cursor){
-        m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable._ID));
-        mBuyerProductResponseID = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID));
-        mHasSwiped = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_HAS_SWIPED));
-        mRespondedFrom = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_RESPONDED_FROM));
-        mCreatedAt = cursor.getString(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_CREATED_AT));
-        mUpdatedAt = cursor.getString(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_UPDATED_AT));
-        mResponseCode = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_RESPONSE_CODE));
-        mStoreMargin = cursor.getFloat(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_MARGIN));
-        mSynced = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_SYNCED));
-    }
+        if (cursor.getColumnIndex(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID) != -1) {
+            mBuyerProductResponseID = cursor.getInt(cursor.getColumnIndex(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID));
+        }
 
-    public void setBasicDataFromCursor(Cursor cursor){
-        mProductID = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_PRODUCT_ID));
-        mHasSwiped = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_HAS_SWIPED));
-        mRespondedFrom = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_RESPONDED_FROM));
-        mResponseCode = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_RESPONSE_CODE));
-        mStoreMargin = cursor.getFloat(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_STORE_MARGIN));
+        if (cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_HAS_SWIPED) != -1) {
+            mHasSwiped = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_HAS_SWIPED));
+        }
+
+        if (cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_RESPONDED_FROM) != -1) {
+            mRespondedFrom = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_RESPONDED_FROM));
+        }
+
+        if (cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_CREATED_AT) != -1) {
+            mCreatedAt = cursor.getString(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_CREATED_AT));
+        }
+
+        if (cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_UPDATED_AT) != -1) {
+            mUpdatedAt = cursor.getString(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_UPDATED_AT));
+        }
+
+        if (cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_RESPONSE_CODE) != -1) {
+            mResponseCode = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_RESPONSE_CODE));
+        }
+
+        if (cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_MARGIN) != -1) {
+            mStoreMargin = cursor.getFloat(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_MARGIN));
+        }
+
+        if (cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_SYNCED) != -1) {
+            mSynced = cursor.getInt(cursor.getColumnIndexOrThrow(ProductsTable.COLUMN_SYNCED));
+        }
     }
 
     private void setProduct(Cursor cursor) {
@@ -67,21 +81,33 @@ public class BuyerProductResponse {
         return mStoreMargin;
     }
 
-    public int getProductID(){return mProductID;}
+    public int getProductID() {
+        return mProductID;
+    }
 
     public Product getProduct() {
         return mProduct;
     }
 
-    public int getHasSwiped() {return mHasSwiped;}
+    public int getHasSwiped() {
+        return mHasSwiped;
+    }
 
-    public int getRespondedFrom(){return mRespondedFrom;}
+    public int getRespondedFrom() {
+        return mRespondedFrom;
+    }
 
-    public String getCreatedAt(){return mCreatedAt;}
+    public String getCreatedAt() {
+        return mCreatedAt;
+    }
 
-    public String getUpdatedAt(){return mUpdatedAt;}
+    public String getUpdatedAt() {
+        return mUpdatedAt;
+    }
 
-    public int getResponseCode() {return mResponseCode;}
+    public int getResponseCode() {
+        return mResponseCode;
+    }
 
     public int getBuyerProductResponseID() {
         return mBuyerProductResponseID;
@@ -94,15 +120,7 @@ public class BuyerProductResponse {
     public static ArrayList<BuyerProductResponse> getDataFromCursor(Cursor cursor) {
         ArrayList<BuyerProductResponse> buyerProducts = new ArrayList<>();
         while (cursor.moveToNext()) {
-            buyerProducts.add(new BuyerProductResponse(cursor, true));
-        }
-        return buyerProducts;
-    }
-
-    public static ArrayList<BuyerProductResponse> getDataFromCursorForSendingToServer(Cursor cursor){
-        ArrayList<BuyerProductResponse> buyerProducts = new ArrayList<>();
-        while (cursor.moveToNext()) {
-            buyerProducts.add(new BuyerProductResponse(cursor, false));
+            buyerProducts.add(new BuyerProductResponse(cursor));
         }
         return buyerProducts;
     }
