@@ -171,6 +171,18 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (mProducts.size() > 0) {
+            mPageLoader.setVisibility(View.INVISIBLE);
+            mPageLayout.setVisibility(View.VISIBLE);
+        } else {
+            mPageLayout.setVisibility(View.INVISIBLE);
+            mPageLoader.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
@@ -198,6 +210,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         super.onResume();
         IntentFilter intentFilter = new IntentFilter(IntentFilters.PRODUCT_DATA);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
+
         restoreRecyclerViewPosition();
     }
 
@@ -222,6 +235,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        Log.d(this.getClass().getSimpleName(), "onstart");
     }
 
     @Override
@@ -254,7 +268,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         mLoaderLoading = false;
         if (data.size() != 0) {
             if (mPageLoader.getVisibility() == View.VISIBLE) {
-                mPageLoader.setVisibility(View.GONE);
+                mPageLoader.setVisibility(View.INVISIBLE);
                 mPageLayout.setVisibility(View.VISIBLE);
             }
             final int oldPosition = mProducts.size();
