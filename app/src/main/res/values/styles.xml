@@ -46,6 +46,11 @@
     </style>
 
     <style name="AppTheme.BoldTextMedium" parent="AppTheme.BoldText">
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingTop">@dimen/secondary_text_padding_top</item>
+    </style>
+
+    <style name="AppTheme.BoldTextLarge" parent="AppTheme.BoldText">
         <item name="android:textSize">18sp</item>
         <item name="android:paddingTop">@dimen/secondary_text_padding_top</item>
     </style>
@@ -99,5 +104,23 @@
     <style name="AppTheme.ImportantText" parent="AppTheme">
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="AppTheme.SecondaryTextKey" parent="AppTheme.SecondaryText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="AppTheme.ImportantTextValue" parent="AppTheme.ImportantText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">2</item>
+    </style>
+
+    <style name="AppTheme.Divider" parent="AppTheme.DefaultCard">
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/divider</item>
+        <item name="android:layout_marginBottom">@dimen/card_margin_vertical</item>
     </style>
 </resources>
