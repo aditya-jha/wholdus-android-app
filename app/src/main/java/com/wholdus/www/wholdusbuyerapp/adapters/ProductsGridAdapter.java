@@ -12,14 +12,19 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.ViewTarget;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.models.GridProductModel;
 
 import java.util.ArrayList;
+
+import static com.bumptech.glide.Glide.with;
 
 /**
  * Created by aditya on 15/12/16.
@@ -91,13 +96,8 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Glide.with(mContext)
                 .load(product.getImageUrl(Constants.SMALL_IMAGE, "1"))
                 .asBitmap()
-                .into(new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                        holder.mProductImage.setImageBitmap(resource);
-                        holder.mProgressBar.setVisibility(View.GONE);
-                    }
-                });
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .into(new BitmapImageViewTarget(holder.mProductImage));
         holder.mListener = mListener;
     }
 
@@ -147,6 +147,15 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static class ProgressViewHolder extends RecyclerView.ViewHolder {
         ProgressViewHolder(View itemView) {
             super(itemView);
+        }
+    }
+
+    @Override
+    public void onViewRecycled(RecyclerView.ViewHolder holder) {
+        super.onViewRecycled(holder);
+        if (holder.getItemViewType() == PRODUCT_VIEW) {
+            ProductsGridAdapter.ProductViewHolder productViewHolder = (ProductsGridAdapter.ProductViewHolder) holder;
+            Glide.clear(productViewHolder.mProductImage);
         }
     }
 }
