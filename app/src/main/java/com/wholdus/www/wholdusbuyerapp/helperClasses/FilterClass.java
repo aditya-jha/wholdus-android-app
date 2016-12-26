@@ -3,7 +3,6 @@ package com.wholdus.www.wholdusbuyerapp.helperClasses;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 
 import java.util.HashMap;
@@ -30,6 +29,7 @@ public final class FilterClass {
             CatalogContract.ProductsTable.COLUMN_MIN_PRICE_PER_UNIT + " ASC ",
             CatalogContract.ProductsTable.COLUMN_MIN_PRICE_PER_UNIT + " DESC "
     };
+    private static final String[] mSortServerString = {"latest", "price_ascending", "price_descending"};
 
     public static int getCategoryID() {
         return mCategoryID;
@@ -111,6 +111,10 @@ public final class FilterClass {
         return mSortString[mSelectedSort];
     }
 
+    public static String getSortServerString() {
+        return mSortServerString[mSelectedSort];
+    }
+
     public static String getFilterString() {
         return GlobalAccessHelper.getUrlStringFromHashMap(getFilterHashMap());
     }
@@ -135,7 +139,7 @@ public final class FilterClass {
         if (mMinPrice != 0) {
             params.put("min_price_per_unit", String.valueOf(mMinPrice));
         }
-        params.put("product_order_by", getSortString());
+        params.put("product_order_by", getSortServerString());
 
         return params;
     }
