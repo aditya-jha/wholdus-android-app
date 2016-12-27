@@ -4,14 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -19,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -27,26 +24,13 @@ import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.BuyerInterestsAdapter;
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserInterestsTable;
-import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProfileLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Buyer;
-import com.wholdus.www.wholdusbuyerapp.models.BuyerInterest;
 import com.wholdus.www.wholdusbuyerapp.services.UserService;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-
-import static android.R.attr.handle;
-import static com.wholdus.www.wholdusbuyerapp.R.id.textView;
 
 /**
  * Created by aditya on 3/12/16.
@@ -167,13 +151,14 @@ public class BuyerInterestFragment extends Fragment implements LoaderManager.Loa
         mPageLayout = (ViewGroup) rootView.findViewById(R.id.page_layout);
         mInterestsListView = (ListView) rootView.findViewById(R.id.interests_list_view);
 
-        Button button = (Button) rootView.findViewById(R.id.add_button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
+//        Button button = (Button) rootView.findViewById(R.id.add_button);
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                BuyerInterestDialogFragment dialogFragment = BuyerInterestDialogFragment.getInstance();
+//                dialogFragment.show(getActivity().getSupportFragmentManager(), dialogFragment.getClass().getSimpleName());
+//            }
+//        });
         mPageLoader.setVisibility(View.VISIBLE);
         mPageLayout.setVisibility(View.INVISIBLE);
 
