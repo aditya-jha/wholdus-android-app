@@ -9,7 +9,6 @@
 
     <string name="logout_loader_message">Logging out&#8230;</string>
 
-    <string name="fetch_user_profile">fetchUserProfile</string>
     <string name="update_user_profile">updateUserProfile</string>
     <string name="fetch_business_types">fetchBusinessTypes</string>
     <string name="update_user_address">updateUserAddress</string>

@@ -121,6 +121,6 @@
     <style name="AppTheme.Divider" parent="AppTheme.DefaultCard">
         <item name="android:layout_height">1dp</item>
         <item name="android:background">@color/divider</item>
-        <item name="android:layout_marginBottom">@dimen/card_margin_vertical</item>
+        <item name="android:layout_marginBottom">@dimen/text_divider_gap</item>
     </style>
 </resources>

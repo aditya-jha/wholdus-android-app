@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -16,7 +15,9 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserTable;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
 import org.json.JSONArray;
@@ -44,7 +45,7 @@ public class UserService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         int todo = intent.getIntExtra("TODO", 0);
         switch (todo) {
-            case R.string.fetch_user_profile:
+            case TODO.FETCH_USER_PROFILE:
                 fetchUserProfile(todo);
                 break;
             case R.string.update_user_profile:
@@ -119,7 +120,7 @@ public class UserService extends IntentService {
         try {
             JSONObject data = new JSONObject(response);
             switch (todo) {
-                case R.string.fetch_user_profile:
+                case TODO.FETCH_USER_PROFILE:
                     JSONArray buyers = data.getJSONArray("buyers");
                     if (buyers.length() == 1) {
                         saveResponseToDB(buyers.getJSONObject(0));
@@ -137,6 +138,34 @@ public class UserService extends IntentService {
         }
     }
 
+    private void saveResponseToDB(JSONObject response) throws JSONException {
+        UserDBHelper userDBHelper = new UserDBHelper(this);
+
+        // update userData
+        boolean savedUserData = userDBHelper.updateUserData(response) > 0;
+        boolean savedUserAddress = userDBHelper.updateUserAddressData(response) > 0;
+        boolean savedUserInterestData = userDBHelper.updateUserInterestsData(response) > 0;
+
+        sendUserDataUpdatedBroadCast(null);
+    }
+
+    private void handleBusinessTypesResponse(JSONObject data) throws JSONException {
+        UserDBHelper userDBHelper = new UserDBHelper(this);
+
+        boolean savedBusinessTypesData = userDBHelper.updateBusinessTypesData(data) > 0;
+        if (savedBusinessTypesData) {
+            sendUserDataUpdatedBroadCast(getString(R.string.business_types_data_updated));
+        }
+    }
+
+    private void sendUserDataUpdatedBroadCast(@Nullable String extra) {
+        Intent intent = new Intent(getString(R.string.user_data_updated));
+        if (extra != null) {
+            intent.putExtra("extra", extra);
+        }
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
     public void volleyStringRequest(final int todo, int method, String endPoint, final String jsonData) {
 
         StringRequest stringRequest = new StringRequest(method, endPoint,
@@ -148,7 +177,9 @@ public class UserService extends IntentService {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getString(R.string.user_data_updated));
+                intent.putExtra(Constants.ERROR_RESPONSE, "Error");
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
             }
         }
         ) {
@@ -173,39 +204,5 @@ public class UserService extends IntentService {
         };
 
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest, REQUEST_TAG);
-    }
-
-    public void cancelRequests() {
-        VolleySingleton.getInstance(getApplicationContext()).cancelPendingRequests(REQUEST_TAG);
-    }
-
-    private void saveResponseToDB(JSONObject response) throws JSONException {
-        UserDBHelper userDBHelper = new UserDBHelper(this);
-
-        // update userData
-        boolean savedUserData = userDBHelper.updateUserData(response) > 0;
-//        boolean savedUserAddress = userDBHelper.updateUserAddressData(response) > 0;
-//        boolean savedUserInterestData = userDBHelper.updateUserInterestsData(response) > 0;
-
-        if (savedUserData) {
-            sendUserDataUpdatedBroadCast(null);
-        }
-    }
-
-    private void handleBusinessTypesResponse(JSONObject data) throws JSONException {
-        UserDBHelper userDBHelper = new UserDBHelper(this);
-
-        boolean savedBusinessTypesData = userDBHelper.updateBusinessTypesData(data) > 0;
-        if (savedBusinessTypesData) {
-            sendUserDataUpdatedBroadCast(getString(R.string.business_types_data_updated));
-        }
-    }
-
-    private void sendUserDataUpdatedBroadCast(@Nullable String extra) {
-        Intent intent = new Intent(getString(R.string.user_data_updated));
-        if (extra != null) {
-            intent.putExtra("extra", extra);
-        }
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }
