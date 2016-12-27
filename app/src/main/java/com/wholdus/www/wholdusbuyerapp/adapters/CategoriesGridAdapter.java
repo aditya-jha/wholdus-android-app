@@ -11,16 +11,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.models.Category;
 
 import java.util.List;
-
-import static android.R.attr.resource;
 
 /**
  * Created by aditya on 11/12/16.
@@ -57,7 +53,7 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
         holder.mNameTextView.setText(category.getCategoryName());
 
         if (category.getLikeStatus()) {
-            holder.mFavIconimageView.setImageResource(R.drawable.ic_favorite_red_24dp);
+            holder.mFavIconImageView.setImageResource(R.drawable.ic_favorite_red_24dp);
         }
 
         Glide.with(mContext)
@@ -79,7 +75,7 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
         TextView mNameTextView;
         ImageView mIconImageView;
         ProgressBar mProgressBar;
-        ImageView mFavIconimageView;
+        ImageView mFavIconImageView;
 
         private ItemClickListener mListener;
 
@@ -89,10 +85,10 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
             mNameTextView = (TextView) itemView.findViewById(R.id.name_textView);
             mIconImageView = (ImageView) itemView.findViewById(R.id.icon_imageView);
             mProgressBar = (ProgressBar) itemView.findViewById(R.id.loading_indicator);
-            mFavIconimageView = (ImageView) itemView.findViewById(R.id.fav_icon_image_view);
+            mFavIconImageView = (ImageView) itemView.findViewById(R.id.fav_icon_image_view);
 
             itemView.setOnClickListener(this);
-            mFavIconimageView.setOnClickListener(this);
+            mFavIconImageView.setOnClickListener(this);
         }
 
         @Override
