@@ -42,9 +42,11 @@ import java.util.List;
  * Fragment to Display Categories present on wholdus
  */
 
-public class CategoryGridFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<Category>>, ItemClickListener {
+public class CategoryGridFragment extends Fragment implements
+        LoaderManager.LoaderCallbacks<ArrayList<Category>>,
+        ItemClickListener {
 
-    private static int CATEGORIES_LOADER = 0;
+    private static final int CATEGORIES_LOADER = 0;
     private BroadcastReceiver mReceiver;
     private RecyclerView mRecyclerView;
     private CategoriesGridAdapter mCategoriesGridAdapter;
@@ -165,7 +167,6 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
         final int ID = view.getId();
         switch (ID) {
             case R.id.fav_icon_image_view:
-                /* TODO: add the category at position to buyer interests */
                 break;
             default:
                 // open category clicked
@@ -209,7 +210,7 @@ public class CategoryGridFragment extends Fragment implements LoaderManager.Load
                 // show error message
                 showErrorMessage();
                 mPageLoader.setVisibility(View.INVISIBLE);
-            } else if (!mLoaderDataLoaded){
+            } else if (!mLoaderDataLoaded) {
                 // retry download
                 fetchDataFromServer();
             }

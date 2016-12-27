@@ -202,8 +202,8 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
         mMaxPriceValue = (TextView) rootView.findViewById(R.id.max_price_value);
 
         CrystalRangeSeekbar priceRangeSeekBar = (CrystalRangeSeekbar) rootView.findViewById(R.id.price_range);
-        priceRangeSeekBar.setMinValue(getResources().getInteger(R.integer.price_filter_min));
-        priceRangeSeekBar.setMaxValue(getResources().getInteger(R.integer.price_filter_max));
+        priceRangeSeekBar.setMinValue(FilterClass.MIN_PRICE_DEFAULT);
+        priceRangeSeekBar.setMaxValue(FilterClass.MAX_PRICE_DEFAULT);
         priceRangeSeekBar.setMinStartValue(FilterClass.getMinPriceFilter()).setMaxStartValue(FilterClass.getMaxPriceFilter()).apply();
 
         priceRangeSeekBar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {

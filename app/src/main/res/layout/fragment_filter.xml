@@ -1,70 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <android.support.v7.widget.CardView
+        style="@style/AppTheme.DefaultCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+        <include layout="@layout/layout_range_selection_filter" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/min_price_key" />
-
-                    <TextView
-                        android:id="@+id/min_price_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:text="0" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/max_price_key" />
-
-                    <TextView
-                        android:id="@+id/max_price_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        tools:text="3000" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
-                android:id="@+id/price_range"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
+        style="@style/AppTheme.DefaultCard"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -95,20 +45,23 @@
     </android.support.v7.widget.CardView>
 
     <LinearLayout
-        style="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        style="@style/AppTheme.BottomBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary_dark">
 
         <TextView
+            style="@style/AppTheme.ImportantText"
+            android:textColor="@android:color/white"
             android:layout_width="0dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/filter_footer_title" />
 
         <Button
             android:id="@+id/filter_button"
-            style="@style/Widget.AppCompat.Button.Colored"
+            style="@style/AppTheme.ColoredButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/filter_text" />

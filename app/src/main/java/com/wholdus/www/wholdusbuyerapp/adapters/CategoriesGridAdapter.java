@@ -52,8 +52,10 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
 
         holder.mNameTextView.setText(category.getCategoryName());
 
-        if (category.getLikeStatus()) {
+        if (category.getBuyerInterest() != null) {
             holder.mFavIconImageView.setImageResource(R.drawable.ic_favorite_red_24dp);
+        } else {
+            holder.mFavIconImageView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
         }
 
         Glide.with(mContext)
@@ -105,6 +107,6 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
     @Override
     public void onViewRecycled(ViewHolder holder) {
         super.onViewRecycled(holder);
-        Glide.clear(((ViewHolder)holder).mIconImageView);
+        Glide.clear(holder.mIconImageView);
     }
 }

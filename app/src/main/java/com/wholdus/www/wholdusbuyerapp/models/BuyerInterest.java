@@ -4,6 +4,8 @@ import android.database.Cursor;
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserInterestsTable;
 
+import java.util.ArrayList;
+
 /**
  * Created by aditya on 7/12/16.
  */
@@ -30,6 +32,14 @@ public class BuyerInterest {
         mPriceFilterApplied = cursor.getInt(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED)) == 1;
         mMinPricePerUnit = cursor.getDouble(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT));
         mMaxPricePerUnit = cursor.getDouble(cursor.getColumnIndexOrThrow(UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT));
+    }
+
+    public static ArrayList<BuyerInterest> getBuyerIntersetList(Cursor cursor) {
+        ArrayList<BuyerInterest> data = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            data.add(new BuyerInterest(cursor));
+        }
+        return data;
     }
 
     public int get_ID() {
