@@ -63,7 +63,6 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
         Glide.with(mContext)
                 .load(category.getImageURL())
                 .asBitmap()
-                .skipMemoryCache(true)
                 .into(new BitmapImageViewTarget(holder.mIconImageView) {
                     @Override
                     protected void setResource(Bitmap resource) {
