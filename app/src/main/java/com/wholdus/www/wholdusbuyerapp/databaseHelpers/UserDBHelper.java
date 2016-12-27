@@ -54,6 +54,7 @@ public class UserDBHelper extends BaseDBHelper {
         if (addressHistoryID != -1) {
             query += whereClauseHelper(whereApplied) + UserAddressTable.COLUMN_ADDRESS_HISTORY_ID + " = " + addressHistoryID;
         }
+        query += " ORDER BY " + UserAddressTable.COLUMN_PRIORITY;
 
         return getCursor(query);
     }

@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.fragments.BuyerAddressFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.BuyerInterestFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.EditAddressFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.EditProfileDetailsFragment;
@@ -179,6 +180,9 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
                 break;
             case "editPersonalDetails":
                 fragment = new EditProfileDetailsFragment();
+                break;
+            case "buyerAddresses":
+                fragment = new BuyerAddressFragment();
                 break;
             case "editAddress":
                 fragment = new EditAddressFragment();

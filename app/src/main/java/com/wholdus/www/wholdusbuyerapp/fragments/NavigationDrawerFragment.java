@@ -151,13 +151,17 @@ public class NavigationDrawerFragment extends Fragment {
                 intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "profile");
                 break;
             case 1:
+                // open profile fragment
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "buyerAddresses");
+                break;
+            case 2:
                 // open orders fragment
                 intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "orders");
                 break;
-            case 2:
+            case 3:
                 intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "buyerInterests");
                 break;
-            case 3:
+            case 4:
                 // open rejected products
                 intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "rejectedProducts");
                 break;

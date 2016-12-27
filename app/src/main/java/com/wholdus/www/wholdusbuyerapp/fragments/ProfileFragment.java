@@ -37,9 +37,8 @@ import java.util.ArrayList;
 
 public class ProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<Buyer> {
 
-    private TextView mNoAddressTextView;
+
     private ListView mPersonalDetailsListView;
-    private ListView mAddressListView;
     private BroadcastReceiver mUserServiceResponseReceiver;
     private ProfileListenerInterface mListener;
     private final int USER_DB_LOADER = 0;
@@ -106,6 +105,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     public void onDestroy() {
         super.onDestroy();
         mUserServiceResponseReceiver = null;
+        //TODO : Do nullifying receivers for all fragments and activities
     }
 
     @Override
@@ -121,13 +121,13 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public Loader<Buyer> onCreateLoader(int id, Bundle args) {
-        return new ProfileLoader(getContext(), true, true, false);
+        return new ProfileLoader(getContext(), true, false, false);
     }
 
     @Override
     public void onLoadFinished(Loader<Buyer> loader, Buyer data) {
         setViewForPersonalDetails(data);
-        setViewForAddressListView(data.getBuyerAddress());
+
     }
 
     @Override
@@ -137,8 +137,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     private void initReferences(ViewGroup rootView) {
         mPersonalDetailsListView = (ListView) rootView.findViewById(R.id.personal_details_list_view);
-        mAddressListView = (ListView) rootView.findViewById(R.id.address_list_view);
-        mNoAddressTextView = (TextView) rootView.findViewById(R.id.no_address_text_view);
 
         TextView mEditPersonalDetailsTextView = (TextView) rootView.findViewById(R.id.edit_personal_details_text_view);
         mEditPersonalDetailsTextView.setOnClickListener(new View.OnClickListener() {
@@ -148,13 +146,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
             }
         });
 
-        TextView mAddAddressTextView = (TextView) rootView.findViewById(R.id.add_address_text_view);
-        mAddAddressTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mListener.editAddress(-1, -1);
-            }
-        });
     }
 
     private void handleAPIResponse() {
@@ -181,26 +172,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         HelperFunctions.setListViewHeightBasedOnChildren(mPersonalDetailsListView);
     }
 
-    private void setViewForAddressListView(ArrayList<BuyerAddress> address) {
-        if (address.isEmpty()) {
-            mNoAddressTextView.setVisibility(View.VISIBLE);
-        } else {
-            mNoAddressTextView.setVisibility(View.GONE);
-            AddressDisplayListViewAdapter adapter = new AddressDisplayListViewAdapter(getActivity().getApplicationContext(), address);
-            mAddressListView.setAdapter(adapter);
-            HelperFunctions.setListViewHeightBasedOnChildren(mAddressListView);
-
-            mAddressListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    int _ID = (Integer) view.getTag(R.integer._ID);
-                    int addressID = (int) view.getTag(R.integer.addressID);
-
-                    mListener.editAddress(addressID, _ID);
-                }
-            });
-        }
-    }
 
     private void fetchDataFromServer() {
         Intent intent = new Intent(getContext(), UserService.class);
