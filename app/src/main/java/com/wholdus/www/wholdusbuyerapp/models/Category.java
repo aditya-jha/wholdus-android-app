@@ -16,8 +16,7 @@ public class Category {
     private int mCategoryID;
     private String mCategoryName;
     private String mImageURL;
-    private int mProductsCount;
-    private boolean mLikeStatus;
+    private BuyerInterest mBuyerInterest;
 
     public Category() {
     }
@@ -31,16 +30,15 @@ public class Category {
         mCategoryID = cursor.getInt(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_CATEGORY_ID));
         mCategoryName = cursor.getString(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_CATEGORY_NAME));
         mImageURL = cursor.getString(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_IMAGE_URL));
-        mProductsCount = 0;
-        mLikeStatus = false;
+        mBuyerInterest = null;
     }
 
-    public void setProductsCount(Cursor cursor) {
-        mProductsCount = cursor.getInt(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_PRODUCTS_COUNT));
+    public void setBuyerInterest(BuyerInterest buyerInterest) {
+        mBuyerInterest = buyerInterest;
     }
 
-    public void setLikeStatus(boolean status) {
-        mLikeStatus = status;
+    public BuyerInterest getBuyerInterest() {
+        return mBuyerInterest;
     }
 
     public int get_ID() {
@@ -59,13 +57,6 @@ public class Category {
         return mImageURL;
     }
 
-    public int getProductsCount() {
-        return mProductsCount;
-    }
-
-    public boolean getLikeStatus() {
-        return mLikeStatus;
-    }
 
     public static ArrayList<Category> getCategoryArrayList(Cursor cursor) {
         ArrayList<Category> categories = new ArrayList<>();

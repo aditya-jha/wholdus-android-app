@@ -66,7 +66,6 @@ public class CatalogDBHelper extends BaseDBHelper {
                     CategoriesTable.COLUMN_PRODUCTS_COUNT;
         }
         String query = "SELECT C.*" + countQuery + " FROM " + CategoriesTable.TABLE_NAME + " AS C";
-        ;
         return getCursor(query);
     }
 

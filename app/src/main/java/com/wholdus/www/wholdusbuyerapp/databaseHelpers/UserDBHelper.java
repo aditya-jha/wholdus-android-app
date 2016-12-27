@@ -20,6 +20,10 @@ import org.json.JSONObject;
 
 import java.util.HashSet;
 
+import static android.R.attr.category;
+import static android.R.attr.data;
+import static android.R.attr.track;
+
 /**
  * Created by aditya on 25/11/16.
  */
@@ -58,11 +62,11 @@ public class UserDBHelper extends BaseDBHelper {
         return getCursor(query);
     }
 
-    public Cursor getUserInterests(int buyerInterestID, int _ID, @Nullable String[] columns) {
+    public Cursor getUserInterests(int categoryID, int _ID, @Nullable String[] columns) {
         String columnNames = getColumnNamesString(columns);
         String query = "SELECT " + columnNames + " FROM " + UserInterestsTable.TABLE_NAME;
-        if (buyerInterestID != -1) {
-            query += " WHERE " + UserInterestsTable.COLUMN_BUYER_INTEREST_ID + "=" + buyerInterestID;
+        if (categoryID != -1) {
+            query += " WHERE " + UserInterestsTable.COLUMN_CATEGORY_ID + "=" + categoryID;
         } else if (_ID != -1) {
             query += " WHERE " + UserInterestsTable._ID + "=" + _ID;
         }
@@ -111,7 +115,7 @@ public class UserDBHelper extends BaseDBHelper {
     }
 
     public HashSet getAllUserInterestID() {
-        Cursor cursor = getUserInterests(-1, -1, new String[]{UserInterestsTable.COLUMN_BUYER_INTEREST_ID});
+        Cursor cursor = getUserInterests(-1, -1, new String[]{UserInterestsTable.COLUMN_CATEGORY_ID});
         HashSet ids = new HashSet();
         while (cursor.moveToNext()) {
             ids.add(cursor.getInt(0));
@@ -277,33 +281,57 @@ public class UserDBHelper extends BaseDBHelper {
         return businessTypes.length();
     }
 
-    public int updateUserInterestsData(JSONObject data) throws JSONException {
-        JSONArray interests = data.getJSONArray(UserInterestsTable.TABLE_NAME);
-
+    public int updateUserInterestsData(JSONObject interest) throws JSONException {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
 
-        for (int i = 0; i < interests.length(); i++) {
-            JSONObject currInterest = interests.getJSONObject(i);
-            ContentValues values = new ContentValues();
+        ContentValues values = new ContentValues();
 
-            JSONObject category = currInterest.getJSONObject("category");
-            int buyerInterestID = currInterest.getInt(UserInterestsTable.COLUMN_BUYER_INTEREST_ID);
+        int buyerInterestID = -1;
+        if (interest.has(UserInterestsTable.COLUMN_BUYER_INTEREST_ID)) {
+            buyerInterestID = interest.getInt(UserInterestsTable.COLUMN_BUYER_INTEREST_ID);
+        }
+        values.put(UserInterestsTable.COLUMN_BUYER_INTEREST_ID, buyerInterestID);
+        values.put(UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT, interest.getString(UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT));
+        values.put(UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT, interest.getString(UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT));
+        values.put(UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT, interest.getString(UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT));
+        values.put(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED, interest.getInt(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED));
 
-            int priceFilterApplied = currInterest.getBoolean(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED) ? 1 : 0;
-            values.put(UserInterestsTable.COLUMN_BUYER_INTEREST_ID, buyerInterestID);
-            values.put(UserInterestsTable.COLUMN_CATEGORY_ID, category.getInt(UserInterestsTable.COLUMN_CATEGORY_ID));
+        int categoryID;
+        if (interest.has("category")) {
+            JSONObject category = interest.getJSONObject("category");
+            categoryID = category.getInt(UserInterestsTable.COLUMN_CATEGORY_ID);
             values.put(UserInterestsTable.COLUMN_CATEGORY_NAME, category.getString(UserInterestsTable.COLUMN_CATEGORY_NAME));
-            values.put(UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT, currInterest.getString(UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT));
-            values.put(UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT, currInterest.getString(UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT));
-            values.put(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED, priceFilterApplied);
-            values.put(UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT, currInterest.getString(UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT));
+        } else {
+            categoryID = interest.getInt(UserInterestsTable.COLUMN_CATEGORY_ID);
+            values.put(UserInterestsTable.COLUMN_CATEGORY_NAME, interest.getString(UserInterestsTable.COLUMN_CATEGORY_NAME));
+        }
+        values.put(UserInterestsTable.COLUMN_CATEGORY_ID, categoryID);
 
-            if (getUserInterests(buyerInterestID, -1, null).getCount() == 0) { // insert
-                db.insert(UserInterestsTable.TABLE_NAME, null, values);
-            } else {
-                String selection = UserInterestsTable.COLUMN_BUYER_INTEREST_ID + "=" + buyerInterestID;
-                db.update(UserInterestsTable.TABLE_NAME, values, selection, null);
+        if (getUserInterests(categoryID, -1, null).getCount() == 0) { // insert
+            db.insert(UserInterestsTable.TABLE_NAME, null, values);
+        } else {
+            String selection = UserInterestsTable.COLUMN_CATEGORY_ID + "=" + categoryID;
+            db.update(UserInterestsTable.TABLE_NAME, values, selection, null);
+        }
+        mDatabaseHelper.closeDatabase();
+        return 1;
+    }
+
+    public int updateUserInterestsData(JSONArray interests) throws JSONException {
+        SQLiteDatabase db = mDatabaseHelper.openDatabase();
+
+        try {
+            db.beginTransaction();
+
+            for (int i = 0; i < interests.length(); i++) {
+                updateUserInterestsData(interests.getJSONObject(i));
             }
+
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
         }
 
         mDatabaseHelper.closeDatabase();

@@ -16,20 +16,24 @@ public final class FilterClass {
     private FilterClass() {
     }
 
-    private static int mCategoryID;
-    private static int mMinPrice = 0;
-    private static int mMaxPrice = 5000;
-    private static int mSelectedSort = 0;
-    private static HashSet<String> mFabrics = new HashSet<>();
-    private static HashSet<String> mColors = new HashSet<>();
-    private static HashSet<String> mSizes = new HashSet<>();
-    private static HashSet<String> mBrands = new HashSet<>();
+    public static final int MIN_PRICE_DEFAULT = 0;
+    public static final int MAX_PRICE_DEFAULT = 5000;
     private static final String[] mSortString = {
             CatalogContract.ProductsTable.COLUMN_PRODUCT_ID + " DESC ",
             CatalogContract.ProductsTable.COLUMN_MIN_PRICE_PER_UNIT + " ASC ",
             CatalogContract.ProductsTable.COLUMN_MIN_PRICE_PER_UNIT + " DESC "
     };
     private static final String[] mSortServerString = {"latest", "price_ascending", "price_descending"};
+
+    private static int mCategoryID;
+    private static int mMinPrice = MIN_PRICE_DEFAULT;
+    private static int mMaxPrice = MAX_PRICE_DEFAULT;
+    private static int mSelectedSort = 0;
+    private static HashSet<String> mFabrics = new HashSet<>();
+    private static HashSet<String> mColors = new HashSet<>();
+    private static HashSet<String> mSizes = new HashSet<>();
+    private static HashSet<String> mBrands = new HashSet<>();
+
 
     public static int getCategoryID() {
         return mCategoryID;
@@ -40,12 +44,13 @@ public final class FilterClass {
     }
 
     public static void resetFilter() {
-        Log.d("FILTER CLASS", "resetting filters");
         mFabrics.clear();
         mColors.clear();
         mSizes.clear();
         mBrands.clear();
         mSelectedSort = 0;
+        mMinPrice = MIN_PRICE_DEFAULT;
+        mMaxPrice = MAX_PRICE_DEFAULT;
     }
 
     public static void resetFilter(String type) {

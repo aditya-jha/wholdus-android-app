@@ -160,4 +160,6 @@
     <string name="store_products">My Products</string>
 
     <string name="no_fabric_filter_text">All Fabric</string>
+    <string name="fragment_buyer_interest_dialog_title">Add %1$s to your favorite categories</string>
+    <string name="price_range_selection_text">Select your price range</string>
 </resources>

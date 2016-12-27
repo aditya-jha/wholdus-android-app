@@ -5,6 +5,7 @@ import android.database.Cursor;
 
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
+import com.wholdus.www.wholdusbuyerapp.models.BuyerInterest;
 import com.wholdus.www.wholdusbuyerapp.models.Category;
 
 import java.util.ArrayList;
@@ -26,11 +27,13 @@ public class CategoriesGridLoader extends AbstractLoader<ArrayList<Category>> {
         ArrayList<Category> categories = Category.getCategoryArrayList(catalogDBHelper.getAllCategories(false));
 
         UserDBHelper userDBHelper = new UserDBHelper(getContext());
-        HashSet userInterestIDs = userDBHelper.getAllUserInterestID();
+        ArrayList<BuyerInterest> buyerInterests = BuyerInterest.getBuyerIntersetList(userDBHelper.getUserInterests(-1, -1, null));
 
         for (Category category: categories) {
-            if (userInterestIDs.contains(category.getCategoryID())) {
-                category.setLikeStatus(true);
+            for (int i=0; i<buyerInterests.size(); i++) {
+                if (buyerInterests.get(i).getCategoryID() == category.getCategoryID()) {
+                    category.setBuyerInterest(buyerInterests.get(i));
+                }
             }
         }
 

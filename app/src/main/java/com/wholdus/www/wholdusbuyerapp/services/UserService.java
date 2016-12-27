@@ -12,11 +12,15 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserTable;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
@@ -27,6 +31,11 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static android.R.attr.breadCrumbShortTitle;
+import static android.R.attr.cacheColorHint;
+import static android.R.attr.data;
+import static com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.*;
 
 
 /**
@@ -44,13 +53,13 @@ public class UserService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         int todo = intent.getIntExtra("TODO", 0);
-        switch (todo) {
-            case TODO.FETCH_USER_PROFILE:
-                fetchUserProfile(todo);
-                break;
-            case R.string.update_user_profile:
-                // update user profile
-                try {
+        try {
+            switch (todo) {
+                case TODO.FETCH_USER_PROFILE:
+                    fetchUserProfile(todo);
+                    break;
+                case R.string.update_user_profile:
+                    // update user profile
                     JSONObject data = new JSONObject();
                     data.put(UserTable.COLUMN_COMPANY_NAME, intent.getStringExtra(getString(R.string.company_name_key)));
                     data.put(UserTable.COLUMN_WHATSAPP_NUMBER, intent.getStringExtra(getString(R.string.whatsapp_number_key)));
@@ -61,32 +70,23 @@ public class UserService extends IntentService {
                     data.put("details", details);
 
                     updateUserProfile(todo, data);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case R.string.fetch_business_types:
-                // fetch business types and update db
-                fetchBusinessTypes(todo);
-                break;
-            case R.string.update_user_address:
-                try {
+                    break;
+                case R.string.fetch_business_types:
+                    // fetch business types and update db
+                    fetchBusinessTypes(todo);
+                    break;
+                case R.string.update_user_address:
                     JSONObject address = new JSONObject(intent.getStringExtra(UserAddressTable.TABLE_NAME));
                     updateUserAddress(todo, address);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                break;
+                    break;
+                case TODO.UPDATE_BUYER_INTEREST:
+                    updateBuyerInterest(todo, intent);
+                    break;
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-    }
-
-    private void updateUserAddress(int todo, JSONObject address) throws JSONException {
-        UserDBHelper userDBHelper = new UserDBHelper(this);
-        userDBHelper.updateUserAddressData(address);
-
-        sendUserDataUpdatedBroadCast(getString(R.string.user_data_modified));
-        // send to server
-
     }
 
     private void fetchUserProfile(int todo) {
@@ -116,6 +116,32 @@ public class UserService extends IntentService {
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }
 
+    private void updateUserAddress(int todo, JSONObject address) throws JSONException {
+        UserDBHelper userDBHelper = new UserDBHelper(this);
+        userDBHelper.updateUserAddressData(address);
+
+        sendUserDataUpdatedBroadCast(getString(R.string.user_data_modified));
+        // send to server
+
+    }
+
+    private void updateBuyerInterest(int todo, Intent intent) throws JSONException {
+        JSONObject data = new JSONObject();
+        data.put(UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT, intent.getStringExtra(UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT));
+        data.put(UserInterestsTable.COLUMN_CATEGORY_ID, intent.getStringExtra(UserInterestsTable.COLUMN_CATEGORY_ID));
+        data.put(UserInterestsTable.COLUMN_CATEGORY_NAME, intent.getStringExtra(UserInterestsTable.COLUMN_CATEGORY_NAME));
+        data.put(UserTable.COLUMN_BUYER_ID, GlobalAccessHelper.getBuyerID(this));
+        data.put(UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT, intent.getIntExtra(UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT, FilterClass.MIN_PRICE_DEFAULT));
+        data.put(UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT, intent.getIntExtra(UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT, FilterClass.MAX_PRICE_DEFAULT));
+        data.put(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED, intent.getIntExtra(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED, 0));
+
+        UserDBHelper userDBHelper = new UserDBHelper(this);
+        userDBHelper.updateUserInterestsData(data);
+
+        String endPoint = HelperFunctions.generateUrl(APIConstants.BUYER_INTEREST_URL);
+        volleyStringRequest(todo, Request.Method.POST, endPoint, data.toString());
+    }
+
     private void onResponseHandler(final int todo, String response) {
         try {
             JSONObject data = new JSONObject(response);
@@ -132,6 +158,9 @@ public class UserService extends IntentService {
                 case R.string.fetch_business_types:
                     handleBusinessTypesResponse(data);
                     break;
+                case TODO.UPDATE_BUYER_INTEREST:
+                    saveBuyerInterestResponse(data);
+                    break;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -144,7 +173,7 @@ public class UserService extends IntentService {
         // update userData
         boolean savedUserData = userDBHelper.updateUserData(response) > 0;
         boolean savedUserAddress = userDBHelper.updateUserAddressData(response) > 0;
-        boolean savedUserInterestData = userDBHelper.updateUserInterestsData(response) > 0;
+        boolean savedUserInterestData = userDBHelper.updateUserInterestsData(response.getJSONArray(UserInterestsTable.TABLE_NAME)) > 0;
 
         sendUserDataUpdatedBroadCast(null);
     }
@@ -164,6 +193,11 @@ public class UserService extends IntentService {
             intent.putExtra("extra", extra);
         }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    private void saveBuyerInterestResponse(JSONObject response) throws JSONException {
+        UserDBHelper userDBHelper = new UserDBHelper(this);
+        userDBHelper.updateUserInterestsData(response.getJSONObject("buyer_interest"));
     }
 
     public void volleyStringRequest(final int todo, int method, String endPoint, final String jsonData) {
