@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 
@@ -20,6 +21,8 @@ import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 public class HomeFragment extends Fragment {
 
     private HomeListenerInterface mListener;
+
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     public HomeFragment() {
     }
@@ -37,6 +40,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
     }
 
     @Nullable
@@ -48,6 +52,15 @@ public class HomeFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "Button");
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "categories button");
+                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                    }
+                }).start();
                 mListener.openCategory(-1);
             }
         });
