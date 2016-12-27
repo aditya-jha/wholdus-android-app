@@ -1,7 +1,6 @@
 package com.wholdus.www.wholdusbuyerapp.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,14 +11,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.models.GridProductModel;
 
 import java.util.ArrayList;
+
+import static com.bumptech.glide.Glide.with;
 
 /**
  * Created by aditya on 15/12/16.
@@ -88,16 +89,15 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.mProductName.setText(product.getName());
         holder.mProductFabric.setText(product.getFabric());
         holder.mProductPrice.setText(String.format(mContext.getString(R.string.price_per_pcs_format), product.getPrice().toString()));
+
+        holder.mFabButton.setImageResource(product.getLikeStatus() ? R.drawable.ic_favorite_red_24dp : R.drawable.ic_favorite_border_black_24dp);
+        holder.mCartButton.setImageResource(product.getCartCount() > 0 ? R.drawable.ic_local_grocery_store_black_24dp : R.drawable.ic_add_shopping_cart_black_24dp);
+
         Glide.with(mContext)
                 .load(product.getImageUrl(Constants.SMALL_IMAGE, "1"))
                 .asBitmap()
-                .into(new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                        holder.mProductImage.setImageBitmap(resource);
-                        holder.mProgressBar.setVisibility(View.GONE);
-                    }
-                });
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .into(new BitmapImageViewTarget(holder.mProductImage));
         holder.mListener = mListener;
     }
 
@@ -147,6 +147,15 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static class ProgressViewHolder extends RecyclerView.ViewHolder {
         ProgressViewHolder(View itemView) {
             super(itemView);
+        }
+    }
+
+    @Override
+    public void onViewRecycled(RecyclerView.ViewHolder holder) {
+        super.onViewRecycled(holder);
+        if (holder.getItemViewType() == PRODUCT_VIEW) {
+            ProductsGridAdapter.ProductViewHolder productViewHolder = (ProductsGridAdapter.ProductViewHolder) holder;
+            Glide.clear(productViewHolder.mProductImage);
         }
     }
 }

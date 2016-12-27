@@ -22,6 +22,7 @@ public class GridProductModel {
     private Double mPrice;
     private String mFabric;
     private int mCartCount;
+    private boolean mLiked;
 
     public GridProductModel() {
 
@@ -37,6 +38,7 @@ public class GridProductModel {
                 + "%s/" + cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_IMAGE_NAME))
                 + "-%s.jpg";
         mCartCount = 0;
+        mLiked = cursor.getInt(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_RESPONSE_CODE)) == 1;
     }
 
     public static ArrayList<GridProductModel> getGridProducts(Cursor cursor) {
@@ -73,5 +75,13 @@ public class GridProductModel {
 
     public int getCartCount() {
         return mCartCount;
+    }
+
+    public boolean getLikeStatus() {
+        return mLiked;
+    }
+
+    public void toggleLikeStatus() {
+        mLiked = !mLiked;
     }
 }

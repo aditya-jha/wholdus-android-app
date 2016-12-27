@@ -2,13 +2,9 @@ package com.wholdus.www.wholdusbuyerapp.loaders;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.support.v4.content.res.TypedArrayUtils;
-import android.util.Log;
 
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
-import com.wholdus.www.wholdusbuyerapp.models.Category;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
-import com.wholdus.www.wholdusbuyerapp.models.Seller;
 
 import java.util.ArrayList;
 
@@ -70,16 +66,12 @@ public class ProductLoader extends AbstractLoader<Product> {
         cursor.moveToFirst();
 
         product.setSeller(cursor);
-        product.setCategory(new Category());
+
+        cursor = catalogDBHelper.getCategoryData(product.getCategoryID(), 1, null);
+        cursor.moveToFirst();
+
+        product.setCategory(cursor);
 
         return product;
-    }
-
-    private String[] getColumnsToFetch() {
-        String[] columns = new String[CatalogDBHelper.BasicProductColumns.length + CatalogDBHelper.ExtraProductColumns.length];
-        System.arraycopy(CatalogDBHelper.BasicProductColumns, 0, columns, 0, CatalogDBHelper.BasicProductColumns.length);
-        System.arraycopy(CatalogDBHelper.ExtraProductColumns, 0, columns, CatalogDBHelper.BasicProductColumns.length, CatalogDBHelper.ExtraProductColumns.length);
-
-        return columns;
     }
 }

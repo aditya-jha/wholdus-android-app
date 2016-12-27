@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,13 +23,13 @@ import com.daprlabs.aaron.swipedeck.SwipeDeck;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductSwipeDeckAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HandPickedListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProductCardListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProductsLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
 import com.wholdus.www.wholdusbuyerapp.services.BuyerProductService;
-import com.wholdus.www.wholdusbuyerapp.services.CartService;
 
 import java.util.ArrayList;
 
@@ -63,7 +62,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     private boolean mHasSwiped = true;
     private boolean mFirstLoad = true;
 
-    public HandPickedFragment(){
+    public HandPickedFragment() {
     }
 
     @Override
@@ -92,7 +91,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
                 handleAPIResponse();
             }
         };
-        fetchDataFromServer();
+        fetchBuyerProducts();
         return rootView;
     }
 
@@ -103,7 +102,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
         mProductsLoader = new ProductsLoaderManager();
@@ -115,12 +114,12 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     }
 
     private void handleAPIResponse() {
-        if (getActivity()!= null && mProductsLeft < mProductBuffer) {
+        if (getActivity() != null && mProductsLeft < mProductBuffer) {
             getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, mProductsLoader);
         }
     }
 
-    private void initReferences(ViewGroup rootView){
+    private void initReferences(ViewGroup rootView) {
 
         mSwipeDeck = (SwipeDeck) rootView.findViewById(R.id.product_swipe_deck);
         mSwipeDeck.setLeftImage(R.id.left_image);
@@ -131,6 +130,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
                 //TODO : Write functions to like and dislike
                 actionAfterSwipe(false);
             }
+
             @Override
             public void cardSwipedRight(long l) {
                 actionAfterSwipe(true);
@@ -183,33 +183,29 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         mNoProductsLeftTextView.setVisibility(View.GONE);
     }
 
-    private void fetchDataFromServer(){
-        fetchBuyerProducts();
-    }
-
-    private void fetchBuyerProducts(){
+    private void fetchBuyerProducts() {
         Intent intent = new Intent(getContext(), BuyerProductService.class);
-        intent.putExtra("TODO", R.string.fetch_buyer_products);
+        intent.putExtra("TODO", TODO.FETCH_BUYER_PRODUCTS);
         getContext().startService(intent);
     }
 
-    private void actionAfterSwipe(boolean liked){
+    private void actionAfterSwipe(boolean liked) {
         Intent intent = new Intent(getContext(), BuyerProductService.class);
-        intent.putExtra("TODO", R.string.update_product_response);
+        intent.putExtra("TODO", TODO.UPDATE_PRODUCT_RESPONSE);
         intent.putExtra(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, mProductsArrayList.get(mPosition).getProductID());
         if (mStoreMargin != null) {
             intent.putExtra(CatalogContract.ProductsTable.COLUMN_STORE_MARGIN, mStoreMargin);
         }
         intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONDED_FROM, 0);
         intent.putExtra(CatalogContract.ProductsTable.COLUMN_HAS_SWIPED, mHasSwiped);
-        intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONSE_CODE, liked?1:2);
+        intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONSE_CODE, liked ? 1 : 2);
         getContext().startService(intent);
 
         mHasSwiped = true;
         mStoreMargin = null;
 
         mProductsLeft -= 1;
-        if (mProductsLeft == 0){
+        if (mProductsLeft == 0) {
             setNoProductsLeftView();
             return;
         }
@@ -217,7 +213,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         mPosition += 1;
         mListener.fragmentCreated(mProductsArrayList.get(mPosition).getName());
 
-        if (mProductsLeft < mProductBuffer){
+        if (mProductsLeft < mProductBuffer) {
             getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, mProductsLoader);
             fetchBuyerProducts();
         }
@@ -229,27 +225,27 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         //setButtonsState(true);
     }
 
-    private void setViewForProducts(ArrayList<Product> data){
+    private void setViewForProducts(ArrayList<Product> data) {
         //TODO: Add products to adapter correctly(not ones already present)
 
-        if(data.size() == 0){
-            if (!mFirstLoad && mProductsArrayList.size() == 0){
+        if (data.size() == 0) {
+            if (!mFirstLoad && mProductsArrayList.size() == 0) {
                 setNoProductsLeftView();
             }
-            if (mFirstLoad){
+            if (mFirstLoad) {
                 mFirstLoad = false;
             }
             return;
         }
 
-        if (mFirstLoad || mProductsArrayList.size() == 0){
+        if (mFirstLoad || mProductsArrayList.size() == 0) {
             mNoProductsLeft.setVisibility(View.GONE);
             mFirstLoad = false;
             mListener.fragmentCreated(data.get(mPosition).getName());
             setButtonsState(true);
         }
         mProductsArrayList.addAll(data);
-        for(Product product:data){
+        for (Product product : data) {
             mProductIDs.add(product.getProductID());
         }
         mProductSwipeDeckAdapter.notifyDataSetChanged();
@@ -258,7 +254,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         //TODO: Handle case for 0 products
     }
 
-    private void setNoProductsLeftView(){
+    private void setNoProductsLeftView() {
         setButtonsState(false);
         mListener.fragmentCreated("Hand Picked For You");
         mSwipeDeck.setVisibility(View.GONE);
@@ -268,7 +264,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         mNoProductsLeftTextView.setText(R.string.no_products_left);
     }
 
-    private void setButtonsState(boolean state){
+    private void setButtonsState(boolean state) {
         mLikeButton.setEnabled(state);
         mDislikeButton.setEnabled(state);
         mAddToCartButton.setEnabled(state);

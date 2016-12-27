@@ -36,7 +36,7 @@ import java.util.ArrayList;
  * Created by kaustubh on 19/12/16.
  */
 
-public class CartDialogFragment extends DialogFragment{
+public class CartDialogFragment extends DialogFragment implements View.OnClickListener {
 
     private TextView mLotSize;
     private TextView mProductName;
@@ -50,10 +50,10 @@ public class CartDialogFragment extends DialogFragment{
     private int mLots;
     ArrayAdapter<Integer> mPiecesAdapter;
 
-    private final int PRODUCTS_DB_LOADER = 50;
-    private final int CART_DB_LOADER = 51;
+    private static final int PRODUCTS_DB_LOADER = 50;
+    private static final int CART_DB_LOADER = 51;
 
-    public CartDialogFragment(){
+    public CartDialogFragment() {
     }
 
     @Override
@@ -78,8 +78,14 @@ public class CartDialogFragment extends DialogFragment{
         Bundle mArgs = getArguments();
         mProductID = mArgs.getInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID);
         mLots = 1;
-        initReferences(rootView);
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initReferences((ViewGroup) getView());
+        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
     }
 
     @Override
@@ -89,46 +95,55 @@ public class CartDialogFragment extends DialogFragment{
         getLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, new ProductLoaderManager());
     }
 
-    public void initReferences(ViewGroup rootView){
+    @Override
+    public void onClick(View view) {
+        final int ID = view.getId();
+        switch (ID) {
+            case R.id.cart_dialog_add_to_cart_button:
+                addProductToCart();
+                break;
+        }
+    }
+
+    public void initReferences(ViewGroup rootView) {
         mLotSize = (TextView) rootView.findViewById(R.id.cart_dialog_lot_size_text_view);
         mProductName = (TextView) rootView.findViewById(R.id.cart_dialog_product_name_text_view);
         mLotDescription = (TextView) rootView.findViewById(R.id.cart_dialog_lot_description_text_view);
         mPricePerPiece = (TextView) rootView.findViewById(R.id.cart_dialog_price_per_piece_text_view);
         mTotalPrice = (TextView) rootView.findViewById(R.id.cart_dialog_total_price_text_view);
         mPiecesSpinner = (Spinner) rootView.findViewById(R.id.cart_dialog_pieces_spinner);
-        mAddtoCart = (Button) rootView.findViewById(R.id.cart_dialog_add_to_cart_button);
-    }
-    public void setViewOnLoad(){
 
-        mAddtoCart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addProductToCart();
-            }
-        });
+        mAddtoCart = (Button) rootView.findViewById(R.id.cart_dialog_add_to_cart_button);
+        mAddtoCart.setOnClickListener(this);
+    }
+
+    public void setViewOnLoad() {
 
         mPiecesAdapter = new ArrayAdapter<>(getContext(), R.layout.cart_dialog_spinner_text_view);
-        for (int i =1; i <11; i++){
-            mPiecesAdapter.add(mProduct.getLotSize()*i);
+        for (int i = 1; i < 11; i++) {
+            mPiecesAdapter.add(mProduct.getLotSize() * i);
         }
         //mPiecesAdapter.setDropDownViewResource(R.layout.cart_dialog_spinner_text_view);
         mPiecesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mPiecesSpinner.setAdapter(mPiecesAdapter);
-        mPiecesSpinner.setSelection(mPiecesAdapter.getPosition(mLots*mProduct.getLotSize()));
+        mPiecesSpinner.setSelection(mPiecesAdapter.getPosition(mLots * mProduct.getLotSize()));
 
         mLotSize.setText(String.valueOf(mProduct.getLotSize()));
+//        getDialog().setTitle(mProduct.getName());
         mProductName.setText(mProduct.getName());
         String lotDetails = mProduct.getProductDetails().getLotDescription();
-        if (lotDetails.equals("")){ lotDetails = mProduct.getLotSize() + " pieces per lot";}
+        if (lotDetails.equals("")) {
+            lotDetails = mProduct.getLotSize() + " pieces per lot";
+        }
         mLotDescription.setText(lotDetails);
-        mPricePerPiece.setText("Rs. "+String.format("%.0f",mProduct.getMinPricePerUnit()));
+        mPricePerPiece.setText("Rs. " + String.format("%.0f", mProduct.getMinPricePerUnit()));
 
         mPiecesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                mLots = (int) (((int)(adapterView.getItemAtPosition(i)))/mProduct.getLotSize());
-                float finalPrice = ((int)adapterView.getItemAtPosition(i))*mProduct.getMinPricePerUnit();
-                mTotalPrice.setText("Rs. "+ String.format("%.0f",finalPrice));
+                mLots = (int) (((int) (adapterView.getItemAtPosition(i))) / mProduct.getLotSize());
+                float finalPrice = ((int) adapterView.getItemAtPosition(i)) * mProduct.getMinPricePerUnit();
+                mTotalPrice.setText("Rs. " + String.format("%.0f", finalPrice));
                 mPiecesSpinner.setSelection(i);
             }
 
@@ -138,18 +153,18 @@ public class CartDialogFragment extends DialogFragment{
         });
     }
 
-    public void addProductToCart(){
+    public void addProductToCart() {
         Intent intent = new Intent(getContext(), CartService.class);
         intent.putExtra("TODO", R.string.write_cart_item);
         intent.putExtra(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, mProduct.getProductID());
         intent.putExtra(CartContract.CartItemsTable.COLUMN_LOTS, mLots);
-        intent.putExtra(CartContract.CartItemsTable.COLUMN_PIECES, mProduct.getLotSize()*mLots);
+        intent.putExtra(CartContract.CartItemsTable.COLUMN_PIECES, mProduct.getLotSize() * mLots);
         intent.putExtra(CartContract.CartItemsTable.COLUMN_LOT_SIZE, mProduct.getLotSize());
         intent.putExtra(CartContract.CartItemsTable.COLUMN_RETAIL_PRICE_PER_PIECE, mProduct.getPricePerUnit());
         intent.putExtra(CartContract.CartItemsTable.COLUMN_CALCULATED_PRICE_PER_PIECE, mProduct.getMinPricePerUnit());
-        intent.putExtra(CartContract.CartItemsTable.COLUMN_FINAL_PRICE, mProduct.getMinPricePerUnit()*mLots*mProduct.getLotSize());
+        intent.putExtra(CartContract.CartItemsTable.COLUMN_FINAL_PRICE, mProduct.getMinPricePerUnit() * mLots * mProduct.getLotSize());
         getContext().startService(intent);
-        Toast.makeText(getContext(),"Added to Cart", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Added to Cart", Toast.LENGTH_SHORT).show();
         dismiss();
     }
 
@@ -163,7 +178,7 @@ public class CartDialogFragment extends DialogFragment{
         public void onLoadFinished(Loader<ArrayList<CartItem>> loader, ArrayList<CartItem> data) {
             if (!data.isEmpty()) {
                 mLots = data.get(0).getLots();
-                if (mPiecesAdapter!= null) {
+                if (mPiecesAdapter != null) {
                     mPiecesSpinner.setSelection(mPiecesAdapter.getPosition(mLots * mProduct.getLotSize()));
                 }
             }
@@ -171,11 +186,11 @@ public class CartDialogFragment extends DialogFragment{
 
         @Override
         public Loader<ArrayList<CartItem>> onCreateLoader(int id, Bundle args) {
-            return new CartItemLoader(getContext(), -1, null, -1, mProductID, -1,false, null);
+            return new CartItemLoader(getContext(), -1, null, -1, mProductID, -1, false, null);
         }
     }
 
-    private class ProductLoaderManager implements LoaderManager.LoaderCallbacks<Product>{
+    private class ProductLoaderManager implements LoaderManager.LoaderCallbacks<Product> {
         @Override
         public Loader<Product> onCreateLoader(int id, Bundle args) {
             return new ProductLoader(getContext(), mProductID);
@@ -183,7 +198,7 @@ public class CartDialogFragment extends DialogFragment{
 
         @Override
         public void onLoadFinished(Loader<Product> loader, Product data) {
-            if (data != null){
+            if (data != null) {
                 mProduct = data;
                 setViewOnLoad();
             }

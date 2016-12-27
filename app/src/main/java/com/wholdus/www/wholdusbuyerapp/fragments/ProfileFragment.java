@@ -21,6 +21,7 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.AddressDisplayListViewAdapter;
 import com.wholdus.www.wholdusbuyerapp.adapters.BuyerPersonalDetailsAdapter;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProfileLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Buyer;
@@ -29,6 +30,8 @@ import com.wholdus.www.wholdusbuyerapp.models.BuyerPersonalDetails;
 import com.wholdus.www.wholdusbuyerapp.services.UserService;
 
 import java.util.ArrayList;
+
+import static com.wholdus.www.wholdusbuyerapp.helperClasses.TODO.FETCH_USER_PROFILE;
 
 /**
  * Created by aditya on 19/11/16.
@@ -175,7 +178,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     private void fetchDataFromServer() {
         Intent intent = new Intent(getContext(), UserService.class);
-        intent.putExtra("TODO", R.string.fetch_user_profile);
+        intent.putExtra("TODO", TODO.FETCH_USER_PROFILE);
         getContext().startService(intent);
     }
 }

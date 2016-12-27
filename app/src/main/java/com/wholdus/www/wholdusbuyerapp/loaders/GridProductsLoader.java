@@ -2,7 +2,6 @@ package com.wholdus.www.wholdusbuyerapp.loaders;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.support.annotation.Nullable;
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
@@ -27,25 +26,25 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
             CatalogContract.ProductsTable.COLUMN_IMAGE_COUNT,
             CatalogContract.ProductsTable.COLUMN_IMAGE_NAME,
             CatalogContract.ProductsTable.COLUMN_IMAGE_NUMBERS,
-            CatalogContract.ProductsTable.COLUMN_IMAGE_PATH
+            CatalogContract.ProductsTable.COLUMN_IMAGE_PATH,
+            CatalogContract.ProductsTable.COLUMN_RESPONSE_CODE,
     };
 
     private int mOffset, mLimit;
-    private ArrayList<Integer> mResponseCodes;
 
-    public GridProductsLoader(Context context, int pageNumber, int limit, @Nullable ArrayList<Integer> responseCodes) {
+    public GridProductsLoader(Context context, int pageNumber, int limit) {
         super(context);
         mLimit = limit;
-        mResponseCodes = responseCodes;
-        if (pageNumber > 0) {
-            mOffset = (pageNumber - 1) * mLimit;
-        } else {
-            mOffset = 0;
-        }
+        mOffset = pageNumber > 0 ? (pageNumber - 1) * mLimit : 0;
     }
 
     @Override
     public ArrayList<GridProductModel> loadInBackground() {
+
+        ArrayList<Integer> responseCodes = new ArrayList<>();
+        responseCodes.add(0);
+        responseCodes.add(1);
+
         CatalogDBHelper catalogDBHelper = new CatalogDBHelper(getContext());
 
         HashSet<Integer> categoryID = new HashSet<>();
@@ -64,12 +63,12 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
                 FilterClass.getSelectedItems("Fabric"),
                 FilterClass.getSelectedItems("Colors"),
                 FilterClass.getSelectedItems("Sizes"),
-                mResponseCodes, //TODO : Put appropriate response codes
+                responseCodes, //TODO : Put appropriate response codes
                 0,
                 1,
                 1,
                 1,
-                null, // ORDER BY
+                new String[] {FilterClass.getSortString()}, // ORDER BY
                 mLimit,
                 mOffset,
                 columns);

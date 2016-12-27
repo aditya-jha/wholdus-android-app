@@ -23,7 +23,7 @@ public class VolleySingleton {
     private VolleySingleton(Context context) {
         mContext = context;
         mRequestQueue = getRequestQueue();
-        VolleyLog.DEBUG = false;
+        VolleyLog.DEBUG = true;
 
         /*
          * TODO: Implement Disk Based Cache for Bitmap
