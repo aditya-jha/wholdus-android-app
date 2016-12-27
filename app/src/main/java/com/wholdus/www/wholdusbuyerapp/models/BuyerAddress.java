@@ -4,6 +4,7 @@ import android.database.Cursor;
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 /**
@@ -107,4 +108,12 @@ public class BuyerAddress {
     public String getUpdatedAt(){return mUpdatedAt;}
 
     public String getClientID(){return mClientID;}
+
+    public static ArrayList<BuyerAddress> getBuyerAddressesFromCursor(Cursor cursor) {
+        ArrayList<BuyerAddress> buyerAddresses= new ArrayList<>();
+        while (cursor.moveToNext()) {
+            buyerAddresses.add(new BuyerAddress(cursor));
+        }
+        return buyerAddresses;
+    }
 }
