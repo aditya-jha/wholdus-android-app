@@ -1,10 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/AppTheme.DefaultCard"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/temp"
+    <ProgressBar
+        android:id="@+id/page_loader"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical" />
+
+    <LinearLayout
+        style="@style/AppTheme.DefaultCard"
+        android:id="@+id/page_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/AppTheme.ImportantText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="categories i deal in" />
+
+            <Button
+                android:id="@+id/add_button"
+                style="@style/Base.Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackgroundBorderless"
+                android:drawableLeft="@drawable/ic_add_black_24dp"
+                android:text="@string/add_key" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            style="@style/AppTheme.Divider" />
+
+        <ListView
+            android:id="@+id/interests_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</android.support.v7.widget.CardView>
