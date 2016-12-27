@@ -12,12 +12,15 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.models.Category;
 
 import java.util.List;
+
+import static android.R.attr.resource;
 
 /**
  * Created by aditya on 11/12/16.
@@ -61,9 +64,10 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
                 .load(category.getImageURL())
                 .asBitmap()
                 .skipMemoryCache(true)
-                .into(new SimpleTarget<Bitmap>() {
+                .into(new BitmapImageViewTarget(holder.mIconImageView) {
                     @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                    protected void setResource(Bitmap resource) {
+                        super.setResource(resource);
                         holder.mIconImageView.setImageBitmap(resource);
                         holder.mProgressBar.setVisibility(View.GONE);
                     }
@@ -101,5 +105,11 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
                 mListener.itemClicked(view, position, -1);
             }
         }
+    }
+
+    @Override
+    public void onViewRecycled(ViewHolder holder) {
+        super.onViewRecycled(holder);
+        Glide.clear(((ViewHolder)holder).mIconImageView);
     }
 }
