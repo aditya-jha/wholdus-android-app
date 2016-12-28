@@ -22,6 +22,7 @@ public class NavigationDrawerData {
 
         ArrayList<String> account = new ArrayList<>();
         account.add("My Profile");
+        account.add("My Addresses");
         account.add("My Orders");
         account.add("My Preferences");
         account.add("Rejected Products");

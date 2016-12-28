@@ -79,7 +79,7 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
     @Override
     public void onResume(){
         super.onResume();
-        mListener.fragmentCreated("Cart Summary");
+        mListener.fragmentCreated("Cart Summary", true);
         getActivity().getSupportLoaderManager().restartLoader(CART_DB_LOADER, null, this);
 
         IntentFilter intentFilter = new IntentFilter(getString(R.string.cart_data_updated));

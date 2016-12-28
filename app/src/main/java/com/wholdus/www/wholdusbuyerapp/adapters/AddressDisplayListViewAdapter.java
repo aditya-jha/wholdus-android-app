@@ -51,26 +51,27 @@ public class AddressDisplayListViewAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
+        ViewHolder holder;
+
         if (view == null) {
             view = LayoutInflater.from(mContext).inflate(R.layout.address_display_list_view, viewGroup, false);
+            holder = new ViewHolder();
+            holder.aliasTextView = (TextView) view.findViewById(R.id.alias_text_view);
+            holder.contactNumberTextView = (TextView) view.findViewById(R.id.contact_number_text_view);
+            holder.addressTextView = (TextView) view.findViewById(R.id.address_text_view);
+            holder.cityStatePincodeTextView = (TextView) view.findViewById(R.id.city_state_pincode_text_view);
+            view.setTag(holder);
+        }
+        else {
+            holder = (ViewHolder) view.getTag();
         }
 
-        BuyerAddress address = (BuyerAddress) getItem(i);
+        BuyerAddress address = mData.get(i);
 
-        TextView aliasTextView = (TextView) view.findViewById(R.id.alias_text_view);
-        aliasTextView.setText(address.getAlias());
-
-        TextView contactNumberTextView = (TextView) view.findViewById(R.id.contact_number_text_view);
-        contactNumberTextView.setText(address.getContactNumber());
-
-        TextView addressTextView = (TextView) view.findViewById(R.id.address_text_view);
-        addressTextView.setText(getAddressTextView(address));
-
-        TextView cityStatePincodeTextView = (TextView) view.findViewById(R.id.city_state_pincode_text_view);
-        cityStatePincodeTextView.setText(getCityStatePincodeTextView(address));
-
-        view.setTag(R.integer.addressID, address.getAddressID());
-        view.setTag(R.integer._ID, address.get_ID());
+        holder.aliasTextView.setText(address.getAlias());
+        holder.contactNumberTextView.setText(address.getContactNumber());
+        holder.addressTextView.setText(getAddressTextView(address));
+        holder.cityStatePincodeTextView.setText(getCityStatePincodeTextView(address));
 
         return view;
     }
@@ -96,5 +97,13 @@ public class AddressDisplayListViewAdapter extends BaseAdapter {
         if (!pincode.isEmpty()) value.add(pincode);
 
         return TextUtils.join(", ", value);
+    }
+
+    class ViewHolder{
+        int id;
+        TextView aliasTextView;
+        TextView contactNumberTextView;
+        TextView addressTextView;
+        TextView cityStatePincodeTextView;
     }
 }

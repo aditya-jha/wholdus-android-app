@@ -12,8 +12,9 @@ import android.view.View;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.fragments.CartSummaryFragment;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartListenerInterface;
+import com.wholdus.www.wholdusbuyerapp.interfaces.UserAddressInterface;
 
-public class CartActivity extends AppCompatActivity implements CartListenerInterface {
+public class CartActivity extends AppCompatActivity implements CartListenerInterface, UserAddressInterface {
 
     private Toolbar mToolbar;
 
@@ -32,7 +33,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     }
 
     @Override
-    public void fragmentCreated(String title) {
+    public void fragmentCreated(String title, boolean backEnabled) {
         mToolbar.setTitle(title);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -50,6 +51,24 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void editAddress(int addressID, int _ID) {
+        Bundle bundle = new Bundle();
+        bundle.putInt("addressID", addressID);
+        bundle.putInt("_ID", _ID);
+        openToFragment("editAddress", bundle);
+    }
+
+    @Override
+    public void addressSaved() {
+        //TODO Open address select fragment
+    }
+
+    @Override
+    public void addressClicked(int addressID, int _ID) {
+        //TODO : SELECT THIS ADDRESS
     }
 
     private String getFragmentToOpenName(Bundle savedInstanceState) {

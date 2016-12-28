@@ -42,7 +42,7 @@ public class UserDBHelper extends BaseDBHelper {
         return getCursor(query);
     }
 
-    public Cursor getUserAddress(int addressID, int _ID, int addressHistoryID, @Nullable String[] columns) {
+    public Cursor getUserAddress(int addressID, int _ID, int addressHistoryID, int synced, @Nullable String[] columns) {
         String columnNames = getColumnNamesString(columns);
 
         String query = "SELECT " + columnNames + " FROM " + UserAddressTable.TABLE_NAME;
@@ -57,7 +57,12 @@ public class UserDBHelper extends BaseDBHelper {
         }
         if (addressHistoryID != -1) {
             query += whereClauseHelper(whereApplied) + UserAddressTable.COLUMN_ADDRESS_HISTORY_ID + " = " + addressHistoryID;
+            whereApplied = true;
         }
+        if (synced != -1) {
+            query += whereClauseHelper(whereApplied) + UserAddressTable.COLUMN_SYNCED + " = " + synced;
+        }
+        query += " ORDER BY " + UserAddressTable.COLUMN_PRIORITY;
 
         return getCursor(query);
     }
@@ -86,7 +91,7 @@ public class UserDBHelper extends BaseDBHelper {
             return mPresentBuyerAddressIDs;
         }
         String[] columns = new String[]{UserAddressTable.COLUMN_ADDRESS_ID, UserAddressTable.COLUMN_UPDATED_AT};
-        Cursor cursor = getUserAddress(-1, -1, 0, columns);
+        Cursor cursor = getUserAddress(-1, -1, 0, -1,columns);
         SparseArray<String> buyerAddressIDs = new SparseArray<>();
         while (cursor.moveToNext()) {
             int buyerAddressID = cursor.getInt(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS_ID));
@@ -104,7 +109,7 @@ public class UserDBHelper extends BaseDBHelper {
             return mPresentBuyerAddressHistoryIDs;
         }
         String[] columns = new String[]{UserAddressTable.COLUMN_ADDRESS_HISTORY_ID, UserAddressTable.COLUMN_UPDATED_AT};
-        Cursor cursor = getUserAddress(0, -1, -1, columns);
+        Cursor cursor = getUserAddress(0, -1, -1, -1, columns);
         SparseArray<String> buyerAddressHistoryIDs = new SparseArray<>();
         while (cursor.moveToNext()) {
             buyerAddressHistoryIDs.put(cursor.getInt(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS_HISTORY_ID))
@@ -215,10 +220,18 @@ public class UserDBHelper extends BaseDBHelper {
             String buyerAddressUpdatedAtServer = currAddress.getString(UserAddressTable.COLUMN_UPDATED_AT);
             if (buyerAddressUpdatedAtLocal == null){
                 ContentValues values = getBuyerAddressContentValues(currAddress, addressHistory);
-                db.insert(UserAddressTable.TABLE_NAME, null, values);
+                String clientID = currAddress.getString(UserAddressTable.COLUMN_CLIENT_ID);
+                int addressUpdated = 0;
+                if (!clientID.equals("") && clientID.length() > 6){
+                    String selection = UserAddressTable.COLUMN_CLIENT_ID + " = '" + clientID +"'";
+                    addressUpdated = db.update(UserAddressTable.TABLE_NAME, values, selection, null);
+                }
+                if (addressUpdated == 0) {
+                    db.insert(UserAddressTable.TABLE_NAME, null, values);
+                }
             } else if (!buyerAddressUpdatedAtLocal.equals(buyerAddressUpdatedAtServer)){
                 ContentValues values = getBuyerAddressContentValues(currAddress, addressHistory);
-                String selection = addressHistory? UserAddressTable.COLUMN_ADDRESS_ID : UserAddressTable.COLUMN_ADDRESS_HISTORY_ID
+                String selection = addressHistory? UserAddressTable.COLUMN_ADDRESS_HISTORY_ID : UserAddressTable.COLUMN_ADDRESS_ID
                         + " = " + addressID;
                 db.update(UserAddressTable.TABLE_NAME, values, selection, null);
             }

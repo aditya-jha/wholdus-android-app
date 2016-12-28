@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.fragments.BuyerAddressFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.BuyerInterestFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.EditAddressFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.EditProfileDetailsFragment;
@@ -25,8 +26,9 @@ import com.wholdus.www.wholdusbuyerapp.fragments.OrdersFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProductGridCategoryTabFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProfileFragment;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
+import com.wholdus.www.wholdusbuyerapp.interfaces.UserAddressInterface;
 
-public class AccountActivity extends AppCompatActivity implements ProfileListenerInterface {
+public class AccountActivity extends AppCompatActivity implements ProfileListenerInterface, UserAddressInterface {
 
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolbar;
@@ -106,6 +108,16 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
         openToFragment("editAddress", bundle);
     }
 
+    @Override
+    public void addressClicked(int addressID, int _ID) {
+        editAddress(addressID, _ID);
+    }
+
+    @Override
+    public void addressSaved() {
+        openToFragment("buyerAddresses",null);
+    }
+
     private void initToolbar() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -179,6 +191,9 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
                 break;
             case "editPersonalDetails":
                 fragment = new EditProfileDetailsFragment();
+                break;
+            case "buyerAddresses":
+                fragment = new BuyerAddressFragment();
                 break;
             case "editAddress":
                 fragment = new EditAddressFragment();
