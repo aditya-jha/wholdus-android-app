@@ -5,5 +5,5 @@ package com.wholdus.www.wholdusbuyerapp.interfaces;
  */
 
 public interface CartListenerInterface {
-    void fragmentCreated(String title);
+    void fragmentCreated(String title, boolean backEnabled);
 }

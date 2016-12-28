@@ -13,23 +13,39 @@
         android:drawableLeft="@drawable/ic_place_black_24dp"
         android:drawableRight="@drawable/ic_mode_edit_black_24dp"
         android:drawableStart="@drawable/ic_place_black_24dp"
+        android:fontFamily="@string/font_family_medium"
+        android:text="@string/order_card_order_number"
+        android:textColor="@color/primary_text"
+        android:textSize="18sp"
         tools:text="Home" />
 
     <TextView
         android:id="@+id/contact_number_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@string/font_family_regular"
+        android:text="@string/order_card_order_number"
+        android:textColor="@color/primary_text"
+        android:textSize="16sp"
         tools:text="7417485915" />
 
     <TextView
         android:id="@+id/address_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@string/font_family_regular"
+        android:text="@string/order_card_order_number"
+        android:textColor="@color/primary_text"
+        android:textSize="16sp"
         tools:text="454/21, Chanakya puri colony, Lane no. 1" />
 
     <TextView
         android:id="@+id/city_state_pincode_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@string/font_family_regular"
+        android:text="@string/order_card_order_number"
+        android:textColor="@color/primary_text"
+        android:textSize="16sp"
         tools:text="Mumbai, Maharastra, 485001" />
 </LinearLayout>

@@ -12,7 +12,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wholdus.www.wholdusbuyerapp.R;
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserTable;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
@@ -22,6 +21,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
+import com.wholdus.www.wholdusbuyerapp.models.BuyerAddress;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
 import org.json.JSONArray;
@@ -29,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,15 +83,27 @@ public class UserService extends IntentService {
                 case TODO.UPDATE_BUYER_INTEREST:
                     updateBuyerInterest(todo, intent);
                     break;
-
             }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+    }
+
+    private void updateUserAddress(int todo, JSONObject address) throws JSONException {
+        UserDBHelper userDBHelper = new UserDBHelper(this);
+        userDBHelper.updateUserAddressData(address);
+        updateAllUnSyncedAddresses();
+        sendUserDataUpdatedBroadCast(getString(R.string.user_data_modified));
     }
 
     private void fetchUserProfile(int todo) {
-        String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_details_url), null);
+        HashMap<String,String> params = new HashMap<>();
+        params.put("buyer_address_details", "1");
+        params.put("buyer_interest_details", "1");
+        params.put("buyer_details_details", "1");
+        String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_details_url), params);
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }
 
@@ -106,23 +119,19 @@ public class UserService extends IntentService {
 
         sendUserDataUpdatedBroadCast(getString(R.string.user_data_modified));
 
+        HashMap<String,String> params = new HashMap<>();
+        params.put("buyer_address_details", "1");
+        params.put("buyer_interest_details", "1");
+        params.put("buyer_details_details", "1");
+
         // send to server
-        String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_details_url), null);
+        String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_details_url), params);
         volleyStringRequest(todo, Request.Method.PUT, url, data.toString());
     }
 
     private void fetchBusinessTypes(int todo) {
         String url = GlobalAccessHelper.generateUrl(getString(R.string.business_types_url), null);
         volleyStringRequest(todo, Request.Method.GET, url, null);
-    }
-
-    private void updateUserAddress(int todo, JSONObject address) throws JSONException {
-        UserDBHelper userDBHelper = new UserDBHelper(this);
-        userDBHelper.updateUserAddressData(address);
-
-        sendUserDataUpdatedBroadCast(getString(R.string.user_data_modified));
-        // send to server
-
     }
 
     private void updateBuyerInterest(int todo, Intent intent) throws JSONException {
@@ -153,11 +162,13 @@ public class UserService extends IntentService {
                     }
                     break;
                 case R.string.update_user_profile:
-                    //saveResponseToDB(data.getJSONObject("buyers"));
+                    saveResponseToDB(data.getJSONObject("buyer"));
                     break;
                 case R.string.fetch_business_types:
                     handleBusinessTypesResponse(data);
                     break;
+                case R.string.update_user_address:
+                    saveBuyerAddressUpdateResponseToDb(data);
                 case TODO.UPDATE_BUYER_INTEREST:
                     saveBuyerInterestResponse(data);
                     break;
@@ -220,7 +231,7 @@ public class UserService extends IntentService {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("Accept", "version=0");
+                params.put("Accept", "version=1");
                 params.put("Authorization", GlobalAccessHelper.getAccessToken(getApplication()));
                 return params;
             }
@@ -238,5 +249,51 @@ public class UserService extends IntentService {
         };
 
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest, REQUEST_TAG);
+    }
+
+    private void updateAllUnSyncedAddresses(){
+        UserDBHelper userDBHelper = new UserDBHelper(getApplicationContext());
+        ArrayList<BuyerAddress> buyerAddresses = BuyerAddress.getBuyerAddressesFromCursor(userDBHelper.getUserAddress(-1,-1,0,0,null));
+        for (BuyerAddress buyerAddress: buyerAddresses){
+            sendBuyerAddressToServer(buyerAddress);
+        }
+
+    }
+
+    private void sendBuyerAddressToServer(BuyerAddress buyerAddress){
+        HashMap<String, String> params = new HashMap<>();
+        String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_address_url), params);
+        JSONObject requestBody = new JSONObject();
+
+        int requestMethod;
+        try {
+            requestBody.put(UserAddressTable.COLUMN_PINCODE, buyerAddress.getPincode());
+            requestBody.put(UserAddressTable.COLUMN_ADDRESS, buyerAddress.getAddress());
+            requestBody.put(UserAddressTable.COLUMN_LANDMARK, buyerAddress.getLandmark());
+            requestBody.put(UserAddressTable.COLUMN_CITY, buyerAddress.getCity());
+            requestBody.put(UserAddressTable.COLUMN_STATE, buyerAddress.getState());
+            requestBody.put(UserAddressTable.COLUMN_CONTACT_NUMBER, buyerAddress.getContactNumber());
+            requestBody.put(UserAddressTable.COLUMN_ADDRESS_ALIAS, buyerAddress.getAlias());
+
+            if (buyerAddress.getAddressID() > 0){
+                requestBody.put(UserAddressTable.COLUMN_ADDRESS_ID, buyerAddress.getAddressID());
+                requestMethod = Request.Method.PUT;
+            } else {
+                requestBody.put(UserAddressTable.COLUMN_CLIENT_ID, buyerAddress.getClientID());
+                requestMethod = Request.Method.POST;
+            }
+
+        } catch (JSONException e){
+            e.printStackTrace();
+            return;
+        }
+
+        volleyStringRequest(R.string.update_user_address, requestMethod, url, requestBody.toString());
+    }
+
+    public void saveBuyerAddressUpdateResponseToDb(JSONObject data) throws JSONException{
+        UserDBHelper userDBHelper = new UserDBHelper(getApplicationContext());
+        userDBHelper.updateUserAddressDataFromJSONObject(data.getJSONObject("address"), false);
+        sendUserDataUpdatedBroadCast(null);
     }
 }
