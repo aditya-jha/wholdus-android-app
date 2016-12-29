@@ -1,9 +1,11 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.wholdus.www.wholdusbuyerapp.databaseHelpers.DatabaseHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.LoginHelper;
 
 public class SplashActivity extends AppCompatActivity {
@@ -28,6 +30,11 @@ public class SplashActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                // so that database is created on first open
+                DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getApplicationContext());
+                SQLiteDatabase db = databaseHelper.openDatabase();
+                databaseHelper.closeDatabase();
+
                 LoginHelper loginHelper = new LoginHelper(getApplicationContext());
                 if (loginHelper.checkIfLoggedIn()) {
                     startLoginSignupActivity(HomeActivity.class);
