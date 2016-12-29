@@ -8,7 +8,6 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.OkHttpHelper;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.RequestTokenInterceptor;
 
 import org.json.JSONObject;
 
@@ -50,7 +49,8 @@ public class FirebaseNotificationService extends IntentService {
             Response response = okHttpClient.newCall(request).execute();
             Log.d(this.getClass().getSimpleName(), response.toString());
 
-            if (!response.isSuccessful()) throw new IOException("unable to push token to server " + response);
+            if (!response.isSuccessful())
+                throw new IOException("unable to push token to server " + response);
         } catch (Exception e) {
             e.printStackTrace();
             FirebaseCrash.report(e);
