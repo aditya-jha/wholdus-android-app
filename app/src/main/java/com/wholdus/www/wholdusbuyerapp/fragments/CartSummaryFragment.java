@@ -36,11 +36,9 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
     private BroadcastReceiver mCartServiceResponseReceiver;
     private Cart mCart;
 
-    private TextView mTotalTextView;
-    private TextView mProductsPiecesTextView;
     private TextView mOrderValueTextView;
     private TextView mShippingChargeTextView;
-    private Button mProceedButton;
+
 
     public CartSummaryFragment(){
 
@@ -89,19 +87,10 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
 
     public void initReferences(ViewGroup view){
 
-        mTotalTextView = (TextView) view.findViewById(R.id.cart_summary_total_price_text_view);
+
         mOrderValueTextView = (TextView) view.findViewById(R.id.cart_summary_order_value_text_view);
         mShippingChargeTextView = (TextView) view.findViewById(R.id.cart_summary_shipping_charge_text_view);
-        mProductsPiecesTextView = (TextView) view.findViewById(R.id.cart_summary_total_products_text_view);
-        mTotalTextView = (TextView) view.findViewById(R.id.cart_summary_total_price_text_view);
-        mProceedButton = (Button) view.findViewById(R.id.cart_summary_proceed_button);
-        mProceedButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getContext(), "Proceed button clicked", Toast.LENGTH_SHORT).show();
-            }
-        });
-        mProceedButton.setEnabled(false);
+
     }
 
     private void fetchDataFromServer(){
@@ -117,12 +106,10 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
     }
 
     private void setViewForCart(){
-        mTotalTextView.setText("Total: Rs. " + String.format("%.0f",mCart.getFinalPrice()));
-        mProductsPiecesTextView.setText(String.valueOf(mCart.getProductCount()) + " products - "
-                + String.valueOf(mCart.getPieces()) + " pieces");
+        mListener.setCart(mCart);
+        mListener.disableProgressBar();
         mShippingChargeTextView.setText("Rs. " +String.format("%.0f",mCart.getShippingCharge()));
         mOrderValueTextView.setText("Rs. " +String.format("%.0f",mCart.getCalculatedPrice()));
-        mProceedButton.setEnabled(true);
     }
 
 

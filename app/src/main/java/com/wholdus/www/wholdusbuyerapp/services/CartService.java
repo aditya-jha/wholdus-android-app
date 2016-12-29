@@ -59,6 +59,9 @@ public class CartService extends IntentService{
             case R.string.write_cart_item:
                 saveCartItem(intent);
                 break;
+            case R.string.delete_cart:
+                deleteAllCarts();
+                break;
         }
     }
     public void fetchCart(int todo){
@@ -84,6 +87,7 @@ public class CartService extends IntentService{
             return;
         }
         HashMap<String,String> params = new HashMap<>();
+        params.put("product_details", "1");
         params.put("sub_cart_details", "1");
         params.put("cart_item_details", "1");
         String url = GlobalAccessHelper.generateUrl(getString(R.string.cart_item_url), params);
@@ -160,6 +164,15 @@ public class CartService extends IntentService{
                     break;
             }
         } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void deleteAllCarts() {
+        try {
+            CartDBHelper cartDBHelper = new CartDBHelper(this);
+            cartDBHelper.deleteCart(-1);
+        } catch (JSONException e){
             e.printStackTrace();
         }
     }

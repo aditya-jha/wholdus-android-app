@@ -27,4 +27,5 @@
     <!-- cart api -->
     <string name="cart_url">cart/</string>
     <string name="cart_item_url">cart/item/</string>
+    <string name="checkout_url">checkout/</string>
 </resources>
