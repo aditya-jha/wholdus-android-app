@@ -1,5 +1,6 @@
 package com.wholdus.www.wholdusbuyerapp.helperClasses;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
@@ -11,6 +12,9 @@ import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,7 +24,7 @@ import java.util.TimeZone;
  * Created by aditya on 7/12/16.
  */
 
-public class HelperFunctions {
+public final class HelperFunctions {
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();
@@ -85,5 +89,12 @@ public class HelperFunctions {
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public static void checkGooglePlay(Activity activity) {
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        if (googleApiAvailability.isGooglePlayServicesAvailable(activity) != ConnectionResult.SUCCESS) {
+            googleApiAvailability.makeGooglePlayServicesAvailable(activity);
+        }
     }
 }

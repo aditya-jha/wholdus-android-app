@@ -22,6 +22,7 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.asynctasks.LoginHelperAsyncTask;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.LoginSignupListenerInterface;
+import com.wholdus.www.wholdusbuyerapp.services.FirebaseNotificationService;
 import com.wholdus.www.wholdusbuyerapp.services.LoginAPIService;
 
 import org.json.JSONException;
@@ -194,6 +195,7 @@ public class LoginFragment extends Fragment {
                             public void processFinish(Boolean output) {
 
                                 if (output) {
+                                    getContext().startService(new Intent(getContext(), FirebaseNotificationService.class));
                                     listener.loginSuccess();
                                 } else {
                                     Toast.makeText(getContext(), "Something went wrong. Please try again", Toast.LENGTH_SHORT).show();

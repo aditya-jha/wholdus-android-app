@@ -25,7 +25,7 @@ import java.util.Objects;
  * Created by aditya on 26/11/16.
  */
 
-public class GlobalAccessHelper {
+public final class GlobalAccessHelper {
 
     public static String getAccessToken(Context context) {
         return "access_token=" + ((WholdusApplication) context).getAccessToken();

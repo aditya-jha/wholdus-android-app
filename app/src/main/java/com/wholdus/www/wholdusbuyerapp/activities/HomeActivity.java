@@ -16,10 +16,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.fragments.CategoryGridFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.HomeFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 
 public class HomeActivity extends AppCompatActivity implements HomeListenerInterface {
@@ -32,6 +35,9 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        // check for google play api
+        HelperFunctions.checkGooglePlay(this);
 
         // initialize the toolbar
         initToolbar();
