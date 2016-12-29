@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +20,9 @@ import com.wholdus.www.wholdusbuyerapp.activities.HomeActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.LoginSignupActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.StoreActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.NavigationDrawerAdapter;
-import com.wholdus.www.wholdusbuyerapp.asynctasks.LoginHelperAsyncTask;
 import com.wholdus.www.wholdusbuyerapp.dataSource.NavigationDrawerData;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.LoginHelper;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -188,19 +189,19 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     private void logout() {
-        LoginHelperAsyncTask loginHelperAsyncTask = new LoginHelperAsyncTask(getContext(),
-                new LoginHelperAsyncTask.AsyncResponse() {
-                    @Override
-                    public void processFinish(Boolean output) {
-                        if (output) {
-                            Intent intent = new Intent(getContext(), LoginSignupActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
-                            getActivity().finish();
-                        }
-                    }
-                });
-        loginHelperAsyncTask.setUpProgressDialog(true, getString(R.string.logout_loader_message));
-        loginHelperAsyncTask.execute("logout");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                LoginHelper loginHelper = new LoginHelper(getActivity().getApplicationContext());
+                if (loginHelper.logout()) {
+                    Intent intent = new Intent(getContext(), LoginSignupActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    getActivity().startActivity(intent);
+                    getActivity().finish();
+                } else {
+                    Log.e(this.getClass().getSimpleName(), "error logging out");
+                }
+            }
+        }).start();
     }
 }
