@@ -1,6 +1,7 @@
 package com.wholdus.www.wholdusbuyerapp.fragments;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -189,16 +190,26 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     private void logout() {
+
+        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+
+        progressDialog.setTitle(getString(R.string.logout_loader_title));
+        progressDialog.setMessage(getString(R.string.logout_loader_message));
+        progressDialog.show();
+        progressDialog.setCanceledOnTouchOutside(false);
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 LoginHelper loginHelper = new LoginHelper(getActivity().getApplicationContext());
                 if (loginHelper.logout()) {
+                    progressDialog.dismiss();
                     Intent intent = new Intent(getContext(), LoginSignupActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     getActivity().startActivity(intent);
                     getActivity().finish();
                 } else {
+                    progressDialog.dismiss();
                     Log.e(this.getClass().getSimpleName(), "error logging out");
                 }
             }

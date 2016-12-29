@@ -2,7 +2,6 @@ package com.wholdus.www.wholdusbuyerapp.services;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -47,8 +46,6 @@ public class FirebaseNotificationService extends IntentService {
                     .build();
 
             Response response = okHttpClient.newCall(request).execute();
-            Log.d(this.getClass().getSimpleName(), response.toString());
-
             if (!response.isSuccessful())
                 throw new IOException("unable to push token to server " + response);
             else {
