@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.wholdus.www.wholdusbuyerapp.asynctasks.LoginHelperAsyncTask;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.LoginHelper;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -25,25 +25,29 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void proceed() {
-        LoginHelperAsyncTask loginHelperAsyncTask = new LoginHelperAsyncTask(this, new LoginHelperAsyncTask.AsyncResponse() {
+        new Thread(new Runnable() {
             @Override
-            public void processFinish(Boolean result) {
-                if (result) {
+            public void run() {
+                LoginHelper loginHelper = new LoginHelper(getApplicationContext());
+                if (loginHelper.checkIfLoggedIn()) {
                     startLoginSignupActivity(HomeActivity.class);
                 } else {
                     startLoginSignupActivity(IntroActivity.class);
                 }
             }
-        });
-
-        loginHelperAsyncTask.execute("checkIfLoggedIn");
+        }).start();
     }
 
-    private void startLoginSignupActivity(Class classToStart) {
-        Intent intent = new Intent(this, classToStart);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-        overridePendingTransition(0, 0);
+    private void startLoginSignupActivity(final Class classToStart) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(getApplicationContext(), classToStart);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+                overridePendingTransition(0, 0);
+            }
+        });
     }
 }

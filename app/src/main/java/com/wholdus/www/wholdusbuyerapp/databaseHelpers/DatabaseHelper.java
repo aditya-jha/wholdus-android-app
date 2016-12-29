@@ -9,6 +9,7 @@ import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract.SubCartsTa
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract.CartItemsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategorySellersTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.SellerAddressTable;
+import com.wholdus.www.wholdusbuyerapp.models.BuyerInterest;
 
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract.OrderItemsTable;
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract.OrdersTable;
@@ -99,7 +100,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED + INT_TYPE + " )";
 
     private static final String SQL_DROP_USER_INTERESTS_TABLE =
-            "DROP TABLE IF EXISTS " + BusinessTypesTable.TABLE_NAME;
+            "DROP TABLE IF EXISTS " + UserInterestsTable.TABLE_NAME;
 
     private static final String SQL_CREATE_ORDERS_TABLE =
             "CREATE TABLE " + OrdersTable.TABLE_NAME + " (" +

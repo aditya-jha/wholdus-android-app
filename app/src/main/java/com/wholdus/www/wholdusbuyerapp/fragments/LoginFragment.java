@@ -19,8 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
-import com.wholdus.www.wholdusbuyerapp.asynctasks.LoginHelperAsyncTask;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.LoginHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.LoginSignupListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.services.FirebaseNotificationService;
 import com.wholdus.www.wholdusbuyerapp.services.LoginAPIService;
@@ -182,32 +182,28 @@ public class LoginFragment extends Fragment {
         }
     }
 
-    private void handleLoginAPIResponse(String response) {
+    private void handleLoginAPIResponse(final String response) {
+        final Context context = getContext();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                JSONObject data = mLoginAPIService.parseLoginResponseData(response);
+                try {
+                    if (data != null) {
+                        JSONObject buyerLogin = data.getJSONObject("buyer_login");
+                        LoginHelper loginHelper = new LoginHelper(context);
+                        if (loginHelper.login(buyerLogin)) {
+                            getActivity().startService(new Intent(context, FirebaseNotificationService.class));
+                            listener.loginSuccess();
+                        } else {
+                            Toast.makeText(context, "Something went wrong. Please try again", Toast.LENGTH_SHORT).show();
+                        }
+                    }
 
-        JSONObject data = mLoginAPIService.parseLoginResponseData(response);
-        try {
-            if (data != null) {
-                JSONObject buyerLogin = data.getJSONObject("buyer_login");
-
-                LoginHelperAsyncTask loginHelperAsyncTask = new LoginHelperAsyncTask(getContext(),
-                        new LoginHelperAsyncTask.AsyncResponse() {
-                            @Override
-                            public void processFinish(Boolean output) {
-
-                                if (output) {
-                                    getContext().startService(new Intent(getContext(), FirebaseNotificationService.class));
-                                    listener.loginSuccess();
-                                } else {
-                                    Toast.makeText(getContext(), "Something went wrong. Please try again", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                loginHelperAsyncTask.setUpProgressDialog(true, getString(R.string.login_progress_message));
-                loginHelperAsyncTask.execute("logIn", buyerLogin.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        }).start();
     }
 }
