@@ -283,7 +283,7 @@ public class CartDBHelper extends BaseDBHelper {
                 db.insert(CartItemsTable.TABLE_NAME, null, values);
             } else if (!cartItemUpdatedAtLocal.equals(cartItemUpdatedAtServer)) {
                 ContentValues values = getCartItemContentValues(cartItem);
-                String selection = CartItemsTable.COLUMN_CART_ITEM_ID + " = " + cartItemID + " AND (( " +
+                String selection = CartItemsTable.COLUMN_PRODUCT_ID + " = " + productID + " AND (( " +
                         CartItemsTable.COLUMN_SYNCED + " = 1) OR ( " +
                         CartItemsTable.COLUMN_SYNCED + " = 0 AND " +
                         CartItemsTable.COLUMN_LOTS + " = " + cartItem.getInt(CartItemsTable.COLUMN_LOTS) + ")) ";

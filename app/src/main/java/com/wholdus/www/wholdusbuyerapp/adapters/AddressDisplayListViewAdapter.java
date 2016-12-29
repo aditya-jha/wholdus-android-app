@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
+import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.models.BuyerAddress;
 
 import org.json.JSONArray;
@@ -28,10 +29,12 @@ public class AddressDisplayListViewAdapter extends BaseAdapter {
 
     private Context mContext;
     private ArrayList<BuyerAddress> mData;
+    private ItemClickListener mListener;
 
-    public AddressDisplayListViewAdapter(Context context, ArrayList<BuyerAddress> data) {
+    public AddressDisplayListViewAdapter(Context context, ArrayList<BuyerAddress> data, final ItemClickListener listener) {
         mContext = context;
         mData = data;
+        mListener = listener;
     }
 
     @Override
@@ -50,7 +53,7 @@ public class AddressDisplayListViewAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
+    public View getView(final int i, View view, ViewGroup viewGroup) {
         ViewHolder holder;
 
         if (view == null) {
@@ -72,6 +75,15 @@ public class AddressDisplayListViewAdapter extends BaseAdapter {
         holder.contactNumberTextView.setText(address.getContactNumber());
         holder.addressTextView.setText(getAddressTextView(address));
         holder.cityStatePincodeTextView.setText(getCityStatePincodeTextView(address));
+
+        holder.aliasTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mListener != null) {
+                    mListener.itemClicked(view, i, -1);
+                }
+            }
+        });
 
         return view;
     }

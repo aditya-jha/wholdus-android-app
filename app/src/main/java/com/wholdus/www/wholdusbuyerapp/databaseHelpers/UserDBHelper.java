@@ -307,7 +307,7 @@ public class UserDBHelper extends BaseDBHelper {
         values.put(UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT, interest.getString(UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT));
         values.put(UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT, interest.getString(UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT));
         values.put(UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT, interest.getString(UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT));
-        values.put(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED, interest.getInt(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED));
+        values.put(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED, interest.getBoolean(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED)?1:0);
 
         int categoryID;
         if (interest.has("category")) {

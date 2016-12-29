@@ -40,8 +40,15 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
 
         initNavigationDrawer(savedInstanceState);
         initToolbar();
+        Intent intent = getIntent();
+        Bundle extras;
+        if (intent != null){
+            extras = intent.getExtras();
+        } else {
+            extras = null;
+        }
 
-        openToFragment(getFragmentToOpenName(savedInstanceState), null);
+        openToFragment(getFragmentToOpenName(savedInstanceState), extras);
     }
 
     @Override
@@ -110,7 +117,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
 
     @Override
     public void addressClicked(int addressID, int _ID) {
-        editAddress(addressID, _ID);
+        //editAddress(addressID, _ID);
     }
 
     @Override
