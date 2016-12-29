@@ -145,6 +145,15 @@
     <string name="cart_summary_proceed">PROCEED</string>
     <string name="cart_summary_order_value">Order Value :&#160;</string>
     <string name="cart_summary_shipping">Shipping :&#160;</string>
+    
+    <string name="checkout_confirm_address_delivery_address">Delivery Address</string>
+    <string name="checkout_confirm_address_select_another">SELECT ANOTHER</string>
+
+    <string name="checkout_payment_method_cod">Cash on Delivery</string>
+    <string name="checkout_payment_method_cod_description">2% COD Charge</string>
+    <string name="checkout_payment_method_neft">NEFT</string>
+    <string name="checkout_payment_method_credit">Credit</string>
+    <string name="checkout_payment_method_credit_description">15 transactions to avail credit</string>
 
     <string name="price_per_pcs_format">Rs. %1$s/pc</string>
     <string name="price_format">Rs. %1$s</string>

@@ -22,4 +22,5 @@
     <string name="fetch_cart">fetchCart</string>
     <string name="post_cart_item">postCartItem</string>
     <string name="write_cart_item">writeCartItem</string>
+    <string name="delete_cart">deleteCart</string>
 </resources>

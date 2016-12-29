@@ -23,6 +23,7 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.AddressDisplayListViewAdapter;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
+import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.UserAddressInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.BuyerAddressLoader;
@@ -35,7 +36,7 @@ import java.util.ArrayList;
  * Created by kaustubh on 26/12/16.
  */
 
-public class BuyerAddressFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<BuyerAddress>> {
+public class BuyerAddressFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<BuyerAddress>>, ItemClickListener {
 
     private TextView mNoAddressTextView;
     private ListView mAddressListView;
@@ -90,13 +91,14 @@ public class BuyerAddressFragment extends Fragment implements LoaderManager.Load
         super.onResume();
         IntentFilter intentFilter = new IntentFilter(getString(R.string.user_data_updated));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mUserServiceResponseReceiver, intentFilter);
-        mListener.fragmentCreated("My Addresses", false);
+        Bundle args = getArguments();
+        mListener.fragmentCreated(args.getString("fragment_title", "My Addresses"), false);
     }
 
     private void initReferences(ViewGroup rootView) {
         mAddressListView = (ListView) rootView.findViewById(R.id.address_list_view);
         mBuyerAddresses = new ArrayList<>();
-        mAddressDisplayListViewAdapter = new AddressDisplayListViewAdapter(getActivity().getApplicationContext(), mBuyerAddresses);
+        mAddressDisplayListViewAdapter = new AddressDisplayListViewAdapter(getActivity().getApplicationContext(), mBuyerAddresses, this);
         mAddressListView.setAdapter(mAddressDisplayListViewAdapter);
 
         mAddressListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -158,5 +160,11 @@ public class BuyerAddressFragment extends Fragment implements LoaderManager.Load
     @Override
     public Loader<ArrayList<BuyerAddress>> onCreateLoader(int id, Bundle args) {
         return new BuyerAddressLoader(getContext(), -1, -1);
+    }
+
+    @Override
+    public void itemClicked(View view, int position, int id) {
+        BuyerAddress buyerAddress = mBuyerAddresses.get(position);
+        mListener.editAddress(buyerAddress.getAddressID(), buyerAddress.get_ID());
     }
 }
