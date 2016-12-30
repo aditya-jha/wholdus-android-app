@@ -6,12 +6,10 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.google.firebase.crash.FirebaseCrash;
-import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.WholdusApplication;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.DatabaseHelper;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -100,7 +98,7 @@ public class LoginHelper {
     }
 
     private void setTokens(String aToken, String rToken, int buyerID) {
-        WholdusApplication wholdusApplication = (WholdusApplication) ((Activity) mContext).getApplication();
+        WholdusApplication wholdusApplication = ((WholdusApplication) ((Activity) mContext).getApplication());
         wholdusApplication.setTokens(aToken, rToken, buyerID);
     }
 }

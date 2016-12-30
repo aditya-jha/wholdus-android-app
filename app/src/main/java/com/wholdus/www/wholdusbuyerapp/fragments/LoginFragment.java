@@ -1,5 +1,6 @@
 package com.wholdus.www.wholdusbuyerapp.fragments;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,12 +16,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.LoginHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.LoginSignupListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.services.FirebaseNotificationService;
 import com.wholdus.www.wholdusbuyerapp.services.LoginAPIService;
@@ -28,21 +36,22 @@ import com.wholdus.www.wholdusbuyerapp.services.LoginAPIService;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static android.R.attr.cacheColorHint;
+import static android.R.attr.data;
+import static android.R.attr.theme;
+
 /**
  * Created by aditya on 16/11/16.
  */
 
-public class LoginFragment extends Fragment {
+public class LoginFragment extends Fragment implements View.OnClickListener, View.OnFocusChangeListener {
 
-    private LoginSignupListenerInterface listener;
-    private final String LOG_TAG = LoginFragment.class.getSimpleName();
-    private TextInputLayout mMobileNumberWrapper;
-    private TextInputLayout mPasswordWrapper;
-    private TextInputEditText mMobileNumberEditText;
-    private TextInputEditText mPasswordEditText;
-    private LoginAPIService mLoginAPIService;
+    private LoginSignupListenerInterface mListener;
+    private TextInputLayout mMobileNumberWrapper, mPasswordWrapper;
+    private TextInputEditText mMobileNumberEditText, mPasswordEditText;
+    private ProgressBar mProgressBar;
 
-    private BroadcastReceiver mLoginAPIServiceResponseReceiver;
+    private BroadcastReceiver mReceiver;
 
     public LoginFragment() {
     }
@@ -51,20 +60,19 @@ public class LoginFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            listener = (LoginSignupListenerInterface) context;
+            mListener = (LoginSignupListenerInterface) context;
         } catch (ClassCastException cce) {
-            Log.d(LOG_TAG, LOG_TAG + " must implement listener interface");
+            Log.d(this.getClass().getSimpleName(), " must implement mListener interface");
         }
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLoginAPIServiceResponseReceiver = new BroadcastReceiver() {
+        mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                String data = intent.getStringExtra(getString(R.string.api_response_data_key));
-                handleLoginAPIResponse(data);
+                handleAPIResponse(intent);
             }
         };
     }
@@ -72,138 +80,156 @@ public class LoginFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_login, container, false);
-
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                initFragment(rootView);
-            }
-        };
-        new Thread(runnable).start();
-
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_login, container, false);
+        initFragment(rootView);
         return rootView;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
-        IntentFilter intentFilter = new IntentFilter(getString(R.string.api_response));
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mLoginAPIServiceResponseReceiver, intentFilter);
+        IntentFilter intentFilter = new IntentFilter(IntentFilters.LOGIN_SIGNUP_DATA);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mLoginAPIServiceResponseReceiver);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        listener = null;
+        mListener = null;
+    }
+
+    @Override
+    public void onClick(View view) {
+        final int ID = view.getId();
+        mListener.hideSoftKeyboard(view);
+
+        switch (ID) {
+            case R.id.login_submit_button:
+                handleLoginSubmitButtonClick();
+                break;
+            case R.id.signup_text:
+                mListener.singupClicked(getValueFromEditText(mMobileNumberEditText));
+                break;
+            case R.id.forgot_password_textView:
+                mListener.forgotPasswordClicked(getValueFromEditText(mMobileNumberEditText));
+                break;
+        }
+    }
+
+    @Override
+    public void onFocusChange(View view, boolean hasFocus) {
+        final int ID = view.getId();
+        boolean emptyText = getValueFromEditText(((TextInputEditText) view)).isEmpty();
+
+        switch (ID) {
+            case R.id.mobile_number_editText:
+                if ((!hasFocus && emptyText) || (hasFocus && emptyText)) {
+                    mMobileNumberWrapper.setError(null);
+                }
+                break;
+            case R.id.password_editText:
+                if ((!hasFocus && emptyText) || (hasFocus && emptyText)) {
+                    mPasswordWrapper.setError(null);
+                }
+        }
     }
 
     private void initFragment(ViewGroup rootView) {
+
+        mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
+        mProgressBar.setVisibility(View.INVISIBLE);
+
         Button loginSubmitButton = (Button) rootView.findViewById(R.id.login_submit_button);
-        loginSubmitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleLoginSubmitButtonClick();
-            }
-        });
+        loginSubmitButton.setOnClickListener(this);
 
         TextView signupText = (TextView) rootView.findViewById(R.id.signup_text);
-        signupText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.singupClicked();
-            }
-        });
+        signupText.setOnClickListener(this);
 
         TextView forgotPasswordTextView = (TextView) rootView.findViewById(R.id.forgot_password_textView);
-        forgotPasswordTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.forgotPasswordClicked(getMobileNumber());
-            }
-        });
+        forgotPasswordTextView.setOnClickListener(this);
 
         mMobileNumberWrapper = (TextInputLayout) rootView.findViewById(R.id.mobile_number_wrapper);
         mPasswordWrapper = (TextInputLayout) rootView.findViewById(R.id.password_wrapper);
 
         mMobileNumberEditText = (TextInputEditText) rootView.findViewById(R.id.mobile_number_editText);
+        mMobileNumberEditText.setOnFocusChangeListener(this);
+
         mPasswordEditText = (TextInputEditText) rootView.findViewById(R.id.password_editText);
-
-        mMobileNumberEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                boolean emptyText = getMobileNumber().isEmpty();
-                if ((!hasFocus && emptyText) || (hasFocus && emptyText)) {
-                    mMobileNumberWrapper.setError(null);
-                }
-            }
-        });
-
-        mPasswordEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                boolean emptyText = getPassword().isEmpty();
-                if ((!hasFocus && emptyText) || (hasFocus && emptyText)) {
-                    mPasswordWrapper.setError(null);
-                }
-            }
-        });
+        mPasswordEditText.setOnFocusChangeListener(this);
     }
 
-    private String getMobileNumber() {
-        return mMobileNumberEditText.getText().toString();
-    }
-
-    private String getPassword() {
-        return mPasswordEditText.getText().toString();
-    }
-
-    private void handleLoginSubmitButtonClick() {
-        listener.hideSoftKeyboard();
-        String password = getPassword();
-        String mobileNumber = getMobileNumber();
-
-        if (InputValidationHelper.isValidMobileNumber(mMobileNumberWrapper, mobileNumber)
-                && InputValidationHelper.isValidPassword(mPasswordWrapper, password)) {
-            mLoginAPIService = new LoginAPIService(getContext());
-            mLoginAPIService.login(mobileNumber, password);
+    private String getValueFromEditText(TextInputEditText editText) {
+        try {
+            return editText.getText().toString();
+        } catch (Exception e) {
+            return null;
         }
     }
 
-    private void handleLoginAPIResponse(final String response) {
-        final Context context = getContext();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                JSONObject data = mLoginAPIService.parseLoginResponseData(response);
-                try {
-                    if (data != null) {
-                        JSONObject buyerLogin = data.getJSONObject("buyer_login");
-                        LoginHelper loginHelper = new LoginHelper(context);
-                        if (loginHelper.login(buyerLogin)) {
-                            getActivity().startService(new Intent(context, FirebaseNotificationService.class));
-                            listener.loginSuccess();
-                        } else {
-                            Toast.makeText(context, "Something went wrong. Please try again", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+    private void handleLoginSubmitButtonClick() {
+        String password = getValueFromEditText(mPasswordEditText);
+        String mobileNumber = getValueFromEditText(mMobileNumberEditText);
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        if (InputValidationHelper.isValidMobileNumber(mMobileNumberWrapper, mobileNumber)
+                && InputValidationHelper.isValidPassword(mPasswordWrapper, password)) {
+
+            if (mProgressBar.getVisibility() == View.VISIBLE) {
+                return;
             }
-        }).start();
+            mProgressBar.setVisibility(View.VISIBLE);
+
+            Intent intent = new Intent(getContext(), LoginAPIService.class);
+            intent.putExtra("TODO", TODO.LOGIN);
+            intent.putExtra(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, mobileNumber);
+            intent.putExtra(UserProfileContract.UserTable.COLUMN_PASSWORD, password);
+
+            getActivity().startService(intent);
+        }
+    }
+
+    private void handleAPIResponse(Intent intent) {
+        mProgressBar.setVisibility(View.INVISIBLE);
+        Bundle extras = intent.getExtras();
+        int todo = extras.getInt("TODO", -1);
+        String data = extras.getString(APIConstants.LOGIN_API_DATA);
+
+        if (todo != TODO.LOGIN) {
+            return;
+        }
+
+        int responseCode = extras.getInt(APIConstants.RESPONSE_CODE);
+        switch (responseCode) {
+            case 200:
+                getActivity().startService(new Intent(getActivity().getApplicationContext(), FirebaseNotificationService.class));
+                mListener.loginSuccess();
+                break;
+            case 401:
+                mMobileNumberWrapper.setError(data);
+                break;
+            case 403:
+                mMobileNumberWrapper.setError(data);
+                break;
+            default:
+                if (HelperFunctions.isNetworkAvailable(getActivity().getApplicationContext())) {
+                    if (data != null && data.contains("timeout")) {
+                        Toast.makeText(getActivity().getApplicationContext(), getString(R.string.timeout_error), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getActivity().getApplicationContext(), getString(R.string.api_error_message), Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), getString(R.string.no_internet_access), Toast.LENGTH_SHORT).show();
+                }
+        }
     }
 }

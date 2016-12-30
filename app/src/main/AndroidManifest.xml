@@ -67,6 +67,9 @@
             android:screenOrientation="portrait" />
 
         <service
+            android:name=".services.LoginAPIService"
+            android:exported="false" />
+        <service
             android:name=".services.UserService"
             android:exported="false" />
         <service
