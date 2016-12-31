@@ -5,11 +5,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
@@ -27,7 +31,6 @@ public class ProductSwipeDeckAdapter extends BaseAdapter {
 
     private Context mContext;
     private ArrayList<Product> mProductArrayList;
-    private ImageLoader mImageLoader;
     private ProductCardListenerInterface mListener;
     private ItemClickListener mItemClickListener;
 
@@ -35,7 +38,6 @@ public class ProductSwipeDeckAdapter extends BaseAdapter {
             , ProductCardListenerInterface listenerInterface, ItemClickListener itemClickListener){
         mContext = context;
         mProductArrayList = productArrayList;
-        mImageLoader = VolleySingleton.getInstance(context).getImageLoader();
         mListener = listenerInterface;
         mItemClickListener = itemClickListener;
     }
@@ -61,7 +63,7 @@ public class ProductSwipeDeckAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.product_card_layout, parent, false);
             holder = new ViewHolder();
-            holder.productImageView = (NetworkImageView) convertView.findViewById(R.id.product_card_image_view);
+            holder.productImageView = (ImageView) convertView.findViewById(R.id.product_card_image_view);
             holder.productFabric = (TextView) convertView.findViewById(R.id.product_card_fabric_text_view);
             holder.productPrice = (TextView) convertView.findViewById(R.id.product_card_price_text_view);
             holder.progressBar = (ProgressBar) convertView.findViewById(R.id.loading_indicator);
@@ -74,7 +76,13 @@ public class ProductSwipeDeckAdapter extends BaseAdapter {
         Product product = mProductArrayList.get(position);
         holder.productFabric.setText(product.getFabricGSM());
         holder.productPrice.setText("Rs." + String.format("%.0f",product.getMinPricePerUnit()) + "/pc");
-        holder.productImageView.setImageUrl(product.getImageUrl(Constants.LARGE_IMAGE, "1"), mImageLoader);
+
+        Glide.with(mContext)
+                .load(product.getImageUrl(Constants.LARGE_IMAGE, "1"))
+                .asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .into(new BitmapImageViewTarget(holder.productImageView));
+
         holder.productImageView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
@@ -96,7 +104,7 @@ public class ProductSwipeDeckAdapter extends BaseAdapter {
     }
 
     static class ViewHolder {
-        NetworkImageView productImageView;
+        ImageView productImageView;
         TextView productFabric;
         TextView productPrice;
         ProgressBar progressBar;

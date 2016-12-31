@@ -52,7 +52,7 @@ public class SubCart {
 
     public int getProductCount(){return mProductCount;}
 
-    private int getPieces(){return mPieces;}
+    public int getPieces(){return mPieces;}
 
     public float getRetailPrice(){return mRetailPrice;}
 

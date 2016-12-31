@@ -118,6 +118,10 @@ public class OrderItem {
         return mEditedPricePerPiece;
     }
 
+    public float getFinalPrice() {
+        return mFinalPrice;
+    }
+
     public int getOrderItemStatusValue() {
         return mOrderItemStatusValue;
     }

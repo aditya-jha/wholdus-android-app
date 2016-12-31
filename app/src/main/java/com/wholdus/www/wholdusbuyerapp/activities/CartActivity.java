@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -29,16 +28,16 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
-import com.wholdus.www.wholdusbuyerapp.databaseHelpers.OrderDBHelper;
 import com.wholdus.www.wholdusbuyerapp.fragments.BuyerAddressFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.CartSummaryFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.CheckoutAddressConfirmFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.CheckoutPaymentMethodFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.EditAddressFragment;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
+import com.wholdus.www.wholdusbuyerapp.fragments.OrderDetailsFragment;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartListenerInterface;
+import com.wholdus.www.wholdusbuyerapp.interfaces.OrderDetailsListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.UserAddressInterface;
 import com.wholdus.www.wholdusbuyerapp.models.Cart;
 import com.wholdus.www.wholdusbuyerapp.services.CartService;
@@ -52,25 +51,24 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.security.AccessController.getContext;
-
-public class CartActivity extends AppCompatActivity implements CartListenerInterface, UserAddressInterface {
+public class CartActivity extends AppCompatActivity implements CartListenerInterface, UserAddressInterface, OrderDetailsListenerInterface {
 
 
     private int mStatus = 0;
-    private int mBuyerAddressID;
+    private int mBuyerAddressID = 0;
     private int mPaymentMethod = -1;
     private Cart mCart;
     private Integer mCheckoutID;
+    private int mOrderID = -1;
 
     private Toolbar mToolbar;
     private TextView mTotalTextView;
     private TextView mProductsPiecesTextView;
     private Button mProceedButton;
     private LinearLayout mProceedButtonLayout;
-    private int mOrderID = -1;
-
     private ProgressBar mProgressBar;
+
+    private BroadcastReceiver mOrderServiceResponseReceiver;
 
     public static final String REQUEST_TAG = "CHECKOUT_API_REQUESTS";
 
@@ -94,6 +92,14 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (mOrderServiceResponseReceiver != null) {
+            try {
+                LocalBroadcastManager.getInstance(this).unregisterReceiver(mOrderServiceResponseReceiver);
+            } catch (Exception e){
+
+            }
+            mOrderServiceResponseReceiver = null;
+        }
     }
 
     private void initToolbar(){
@@ -131,17 +137,16 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     @Override
     public void onBackPressed() {
         //TODO : Do not let user cancel transaction
-        if (mCheckoutID != null && mCheckoutID > 0) {
+        if (mStatus >= 1 && mStatus < 3) {
             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which) {
                         case DialogInterface.BUTTON_POSITIVE:
-                            finish();
+                            openToFragment("cart_summary", null);
                             break;
 
                         case DialogInterface.BUTTON_NEGATIVE:
-                            //No button clicked
                             break;
                     }
                 }
@@ -150,6 +155,15 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Transaction will be cancelled. Are you sure?").setPositiveButton("Yes", dialogClickListener)
                     .setNegativeButton("No", dialogClickListener).show();
+        } else if (mStatus == 0 && mCheckoutID != null && mCheckoutID > 0){
+            FragmentManager fm = getSupportFragmentManager();
+            String openFragment = fm.getBackStackEntryAt(fm.getBackStackEntryCount()-1).getName();
+            if (openFragment.equals(BuyerAddressFragment.class.getCanonicalName())
+                    || openFragment.equals(CheckoutAddressConfirmFragment.class.getCanonicalName())){
+                openToFragment("cart_summary", null);
+            } else {
+                super.onBackPressed();
+            }
         }
         else {
             finish();
@@ -245,6 +259,8 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         switch (fragmentName) {
             case "cart_summary":
                 mProgressBar.setVisibility(View.VISIBLE);
+                resetAllIDs();
+                mProceedButtonLayout.setVisibility(View.VISIBLE);
                 fragment = new CartSummaryFragment();
                 break;
             case "select_address":
@@ -259,7 +275,14 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
             case "paymentMethod":
                 fragment = new CheckoutPaymentMethodFragment();
                 break;
+            case "orderDetails":
+                mProgressBar.setVisibility(View.GONE);
+                fragment = new OrderDetailsFragment();
+                break;
             default:
+                resetAllIDs();
+                mProgressBar.setVisibility(View.VISIBLE);
+                mProceedButtonLayout.setVisibility(View.VISIBLE);
                 fragment = new CartSummaryFragment();
         }
 
@@ -269,13 +292,29 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
 
         boolean fragmentPopped = fm.popBackStackImmediate(backStateName, 0);
 
-        if (!fragmentPopped) { // fragment not in backstack create it
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.cart_fragment_container, fragment, fragment.getClass().getSimpleName());
-            ft.addToBackStack(backStateName);
-            ft.commit();
+        if (!fragmentPopped) {
+            // fragment not in backstack create it
+            if (fragment.getClass().getSimpleName() == EditAddressFragment.class.getSimpleName()){
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.replace(R.id.cart_fragment_container, fragment, fragment.getClass().getSimpleName());
+                ft.commit();
+            }else {
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.replace(R.id.cart_fragment_container, fragment, fragment.getClass().getSimpleName());
+                ft.addToBackStack(backStateName);
+                ft.commit();
+            }
         }
 
+    }
+
+    private void resetAllIDs(){
+        mCheckoutID = null;
+        mStatus = 0;
+        mBuyerAddressID = 0;
+        mPaymentMethod = -1;
+        mCart = null;
+        mOrderID = -1;
     }
 
     private void volleyStringRequest(final int todo, int method, String endPoint, final String jsonData) {
@@ -336,17 +375,13 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
                     openToFragment("paymentMethod", args);
                     break;
                 case TODO.UPDATE_CART_PAYMENT_METHOD:
-                    mProceedButtonLayout.setVisibility(View.GONE);
-                    //mOrderID = data.getJSONObject("order").getInt("orderID");
+
                     Toast.makeText(this, "Order successfully placed", Toast.LENGTH_SHORT).show();
                     Intent cartIntent = new Intent(this, CartService.class);
                     cartIntent.putExtra("TODO", R.string.delete_cart);
                     startService(cartIntent);
-                    //OrderDBHelper orderDBHelper = new OrderDBHelper(this);
-                    //orderDBHelper.saveOrderData(data.getJSONObject("order"));
-                    //startOrderDetailsActivity();
-
-                    runAsyncTaskOrder(data.getJSONObject("order"));
+                    mOrderID = data.getJSONObject("order").getInt("orderID");
+                    runOrderService();
 
 
             }
@@ -355,30 +390,19 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         }
     }
 
-    private void runAsyncTaskOrder(final JSONObject order){
-        new AsyncTask<Void, Void, Void>() {
-            protected void onPreExecute() {
-            }
-
-            protected Void doInBackground(Void... unused) {
-                saveOrder(order);
-                return null;
-            }
-
-            protected void onPostExecute(Void unused) {
+    private void runOrderService(){
+        mOrderServiceResponseReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
                 startOrderDetailsActivity();
             }
-        }.execute();
-    }
+        };
+        IntentFilter intentFilter = new IntentFilter(getString(R.string.order_data_updated));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mOrderServiceResponseReceiver, intentFilter);
+        Intent intent = new Intent(this, OrderService.class);
+        intent.putExtra("TODO", R.string.fetch_orders);
+        startService(intent);
 
-    private void saveOrder(JSONObject order){
-        OrderDBHelper orderDBHelper = new OrderDBHelper(this);
-        try {
-            orderDBHelper.saveOrderData(order);
-            mOrderID = order.getInt("orderID");
-        } catch (JSONException e){
-
-        }
     }
 
     private void proceedButtonClicked(){
@@ -387,16 +411,16 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
             HashMap<String,String> params = new HashMap<>();
             if (mStatus == 0 && mCheckoutID == null && mCart.getSynced() == 1){
                 updateCart(requestBody, Request.Method.POST, TODO.CREATE_CART, params);
-            } else if (mStatus == 0 && mCheckoutID > 0){
+            } else if (mStatus == 0 && mCheckoutID != null && mCheckoutID > 0 && mBuyerAddressID > 0){
                 requestBody.put("checkoutID", mCheckoutID);
                 requestBody.put("status", mStatus + 1);
                 requestBody.put("addressID", mBuyerAddressID);
                 updateCart(requestBody, Request.Method.PUT, TODO.UPDATE_CART_ADDRESS, params);
-            } else if (mStatus == 1 && mCheckoutID > 0){
+            } else if (mStatus == 1 && mCheckoutID != null && mCheckoutID > 0){
                 requestBody.put("checkoutID", mCheckoutID);
                 requestBody.put("status", mStatus + 1);
                 updateCart(requestBody, Request.Method.PUT, TODO.UPDATE_CART_SUMMARY_CONFIRM, params);
-            } else if (mStatus == 2 && mCheckoutID > 0){
+            } else if (mStatus == 2 && mCheckoutID != null && mCheckoutID > 0){
                 if (mPaymentMethod == 0 || mPaymentMethod == 1) {
                     requestBody.put("checkoutID", mCheckoutID);
                     requestBody.put("status", mStatus + 1);
@@ -416,16 +440,10 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     }
 
     public void startOrderDetailsActivity(){
-        if (mOrderID > 0) {
-            Intent orderIntent = new Intent(this, AccountActivity.class);
-            // todo set flags so that cart activity is not opened but app doesnt close
-            orderIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            orderIntent.putExtra(Constants.OPEN_FRAGMENT_KEY, "orderDetails");
-            Bundle bundle = new Bundle();
-            bundle.putInt("orderID", mOrderID);
-            startActivity(orderIntent);
-            finish();
-        }
+        mProceedButtonLayout.setVisibility(View.GONE);
+        Bundle bundle = new Bundle();
+        bundle.putInt("orderID", mOrderID);
+        openToFragment("orderDetails", bundle);
     }
 
 }
