@@ -55,6 +55,28 @@ public class InputValidationHelper {
             error = "Please enter your pincode";
         } else if (inputValue.length() != 6) {
             error = "Please check your pincode";
+        } else {
+            try {
+                Integer.parseInt(inputValue);
+            } catch (Exception e) {
+                error = "Please check your pincode";
+            }
+        }
+
+        return returnHelper(wrapper, error);
+    }
+
+    public static boolean isValidOTP(@Nullable TextInputLayout wrapper, String inputValue) {
+        String error = null;
+
+        if (inputValue.isEmpty()) {
+            error = "Please enter the OTP received";
+        } else {
+            try {
+                Integer.parseInt(inputValue);
+            } catch (Exception e) {
+                error = "Invalid OTP";
+            }
         }
 
         return returnHelper(wrapper, error);
