@@ -34,7 +34,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true" />
 
-                <com.android.volley.toolbox.NetworkImageView
+                <ImageView
                     android:id="@+id/product_card_image_view"
                     android:adjustViewBounds="true"
                     android:scaleType="fitCenter"

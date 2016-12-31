@@ -71,6 +71,18 @@
     <string name="order_card_suborder_pieces">Pieces :&#160;</string>
     <string name="order_card_sellers_in_order">Sellers in Order:</string>
 
+    <!-- Order Details Fragment -->
+    <string name="order_details_pieces">Pieces:</string>
+    <string name="order_details_products">Products:</string>
+    <string name="order_details_order_value">Order Value:</string>
+    <string name="order_details_cod_charge">COD Charge:</string>
+    <string name="order_details_shipping">Shipping:</string>
+    <string name="order_details_total_amount">Total Amount:</string>
+
+    <string name="order_item_price_per_piece">Price/pc:</string>
+    <string name="order_item_pieces">Pieces:</string>
+    <string name="order_item_total">Total:</string>
+
     <!-- keys -->
     <string name="name_key">name</string>
     <string name="mobile_number_key">Mobile Number</string>
@@ -154,6 +166,12 @@
     <string name="cart_summary_proceed">PROCEED</string>
     <string name="cart_summary_order_value">Order Value :&#160;</string>
     <string name="cart_summary_shipping">Shipping :&#160;</string>
+    <string name="cart_summary_no_products">You have no products in your cart</string>
+    <string name="cart_summary_continue_shopping">CONTINUE SHOPPING</string>
+
+    <string name="cart_item_price_per_piece">Price/pc:</string>
+    <string name="cart_item_pieces">Pieces:</string>
+    <string name="cart_item_total">Total:</string>
     
     <string name="checkout_confirm_address_delivery_address">Delivery Address</string>
     <string name="checkout_confirm_address_select_another">SELECT ANOTHER</string>

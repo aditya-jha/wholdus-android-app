@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,7 +21,7 @@ import java.util.ArrayList;
  * Created by kaustubh on 8/12/16.
  */
 
-public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHolder> {
+public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHolder>{
 
     private ArrayList<Order> mListData;
     private Context mContext;
@@ -38,7 +39,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(final MyViewHolder holder, int position) {
         Order order = mListData.get(position);
         holder.orderID.setText(order.getDisplayNumber());
         holder.orderStatus.setText(order.getOrderStatusDisplay());
@@ -49,16 +50,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
         SuborderListViewAdapter suborderAdapter = new SuborderListViewAdapter(mContext, suborders);
         holder.suborderListView.setAdapter(suborderAdapter);
         HelperFunctions.setListViewHeightBasedOnChildren(holder.suborderListView);
-        //TODO:Handle on click behavior for the list view
-        /*
-        final int adapterCount = suborderAdapter.getCount();
-        LinearLayout layout = new LinearLayout(mContext);
-        for (int i = 0; i < adapterCount; i++) {
-            View item = suborderAdapter.getView(i, null, null);
-            layout.addView(item);
-        }*/
 
-        //holder.suborderListView.addView(layout);
         holder.mListener = mListener;
 
     }
@@ -78,15 +70,20 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
         private ListView suborderListView;
         private ItemClickListener mListener;
 
-        private MyViewHolder(View itemView) {
+        private MyViewHolder(final View itemView) {
             super(itemView);
             orderID = (TextView) itemView.findViewById(R.id.order_id_text_view);
             orderStatus = (TextView) itemView.findViewById(R.id.order_status_text_view);
             orderDate = (TextView) itemView.findViewById(R.id.order_date_text_view);
             orderAmount = (TextView) itemView.findViewById(R.id.order_amount_text_view);
             suborderListView = (ListView) itemView.findViewById(R.id.suborder_list_view);
-
             itemView.setOnClickListener(this);
+            suborderListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    onClick(itemView);
+                }
+            });
         }
 
         @Override

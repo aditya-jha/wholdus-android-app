@@ -25,10 +25,12 @@ import com.wholdus.www.wholdusbuyerapp.fragments.OrderDetailsFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.OrdersFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProductGridCategoryTabFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProfileFragment;
+import com.wholdus.www.wholdusbuyerapp.interfaces.OrderDetailsListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.UserAddressInterface;
 
-public class AccountActivity extends AppCompatActivity implements ProfileListenerInterface, UserAddressInterface {
+public class AccountActivity extends AppCompatActivity implements ProfileListenerInterface,
+        UserAddressInterface, OrderDetailsListenerInterface {
 
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolbar;

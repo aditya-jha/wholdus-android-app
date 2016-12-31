@@ -127,6 +127,10 @@ public class Suborder {
         return mEditedPrice;
     }
 
+    public float getFinalPrice() {
+        return mFinalPrice;
+    }
+
     public float getShippingCharge() {
         return mShippingCharge;
     }

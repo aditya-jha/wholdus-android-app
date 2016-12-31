@@ -97,7 +97,14 @@ public class OrdersFragment extends Fragment implements ItemClickListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mOrderServiceResponseReceiver = null;
+        if (mOrderServiceResponseReceiver != null) {
+            try {
+                LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mOrderServiceResponseReceiver);
+            } catch (Exception e){
+
+            }
+            mOrderServiceResponseReceiver = null;
+        }
     }
 
     @Override

@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.models.Suborder;
 
 import java.util.ArrayList;
@@ -37,6 +38,11 @@ public class SuborderListViewAdapter extends BaseAdapter {
     }
 
     @Override
+    public Object getItem(int i) {
+        return mListData.get(i);
+    }
+
+    @Override
     public View getView(int i, View convertView, ViewGroup viewGroup) {
         ViewHolder holder;
 
@@ -53,17 +59,8 @@ public class SuborderListViewAdapter extends BaseAdapter {
 
         holder.sellerName.setText(suborder.getSeller().getCompanyName());
         holder.pieces.setText(String.valueOf(suborder.getPieces()));
+
         return convertView;
-    }
-
-    @Override
-    public boolean isEnabled(int position){
-        return false;
-    }
-
-    @Override
-    public Object getItem(int i) {
-        return mListData.get(i);
     }
 
     class ViewHolder{
