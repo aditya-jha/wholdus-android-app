@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,6 +17,9 @@ import android.widget.Toast;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.fragments.LoginFragment;
+import com.wholdus.www.wholdusbuyerapp.fragments.OTPFragment;
+import com.wholdus.www.wholdusbuyerapp.fragments.RegisterFragment;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.interfaces.LoginSignupListenerInterface;
 
@@ -74,12 +78,24 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
 
     @Override
     public void singupClicked(@Nullable String mobileNumber) {
-
+        Fragment fragment = new RegisterFragment();
+        if (mobileNumber != null) {
+            Bundle bundle = new Bundle();
+            bundle.getString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, mobileNumber);
+            fragment.setArguments(bundle);
+        }
+        openFragment(fragment);
     }
 
     @Override
-    public void loginClicked() {
-
+    public void loginClicked(@Nullable String mobileNumber) {
+        Fragment fragment = new LoginFragment();
+        if (mobileNumber != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, mobileNumber);
+            fragment.setArguments(bundle);
+        }
+        openFragment(fragment);
     }
 
     @Override
@@ -117,5 +133,12 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void openOTPFragment(@NonNull Bundle bundle) {
+        Fragment fragment = new OTPFragment();
+        fragment.setArguments(bundle);
+        openFragment(fragment);
     }
 }

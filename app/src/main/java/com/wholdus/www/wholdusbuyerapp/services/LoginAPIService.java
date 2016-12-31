@@ -9,7 +9,6 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.LoginHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.OkHttpHelper;
@@ -17,13 +16,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 
 import org.json.JSONObject;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
-
-import static android.R.attr.cacheColorHint;
-import static android.R.attr.type;
 
 /**
  * Created by aditya on 12/11/16.
@@ -37,60 +30,73 @@ public class LoginAPIService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        try {
-            final int todo = intent.getIntExtra("TODO", -1);
-            switch (todo) {
-                case TODO.LOGIN:
-                    login(intent);
-                    break;
-                case TODO.SINGUP:
-                    signup();
-                    break;
-                case TODO.FORGOT_PASSWORD:
-                    forgotPassword();
-                    break;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            FirebaseCrash.report(e);
-            sendBroadcast(intent.getIntExtra("TODO", -1), e.toString(), 500);
+        final int todo = intent.getIntExtra("TODO", -1);
+        switch (todo) {
+            case TODO.LOGIN:
+                login(intent);
+                break;
+            case TODO.REGISTER:
+                register(intent);
+                break;
+            case TODO.FORGOT_PASSWORD:
+                forgotPassword();
+                break;
+            case TODO.RESEND_OTP:
+                resendOTP(intent);
+                break;
+            case TODO.VERIFY_OTP:
+                verifyOTP(intent);
         }
     }
 
 
-    public void signup() {
-//        String endPoint = super.generateUrl(mContext.getString(R.string.signup_url));
-//
-//        try {
-//            JSONObject userData = new JSONObject();
-//            userData.put(NAME_KEY, name);
-//            userData.put(MOBILE_NUMBER_KEY, mobileNumber);
-//            userData.put(PASSWORD_KEY, password);
-//
-//            super.volleyStringRequest(Request.Method.POST, endPoint, userData.toString());
-//        } catch (Exception e) {
-//            Toast.makeText(mContext, e.toString(), Toast.LENGTH_SHORT).show();
-//        }
+    private void register(Intent intent) {
+        try {
+            JSONObject data = new JSONObject();
+            data.put(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER,
+                    intent.getStringExtra(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER));
+            data.put(UserProfileContract.UserTable.COLUMN_NAME,
+                    intent.getStringExtra(UserProfileContract.UserTable.COLUMN_NAME));
+            data.put(UserProfileContract.UserTable.COLUMN_PASSWORD,
+                    intent.getStringExtra(UserProfileContract.UserTable.COLUMN_PASSWORD));
+            data.put(UserProfileContract.UserTable.COLUMN_EMAIL,
+                    intent.getStringExtra(UserProfileContract.UserTable.COLUMN_EMAIL));
+
+            Response response = OkHttpHelper.makePostRequest(getApplicationContext(),
+                    OkHttpHelper.generateUrl(APIConstants.REGISTER_URL), data.toString());
+            final int responseCode = response.code();
+
+            switch (responseCode) {
+                case 200:
+                    JSONObject responseData = new JSONObject(response.body().string());
+                    String registrationToken = responseData.getJSONObject("buyer_registration").getString(APIConstants.REGISTRATION_TOKEN_KEY);
+
+                    sendBroadcast(intent.getIntExtra("TODO", -1), registrationToken, responseCode);
+                    break;
+                case 400:
+                    sendBroadcast(intent.getIntExtra("TODO", -1), getString(R.string.already_registered_error), responseCode);
+                    break;
+                default:
+                    sendBroadcast(intent.getIntExtra("TODO", -1), getString(R.string.api_error_message), 500);
+            }
+
+        } catch (Exception e) {
+            sendBroadcast(intent.getIntExtra("TODO", -1), e.toString(), 500);
+            FirebaseCrash.report(e);
+        }
     }
 
-    public void login(Intent intent) throws Exception {
-        JSONObject loginData = new JSONObject();
-
-        loginData.put(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER,
-                intent.getStringExtra(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER));
-        loginData.put(UserProfileContract.UserTable.COLUMN_PASSWORD,
-                intent.getStringExtra(UserProfileContract.UserTable.COLUMN_PASSWORD));
-
-        OkHttpClient okHttpClient = OkHttpHelper.getClient(getApplicationContext());
-        RequestBody requestBody = RequestBody.create(OkHttpHelper.JSON, loginData.toString());
-
-        Request request = new Request.Builder()
-                .url(OkHttpHelper.generateUrl(APIConstants.LOGIN_URL))
-                .post(requestBody)
-                .build();
-
+    private void login(Intent intent) {
         try {
-            Response response = okHttpClient.newCall(request).execute();
+            JSONObject loginData = new JSONObject();
+
+            loginData.put(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER,
+                    intent.getStringExtra(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER));
+            loginData.put(UserProfileContract.UserTable.COLUMN_PASSWORD,
+                    intent.getStringExtra(UserProfileContract.UserTable.COLUMN_PASSWORD));
+
+            Response response = OkHttpHelper.makePostRequest(getApplicationContext(),
+                    OkHttpHelper.generateUrl(APIConstants.LOGIN_URL), loginData.toString());
             int responseCode = response.code();
 
             switch (responseCode) {
@@ -100,17 +106,19 @@ public class LoginAPIService extends IntentService {
 
                     LoginHelper loginHelper = new LoginHelper(this);
                     if (loginHelper.login(buyerLogin)) {
-                        sendBroadcast(intent.getIntExtra("TODO", -1), "success", responseCode);
+                        sendBroadcast(TODO.LOGIN, "success", responseCode);
                     } else {
-                        sendBroadcast(intent.getIntExtra("TODO", -1), null, responseCode);
+                        sendBroadcast(TODO.LOGIN, null, responseCode);
                     }
                     break;
                 case 401:
-                    sendBroadcast(intent.getIntExtra("TODO", -1), getString(R.string.invalid_credentials), responseCode);
+                    sendBroadcast(TODO.LOGIN, getString(R.string.invalid_credentials), responseCode);
                     break;
                 case 403:
-                    sendBroadcast(intent.getIntExtra("TODO", -1), getString(R.string.unregistered_mobile_number), responseCode);
+                    sendBroadcast(TODO.LOGIN, getString(R.string.unregistered_mobile_number), responseCode);
                     break;
+                default:
+                    sendBroadcast(intent.getIntExtra("TODO", -1), getString(R.string.api_error_message), 500);
             }
         } catch (Exception e) {
             sendBroadcast(intent.getIntExtra("TODO", -1), e.toString(), 500);
@@ -118,7 +126,54 @@ public class LoginAPIService extends IntentService {
         }
     }
 
-    public void forgotPassword() {
+    private void forgotPassword() {
+    }
+
+    private void resendOTP(Intent intent) {
+        try {
+            JSONObject data = new JSONObject();
+            data.put(APIConstants.REGISTRATION_TOKEN_KEY, intent.getStringExtra(APIConstants.REGISTRATION_TOKEN_KEY));
+
+            Response response = OkHttpHelper.makePostRequest(getApplicationContext(),
+                    OkHttpHelper.generateUrl(APIConstants.RESEND_OTP_URL), data.toString());
+            final String responseBody = response.body().string();
+            response.body().close();
+            sendBroadcast(TODO.RESEND_OTP, responseBody, response.code());
+        } catch (Exception e) {
+            sendBroadcast(intent.getIntExtra("TODO", -1), e.toString(), 500);
+            FirebaseCrash.report(e);
+        }
+    }
+
+    private void verifyOTP(Intent intent) {
+        try {
+            JSONObject data = new JSONObject();
+            data.put(APIConstants.REGISTRATION_TOKEN_KEY, intent.getStringExtra(APIConstants.REGISTRATION_TOKEN_KEY));
+            data.put(APIConstants.OTP_NUMBER_KEY, intent.getStringExtra(APIConstants.OTP_NUMBER_KEY));
+
+            Response response = OkHttpHelper.makePostRequest(getApplicationContext(),
+                    OkHttpHelper.generateUrl(APIConstants.VERIFY_OTP_URL), data.toString());
+            final int responseCode = response.code();
+            final String responseBody = response.body().string();
+            response.body().close();
+
+            if (responseCode == 200) {
+                JSONObject responseData = new JSONObject(responseBody);
+                JSONObject buyerLogin = responseData.getJSONObject(APIConstants.BUYER_LOGIN_KEY);
+
+                LoginHelper loginHelper = new LoginHelper(this);
+                if (loginHelper.login(buyerLogin)) {
+                    sendBroadcast(TODO.LOGIN, "success", responseCode);
+                } else {
+                    sendBroadcast(TODO.LOGIN, null, responseCode);
+                }
+            } else {
+                sendBroadcast(TODO.RESEND_OTP, responseBody, responseCode);
+            }
+        } catch (Exception e) {
+            sendBroadcast(intent.getIntExtra("TODO", -1), e.toString(), 500);
+            FirebaseCrash.report(e);
+        }
     }
 
     private void sendBroadcast(int todo, @Nullable String data, int responseCode) {

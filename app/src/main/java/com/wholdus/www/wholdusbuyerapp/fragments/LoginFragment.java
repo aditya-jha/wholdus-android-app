@@ -1,6 +1,5 @@
 package com.wholdus.www.wholdusbuyerapp.fragments;
 
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -23,22 +22,13 @@ import android.widget.Toast;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.LoginHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.LoginSignupListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.services.FirebaseNotificationService;
 import com.wholdus.www.wholdusbuyerapp.services.LoginAPIService;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import static android.R.attr.cacheColorHint;
-import static android.R.attr.data;
-import static android.R.attr.theme;
 
 /**
  * Created by aditya on 16/11/16.
@@ -129,19 +119,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
 
     @Override
     public void onFocusChange(View view, boolean hasFocus) {
-        final int ID = view.getId();
-        boolean emptyText = getValueFromEditText(((TextInputEditText) view)).isEmpty();
+        final String emptyText = getValueFromEditText((TextInputEditText) view);
 
-        switch (ID) {
-            case R.id.mobile_number_editText:
-                if ((!hasFocus && emptyText) || (hasFocus && emptyText)) {
-                    mMobileNumberWrapper.setError(null);
-                }
-                break;
-            case R.id.password_editText:
-                if ((!hasFocus && emptyText) || (hasFocus && emptyText)) {
-                    mPasswordWrapper.setError(null);
-                }
+        if (emptyText != null && ((!hasFocus && emptyText.isEmpty()) || (hasFocus && emptyText.isEmpty()))) {
+            ((TextInputEditText) view).setError(null);
         }
     }
 
@@ -162,10 +143,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
         mMobileNumberWrapper = (TextInputLayout) rootView.findViewById(R.id.mobile_number_wrapper);
         mPasswordWrapper = (TextInputLayout) rootView.findViewById(R.id.password_wrapper);
 
-        mMobileNumberEditText = (TextInputEditText) rootView.findViewById(R.id.mobile_number_editText);
+        mMobileNumberEditText = (TextInputEditText) rootView.findViewById(R.id.mobile_number_edit_text);
         mMobileNumberEditText.setOnFocusChangeListener(this);
 
-        mPasswordEditText = (TextInputEditText) rootView.findViewById(R.id.password_editText);
+        mPasswordEditText = (TextInputEditText) rootView.findViewById(R.id.password_edit_text);
         mPasswordEditText.setOnFocusChangeListener(this);
     }
 

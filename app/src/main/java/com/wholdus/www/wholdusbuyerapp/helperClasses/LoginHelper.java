@@ -93,6 +93,17 @@ public class LoginHelper {
         return true;
     }
 
+    public boolean saveRegistrationToken(String token) {
+        SharedPreferences.Editor editor = getSharedPreference().edit();
+        try {
+            editor.putString(APIConstants.REGISTRATION_TOKEN_KEY, token);
+            editor.apply();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     private SharedPreferences getSharedPreference() {
         return mContext.getSharedPreferences("LoginHelperSharedPreference", Context.MODE_PRIVATE);
     }
