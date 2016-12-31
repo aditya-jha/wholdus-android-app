@@ -43,7 +43,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     private TextInputLayout mMobileNumberWrapper, mPasswordWrapper, mNameWrapper;
     private ProgressBar mProgressBar;
     private BroadcastReceiver mReceiver;
-    private boolean mSMSPersmissionRequested;
     private final int RECEIVE_SMS_REQUEST = 1;
 
     public RegisterFragment() {
@@ -68,7 +67,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
                 handleAPIResponse(intent);
             }
         };
-        mSMSPersmissionRequested = false;
     }
 
     @Nullable
@@ -102,6 +100,11 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         mMobileNumberWrapper = (TextInputLayout) view.findViewById(R.id.mobile_number_wrapper);
         mPasswordWrapper = (TextInputLayout) view.findViewById(R.id.password_wrapper);
         mNameWrapper = (TextInputLayout) view.findViewById(R.id.name_wrapper);
+
+        Bundle args = getArguments();
+        if (args != null) {
+            mMobileNumberEditText.setText(args.getString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, ""));
+        }
     }
 
     @Override

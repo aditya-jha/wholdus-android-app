@@ -25,6 +25,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.LoginHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.LoginSignupListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.services.FirebaseNotificationService;
@@ -70,9 +71,13 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_login, container, false);
-        initFragment(rootView);
-        return rootView;
+        return inflater.inflate(R.layout.fragment_login, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initFragment(view);
     }
 
     @Override
@@ -126,7 +131,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
         }
     }
 
-    private void initFragment(ViewGroup rootView) {
+    private void initFragment(View rootView) {
 
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
         mProgressBar.setVisibility(View.INVISIBLE);
@@ -148,6 +153,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
 
         mPasswordEditText = (TextInputEditText) rootView.findViewById(R.id.password_edit_text);
         mPasswordEditText.setOnFocusChangeListener(this);
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            mMobileNumberEditText.setText(bundle.getString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, ""));
+        }
     }
 
     private String getValueFromEditText(TextInputEditText editText) {
@@ -192,8 +202,23 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
         int responseCode = extras.getInt(APIConstants.RESPONSE_CODE);
         switch (responseCode) {
             case 200:
-                getActivity().startService(new Intent(getActivity().getApplicationContext(), FirebaseNotificationService.class));
-                mListener.loginSuccess();
+                final LoginHelper loginHelper = new LoginHelper(getContext());
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!loginHelper.checkIfLoggedIn()) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mListener.loginClicked(null);
+                                }
+                            });
+                        } else {
+                            getActivity().startService(new Intent(getActivity().getApplicationContext(), FirebaseNotificationService.class));
+                            mListener.loginSuccess();
+                        }
+                    }
+                }).start();
                 break;
             case 401:
                 mMobileNumberWrapper.setError(data);

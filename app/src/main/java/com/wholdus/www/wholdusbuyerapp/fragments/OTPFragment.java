@@ -28,16 +28,14 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.LoginHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.LoginSignupListenerInterface;
+import com.wholdus.www.wholdusbuyerapp.services.FirebaseNotificationService;
 import com.wholdus.www.wholdusbuyerapp.services.LoginAPIService;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static android.R.attr.handle;
-import static android.os.Build.ID;
-import static android.webkit.WebViewDatabase.getInstance;
 
 /**
  * Created by aditya on 30/12/16.
@@ -139,7 +137,10 @@ public class OTPFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if (mProgressBar.getVisibility() == View.VISIBLE) { return; }
+        mListener.hideSoftKeyboard(view);
+        if (mProgressBar.getVisibility() == View.VISIBLE) {
+            return;
+        }
         final int ID = view.getId();
         switch (ID) {
             case R.id.resend_otp:
@@ -184,7 +185,23 @@ public class OTPFragment extends Fragment implements View.OnClickListener {
         switch (responseCode) {
             case 200:
                 if (TODO.VERIFY_OTP == todo) {
-                    mListener.loginSuccess();
+                    final LoginHelper loginHelper = new LoginHelper(getContext());
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!loginHelper.checkIfLoggedIn()) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mListener.loginSuccess();
+                                    }
+                                });
+                            } else {
+                                getActivity().startService(new Intent(getActivity().getApplicationContext(), FirebaseNotificationService.class));
+                                mListener.loginSuccess();
+                            }
+                        }
+                    }).start();
                 }
                 break;
             case 403:
@@ -238,7 +255,8 @@ public class OTPFragment extends Fragment implements View.OnClickListener {
                                     break;
                                 }
                             }
-                        } catch (Exception e) {}
+                        } catch (Exception e) {
+                        }
                     }
                 }
             }

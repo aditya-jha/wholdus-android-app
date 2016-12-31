@@ -71,16 +71,17 @@ public class LoginAPIService extends IntentService {
                     JSONObject responseData = new JSONObject(response.body().string());
                     String registrationToken = responseData.getJSONObject("buyer_registration").getString(APIConstants.REGISTRATION_TOKEN_KEY);
 
-                    sendBroadcast(intent.getIntExtra("TODO", -1), registrationToken, responseCode);
+                    sendBroadcast(TODO.REGISTER, registrationToken, responseCode);
                     break;
                 case 400:
-                    sendBroadcast(intent.getIntExtra("TODO", -1), getString(R.string.already_registered_error), responseCode);
+                    sendBroadcast(TODO.REGISTER, getString(R.string.already_registered_error), responseCode);
                     break;
                 default:
-                    sendBroadcast(intent.getIntExtra("TODO", -1), getString(R.string.api_error_message), 500);
+                    sendBroadcast(TODO.REGISTER, getString(R.string.api_error_message), 500);
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             sendBroadcast(intent.getIntExtra("TODO", -1), e.toString(), 500);
             FirebaseCrash.report(e);
         }
@@ -97,11 +98,13 @@ public class LoginAPIService extends IntentService {
 
             Response response = OkHttpHelper.makePostRequest(getApplicationContext(),
                     OkHttpHelper.generateUrl(APIConstants.LOGIN_URL), loginData.toString());
-            int responseCode = response.code();
+            final int responseCode = response.code();
+            final String responseBody = response.body().string();
+            response.body().close();
 
             switch (responseCode) {
                 case 200:
-                    JSONObject data = new JSONObject(response.body().string());
+                    JSONObject data = new JSONObject(responseBody);
                     JSONObject buyerLogin = data.getJSONObject(APIConstants.BUYER_LOGIN_KEY);
 
                     LoginHelper loginHelper = new LoginHelper(this);
@@ -118,10 +121,11 @@ public class LoginAPIService extends IntentService {
                     sendBroadcast(TODO.LOGIN, getString(R.string.unregistered_mobile_number), responseCode);
                     break;
                 default:
-                    sendBroadcast(intent.getIntExtra("TODO", -1), getString(R.string.api_error_message), 500);
+                    sendBroadcast(TODO.LOGIN, getString(R.string.api_error_message), 500);
             }
         } catch (Exception e) {
-            sendBroadcast(intent.getIntExtra("TODO", -1), e.toString(), 500);
+            e.printStackTrace();
+            sendBroadcast(TODO.LOGIN, e.toString(), 500);
             FirebaseCrash.report(e);
         }
     }
@@ -140,7 +144,8 @@ public class LoginAPIService extends IntentService {
             response.body().close();
             sendBroadcast(TODO.RESEND_OTP, responseBody, response.code());
         } catch (Exception e) {
-            sendBroadcast(intent.getIntExtra("TODO", -1), e.toString(), 500);
+            e.printStackTrace();
+            sendBroadcast(TODO.RESEND_OTP, e.toString(), 500);
             FirebaseCrash.report(e);
         }
     }
@@ -159,19 +164,19 @@ public class LoginAPIService extends IntentService {
 
             if (responseCode == 200) {
                 JSONObject responseData = new JSONObject(responseBody);
-                JSONObject buyerLogin = responseData.getJSONObject(APIConstants.BUYER_LOGIN_KEY);
 
                 LoginHelper loginHelper = new LoginHelper(this);
-                if (loginHelper.login(buyerLogin)) {
-                    sendBroadcast(TODO.LOGIN, "success", responseCode);
+                if (loginHelper.login(responseData)) {
+                    sendBroadcast(TODO.VERIFY_OTP, "success", responseCode);
                 } else {
-                    sendBroadcast(TODO.LOGIN, null, responseCode);
+                    sendBroadcast(TODO.VERIFY_OTP, null, responseCode);
                 }
             } else {
-                sendBroadcast(TODO.RESEND_OTP, responseBody, responseCode);
+                sendBroadcast(TODO.VERIFY_OTP, responseBody, responseCode);
             }
         } catch (Exception e) {
-            sendBroadcast(intent.getIntExtra("TODO", -1), e.toString(), 500);
+            e.printStackTrace();
+            sendBroadcast(TODO.VERIFY_OTP, e.toString(), 500);
             FirebaseCrash.report(e);
         }
     }

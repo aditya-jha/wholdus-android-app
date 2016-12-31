@@ -109,7 +109,10 @@ public class LoginHelper {
     }
 
     private void setTokens(String aToken, String rToken, int buyerID) {
-        WholdusApplication wholdusApplication = ((WholdusApplication) ((Activity) mContext).getApplication());
-        wholdusApplication.setTokens(aToken, rToken, buyerID);
+        try {
+            WholdusApplication wholdusApplication = ((WholdusApplication) ((Activity) mContext).getApplication());
+            wholdusApplication.setTokens(aToken, rToken, buyerID);
+        } catch (Exception e) {
+        }
     }
 }

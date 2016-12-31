@@ -78,10 +78,10 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
 
     @Override
     public void singupClicked(@Nullable String mobileNumber) {
-        Fragment fragment = new RegisterFragment();
+        RegisterFragment fragment = new RegisterFragment();
         if (mobileNumber != null) {
             Bundle bundle = new Bundle();
-            bundle.getString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, mobileNumber);
+            bundle.putString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, mobileNumber);
             fragment.setArguments(bundle);
         }
         openFragment(fragment);
@@ -89,7 +89,7 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
 
     @Override
     public void loginClicked(@Nullable String mobileNumber) {
-        Fragment fragment = new LoginFragment();
+        LoginFragment fragment = new LoginFragment();
         if (mobileNumber != null) {
             Bundle bundle = new Bundle();
             bundle.putString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, mobileNumber);
@@ -137,7 +137,7 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
 
     @Override
     public void openOTPFragment(@NonNull Bundle bundle) {
-        Fragment fragment = new OTPFragment();
+        OTPFragment fragment = new OTPFragment();
         fragment.setArguments(bundle);
         openFragment(fragment);
     }
