@@ -2,9 +2,14 @@ package com.wholdus.www.wholdusbuyerapp.helperClasses;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.telephony.SmsMessage;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
@@ -19,6 +24,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by aditya on 7/12/16.
@@ -96,5 +103,40 @@ public final class HelperFunctions {
         if (googleApiAvailability.isGooglePlayServicesAvailable(activity) != ConnectionResult.SUCCESS) {
             googleApiAvailability.makeGooglePlayServicesAvailable(activity);
         }
+    }
+
+    @Nullable
+    public static String getOTPFromSMS(Intent intent) {
+        Bundle bundle = intent.getExtras();
+        SmsMessage[] msgs = null;
+
+        if (bundle != null) {
+            try {
+                Object[] pdus = (Object[]) bundle.get("pdus");
+                msgs = new SmsMessage[pdus.length];
+                Pattern p = Pattern.compile("-?\\d+");
+
+                for (int i = 0; i < msgs.length; i++) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i], bundle.getString("format"));
+                    } else {
+                        msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+                    }
+
+                    //msg_from = msgs[i].getOriginatingAddress();
+                    Matcher m = p.matcher(msgs[i].getMessageBody());
+
+                    if (m.find()) {
+                        final String otp = m.group();
+                        if (InputValidationHelper.isValidOTP(null, otp)) {
+                            return otp;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        return null;
     }
 }
