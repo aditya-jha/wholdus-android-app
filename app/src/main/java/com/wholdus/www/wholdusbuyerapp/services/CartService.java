@@ -93,9 +93,10 @@ public class CartService extends IntentService{
         String url = GlobalAccessHelper.generateUrl(getString(R.string.cart_item_url), params);
         JSONObject jsonData = new JSONObject();
         JSONArray products = new JSONArray();
-        JSONObject product = new JSONObject();
+
         try {
             for (CartItem cartItem : cartItems) {
+                JSONObject product = new JSONObject();
                 product.put(CartItemsTable.COLUMN_PRODUCT_ID, cartItem.getProductID());
                 product.put(CartItemsTable.COLUMN_LOTS, cartItem.getLots());
                 products.put(product);
@@ -157,10 +158,10 @@ public class CartService extends IntentService{
                     if (carts.length() > 0) {
                         JSONObject cart = carts.getJSONObject(0);
                         cartDBHelper.saveCartDataFromJSONObject(cart);
-                        sendCartDataUpdatedBroadCast(null);
                     } else {
                         cartDBHelper.deleteCart(-1);
                     }
+                    sendCartDataUpdatedBroadCast(null);
                     break;
             }
         } catch (JSONException e) {

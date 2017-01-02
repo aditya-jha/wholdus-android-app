@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -41,6 +42,8 @@ public class OrdersFragment extends Fragment implements ItemClickListener {
     private OrderLoaderManager mOrderLoader;
     private OrdersAdapter ordersAdapter;
     ArrayList<Order> mOrderArrayList;
+    private Parcelable mOrderListViewState;
+    RecyclerView.LayoutManager mLayoutManager;
 
     public OrdersFragment() {
     }
@@ -92,7 +95,14 @@ public class OrdersFragment extends Fragment implements ItemClickListener {
     public void onPause() {
         super.onPause();
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mOrderServiceResponseReceiver);
+        mOrderListViewState = mLayoutManager.onSaveInstanceState();
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+    }
+
 
     @Override
     public void onDestroy() {
@@ -119,7 +129,7 @@ public class OrdersFragment extends Fragment implements ItemClickListener {
 
     private void initReferences(ViewGroup rootView){
         mOrdersListView = (RecyclerView) rootView.findViewById(R.id.orders_recycler_view);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        mLayoutManager = new LinearLayoutManager(getContext());
         mOrdersListView.setLayoutManager(mLayoutManager);
         mOrdersListView.setItemAnimator(new DefaultItemAnimator());
         mOrdersListView.addItemDecoration(new RecyclerViewSpaceItemDecoration(40, 0));
@@ -134,6 +144,9 @@ public class OrdersFragment extends Fragment implements ItemClickListener {
         mOrderArrayList.addAll(orders);
         //TODO: More efficient way to implement clear and add
         ordersAdapter.notifyDataSetChanged();
+        if (mOrderListViewState != null){
+            mLayoutManager.onRestoreInstanceState(mOrderListViewState);
+        }
     }
 
     private void fetchDataFromServer(){

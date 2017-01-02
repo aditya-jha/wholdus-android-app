@@ -13,6 +13,8 @@ public interface CartListenerInterface {
 
     void disableProgressBar();
 
+    void enableProgressBar();
+
     void addressSelected(int addressID);
 
     void openSelectAddress();

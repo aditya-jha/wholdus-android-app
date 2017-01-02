@@ -17,13 +17,13 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.HomeActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.SubCartAdapter;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartListenerInterface;
-import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
+import com.wholdus.www.wholdusbuyerapp.interfaces.CartSummaryListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.CartLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Cart;
 import com.wholdus.www.wholdusbuyerapp.models.SubCart;
@@ -35,7 +35,7 @@ import java.util.ArrayList;
  * Created by kaustubh on 26/12/16.
  */
 
-public class CartSummaryFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cart> {
+public class CartSummaryFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cart>, CartSummaryListenerInterface {
 
     private CartListenerInterface mListener;
     private final int CART_DB_LOADER = 90;
@@ -47,7 +47,7 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
     private LinearLayout mTopSummary;
     private LinearLayout mNoProducts;
     private Button mContinueShopping;
-    private ListView mSubOrderListView;
+    private ListView mSubCartListView;
 
     private SubCartAdapter mSubCartAdapter;
     private ArrayList<SubCart> mSubCarts;
@@ -114,10 +114,15 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
         });
         mNoProducts = (LinearLayout) view.findViewById(R.id.no_products);
 
-        mSubOrderListView = (ListView) view.findViewById(R.id.cart_summary_suborder_list_view);
+        mSubCartListView = (ListView) view.findViewById(R.id.cart_summary_suborder_list_view);
         mSubCarts = new ArrayList<>();
-        mSubCartAdapter = new SubCartAdapter(getContext(), mSubCarts);
-        mSubOrderListView.setAdapter(mSubCartAdapter);
+        mSubCartAdapter = new SubCartAdapter(getContext(), mSubCarts, this);
+        mSubCartListView.setAdapter(mSubCartAdapter);
+    }
+
+    @Override
+    public void enableProgressBar(){
+        mListener.enableProgressBar();
     }
 
     private void fetchDataFromServer(){
@@ -139,6 +144,7 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
         mSubCarts.clear();
         mSubCarts.addAll(mCart.getSubCarts());
         mSubCartAdapter.notifyDataSetChanged();
+        HelperFunctions.setListViewHeightBasedOnChildren(mSubCartListView);
 
         mListener.setCart(mCart);
 
@@ -151,6 +157,16 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
     private void setViewForEmptyCart(){
         mTopSummary.setVisibility(View.GONE);
         mNoProducts.setVisibility(View.VISIBLE);
+        mListener.disableProgressBar();
+
+        mSubCarts.clear();
+        mSubCartAdapter.notifyDataSetChanged();
+        HelperFunctions.setListViewHeightBasedOnChildren(mSubCartListView);
+        mListener.setCart(mCart);
+
+        mShippingChargeTextView.setText("");
+        mOrderValueTextView.setText("");
+
         mListener.disableProgressBar();
     }
 
@@ -167,6 +183,7 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
             setViewForCart();
         }
         else {
+            mCart = null;
             setViewForEmptyCart();
         }
     }

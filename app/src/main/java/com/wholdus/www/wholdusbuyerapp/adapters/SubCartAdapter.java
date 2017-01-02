@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
+import com.wholdus.www.wholdusbuyerapp.interfaces.CartSummaryListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.models.BuyerAddress;
 import com.wholdus.www.wholdusbuyerapp.models.SubCart;
@@ -24,10 +25,12 @@ public class SubCartAdapter extends BaseAdapter {
 
     private Context mContext;
     private ArrayList<SubCart> mData;
+    private CartSummaryListenerInterface mListener;
 
-    public SubCartAdapter(Context context, ArrayList<SubCart> data) {
+    public SubCartAdapter(Context context, ArrayList<SubCart> data, CartSummaryListenerInterface listener) {
         mContext = context;
         mData = data;
+        mListener = listener;
     }
 
     @Override
@@ -67,7 +70,7 @@ public class SubCartAdapter extends BaseAdapter {
         holder.summary.setText( String.valueOf(subCart.getPieces()) + " pieces - Rs. " +
                 String.format("%.0f",subCart.getFinalPrice()));
 
-        CartItemsAdapter cartItemsAdapter = new CartItemsAdapter(mContext, subCart.getCartItems());
+        CartItemsAdapter cartItemsAdapter = new CartItemsAdapter(mContext, subCart.getCartItems(), mListener);
         holder.cartItems.setAdapter(cartItemsAdapter);
         HelperFunctions.setListViewHeightBasedOnChildren(holder.cartItems);
 

@@ -1,6 +1,7 @@
 package com.wholdus.www.wholdusbuyerapp.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.activities.ProductDetailActivity;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.models.OrderItem;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
@@ -78,6 +81,15 @@ public class OrderItemsAdapter extends BaseAdapter {
                 .asBitmap()
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .into(holder.productImage);
+
+        holder.productImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, ProductDetailActivity.class);
+                intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME, product.getProductID());
+                mContext.startActivity(intent);
+            }
+        });
 
         return convertView;
     }
