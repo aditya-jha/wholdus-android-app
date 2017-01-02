@@ -44,6 +44,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     private BroadcastReceiver mProductServiceResponseReceiver;
     private ProductsLoaderManager mProductsLoader;
     ArrayList<Product> mProductsArrayList;
+    ArrayList<Integer> mExcludeProductIDs;
     ArrayList<Integer> mProductIDs;
     //private int mCurrentProductID;
     private Float mStoreMargin;
@@ -78,6 +79,12 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle mArgs = getArguments();
+        try {
+            mProductIDs = mArgs.getIntegerArrayList(CatalogContract.ProductsTable.TABLE_NAME);
+        } catch (Exception e){
+
+        }
     }
 
     @Nullable
@@ -104,6 +111,8 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     @Override
     public void onResume() {
         super.onResume();
+
+
 
         mProductsLoader = new ProductsLoaderManager();
         getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, mProductsLoader);
@@ -172,7 +181,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         setButtonsState(false);
 
         mProductsArrayList = new ArrayList<>();
-        mProductIDs = new ArrayList<>();
+        mExcludeProductIDs = new ArrayList<>();
         mProductSwipeDeckAdapter = new ProductSwipeDeckAdapter(getContext(), mProductsArrayList, this, this);
         mSwipeDeck.setAdapter(mProductSwipeDeckAdapter);
 
@@ -246,10 +255,22 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         }
         mProductsArrayList.addAll(data);
         for (Product product : data) {
-            mProductIDs.add(product.getProductID());
+            mExcludeProductIDs.add(product.getProductID());
+            if (mProductIDs!=null){
+                mProductIDs.remove(Integer.valueOf(product.getProductID()));
+            }
+        }
+
+        if (mProductIDs!= null && mProductIDs.size() == 0){
+            mProductIDs = null;
         }
         mProductSwipeDeckAdapter.notifyDataSetChanged();
         mProductsLeft += data.size();
+
+        if (mProductsLeft < mProductBuffer) {
+            getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, mProductsLoader);
+            fetchBuyerProducts();
+        }
 
         //TODO: Handle case for 0 products
     }
@@ -288,7 +309,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             ArrayList<Integer> responseCodes = new ArrayList<>();
             responseCodes.add(0);
             // TODO : ?? Also add condition so that buyer product Id is not 0
-            return new ProductsLoader(getContext(), null, mProductIDs, responseCodes, null, 15);
+            return new ProductsLoader(getContext(), mProductIDs, mExcludeProductIDs, responseCodes, null, 15);
         }
     }
 
