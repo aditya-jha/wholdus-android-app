@@ -23,7 +23,9 @@
             android:layout_gravity="center_horizontal"
             android:text="@string/login_fragment_header" />
 
-        <include layout="@layout/layout_mobile_password" />
+        <include layout="@layout/layout_mobile_number_input" />
+
+        <include layout="@layout/layout_password_input" />
 
         <Button
             android:id="@+id/login_submit_button"

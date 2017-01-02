@@ -85,7 +85,7 @@ public class ForgotPasswordFragment extends Fragment implements View.OnClickList
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         mProgressBar.setVisibility(View.INVISIBLE);
 
-        TextView back = (TextView) view.findViewById(R.id.back_button);
+        Button back = (Button) view.findViewById(R.id.back_button);
         back.setOnClickListener(this);
 
         Button requestOTPButton = (Button) view.findViewById(R.id.request_otp_button);
@@ -95,6 +95,8 @@ public class ForgotPasswordFragment extends Fragment implements View.OnClickList
         if (bundle != null) {
             mMobileNumberEditText.setText(bundle.getString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER));
         }
+
+        mMobileNumberEditText.setOnFocusChangeListener(this);
     }
 
     @Override
@@ -166,7 +168,13 @@ public class ForgotPasswordFragment extends Fragment implements View.OnClickList
 
         switch (responseCode) {
             case 200:
-                Toast.makeText(getContext(), intent.getStringExtra(APIConstants.LOGIN_API_DATA), Toast.LENGTH_SHORT).show();
+                final String forgotPasswordToken = intent.getStringExtra(APIConstants.LOGIN_API_DATA);
+                if (forgotPasswordToken != null) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(APIConstants.FORGOT_PASSWORD_TOKEN, forgotPasswordToken);
+                    bundle.putString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, getValueFromEditText(mMobileNumberEditText));
+                    mListener.resetPassword(bundle);
+                }
                 break;
             case 400:
                 mMobileNumberWrapper.setError(intent.getStringExtra(APIConstants.LOGIN_API_DATA));

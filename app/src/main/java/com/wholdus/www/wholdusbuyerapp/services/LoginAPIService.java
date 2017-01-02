@@ -46,6 +46,10 @@ public class LoginAPIService extends IntentService {
                 break;
             case TODO.VERIFY_OTP:
                 verifyOTP(intent);
+                break;
+            case TODO.FORGOT_PASSWORD_VERIFY:
+                forgotPasswordVerify(intent);
+                break;
         }
     }
 
@@ -211,6 +215,10 @@ public class LoginAPIService extends IntentService {
             sendBroadcast(TODO.VERIFY_OTP, e.toString(), 500);
             FirebaseCrash.report(e);
         }
+    }
+
+    private void forgotPasswordVerify(Intent intent) {
+        sendBroadcast(TODO.FORGOT_PASSWORD_VERIFY, null, 200);
     }
 
     private void sendBroadcast(int todo, @Nullable String data, int responseCode) {

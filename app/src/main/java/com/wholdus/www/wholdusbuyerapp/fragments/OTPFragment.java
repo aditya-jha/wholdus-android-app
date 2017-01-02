@@ -104,7 +104,7 @@ public class OTPFragment extends Fragment implements View.OnClickListener {
         Button submitOTP = (Button) view.findViewById(R.id.submit_otp);
         submitOTP.setOnClickListener(this);
 
-        TextView resendOTP = (TextView) view.findViewById(R.id.resend_otp);
+        Button resendOTP = (Button) view.findViewById(R.id.resend_otp);
         resendOTP.setOnClickListener(this);
 
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
@@ -114,7 +114,7 @@ public class OTPFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        IntentFilter smsIntentFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
+        IntentFilter smsIntentFilter = new IntentFilter(IntentFilters.SMS_DATA);
         smsIntentFilter.setPriority(1000);
         getActivity().registerReceiver(mSMSReceiver, smsIntentFilter);
 
@@ -225,38 +225,14 @@ public class OTPFragment extends Fragment implements View.OnClickListener {
             @Override
             public void run() {
                 if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())) {
-                    Bundle bundle = intent.getExtras();
-                    SmsMessage[] msgs = null;
-
-                    if (bundle != null) {
-                        try {
-                            Object[] pdus = (Object[]) bundle.get("pdus");
-                            msgs = new SmsMessage[pdus.length];
-                            Pattern p = Pattern.compile("-?\\d+");
-
-                            for (int i = 0; i < msgs.length; i++) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i], bundle.getString("format"));
-                                } else {
-                                    msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
-                                }
-
-                                //msg_from = msgs[i].getOriginatingAddress();
-                                Matcher m = p.matcher(msgs[i].getMessageBody());
-
-                                if (m.find()) {
-                                    final String otp = m.group();
-                                    getActivity().runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            mOTPEditText.setText(otp);
-                                        }
-                                    });
-                                    break;
-                                }
+                    final String otp = HelperFunctions.getOTPFromSMS(intent);
+                    if (otp != null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mOTPEditText.setText(otp);
                             }
-                        } catch (Exception e) {
-                        }
+                        });
                     }
                 }
             }

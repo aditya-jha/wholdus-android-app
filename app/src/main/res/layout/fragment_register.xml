@@ -38,7 +38,9 @@
                 android:inputType="text" />
         </android.support.design.widget.TextInputLayout>
 
-        <include layout="@layout/layout_mobile_password" />
+        <include layout="@layout/layout_mobile_number_input" />
+
+        <include layout="@layout/layout_password_input" />
 
         <Button
             android:id="@+id/register_submit_button"

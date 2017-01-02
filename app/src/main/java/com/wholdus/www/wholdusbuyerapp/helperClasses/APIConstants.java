@@ -14,6 +14,7 @@ public class APIConstants {
     public static final String VERIFY_OTP_URL = "users/buyer/register/verify/";
     public static final String RESEND_OTP_URL = "users/buyer/register/resend_sms/";
     public static final String FORGOT_PASSWORD_URL = "users/buyer/forgotpassword/";
+    public static final String FORGOT_PASSWORD_VERIFY_URL = "users/buyer/forgotpassword/verify/";
 
     public static final String CATEGORY_URL = "category/";
     public static final String BUYER_INTEREST_URL = "users/buyer/buyerinterest/";
@@ -31,5 +32,6 @@ public class APIConstants {
     public static final String RESPONSE_CODE = "responseCode";
 
     public static final String REGISTRATION_TOKEN_KEY = "registration_token";
+    public static final String FORGOT_PASSWORD_TOKEN = "forgot_password_token";
     public static final String OTP_NUMBER_KEY = "otp_number";
 }
