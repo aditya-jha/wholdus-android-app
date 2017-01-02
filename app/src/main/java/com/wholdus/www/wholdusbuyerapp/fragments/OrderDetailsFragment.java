@@ -117,17 +117,10 @@ public class OrderDetailsFragment extends Fragment {
         mSuborders = new ArrayList<>();
         mSuborderAdapter = new SubOrderAdapter(getContext(), mSuborders);
         mSubOrdersListView.setAdapter(mSuborderAdapter);
-        mSubOrdersListView.setVerticalScrollBarEnabled(false);
-        mSubOrdersListView.setScrollContainer(false);
-        mSubOrdersListView.setOnTouchListener(new View.OnTouchListener() {
-
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                    return true; // Indicates that this has been handled by you and will not be forwarded further.
-                }
-                return false;
-            }
-        });
+        //mSubOrdersListView.setVerticalScrollBarEnabled(false);
+        //mSubOrdersListView.setScrollContainer(false);
+        //mSubOrdersListView.setClickable(false);
+        //HelperFunctions.setListViewHeightBasedOnChildren(mSubOrdersListView);
     }
 
     public void setViewForOrders(){
