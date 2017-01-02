@@ -26,7 +26,15 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
         setContentView(R.layout.activity_hand_picked);
 
         initToolbar();
-        openToFragment(getFragmentToOpenName(savedInstanceState), null);
+        Intent intent = getIntent();
+        Bundle extras;
+        if (intent != null){
+            extras = intent.getExtras();
+        } else {
+            extras = null;
+        }
+
+        openToFragment(getFragmentToOpenName(savedInstanceState), extras);
     }
 
     private void initToolbar(){

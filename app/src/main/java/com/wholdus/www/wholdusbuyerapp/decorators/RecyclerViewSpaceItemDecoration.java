@@ -8,12 +8,14 @@ import android.view.View;
  * Created by kaustubh on 11/12/16.
  */
 
-public class RecyclerViewVerticalSpaceItemDecoration extends RecyclerView.ItemDecoration {
+public class RecyclerViewSpaceItemDecoration extends RecyclerView.ItemDecoration {
 
     private int verticalSpaceHeight;
+    private int horizontalSpaceHeight;
 
-    public RecyclerViewVerticalSpaceItemDecoration(int verticalSpaceHeight) {
+    public RecyclerViewSpaceItemDecoration(int verticalSpaceHeight, int horizontalSpaceHeight) {
         this.verticalSpaceHeight = verticalSpaceHeight;
+        this.horizontalSpaceHeight = horizontalSpaceHeight;
     }
 
     @Override
@@ -21,6 +23,7 @@ public class RecyclerViewVerticalSpaceItemDecoration extends RecyclerView.ItemDe
                                RecyclerView.State state) {
         if (parent.getChildAdapterPosition(view) != parent.getAdapter().getItemCount() - 1) {
             outRect.bottom = verticalSpaceHeight;
+            outRect.right = horizontalSpaceHeight;
         }
     }
 }

@@ -19,7 +19,7 @@ import android.view.ViewGroup;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.OrdersAdapter;
-import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewVerticalSpaceItemDecoration;
+import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.OrdersLoader;
@@ -122,8 +122,7 @@ public class OrdersFragment extends Fragment implements ItemClickListener {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         mOrdersListView.setLayoutManager(mLayoutManager);
         mOrdersListView.setItemAnimator(new DefaultItemAnimator());
-        RecyclerViewVerticalSpaceItemDecoration dividerItemDecoration = new RecyclerViewVerticalSpaceItemDecoration(40);
-        mOrdersListView.addItemDecoration(dividerItemDecoration);
+        mOrdersListView.addItemDecoration(new RecyclerViewSpaceItemDecoration(40, 0));
         mOrderArrayList = new ArrayList<>();
         ordersAdapter = new OrdersAdapter(getContext(), mOrderArrayList, this);
         mOrdersListView.setAdapter(ordersAdapter);

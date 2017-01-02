@@ -145,13 +145,15 @@ public class CategoryGridFragment extends Fragment implements
                 mLoaderDataLoaded = true;
                 if (data.size() > 0) {
                     setDataToView(data);
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mPageLoader.setVisibility(View.GONE);
-                            mSwipeRefreshLayout.setVisibility(View.VISIBLE);
-                        }
-                    });
+                    if (getActivity()!= null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mPageLoader.setVisibility(View.GONE);
+                                mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
                 }
             }
         }).start();
