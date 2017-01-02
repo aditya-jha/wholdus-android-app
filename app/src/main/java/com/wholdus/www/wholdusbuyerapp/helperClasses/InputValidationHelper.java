@@ -71,6 +71,8 @@ public class InputValidationHelper {
 
         if (inputValue.isEmpty()) {
             error = "Please enter the OTP received";
+        } else if (inputValue.length() != 6) {
+            error = "Invalid OTP";
         } else {
             try {
                 Integer.parseInt(inputValue);

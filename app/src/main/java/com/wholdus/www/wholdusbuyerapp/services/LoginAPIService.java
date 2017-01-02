@@ -39,7 +39,7 @@ public class LoginAPIService extends IntentService {
                 register(intent);
                 break;
             case TODO.FORGOT_PASSWORD:
-                forgotPassword();
+                forgotPassword(intent);
                 break;
             case TODO.RESEND_OTP:
                 resendOTP(intent);
@@ -66,20 +66,20 @@ public class LoginAPIService extends IntentService {
                     OkHttpHelper.generateUrl(APIConstants.REGISTER_URL), data.toString());
             final int responseCode = response.code();
 
-            switch (responseCode) {
-                case 200:
-                    JSONObject responseData = new JSONObject(response.body().string());
-                    String registrationToken = responseData.getJSONObject("buyer_registration").getString(APIConstants.REGISTRATION_TOKEN_KEY);
+            if (response.isSuccessful()) {
+                JSONObject responseData = new JSONObject(response.body().string());
+                String registrationToken = responseData.getJSONObject("buyer_registration").getString(APIConstants.REGISTRATION_TOKEN_KEY);
 
-                    sendBroadcast(TODO.REGISTER, registrationToken, responseCode);
-                    break;
-                case 400:
-                    sendBroadcast(TODO.REGISTER, getString(R.string.already_registered_error), responseCode);
-                    break;
-                default:
-                    sendBroadcast(TODO.REGISTER, getString(R.string.api_error_message), 500);
+                sendBroadcast(TODO.REGISTER, registrationToken, responseCode);
+            } else {
+                switch (responseCode) {
+                    case 400:
+                        sendBroadcast(TODO.REGISTER, getString(R.string.already_registered_error), responseCode);
+                        break;
+                    default:
+                        sendBroadcast(TODO.REGISTER, getString(R.string.api_error_message), 500);
+                }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             sendBroadcast(intent.getIntExtra("TODO", -1), e.toString(), 500);
@@ -102,26 +102,27 @@ public class LoginAPIService extends IntentService {
             final String responseBody = response.body().string();
             response.body().close();
 
-            switch (responseCode) {
-                case 200:
-                    JSONObject data = new JSONObject(responseBody);
-                    JSONObject buyerLogin = data.getJSONObject(APIConstants.BUYER_LOGIN_KEY);
+            if (response.isSuccessful()) {
+                JSONObject data = new JSONObject(responseBody);
+                JSONObject buyerLogin = data.getJSONObject(APIConstants.BUYER_LOGIN_KEY);
 
-                    LoginHelper loginHelper = new LoginHelper(this);
-                    if (loginHelper.login(buyerLogin)) {
-                        sendBroadcast(TODO.LOGIN, "success", responseCode);
-                    } else {
-                        sendBroadcast(TODO.LOGIN, null, responseCode);
-                    }
-                    break;
-                case 401:
-                    sendBroadcast(TODO.LOGIN, getString(R.string.invalid_credentials), responseCode);
-                    break;
-                case 403:
-                    sendBroadcast(TODO.LOGIN, getString(R.string.unregistered_mobile_number), responseCode);
-                    break;
-                default:
-                    sendBroadcast(TODO.LOGIN, getString(R.string.api_error_message), 500);
+                LoginHelper loginHelper = new LoginHelper(this);
+                if (loginHelper.login(buyerLogin)) {
+                    sendBroadcast(TODO.LOGIN, "success", responseCode);
+                } else {
+                    sendBroadcast(TODO.LOGIN, null, responseCode);
+                }
+            } else {
+                switch (responseCode) {
+                    case 401:
+                        sendBroadcast(TODO.LOGIN, getString(R.string.invalid_credentials), responseCode);
+                        break;
+                    case 403:
+                        sendBroadcast(TODO.LOGIN, getString(R.string.unregistered_mobile_number), responseCode);
+                        break;
+                    default:
+                        sendBroadcast(TODO.LOGIN, getString(R.string.api_error_message), 500);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -130,7 +131,35 @@ public class LoginAPIService extends IntentService {
         }
     }
 
-    private void forgotPassword() {
+    private void forgotPassword(Intent intent) {
+        try {
+            JSONObject data = new JSONObject();
+            data.put(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER,
+                    intent.getStringExtra(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER));
+
+            Response response = OkHttpHelper.makePostRequest(getApplicationContext(),
+                    OkHttpHelper.generateUrl(APIConstants.FORGOT_PASSWORD_URL), data.toString());
+            final String responseBody = response.body().string();
+            final int responseCode = response.code();
+            response.body().close();
+
+            if (response.isSuccessful()) {
+                String token = new JSONObject(responseBody).getJSONObject("buyer_registration").getString("forgot_password_token");
+                sendBroadcast(TODO.FORGOT_PASSWORD, token, 200);
+            } else {
+                switch (responseCode) {
+                    case 400:
+                        sendBroadcast(TODO.FORGOT_PASSWORD, getString(R.string.unregistered_mobile_number), 400);
+                        break;
+                    default:
+                        sendBroadcast(TODO.FORGOT_PASSWORD, getString(R.string.api_error_message), 500);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            sendBroadcast(TODO.FORGOT_PASSWORD, e.toString(), 500);
+            FirebaseCrash.report(e);
+        }
     }
 
     private void resendOTP(Intent intent) {
@@ -142,7 +171,11 @@ public class LoginAPIService extends IntentService {
                     OkHttpHelper.generateUrl(APIConstants.RESEND_OTP_URL), data.toString());
             final String responseBody = response.body().string();
             response.body().close();
-            sendBroadcast(TODO.RESEND_OTP, responseBody, response.code());
+            if (response.isSuccessful()) {
+                sendBroadcast(TODO.RESEND_OTP, responseBody, 200);
+            } else {
+                sendBroadcast(TODO.RESEND_OTP, responseBody, response.code());
+            }
         } catch (Exception e) {
             e.printStackTrace();
             sendBroadcast(TODO.RESEND_OTP, e.toString(), 500);
@@ -162,14 +195,13 @@ public class LoginAPIService extends IntentService {
             final String responseBody = response.body().string();
             response.body().close();
 
-            if (responseCode == 200) {
+            if (response.isSuccessful()) {
                 JSONObject responseData = new JSONObject(responseBody);
-
                 LoginHelper loginHelper = new LoginHelper(this);
                 if (loginHelper.login(responseData)) {
-                    sendBroadcast(TODO.VERIFY_OTP, "success", responseCode);
+                    sendBroadcast(TODO.VERIFY_OTP, "success", 200);
                 } else {
-                    sendBroadcast(TODO.VERIFY_OTP, null, responseCode);
+                    sendBroadcast(TODO.VERIFY_OTP, null, 200);
                 }
             } else {
                 sendBroadcast(TODO.VERIFY_OTP, responseBody, responseCode);

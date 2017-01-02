@@ -14,7 +14,7 @@ public interface LoginSignupListenerInterface {
 
     void loginClicked(@Nullable String mobileNumber);
 
-    void forgotPasswordClicked(String mobileNumber);
+    void forgotPasswordClicked(@Nullable String mobileNumber);
 
     void permissionsBottomSheet(boolean show);
 

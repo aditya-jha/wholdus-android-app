@@ -34,9 +34,9 @@
 
     <!-- ForgotPassword Fragment -->
     <string name="forgot_password_fragment_header">Forgot Password</string>
-    <string name="back_button_fragment">BACK</string>
+    <string name="back_button_fragment"><u>GO BACK</u></string>
     <string name="request_otp">REQUEST OTP</string>
-    <string name="forgot_password_intro_text">We just need your registered mobile number help you reset your password</string>
+    <string name="forgot_password_intro_text">We just need your registered mobile number to help you reset your password</string>
 
     <!-- Account Activity -->
     <string-array name="account_activity_fragments">
