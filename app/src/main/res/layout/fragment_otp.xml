@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    style="@style/AppTheme.DefaultCard">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/wholdus_logo" />
+
+    <TextView
+        style="@style/AppTheme.ImportantText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/otp_key" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/otp_wrapper"
+        style="@style/TextLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/otp_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/otp_key"
+            android:inputType="phone" />
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:id="@+id/submit_otp"
+        style="@style/AppTheme.ColoredButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/submit" />
+
+    <TextView
+        android:id="@+id/resend_otp"
+        style="@style/AppTheme.DefaultCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/resend_otp" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="@style/AppTheme.DefaultCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>

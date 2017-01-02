@@ -26,5 +26,6 @@ public final class Constants {
 
     public static final String OPEN_FRAGMENT_KEY = "openFragment";
     public static final String OPEN_ACTIVITY_KEY = "openActivity";
+    public static final String BACK_FRAGMENT = "backFragment";
 
 }

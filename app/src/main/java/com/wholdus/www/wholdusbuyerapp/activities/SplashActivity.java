@@ -1,5 +1,6 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -27,6 +28,8 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void proceed() {
+        final Context context = this;
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -35,7 +38,7 @@ public class SplashActivity extends AppCompatActivity {
                 SQLiteDatabase db = databaseHelper.openDatabase();
                 databaseHelper.closeDatabase();
 
-                LoginHelper loginHelper = new LoginHelper(getApplicationContext());
+                LoginHelper loginHelper = new LoginHelper(context);
                 if (loginHelper.checkIfLoggedIn()) {
                     startLoginSignupActivity(HomeActivity.class);
                 } else {

@@ -15,14 +15,22 @@
     <!-- Mobile Number and Password helper layout -->
     <string name="hint_mobile_number">Mobile Number</string>
     <string name="hint_password">Password</string>
-
-    <!-- Login Fragment -->
+    <string name="hint_name">Your name</string>
     <string name="login_fragment_header">Login</string>
-    <string name="signup_button_on_login_fragment"><u>Create one</u></string>
-    <string name="no_account">No account yet? </string>
+    <string name="register_fragment_header">Register</string>
+
+    <string name="submit">submit</string>
+    <string name="otp_key">OTP</string>
+    <string name="resend_otp"><u>Resend OTP</u></string>
+    <string name="already_member">Already a member?  <u>Login</u></string>
+    <string name="no_account">No account yet?  <u>Create one</u></string>
+    <string name="already_registered_error">Mobile Number or Email Already Registered</string>
     <string name="verifying_credentials">Verifying Credentials&#8230;</string>
     <string name="login_progress_message">Logging you in&#8230;</string>
-    <string name="login_error_message">Invalid Credentials! Please try again</string>
+    <string name="invalid_credentials">Invalid Credentials! Please try again</string>
+    <string name="unregistered_mobile_number">Have you registered?</string>
+    <string name="empty_otp">Please enter the OTP received</string>
+    <string name="token_expired">Token expired, Please register again</string>
 
     <!-- ForgotPassword Fragment -->
     <string name="forgot_password_fragment_header">Forgot Password</string>
@@ -91,6 +99,7 @@
     <string name="notification_key">Updates</string>
     <string name="retry_text">Retry</string>
     <string name="api_error_message">Ops! Something went wrong</string>
+    <string name="timeout_error">Very slow internet connection</string>
     <string name="no_internet_access">No Internet Connection</string>
     <string name="new_products_message">New Products Available</string>
     <string name="show_text">SHOW</string>

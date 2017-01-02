@@ -22,6 +22,7 @@ public final class UserProfileContract {
         public static final String COLUMN_COMPANY_NAME = "company_name";
         public static final String COLUMN_BUSINESS_TYPE = "business_type";
         public static final String COLUMN_GENDER = "gender";
+        public static final String COLUMN_PASSWORD = "password";
 
         public static final String COLUMN_STORE_GLOBAL_MARGIN = "store_global_margin";
 

@@ -6,12 +6,10 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.google.firebase.crash.FirebaseCrash;
-import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.WholdusApplication;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.DatabaseHelper;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -95,12 +93,26 @@ public class LoginHelper {
         return true;
     }
 
+    public boolean saveRegistrationToken(String token) {
+        SharedPreferences.Editor editor = getSharedPreference().edit();
+        try {
+            editor.putString(APIConstants.REGISTRATION_TOKEN_KEY, token);
+            editor.apply();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     private SharedPreferences getSharedPreference() {
         return mContext.getSharedPreferences("LoginHelperSharedPreference", Context.MODE_PRIVATE);
     }
 
     private void setTokens(String aToken, String rToken, int buyerID) {
-        WholdusApplication wholdusApplication = (WholdusApplication) ((Activity) mContext).getApplication();
-        wholdusApplication.setTokens(aToken, rToken, buyerID);
+        try {
+            WholdusApplication wholdusApplication = ((WholdusApplication) ((Activity) mContext).getApplication());
+            wholdusApplication.setTokens(aToken, rToken, buyerID);
+        } catch (Exception e) {
+        }
     }
 }
