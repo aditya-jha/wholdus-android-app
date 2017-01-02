@@ -32,6 +32,8 @@
     <string name="empty_otp">Please enter the OTP received</string>
     <string name="token_expired">Token expired, Please register again</string>
     <string name="reset_password_title">Reset Password</string>
+    <string name="invalid_otp_error">Invalid OTP</string>
+    <string name="password_reset_success">Password reset successful</string>
 
     <!-- ForgotPassword Fragment -->
     <string name="forgot_password_fragment_header">Forgot Password</string>

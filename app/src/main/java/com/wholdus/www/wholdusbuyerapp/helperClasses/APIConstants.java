@@ -15,6 +15,7 @@ public class APIConstants {
     public static final String RESEND_OTP_URL = "users/buyer/register/resend_sms/";
     public static final String FORGOT_PASSWORD_URL = "users/buyer/forgotpassword/";
     public static final String FORGOT_PASSWORD_VERIFY_URL = "users/buyer/forgotpassword/verify/";
+    public static final String FORGOT_PASSWORD_RESEND_OTP_URL = "users/buyer/forgotpassword/resend_sms/";
 
     public static final String CATEGORY_URL = "category/";
     public static final String BUYER_INTEREST_URL = "users/buyer/buyerinterest/";

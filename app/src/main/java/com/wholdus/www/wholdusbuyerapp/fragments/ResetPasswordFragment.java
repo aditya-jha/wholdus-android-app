@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
@@ -22,11 +23,10 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.LoginHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.LoginSignupListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.services.LoginAPIService;
-
-import static android.os.Build.ID;
 
 /**
  * Created by aditya on 2/1/17.
@@ -42,7 +42,8 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
     private ProgressBar mProgressBar;
     private String mForgotPasswordToken;
 
-    public ResetPasswordFragment() {}
+    public ResetPasswordFragment() {
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -57,27 +58,18 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mForgotPasswordToken = getArguments().getString(APIConstants.FORGOT_PASSWORD_TOKEN, null);
-        if (mForgotPasswordToken == null) {
-            mListener.forgotPasswordClicked(getArguments().getString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER));
-            return;
-        }
+
         mReceiver = new BroadcastReceiver() {
             @Override
-            public void onReceive(Context context, final Intent intent) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String intentAction = intent.getAction();
-                        switch (intentAction) {
-                            case IntentFilters.LOGIN_SIGNUP_DATA:
-                                handleAPIResponse(intent);
-                                break;
-                            case IntentFilters.SMS_DATA:
-                                handleSMSReceived(intent);
-                        }
-                    }
-                }).start();
+            public void onReceive(Context context, Intent intent) {
+                String intentAction = intent.getAction();
+                switch (intentAction) {
+                    case IntentFilters.LOGIN_SIGNUP_DATA:
+                        handleAPIResponse(intent);
+                        break;
+                    case IntentFilters.SMS_DATA:
+                        handleSMSReceived(intent);
+                }
             }
         };
     }
@@ -109,15 +101,25 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
 
         Button backButton = (Button) view.findViewById(R.id.back_button);
         backButton.setOnClickListener(this);
+
+        Button resendOTP = (Button) view.findViewById(R.id.resend_otp);
+        resendOTP.setOnClickListener(this);
+
+        mForgotPasswordToken = getArguments().getString(APIConstants.FORGOT_PASSWORD_TOKEN, null);
+        if (mForgotPasswordToken == null) {
+            mListener.forgotPasswordClicked(getArguments().getString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER));
+            return;
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(IntentFilters.LOGIN_SIGNUP_DATA);
-        intentFilter.addAction(IntentFilters.SMS_DATA);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
+        IntentFilter apiFilter = new IntentFilter(IntentFilters.LOGIN_SIGNUP_DATA);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, apiFilter);
+
+        IntentFilter smsFilter = new IntentFilter(IntentFilters.SMS_DATA);
+        getActivity().registerReceiver(mReceiver, smsFilter);
     }
 
     @Override
@@ -134,6 +136,7 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+        mListener.hideSoftKeyboard(view);
         if (mProgressBar.getVisibility() == View.VISIBLE) return;
 
         final int ID = view.getId();
@@ -144,6 +147,8 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
             case R.id.back_button:
                 getFragmentManager().popBackStack();
                 break;
+            case R.id.resend_otp:
+                resendOTP();
         }
     }
 
@@ -165,20 +170,68 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
         }
     }
 
-    private void handleAPIResponse(Intent intent) {
+    private void handleAPIResponse(final Intent intent) {
         mProgressBar.setVisibility(View.INVISIBLE);
+        final int responseCode = intent.getIntExtra(APIConstants.RESPONSE_CODE, 500);
+
+        switch (responseCode) {
+            case 200:
+                if (intent.getIntExtra("TODO", -1) == TODO.RESEND_OTP) {
+                    return;
+                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LoginHelper loginHelper = new LoginHelper(getContext());
+                        if (loginHelper.checkIfLoggedIn()) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getContext(), getString(R.string.password_reset_success), Toast.LENGTH_SHORT).show();
+                                    mListener.loginSuccess();
+                                }
+                            });
+                        } else {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mListener.loginClicked(null);
+                                }
+                            });
+                        }
+                    }
+                }).start();
+                break;
+            case 400:
+                Toast.makeText(getContext(), getString(R.string.invalid_otp_error), Toast.LENGTH_SHORT).show();
+                break;
+            case 403:
+                Toast.makeText(getContext(), getString(R.string.token_expired), Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                if (HelperFunctions.isNetworkAvailable(getActivity().getApplicationContext())) {
+                    Toast.makeText(getContext(), getString(R.string.api_error_message), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), getString(R.string.no_internet_access), Toast.LENGTH_SHORT).show();
+                }
+        }
     }
 
-    private void handleSMSReceived(Intent intent) {
-        final String otp = HelperFunctions.getOTPFromSMS(intent);
-        if (otp != null) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mOTPEditText.setText(otp);
+    private void handleSMSReceived(final Intent intent) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String otp = HelperFunctions.getOTPFromSMS(intent);
+                if (otp != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mOTPEditText.setText(otp);
+                        }
+                    });
                 }
-            });
-        }
+            }
+        }).start();
     }
 
     private void resetPassword() {
@@ -196,5 +249,15 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
 
             getActivity().startService(intent);
         }
+    }
+
+    private void resendOTP() {
+        mProgressBar.setVisibility(View.VISIBLE);
+
+        Intent intent = new Intent(getContext(), LoginAPIService.class);
+        intent.putExtra("TODO", TODO.RESEND_OTP);
+        intent.putExtra(APIConstants.FORGOT_PASSWORD_TOKEN, mForgotPasswordToken);
+
+        getActivity().startService(intent);
     }
 }

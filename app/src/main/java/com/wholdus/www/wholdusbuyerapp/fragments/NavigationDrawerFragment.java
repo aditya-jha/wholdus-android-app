@@ -4,6 +4,7 @@ package com.wholdus.www.wholdusbuyerapp.fragments;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -34,9 +35,10 @@ import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NavigationDrawerFragment extends Fragment {
+public class NavigationDrawerFragment extends Fragment implements ExpandableListView.OnGroupClickListener, ExpandableListView.OnChildClickListener {
 
     private Bundle mBundle;
+    private DrawerLayout mDrawerLayout;
 
     public NavigationDrawerFragment() {
     }
@@ -49,78 +51,77 @@ public class NavigationDrawerFragment extends Fragment {
         if (mBundle == null) {
             mBundle = new Bundle();
         }
-
-        initNavigationDrawer(rootView);
-
+        if (mBundle.getString(Constants.OPEN_FRAGMENT_KEY, "none").equals("none")) {
+            mBundle.putString(Constants.OPEN_FRAGMENT_KEY, HomeFragment.class.getSimpleName());
+        }
         return rootView;
     }
 
-    private void initNavigationDrawer(ViewGroup rootView) {
-        final DrawerLayout mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
-        ExpandableListView mExpandableListView = (ExpandableListView) rootView.findViewById(R.id.expandable_list_view);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
+        ExpandableListView expandableListView = (ExpandableListView) view.findViewById(R.id.expandable_list_view);
 
-        LinkedHashMap<String, List<String>> mNavigationDrawerData;
-        mNavigationDrawerData = NavigationDrawerData.getData();
-
-        ArrayList<String> mNavigationDrawerDataTitles = new ArrayList<>(mNavigationDrawerData.keySet());
-
+        LinkedHashMap<String, List<String>> mNavigationDrawerData = NavigationDrawerData.getData();
         NavigationDrawerAdapter mNavigationDrawerAdapter = new NavigationDrawerAdapter(getContext(),
-                mNavigationDrawerDataTitles, mNavigationDrawerData,
+                new ArrayList<>(mNavigationDrawerData.keySet()), mNavigationDrawerData,
                 R.layout.navigation_drawer_list_group, R.layout.navigation_drawer_list_item);
-        mExpandableListView.setAdapter(mNavigationDrawerAdapter);
+        expandableListView.setAdapter(mNavigationDrawerAdapter);
 
-        /* TODO: functionality should not be handled based on the postion, some Id or tag mus tbe used */
-        mExpandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+        expandableListView.setOnGroupClickListener(this);
+        expandableListView.setOnChildClickListener(this);
+    }
 
-                switch (groupPosition) {
-                    case 0:
-                        String openActivity = mBundle.getString(Constants.OPEN_ACTIVITY_KEY, "none");
-                        if (!openActivity.equals(HomeActivity.class.getSimpleName())) {
-                            mBundle.putString(Constants.OPEN_ACTIVITY_KEY, HomeActivity.class.getSimpleName());
-                            Intent intent = new Intent(getContext(), HomeActivity.class);
-                            intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
-                        }
-                        break;
-                    case 1:
-                        startActivity(new Intent(getContext(), HandPickedActivity.class));
-                        break;
-                    case 5:
-                        Toast.makeText(getContext(), "Notification clicked", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 6:
-                        logout();
-                        break;
-                    default:
-                        return false;
+    @Override
+    public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+        switch (groupPosition) {
+            case 0:
+                Intent intent = new Intent(getContext(), HomeActivity.class);
+                intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
+                if (!mBundle.getString(Constants.OPEN_ACTIVITY_KEY, "none").equals(HomeActivity.class.getSimpleName())) {
+                    mBundle.putString(Constants.OPEN_ACTIVITY_KEY, HomeActivity.class.getSimpleName());
+                    startActivity(intent);
+                } else if (!mBundle.getString(Constants.OPEN_FRAGMENT_KEY, "none").equals(HomeFragment.class.getSimpleName())){
+                    mBundle.putString(Constants.OPEN_ACTIVITY_KEY, HomeActivity.class.getSimpleName());
+                    mBundle.putString(Constants.OPEN_FRAGMENT_KEY, HomeFragment.class.getSimpleName());
+                    intent.putExtra(Constants.OPEN_FRAGMENT_KEY, HomeFragment.class.getSimpleName());
+                    startActivity(intent);
                 }
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-                return true;
-            }
-        });
+                break;
+            case 1:
+                startActivity(new Intent(getContext(), HandPickedActivity.class));
+                break;
+            case 5:
+                Toast.makeText(getContext(), "Notification clicked", Toast.LENGTH_SHORT).show();
+                break;
+            case 6:
+                logout();
+                break;
+            default:
+                return false;
+        }
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
 
-        mExpandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                switch (groupPosition) {
-                    case 2:
-                        handleStoreCase(childPosition);
-                        break;
-                    case 3:
-                        handleAccountCase(childPosition);
-                        break;
-                    case 4:
-                        handleHelpSupportCase(childPosition);
-                        break;
-                    default:
-                        return false;
-                }
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-                return true;
-            }
-        });
+    @Override
+    public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+        switch (groupPosition) {
+            case 2:
+                handleStoreCase(childPosition);
+                break;
+            case 3:
+                handleAccountCase(childPosition);
+                break;
+            case 4:
+                handleHelpSupportCase(childPosition);
+                break;
+            default:
+                return false;
+        }
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     private boolean handleStoreCase(int childPosition) {

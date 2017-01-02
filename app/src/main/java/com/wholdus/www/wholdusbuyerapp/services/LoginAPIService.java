@@ -9,6 +9,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.LoginHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.OkHttpHelper;
@@ -169,10 +170,18 @@ public class LoginAPIService extends IntentService {
     private void resendOTP(Intent intent) {
         try {
             JSONObject data = new JSONObject();
-            data.put(APIConstants.REGISTRATION_TOKEN_KEY, intent.getStringExtra(APIConstants.REGISTRATION_TOKEN_KEY));
+            String forgotPasswordToken = intent.getStringExtra(APIConstants.FORGOT_PASSWORD_TOKEN);
+            String urlID =  APIConstants.RESEND_OTP_URL;
+
+            if (forgotPasswordToken != null) {
+                data.put(APIConstants.FORGOT_PASSWORD_TOKEN, intent.getStringExtra(APIConstants.FORGOT_PASSWORD_TOKEN));
+                urlID = APIConstants.FORGOT_PASSWORD_RESEND_OTP_URL;
+            } else {
+                data.put(APIConstants.REGISTRATION_TOKEN_KEY, intent.getStringExtra(APIConstants.REGISTRATION_TOKEN_KEY));
+            }
 
             Response response = OkHttpHelper.makePostRequest(getApplicationContext(),
-                    OkHttpHelper.generateUrl(APIConstants.RESEND_OTP_URL), data.toString());
+                    OkHttpHelper.generateUrl(urlID), data.toString());
             final String responseBody = response.body().string();
             response.body().close();
             if (response.isSuccessful()) {
@@ -218,7 +227,32 @@ public class LoginAPIService extends IntentService {
     }
 
     private void forgotPasswordVerify(Intent intent) {
-        sendBroadcast(TODO.FORGOT_PASSWORD_VERIFY, null, 200);
+        try {
+            JSONObject data = new JSONObject();
+            data.put(APIConstants.OTP_NUMBER_KEY, intent.getStringExtra(APIConstants.OTP_NUMBER_KEY));
+            data.put(APIConstants.FORGOT_PASSWORD_TOKEN, intent.getStringExtra(APIConstants.FORGOT_PASSWORD_TOKEN));
+            data.put("new_password", intent.getStringExtra(UserProfileContract.UserTable.COLUMN_PASSWORD));
+
+            Response response = OkHttpHelper.makePostRequest(getApplicationContext(),
+                    OkHttpHelper.generateUrl(APIConstants.FORGOT_PASSWORD_VERIFY_URL), data.toString());
+            final String responseBody = response.body().string();
+            response.body().close();
+
+            if (response.isSuccessful()) {
+                JSONObject responseData = new JSONObject(responseBody);
+                LoginHelper loginHelper = new LoginHelper(this);
+                if (loginHelper.login(responseData)) {
+                    sendBroadcast(TODO.FORGOT_PASSWORD_VERIFY, "success", 200);
+                } else {
+                    sendBroadcast(TODO.FORGOT_PASSWORD_VERIFY, null, 200);
+                }
+            } else {
+                sendBroadcast(TODO.FORGOT_PASSWORD_VERIFY, responseBody, response.code());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            sendBroadcast(TODO.FORGOT_PASSWORD_VERIFY, e.toString(), 500);
+        }
     }
 
     private void sendBroadcast(int todo, @Nullable String data, int responseCode) {

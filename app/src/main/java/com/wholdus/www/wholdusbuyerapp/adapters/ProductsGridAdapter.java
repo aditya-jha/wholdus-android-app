@@ -88,7 +88,7 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         holder.mProductName.setText(product.getName());
         holder.mProductFabric.setText(product.getFabric());
-        holder.mProductPrice.setText(String.format(mContext.getString(R.string.price_per_pcs_format), product.getPrice().toString()));
+        holder.mProductPrice.setText(String.format(mContext.getString(R.string.price_per_pcs_format), String.valueOf((int) Math.ceil(product.getPrice()))));
 
         holder.mFabButton.setImageResource(product.getLikeStatus() ? R.drawable.ic_favorite_red_24dp : R.drawable.ic_favorite_border_black_24dp);
         holder.mCartButton.setImageResource(product.getCartCount() > 0 ? R.drawable.ic_local_grocery_store_black_24dp : R.drawable.ic_add_shopping_cart_black_24dp);

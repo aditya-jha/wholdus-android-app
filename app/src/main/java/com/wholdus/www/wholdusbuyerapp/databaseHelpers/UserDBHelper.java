@@ -138,7 +138,16 @@ public class UserDBHelper extends BaseDBHelper {
         user.put(UserTable.COLUMN_WHATSAPP_NUMBER, data.getString(UserTable.COLUMN_WHATSAPP_NUMBER));
         user.put(UserTable.COLUMN_GENDER, data.getString(UserTable.COLUMN_GENDER));
 
-        String businessType = data.getJSONObject("details").getJSONObject("buyer_type").getString(UserTable.COLUMN_BUSINESS_TYPE);
+        String businessType = "";
+        if (data.has("details")) {
+            JSONObject details = data.getJSONObject("details");
+            if (details.has("buyer_type")) {
+                JSONObject buyerType = details.getJSONObject("buyer_type");
+                if (buyerType.has(UserTable.COLUMN_BUSINESS_TYPE)) {
+                    businessType = buyerType.getString(UserTable.COLUMN_BUSINESS_TYPE);
+                }
+            }
+        }
         user.put(UserTable.COLUMN_BUSINESS_TYPE, businessType);
 
         int buyerID = data.getInt(UserTable.COLUMN_BUYER_ID);

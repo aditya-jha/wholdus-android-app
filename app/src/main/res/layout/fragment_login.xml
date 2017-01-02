@@ -34,21 +34,24 @@
             android:layout_height="wrap_content"
             android:text="@string/login_fragment_header" />
 
-        <TextView
+        <Button
             android:id="@+id/forgot_password_textView"
-            style="@style/AppTheme.DefaultCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="@string/forgot_password_fragment_header" />
-
-        <TextView
-            android:id="@+id/signup_text"
-            style="@style/AppTheme.DefaultCard"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:layout_height="wrap_content"
-            android:text="@string/no_account" />
+            android:layout_gravity="center_horizontal"
+            android:text="@string/forgot_password_fragment_header"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/signup_text"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="-10dp"
+            android:text="@string/no_account"
+            android:textAllCaps="false" />
 
         <ProgressBar
             android:id="@+id/progress_bar"
