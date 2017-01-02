@@ -139,10 +139,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
         Button loginSubmitButton = (Button) rootView.findViewById(R.id.login_submit_button);
         loginSubmitButton.setOnClickListener(this);
 
-        TextView signupText = (TextView) rootView.findViewById(R.id.signup_text);
+        Button signupText = (Button) rootView.findViewById(R.id.signup_text);
         signupText.setOnClickListener(this);
 
-        TextView forgotPasswordTextView = (TextView) rootView.findViewById(R.id.forgot_password_textView);
+        Button forgotPasswordTextView = (Button) rootView.findViewById(R.id.forgot_password_textView);
         forgotPasswordTextView.setOnClickListener(this);
 
         mMobileNumberWrapper = (TextInputLayout) rootView.findViewById(R.id.mobile_number_wrapper);

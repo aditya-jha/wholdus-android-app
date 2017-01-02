@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import static com.wholdus.www.wholdusbuyerapp.R.drawable.ic_expand_more_black_24dp;
+import static com.wholdus.www.wholdusbuyerapp.R.id.imageView;
+
 /**
  * Created by aditya on 16/11/16.
  */
@@ -66,15 +69,14 @@ public class NavigationDrawerAdapter extends BaseExpandableListAdapter {
         textView.setTypeface(null, Typeface.BOLD);
         textView.setText(listTitle);
 
-        ImageView imageView = (ImageView) convertView.findViewById(R.id.imageView);
         if (getChildrenCount(groupPosition) > 0) {
             if (isExpanded) {
-                imageView.setImageResource(R.drawable.ic_expand_less_black_24dp);
+                textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_expand_less_black_24dp, 0);
             } else {
-                imageView.setImageResource(R.drawable.ic_expand_more_black_24dp);
+                textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, ic_expand_more_black_24dp, 0);
             }
         } else {
-            imageView.setImageDrawable(null);
+            textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
         }
 
         return convertView;

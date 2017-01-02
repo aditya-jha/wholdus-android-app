@@ -146,7 +146,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         Fragment navDrawerFragment = new NavigationDrawerFragment();
 
         Bundle args = new Bundle();
-        args.putSerializable(getString(R.string.open_activity_key), this.getClass().getSimpleName());
+        args.putString(getString(R.string.open_activity_key), this.getClass().getSimpleName());
         navDrawerFragment.setArguments(args);
 
         getSupportFragmentManager().beginTransaction()

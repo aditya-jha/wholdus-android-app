@@ -21,11 +21,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
@@ -33,21 +34,20 @@ import com.wholdus.www.wholdusbuyerapp.interfaces.LoginSignupListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.services.LoginAPIService;
 
 /**
- * Created by aditya on 30/12/16.
+ * Created by aditya on 2/1/17.
  */
 
-public class RegisterFragment extends Fragment implements View.OnClickListener, View.OnFocusChangeListener {
+public class ForgotPasswordFragment extends Fragment implements View.OnClickListener, View.OnFocusChangeListener {
 
     private LoginSignupListenerInterface mListener;
-    private TextInputEditText mPasswordEditText, mMobileNumberEditText, mNameEditText;
-    private TextInputLayout mMobileNumberWrapper, mPasswordWrapper, mNameWrapper;
-    private ProgressBar mProgressBar;
+    private TextInputLayout mMobileNumberWrapper;
+    private TextInputEditText mMobileNumberEditText;
     private BroadcastReceiver mReceiver;
+    private ProgressBar mProgressBar;
 
     private static final int RECEIVE_SMS_REQUEST = 1;
 
-    public RegisterFragment() {
-    }
+    public ForgotPasswordFragment() {}
 
     @Override
     public void onAttach(Context context) {
@@ -55,7 +55,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         try {
             mListener = (LoginSignupListenerInterface) context;
         } catch (ClassCastException cee) {
-            Log.e(this.getClass().getSimpleName(), " must implement " + LoginSignupListenerInterface.class.getSimpleName());
+            Log.d(this.getClass().getSimpleName(), " must implement " + LoginSignupListenerInterface.class.getSimpleName());
         }
     }
 
@@ -73,39 +73,30 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_register, container, false);
+        return inflater.inflate(R.layout.fragment_forgot_password, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mMobileNumberEditText = (TextInputEditText) view.findViewById(R.id.mobile_number_edit_text);
+        mMobileNumberWrapper = (TextInputLayout) view.findViewById(R.id.mobile_number_wrapper);
 
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         mProgressBar.setVisibility(View.INVISIBLE);
 
-        Button registerButton = (Button) view.findViewById(R.id.register_submit_button);
-        registerButton.setOnClickListener(this);
+        Button back = (Button) view.findViewById(R.id.back_button);
+        back.setOnClickListener(this);
 
-        TextView loginText = (TextView) view.findViewById(R.id.login_text);
-        loginText.setOnClickListener(this);
+        Button requestOTPButton = (Button) view.findViewById(R.id.request_otp_button);
+        requestOTPButton.setOnClickListener(this);
 
-        mMobileNumberEditText = (TextInputEditText) view.findViewById(R.id.mobile_number_edit_text);
-        mMobileNumberEditText.setOnFocusChangeListener(this);
-
-        mNameEditText = (TextInputEditText) view.findViewById(R.id.name_edit_text);
-        mNameEditText.setOnFocusChangeListener(this);
-
-        mPasswordEditText = (TextInputEditText) view.findViewById(R.id.password_edit_text);
-        mPasswordEditText.setOnFocusChangeListener(this);
-
-        mMobileNumberWrapper = (TextInputLayout) view.findViewById(R.id.mobile_number_wrapper);
-        mPasswordWrapper = (TextInputLayout) view.findViewById(R.id.password_wrapper);
-        mNameWrapper = (TextInputLayout) view.findViewById(R.id.name_wrapper);
-
-        Bundle args = getArguments();
-        if (args != null) {
-            mMobileNumberEditText.setText(args.getString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, ""));
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            mMobileNumberEditText.setText(bundle.getString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER));
         }
+
+        mMobileNumberEditText.setOnFocusChangeListener(this);
     }
 
     @Override
@@ -129,13 +120,14 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onClick(View view) {
+        if (mProgressBar.getVisibility() == View.VISIBLE) return;
         final int ID = view.getId();
         switch (ID) {
-            case R.id.register_submit_button:
-                mListener.hideSoftKeyboard(view);
-                registerUser(true);
+            case R.id.request_otp_button:
+                mProgressBar.setVisibility(View.VISIBLE);
+                requestOTP(true);
                 break;
-            case R.id.login_text:
+            case R.id.back_button:
                 mListener.loginClicked(getValueFromEditText(mMobileNumberEditText));
                 break;
         }
@@ -154,10 +146,12 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case RECEIVE_SMS_REQUEST:
-                registerUser(false);
+                requestOTP(false);
+                break;
         }
     }
 
+    @Nullable
     private String getValueFromEditText(TextInputEditText editText) {
         try {
             return editText.getText().toString();
@@ -168,63 +162,53 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
 
     private void handleAPIResponse(final Intent intent) {
         mProgressBar.setVisibility(View.INVISIBLE);
-        Bundle extras = intent.getExtras();
+        if (intent.getIntExtra("TODO", -1) != TODO.FORGOT_PASSWORD) return;
 
-        if (extras.getInt("TODO", -1) != TODO.REGISTER) {
-            return;
-        }
-
-        int responseCode = extras.getInt(APIConstants.RESPONSE_CODE);
-        String data = extras.getString(APIConstants.LOGIN_API_DATA, null);
+        final int responseCode = intent.getIntExtra(APIConstants.RESPONSE_CODE, -1);
 
         switch (responseCode) {
             case 200:
-                Bundle bundle = new Bundle();
-                bundle.putString(APIConstants.REGISTRATION_TOKEN_KEY, data);
-                bundle.putString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, getValueFromEditText(mMobileNumberEditText));
-                bundle.putString(Constants.BACK_FRAGMENT, this.getClass().getSimpleName());
-                mListener.openOTPFragment(bundle);
+                final String forgotPasswordToken = intent.getStringExtra(APIConstants.LOGIN_API_DATA);
+                if (forgotPasswordToken != null) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(APIConstants.FORGOT_PASSWORD_TOKEN, forgotPasswordToken);
+                    bundle.putString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, getValueFromEditText(mMobileNumberEditText));
+                    mListener.resetPassword(bundle);
+                }
                 break;
             case 400:
-                mMobileNumberWrapper.setError(data);
+                mMobileNumberWrapper.setError(intent.getStringExtra(APIConstants.LOGIN_API_DATA));
                 break;
+            default:
+                if (HelperFunctions.isNetworkAvailable(getContext())) {
+                    Toast.makeText(getContext(), getString(R.string.api_error_message), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), getString(R.string.no_internet_access), Toast.LENGTH_SHORT).show();
+                }
         }
     }
 
-    private void registerUser(boolean requestPermission) {
-        if (mProgressBar.getVisibility() == View.VISIBLE) {
-            return;
-        }
-
+    private void requestOTP(boolean requestPermission) {
         String mobileNumber = getValueFromEditText(mMobileNumberEditText);
-        String password = getValueFromEditText(mPasswordEditText);
-        String name = getValueFromEditText(mNameEditText);
 
-        if (InputValidationHelper.isNameValid(mNameWrapper, name)
-                && InputValidationHelper.isValidMobileNumber(mMobileNumberWrapper, mobileNumber)
-                && InputValidationHelper.isValidPassword(mPasswordWrapper, password)) {
-
+        if (InputValidationHelper.isValidMobileNumber(mMobileNumberWrapper, mobileNumber)) {
             if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED || !requestPermission) {
-                registerUserAPICall();
+                requestOTPAPICall();
             } else {
                 requestPermissions(new String[]{Manifest.permission.RECEIVE_SMS}, RECEIVE_SMS_REQUEST);
             }
         }
     }
 
-    private void registerUserAPICall() {
+    private void requestOTPAPICall() {
         String mobileNumber = getValueFromEditText(mMobileNumberEditText);
-        String password = getValueFromEditText(mPasswordEditText);
-        String name = getValueFromEditText(mNameEditText);
 
-        mProgressBar.setVisibility(View.VISIBLE);
+        if (InputValidationHelper.isValidMobileNumber(mMobileNumberWrapper, mobileNumber)) {
+            Intent intent = new Intent(getContext(), LoginAPIService.class);
+            intent.putExtra("TODO", TODO.FORGOT_PASSWORD);
+            intent.putExtra(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, mobileNumber);
 
-        Intent intent = new Intent(getContext(), LoginAPIService.class);
-        intent.putExtra("TODO", TODO.REGISTER);
-        intent.putExtra(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, mobileNumber);
-        intent.putExtra(UserProfileContract.UserTable.COLUMN_NAME, name);
-        intent.putExtra(UserProfileContract.UserTable.COLUMN_PASSWORD, password);
-        intent.putExtra(UserProfileContract.UserTable.COLUMN_EMAIL, "aditya@wholdus.com");
-        getActivity().startService(intent);
+            getActivity().startService(intent);
+        }
     }
 }

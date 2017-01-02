@@ -16,9 +16,11 @@ import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
+import com.wholdus.www.wholdusbuyerapp.fragments.ForgotPasswordFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.LoginFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.OTPFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.RegisterFragment;
+import com.wholdus.www.wholdusbuyerapp.fragments.ResetPasswordFragment;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.interfaces.LoginSignupListenerInterface;
@@ -99,19 +101,21 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
     }
 
     @Override
-    public void forgotPasswordClicked(String mobileNumber) {
-        Bundle bundle = new Bundle();
-        bundle.putString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, mobileNumber);
+    public void forgotPasswordClicked(@Nullable String mobileNumber) {
+        ForgotPasswordFragment fragment = new ForgotPasswordFragment();
+        if (mobileNumber != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, mobileNumber);
+            fragment.setArguments(bundle);
+        }
+        openFragment(fragment);
     }
 
     @Override
-    public void permissionsBottomSheet(boolean show) {
-
-    }
-
-    @Override
-    public void requestReceiveSMSPermission() {
-
+    public void resetPassword(@NonNull Bundle args) {
+        ResetPasswordFragment fragment = new ResetPasswordFragment();
+        fragment.setArguments(args);
+        openFragment(fragment);
     }
 
     @Override
