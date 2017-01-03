@@ -227,6 +227,11 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     }
 
     @Override
+    public void enableProgressBar() {
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
     public void setPaymentMethod(int paymentMethod) {
         mPaymentMethod = paymentMethod;
     }
@@ -237,6 +242,10 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
             mProductsPiecesTextView.setText(String.valueOf(mCart.getProductCount()) + " products - "
                     + String.valueOf(mCart.getPieces()) + " pieces");
             mProceedButton.setEnabled(true);
+        } else {
+            mTotalTextView.setText("");
+            mProductsPiecesTextView.setText("");
+            mProceedButton.setEnabled(false);
         }
     }
 

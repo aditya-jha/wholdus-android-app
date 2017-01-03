@@ -162,18 +162,22 @@ public class CartDBHelper extends BaseDBHelper {
         mDatabaseHelper.closeDatabase();
     }
 
-    public void deleteCartItems(int subCartID, @Nullable ArrayList<Integer> excludeSubCartIDs, @Nullable ArrayList<Integer> excludeCartItemIDs) throws JSONException{
+    public void deleteCartItems(int subCartID, @Nullable ArrayList<Integer> excludeSubCartIDs, @Nullable ArrayList<Integer> excludeProductIDs) throws JSONException{
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
-        if (excludeCartItemIDs == null){
-            excludeCartItemIDs = new ArrayList<>();
+        String selection = "";
+        boolean whereApplied = false;
+        if (excludeProductIDs != null && !excludeProductIDs.isEmpty()){
+            selection = CartItemsTable.COLUMN_PRODUCT_ID + " NOT IN (" + TextUtils.join(", ", excludeProductIDs) + ")";
+            whereApplied = true;
         }
-        excludeCartItemIDs.add(0);
-        String selection = CartItemsTable.COLUMN_CART_ITEM_ID + " NOT IN (" + TextUtils.join(", ", excludeCartItemIDs) + ")";
         if (subCartID != -1){
-            selection += " AND " + CartItemsTable.COLUMN_SUBCART_ID + " = " + subCartID;
+            selection += whereApplied ? " AND " : " ";
+            selection += CartItemsTable.COLUMN_SUBCART_ID + " = " + subCartID;
+            whereApplied = true;
         }
         if(excludeSubCartIDs != null && !excludeSubCartIDs.isEmpty()){
-            selection += " AND " + CartItemsTable.COLUMN_SUBCART_ID + " NOT IN (" + TextUtils.join(", ", excludeSubCartIDs) + ")";
+            selection += whereApplied ? " AND " : " ";
+            selection +=  CartItemsTable.COLUMN_SUBCART_ID + " NOT IN (" + TextUtils.join(", ", excludeSubCartIDs) + ")";
         }
         db.delete(CartItemsTable.TABLE_NAME,selection,null);
         mPresentCartItemProductIds = null;
@@ -239,13 +243,13 @@ public class CartDBHelper extends BaseDBHelper {
         }
         if (subCartInserted && subCart.has("cart_items")){
             JSONArray cartItems = subCart.getJSONArray("cart_items");
-            ArrayList<Integer> cartItemIDs = new ArrayList<>();
+            ArrayList<Integer> productIDs = new ArrayList<>();
             for (int i = 0; i < cartItems.length(); i++) {
                 JSONObject cartItem = cartItems.getJSONObject(i);
                 saveCartItemDataFromJSONObject(cartItem);
-                cartItemIDs.add(cartItem.getInt(CartItemsTable.COLUMN_CART_ITEM_ID));
+                productIDs.add(cartItem.getJSONObject("product").getInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID));
             }
-            deleteCartItems(subCartID, null, cartItemIDs);
+            deleteCartItems(subCartID, null, productIDs);
         }
 
         mDatabaseHelper.closeDatabase();

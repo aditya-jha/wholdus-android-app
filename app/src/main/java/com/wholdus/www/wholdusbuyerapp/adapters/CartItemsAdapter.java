@@ -1,13 +1,17 @@
 package com.wholdus.www.wholdusbuyerapp.adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -18,9 +22,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.activities.ProductDetailActivity;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
+import com.wholdus.www.wholdusbuyerapp.interfaces.CartSummaryListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.models.CartItem;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
 import com.wholdus.www.wholdusbuyerapp.services.CartService;
@@ -35,10 +41,12 @@ public class CartItemsAdapter extends BaseAdapter {
 
     private Context mContext;
     private ArrayList<CartItem> mData;
+    private CartSummaryListenerInterface mListener;
 
-    public CartItemsAdapter(Context context, ArrayList<CartItem> data) {
+    public CartItemsAdapter(Context context, ArrayList<CartItem> data, CartSummaryListenerInterface listener) {
         mContext = context;
         mData = data;
+        mListener = listener;
     }
 
     @Override
@@ -69,6 +77,7 @@ public class CartItemsAdapter extends BaseAdapter {
             holder.pieces = (Spinner) convertView.findViewById(R.id.cart_item_pieces_spinner);
             holder.progressBar = (ProgressBar) convertView.findViewById(R.id.loading_indicator);
             holder.productImage = (ImageView) convertView.findViewById(R.id.product_image);
+            holder.removeButton = (ImageButton) convertView.findViewById(R.id.cart_item_remove_button);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -96,12 +105,21 @@ public class CartItemsAdapter extends BaseAdapter {
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .into(holder.productImage);
 
+        holder.productImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, ProductDetailActivity.class);
+                intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME, product.getProductID());
+                mContext.startActivity(intent);
+            }
+        });
+
         holder.pieces.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if (oldSelectionPosition != i) {
                     holder.pieces.setSelection(i);
-                    addProductToCart(i, ((int) holder.pieces.getSelectedItem()) / product.getLotSize(), product);
+                    addProductToCart(((int) holder.pieces.getSelectedItem()) / product.getLotSize(), product);
                 }
             }
 
@@ -110,10 +128,35 @@ public class CartItemsAdapter extends BaseAdapter {
             }
         });
 
+        holder.removeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case DialogInterface.BUTTON_POSITIVE:
+                                addProductToCart(0, product);
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setMessage("Do you want to remove this product from cart?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+
+            }
+        });
+
         return convertView;
     }
 
-    public void addProductToCart(int i, int lots, Product product) {
+    public void addProductToCart(int lots, Product product) {
+        mListener.enableProgressBar();
         Intent intent = new Intent(mContext, CartService.class);
         intent.putExtra("TODO", R.string.write_cart_item);
         intent.putExtra(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, product.getProductID());
@@ -134,5 +177,6 @@ public class CartItemsAdapter extends BaseAdapter {
         TextView total;
         ImageView productImage;
         ProgressBar progressBar;
+        ImageButton removeButton;
     }
 }
