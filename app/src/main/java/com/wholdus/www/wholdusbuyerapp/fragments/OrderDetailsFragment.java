@@ -117,10 +117,6 @@ public class OrderDetailsFragment extends Fragment {
         mSuborders = new ArrayList<>();
         mSuborderAdapter = new SubOrderAdapter(getContext(), mSuborders);
         mSubOrdersListView.setAdapter(mSuborderAdapter);
-        //mSubOrdersListView.setVerticalScrollBarEnabled(false);
-        //mSubOrdersListView.setScrollContainer(false);
-        //mSubOrdersListView.setClickable(false);
-        //HelperFunctions.setListViewHeightBasedOnChildren(mSubOrdersListView);
     }
 
     public void setViewForOrders(){
@@ -138,6 +134,7 @@ public class OrderDetailsFragment extends Fragment {
         mSuborders.clear();
         mSuborders.addAll(mOrder.getSuborders());
         mSuborderAdapter.notifyDataSetChanged();
+        HelperFunctions.setListViewHeightBasedOnChildren(mSubOrdersListView);
     }
 
     private class OrderLoaderManager implements LoaderManager.LoaderCallbacks<ArrayList<Order>> {
