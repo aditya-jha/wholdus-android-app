@@ -25,6 +25,7 @@ import com.wholdus.www.wholdusbuyerapp.fragments.OrderDetailsFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.OrdersFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProductGridCategoryTabFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProfileFragment;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.interfaces.OrderDetailsListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.UserAddressInterface;
@@ -161,7 +162,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
 
         Bundle args = new Bundle();
         //TODO : Check method for getting current fragment name, this has bugs
-        args.putSerializable(getString(R.string.open_fragment_key), getFragmentToOpenName(savedInstanceState));
+        args.putSerializable(Constants.OPEN_FRAGMENT_KEY, getFragmentToOpenName(savedInstanceState));
         args.putSerializable(getString(R.string.open_activity_key), this.getClass().getSimpleName());
         navDrawerFragment.setArguments(args);
 
@@ -173,12 +174,12 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
         String openFragment;
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
-            openFragment = extras.getString(getString(R.string.open_fragment_key));
+            openFragment = extras.getString(Constants.OPEN_FRAGMENT_KEY);
             if (TextUtils.isEmpty(openFragment)) {
                 openFragment = "profile";
             }
         } else {
-            openFragment = (String) savedInstanceState.getSerializable(getString(R.string.open_fragment_key));
+            openFragment = (String) savedInstanceState.getSerializable(Constants.OPEN_FRAGMENT_KEY);
         }
         return openFragment;
     }
