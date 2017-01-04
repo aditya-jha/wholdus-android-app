@@ -261,7 +261,6 @@ public class UserDBHelper extends BaseDBHelper {
         values.put(UserAddressTable.COLUMN_CITY, currAddress.getString(UserAddressTable.COLUMN_CITY));
         values.put(UserAddressTable.COLUMN_CONTACT_NUMBER, currAddress.getString(UserAddressTable.COLUMN_CONTACT_NUMBER));
         values.put(UserAddressTable.COLUMN_LANDMARK, currAddress.getString(UserAddressTable.COLUMN_LANDMARK));
-        values.put(UserAddressTable.COLUMN_PINCODE_ID, currAddress.getInt(UserAddressTable.COLUMN_PINCODE_ID));
         values.put(UserAddressTable.COLUMN_PINCODE, currAddress.getString(UserAddressTable.COLUMN_PINCODE));
         values.put(UserAddressTable.COLUMN_STATE, currAddress.getString(UserAddressTable.COLUMN_STATE));
         // TODO: Manage priority on server and client side

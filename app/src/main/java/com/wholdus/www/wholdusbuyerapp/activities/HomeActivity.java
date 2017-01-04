@@ -22,6 +22,7 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.fragments.CategoryGridFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.HomeFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 
@@ -45,6 +46,8 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         // initialize the navigation drawer
         initNavigationDrawer();
 
+
+
         openToFragment(getFragmentToOpenName(savedInstanceState), null);
     }
 
@@ -52,6 +55,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     protected void onResume() {
         super.onResume();
         mDoublePressToExit = false;
+        FilterClass.resetFilter();
     }
 
     @Override

@@ -14,7 +14,6 @@ import java.util.UUID;
 public class BuyerAddress {
     private int m_ID;
     private int mAddressID;
-    private int mPincodeID;
     private String mAddress;
     private String mCity;
     private String mState;
@@ -31,7 +30,6 @@ public class BuyerAddress {
     public BuyerAddress() {
         m_ID = -1;
         mAddressID = -1;
-        mPincodeID = -1;
         mPriority = 0;
         mSynced = 0;
         mCreatedAt = "";
@@ -42,7 +40,6 @@ public class BuyerAddress {
     public BuyerAddress(Cursor cursor) {
         m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(UserAddressTable._ID));
         mAddressID = cursor.getInt(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS_ID));
-        mPincodeID = cursor.getInt(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_PINCODE_ID));
         mAddress = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_ADDRESS));
         mCity = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_CITY));
         mState = cursor.getString(cursor.getColumnIndexOrThrow(UserAddressTable.COLUMN_STATE));
@@ -63,10 +60,6 @@ public class BuyerAddress {
 
     public int getAddressID() {
         return mAddressID;
-    }
-
-    public int getPincodeID() {
-        return mPincodeID;
     }
 
     public String getAddress() {
