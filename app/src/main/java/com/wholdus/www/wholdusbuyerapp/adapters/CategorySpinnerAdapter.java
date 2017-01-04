@@ -71,7 +71,6 @@ public class CategorySpinnerAdapter extends BaseAdapter implements SpinnerAdapte
         }
         if (color == -1) {
             dataTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-            dataTextView.setTextColor(mContext.getResources().getColor(android.R.color.white));
         } else {
             dataTextView.setBackgroundColor(mContext.getResources().getColor(color));
         }

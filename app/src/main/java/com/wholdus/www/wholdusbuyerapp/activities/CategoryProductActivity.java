@@ -83,6 +83,7 @@ public class CategoryProductActivity extends AppCompatActivity
         updateProducts();
     }
 
+
     @Override
     protected void onStart() {
         super.onStart();
