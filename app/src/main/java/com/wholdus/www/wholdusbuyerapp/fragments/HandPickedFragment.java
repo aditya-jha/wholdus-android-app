@@ -315,7 +315,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     }
 
     public void resetProducts(){
-        
+
         mNoProductsLeft.setVisibility(View.VISIBLE);
         mNoProductsLeftTextView.setVisibility(View.GONE);
         mNoProductsLeftProgressBar.setVisibility(View.VISIBLE);

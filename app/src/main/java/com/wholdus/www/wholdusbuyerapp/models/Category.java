@@ -16,7 +16,10 @@ public class Category {
     private int mCategoryID;
     private String mCategoryName;
     private String mImageURL;
-    private BuyerInterest mBuyerInterest;
+    private int mBuyerInterestID;
+    private int mBuyerInterestIsActive;
+    private int mSynced;
+
 
     public Category() {
     }
@@ -30,15 +33,9 @@ public class Category {
         mCategoryID = cursor.getInt(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_CATEGORY_ID));
         mCategoryName = cursor.getString(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_CATEGORY_NAME));
         mImageURL = cursor.getString(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_IMAGE_URL));
-        mBuyerInterest = null;
-    }
-
-    public void setBuyerInterest(BuyerInterest buyerInterest) {
-        mBuyerInterest = buyerInterest;
-    }
-
-    public BuyerInterest getBuyerInterest() {
-        return mBuyerInterest;
+        mBuyerInterestID = cursor.getInt(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_BUYER_INTEREST_ID));
+        mBuyerInterestIsActive = cursor.getInt(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE));
+        mSynced = cursor.getInt(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_SYNCED));
     }
 
     public int get_ID() {
@@ -56,6 +53,12 @@ public class Category {
     public String getImageURL() {
         return mImageURL;
     }
+
+    public int getSynced(){return mSynced;}
+
+    public int getBuyerInterestID(){return mBuyerInterestID;}
+
+    public int getBuyerInterestIsActive() {return mBuyerInterestIsActive;}
 
 
     public static ArrayList<Category> getCategoryArrayList(Cursor cursor) {

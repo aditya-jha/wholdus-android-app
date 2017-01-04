@@ -52,7 +52,7 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
 
         holder.mNameTextView.setText(category.getCategoryName());
 
-        if (category.getBuyerInterest() != null) {
+        if (category.getBuyerInterestIsActive()==1) {
             holder.mFavIconImageView.setImageResource(R.drawable.ic_favorite_red_24dp);
         } else {
             holder.mFavIconImageView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
@@ -91,6 +91,7 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
 
             itemView.setOnClickListener(this);
             mFavIconImageView.setOnClickListener(this);
+            //TODO Implement adding and removing category from buyer interest
         }
 
         @Override
