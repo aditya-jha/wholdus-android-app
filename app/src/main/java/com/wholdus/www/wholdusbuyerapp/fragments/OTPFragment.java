@@ -205,11 +205,12 @@ public class OTPFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case 403:
-            case 400: {
                 Toast.makeText(getContext(), getString(R.string.token_expired), Toast.LENGTH_SHORT).show();
                 mListener.singupClicked(mMobileNumber);
                 break;
-            }
+            case 400:
+                Toast.makeText(getContext(), getString(R.string.invalid_otp_error), Toast.LENGTH_SHORT).show();
+                break;
             default:
                 if (HelperFunctions.isNetworkAvailable(getContext())) {
                     Toast.makeText(getContext(), getString(R.string.api_error_message), Toast.LENGTH_SHORT).show();
