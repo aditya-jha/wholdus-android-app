@@ -2,7 +2,7 @@
     <string name="app_name">Wholdus</string>
 
     <!-- INTRODUCTION page texts -->
-    <string name="intro_page_1">Buy best products from manufacturers and brands at factory prices</string>
+    <string name="intro_page_1">Explore latest products from manufacturers &amp; brands</string>
     <string name="intro_page_2">Get them delivered to your doorstep, hassle free</string>
     <string name="intro_page_3">Get your own online store for free</string>
     <string name="start_button">START</string>
@@ -34,7 +34,7 @@
     <string name="reset_password_title">Reset Password</string>
     <string name="invalid_otp_error">Invalid OTP</string>
     <string name="password_reset_success">Password reset successful</string>
-
+    <string name="next_button">Next</string>
     <!-- ForgotPassword Fragment -->
     <string name="forgot_password_fragment_header">Forgot Password</string>
     <string name="back_button_fragment">GO BACK</string>
