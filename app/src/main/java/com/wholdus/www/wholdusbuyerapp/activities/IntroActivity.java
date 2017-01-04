@@ -2,7 +2,6 @@ package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.animation.ArgbEvaluator;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -16,10 +15,6 @@ import android.widget.LinearLayout;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.IntroViewPagerAdapter;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
-
-import static com.wholdus.www.wholdusbuyerapp.R.color.slide_2_color;
-import static com.wholdus.www.wholdusbuyerapp.R.color.slide_3_color;
-import static com.wholdus.www.wholdusbuyerapp.R.id.colors;
 
 public class IntroActivity extends FragmentActivity {
 
@@ -64,7 +59,7 @@ public class IntroActivity extends FragmentActivity {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if(position < (TOTAL_DOTS -1) && position < (mColors.length - 1)) {
+                if (position < (TOTAL_DOTS - 1) && position < (mColors.length - 1)) {
                     mViewPager.setBackgroundColor((Integer) mArgbEvaluator.evaluate(positionOffset, mColors[position], mColors[position + 1]));
                 } else {
                     // the last page color
