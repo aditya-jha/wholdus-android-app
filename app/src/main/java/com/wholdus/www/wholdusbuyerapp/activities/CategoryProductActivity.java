@@ -101,6 +101,7 @@ public class CategoryProductActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
+        FilterClass.resetFilter();
     }
 
     @Override

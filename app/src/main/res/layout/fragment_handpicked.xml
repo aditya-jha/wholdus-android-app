@@ -137,14 +137,14 @@
             android:layout_weight="1" />
 
         <ImageButton
-            android:id="@+id/hand_picked_set_price_button"
+            android:id="@+id/hand_picked_filter_button"
             style="@style/AppTheme"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginTop="9dp"
             android:background="@drawable/circular_button_shape"
             android:contentDescription="@string/set_price_key"
-            android:src="@drawable/ic_set_price_tag_24dp" />
+            android:src="@drawable/ic_funnel_black_24dp" />
 
         <View
             android:layout_width="0dp"

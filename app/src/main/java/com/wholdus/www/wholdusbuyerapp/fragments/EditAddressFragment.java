@@ -234,7 +234,6 @@ public class EditAddressFragment extends Fragment implements LoaderManager.Loade
             address.put(UserAddressTable.COLUMN_UPDATED_AT, mBuyerAddress.getUpdatedAt());
             address.put(UserAddressTable.COLUMN_CLIENT_ID, mBuyerAddress.getClientID());
             address.put(UserAddressTable.COLUMN_PRIORITY, mBuyerAddress.getPriority());
-            address.put(UserAddressTable.COLUMN_PINCODE_ID, mBuyerAddress.getPincodeID());
 
             address.put(UserAddressTable._ID, mBuyerAddress.get_ID());
 

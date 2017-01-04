@@ -52,7 +52,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     ImageButton mLikeButton;
     ImageButton mDislikeButton;
     ImageButton mAddToCartButton;
-    ImageButton mSetStorePriceButton;
+    ImageButton mFilterButton;
     ProductSwipeDeckAdapter mProductSwipeDeckAdapter;
     LinearLayout mNoProductsLeft;
     TextView mNoProductsLeftTextView;
@@ -177,7 +177,13 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             }
         });
 
-        mSetStorePriceButton = (ImageButton) rootView.findViewById(R.id.hand_picked_set_price_button);
+        mFilterButton = (ImageButton) rootView.findViewById(R.id.hand_picked_filter_button);
+        mFilterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.openFilter(true);
+            }
+        });
         setButtonsState(false);
 
         mProductsArrayList = new ArrayList<>();
@@ -289,7 +295,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         mLikeButton.setEnabled(state);
         mDislikeButton.setEnabled(state);
         mAddToCartButton.setEnabled(state);
-        mSetStorePriceButton.setEnabled(state);
+        mFilterButton.setEnabled(state);
     }
 
     private class ProductsLoaderManager implements LoaderManager.LoaderCallbacks<ArrayList<Product>> {

@@ -32,7 +32,6 @@ public final class UserProfileContract {
 
     public static final class UserAddressTable implements BaseColumns {
         public static final String TABLE_NAME = "user_address";
-        public static final String COLUMN_PINCODE_ID = "pincodeID";
         public static final String COLUMN_ADDRESS_ID = "addressID";
         public static final String COLUMN_ADDRESS_HISTORY_ID = "address_history_ID";
         public static final String COLUMN_PRIORITY = "priority";

@@ -57,7 +57,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_USER_ADDRESS_TABLE =
             "CREATE TABLE " + UserAddressTable.TABLE_NAME + " (" +
                     UserAddressTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
-                    UserAddressTable.COLUMN_PINCODE_ID + INT_TYPE + COMMA_SEP +
                     UserAddressTable.COLUMN_ADDRESS_ID + INT_TYPE + COMMA_SEP +
                     UserAddressTable.COLUMN_ADDRESS_HISTORY_ID + INT_TYPE + COMMA_SEP +
                     UserAddressTable.COLUMN_PRIORITY + INT_TYPE + COMMA_SEP +
