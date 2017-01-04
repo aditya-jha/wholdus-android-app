@@ -14,9 +14,13 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.fragments.FilterFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.HandPickedFragment;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
+import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HandPickedListenerInterface;
 
-public class HandPickedActivity extends AppCompatActivity implements HandPickedListenerInterface {
+import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
+
+public class HandPickedActivity extends AppCompatActivity implements HandPickedListenerInterface, CategoryProductListenerInterface {
 
     private Toolbar mToolbar;
 
@@ -34,7 +38,15 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
             extras = null;
         }
 
+        FilterClass.resetFilter();
+
         openToFragment(getFragmentToOpenName(savedInstanceState), extras);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        FilterClass.resetFilter();
     }
 
     private void initToolbar(){
@@ -91,17 +103,15 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
         }
 
         fragment.setArguments(bundle);
-        String backStateName = fragment.getClass().getName();
+        String backStateName = fragment.getClass().getSimpleName();
         FragmentManager fm = getSupportFragmentManager();
+        //TODO : Put POP_BACK_STACK_INCLUSIVE in all activities
+        fm.popBackStackImmediate(backStateName, POP_BACK_STACK_INCLUSIVE);
 
-        boolean fragmentPopped = fm.popBackStackImmediate(backStateName, 0);
-
-        if (!fragmentPopped) { // fragment not in backstack create it
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.handpicked_fragment_container, fragment, fragment.getClass().getSimpleName());
-            ft.addToBackStack(backStateName);
-            ft.commit();
-        }
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.handpicked_fragment_container, fragment, fragment.getClass().getSimpleName());
+        ft.addToBackStack(backStateName);
+        ft.commit();
 
     }
 
@@ -109,6 +119,26 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
         Intent intent = new Intent(this, ProductDetailActivity.class);
         intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME, productID);
         startActivity(intent);
+    }
+
+    @Override
+    public void openFilter(boolean open) {
+        if (open) {
+            openToFragment("filter", null);
+        } else {
+            onBackPressed();
+        }
+    }
+
+    @Override
+    public void sortClicked() {
+    }
+
+    @Override
+    public void applyFilter() {
+        onBackPressed();
+        //TODO if open directly or clear from back stack first
+        openToFragment("handpicked", null);
     }
 
 }
