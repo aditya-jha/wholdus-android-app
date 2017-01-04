@@ -156,6 +156,7 @@
     <string name="dislike_key">Dislike</string>
     <string name="set_price_key">Set Price</string>
     <string name="no_products_left">Return in some time for more products</string>
+    <string name="filter_no_products">No products for filter</string>
 
     <!-- cart dialog fragment -->
     <string name="lot_size_key">Lot Size :</string>

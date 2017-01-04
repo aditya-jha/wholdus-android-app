@@ -33,6 +33,7 @@ public final class FilterClass {
     private static HashSet<String> mColors = new HashSet<>();
     private static HashSet<String> mSizes = new HashSet<>();
     private static HashSet<String> mBrands = new HashSet<>();
+    private static boolean mFilterApplied = false;
 
 
     public static int getCategoryID() {
@@ -41,6 +42,7 @@ public final class FilterClass {
 
     public static void setCategoryID(int id) {
         mCategoryID = id;
+        mFilterApplied = true;
     }
 
     public static void resetFilter() {
@@ -51,6 +53,11 @@ public final class FilterClass {
         mSelectedSort = 0;
         mMinPrice = MIN_PRICE_DEFAULT;
         mMaxPrice = MAX_PRICE_DEFAULT;
+        mFilterApplied = false;
+    }
+
+    public static boolean isFilterApplied(){
+        return mFilterApplied;
     }
 
     public static void resetFilter(String type) {
@@ -63,6 +70,9 @@ public final class FilterClass {
             object.remove(value);
         } else {
             object.add(value);
+        }
+        if (!object.isEmpty()){
+            mFilterApplied = true;
         }
     }
 
@@ -94,6 +104,9 @@ public final class FilterClass {
     public static void setPriceFilter(int min, int max) {
         mMaxPrice = max;
         mMinPrice = min;
+        if (max != MAX_PRICE_DEFAULT || min != MIN_PRICE_DEFAULT){
+            mFilterApplied = true;
+        }
     }
 
     public static int getMinPriceFilter() {
