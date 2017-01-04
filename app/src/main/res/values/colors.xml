@@ -14,4 +14,9 @@
     <color name="list_row_selected_bg">#86d3f6</color>
 
     <color name="transparent_white">#80FFFFFF</color>
+
+    <!-- intro colors -->
+    <color name="slide_1_color">#EE5A00</color>
+    <color name="slide_2_color">#00C57A</color>
+    <color name="slide_3_color">#5ACCFA</color>
 </resources>

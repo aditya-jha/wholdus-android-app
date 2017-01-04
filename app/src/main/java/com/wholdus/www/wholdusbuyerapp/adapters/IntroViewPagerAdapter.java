@@ -30,13 +30,13 @@ public class IntroViewPagerAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                introSlideFragment.setData(R.drawable.slide_1, mContext.getString(R.string.intro_page_1), View.GONE);
+                introSlideFragment.setData(R.drawable.slide_1, mContext.getString(R.string.intro_page_1));
                 break;
             case 1:
-                introSlideFragment.setData(R.drawable.slide_2, mContext.getString(R.string.intro_page_2), View.GONE);
+                introSlideFragment.setData(R.drawable.slide_2, mContext.getString(R.string.intro_page_2));
                 break;
             case 2:
-                introSlideFragment.setData(R.drawable.slide_3, mContext.getString(R.string.intro_page_3), View.VISIBLE);
+                introSlideFragment.setData(R.drawable.slide_3, mContext.getString(R.string.intro_page_3));
                 break;
         }
         return introSlideFragment;
