@@ -16,8 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.fragments.CategoryGridFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.HomeFragment;
@@ -127,7 +125,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
                 }
             });
         } else if (!backEnabled && mToolbar.getNavigationContentDescription() != "default") {
-            mToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+            mToolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
             mToolbar.setNavigationContentDescription("default");
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
