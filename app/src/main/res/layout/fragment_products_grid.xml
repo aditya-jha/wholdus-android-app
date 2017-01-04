@@ -6,7 +6,7 @@
     <ProgressBar
         android:id="@+id/page_loader"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:layout_centerVertical="true" />
 
     <LinearLayout
@@ -27,13 +27,18 @@
                 android:layout_height="wrap_content" />
         </android.support.v4.widget.SwipeRefreshLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/toolbar_drop_shadow" />
+
         <LinearLayout style="@style/AppTheme.BottomBar">
 
             <Button
                 android:id="@+id/sort_button"
                 style="@style/AppTheme.HomeBottomButton"
-                android:drawableLeft="@drawable/ic_sort_white_24dp"
-                android:drawableStart="@drawable/ic_sort_white_24dp"
+                android:drawableLeft="@drawable/ic_sort_black_24dp"
+                android:drawableStart="@drawable/ic_sort_black_24dp"
                 android:text="@string/sort_text" />
 
             <View
@@ -44,8 +49,8 @@
             <Button
                 android:id="@+id/filter_button"
                 style="@style/AppTheme.HomeBottomButton"
-                android:drawableLeft="@drawable/ic_filter_list_white_24dp"
-                android:drawableStart="@drawable/ic_filter_list_white_24dp"
+                android:drawableLeft="@drawable/ic_filter_list_black_24dp"
+                android:drawableStart="@drawable/ic_filter_list_black_24dp"
                 android:text="@string/filter_text" />
         </LinearLayout>
     </LinearLayout>

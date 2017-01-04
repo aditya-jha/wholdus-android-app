@@ -33,11 +33,16 @@
         </LinearLayout>
     </ScrollView>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/toolbar_drop_shadow" />
+
     <LinearLayout
-        style="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        style="@style/ThemeOverlay.AppCompat.Light"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary_dark"
+        android:background="@color/primary"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -46,7 +51,7 @@
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_favorite_border_white_28dp" />
+            android:src="@drawable/ic_favorite_border_black_28dp" />
 
         <Button
             android:id="@+id/cart_button"
@@ -63,6 +68,6 @@
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_share_white_24dp" />
+            android:src="@drawable/ic_share_black_24dp" />
     </LinearLayout>
 </LinearLayout>

@@ -90,7 +90,6 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         } catch (ClassCastException cee) {
             Log.e(getClass().getSimpleName(), " must implement " + CategoryProductListenerInterface.class.getSimpleName());
         }
-        Log.d(this.getClass().getSimpleName(), "onattach");
     }
 
     @Override

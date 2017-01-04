@@ -27,6 +27,11 @@
         </LinearLayout>
     </ScrollView>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/toolbar_drop_shadow" />
+
     <LinearLayout style="@style/AppTheme.BottomBar">
 
         <Button
@@ -38,7 +43,7 @@
 
         <Button
             android:id="@+id/help"
-            style="@style/AppTheme.BorderlessButton"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="0dp"

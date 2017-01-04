@@ -137,7 +137,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
     private void modifyToolbar(String title, boolean backEnabled) {
         mToolbar.setTitle(title);
         if (backEnabled && mToolbar.getNavigationContentDescription() != "backEnabled") {
-            mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+            mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
             mToolbar.setNavigationContentDescription("backEnabled");
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
