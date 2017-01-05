@@ -14,6 +14,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserTable;
+import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
@@ -80,9 +81,6 @@ public class UserService extends IntentService {
                     JSONObject address = new JSONObject(intent.getStringExtra(UserAddressTable.TABLE_NAME));
                     updateUserAddress(todo, address);
                     break;
-                case TODO.UPDATE_BUYER_INTEREST:
-                    updateBuyerInterest(todo, intent);
-                    break;
             }
 
         } catch (JSONException e) {
@@ -103,6 +101,7 @@ public class UserService extends IntentService {
         params.put("buyer_address_details", "1");
         params.put("buyer_interest_details", "1");
         params.put("buyer_details_details", "1");
+        params.put("category_details", "1");
         String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_details_url), params);
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }
@@ -123,7 +122,7 @@ public class UserService extends IntentService {
         params.put("buyer_address_details", "1");
         params.put("buyer_interest_details", "1");
         params.put("buyer_details_details", "1");
-
+        params.put("category_details", "1");
         // send to server
         String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_details_url), params);
         volleyStringRequest(todo, Request.Method.PUT, url, data.toString());
@@ -134,22 +133,6 @@ public class UserService extends IntentService {
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }
 
-    private void updateBuyerInterest(int todo, Intent intent) throws JSONException {
-        JSONObject data = new JSONObject();
-        data.put(UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT, intent.getStringExtra(UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT));
-        data.put(UserInterestsTable.COLUMN_CATEGORY_ID, intent.getStringExtra(UserInterestsTable.COLUMN_CATEGORY_ID));
-        data.put(UserInterestsTable.COLUMN_CATEGORY_NAME, intent.getStringExtra(UserInterestsTable.COLUMN_CATEGORY_NAME));
-        data.put(UserTable.COLUMN_BUYER_ID, GlobalAccessHelper.getBuyerID(this));
-        data.put(UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT, intent.getIntExtra(UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT, FilterClass.MIN_PRICE_DEFAULT));
-        data.put(UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT, intent.getIntExtra(UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT, FilterClass.MAX_PRICE_DEFAULT));
-        data.put(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED, intent.getIntExtra(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED, 0));
-
-        UserDBHelper userDBHelper = new UserDBHelper(this);
-        userDBHelper.updateUserInterestsData(data);
-
-        String endPoint = HelperFunctions.generateUrl(APIConstants.BUYER_INTEREST_URL);
-        volleyStringRequest(todo, Request.Method.POST, endPoint, data.toString());
-    }
 
     private void onResponseHandler(final int todo, String response) {
         try {
@@ -169,9 +152,8 @@ public class UserService extends IntentService {
                     break;
                 case R.string.update_user_address:
                     saveBuyerAddressUpdateResponseToDb(data);
-                case TODO.UPDATE_BUYER_INTEREST:
-                    saveBuyerInterestResponse(data);
                     break;
+
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -180,11 +162,12 @@ public class UserService extends IntentService {
 
     private void saveResponseToDB(JSONObject response) throws JSONException {
         UserDBHelper userDBHelper = new UserDBHelper(this);
+        CatalogDBHelper catalogDBHelper = new CatalogDBHelper(this);
 
         // update userData
         boolean savedUserData = userDBHelper.updateUserData(response) > 0;
         boolean savedUserAddress = userDBHelper.updateUserAddressData(response) > 0;
-        boolean savedUserInterestData = userDBHelper.updateUserInterestsData(response.getJSONArray(UserInterestsTable.TABLE_NAME)) > 0;
+        catalogDBHelper.updateBuyerInterestsDataFromJSONArray(response.getJSONArray("buyer_interests"));
 
         sendUserDataUpdatedBroadCast(null);
     }
@@ -206,10 +189,6 @@ public class UserService extends IntentService {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
-    private void saveBuyerInterestResponse(JSONObject response) throws JSONException {
-        UserDBHelper userDBHelper = new UserDBHelper(this);
-        userDBHelper.updateUserInterestsData(response.getJSONObject("buyer_interest"));
-    }
 
     public void volleyStringRequest(final int todo, int method, String endPoint, final String jsonData) {
 

@@ -67,7 +67,7 @@ public class ProductLoader extends AbstractLoader<Product> {
 
         product.setSeller(cursor);
 
-        cursor = catalogDBHelper.getCategoryData(product.getCategoryID(), 1, null);
+        cursor = catalogDBHelper.getCategoryData(product.getCategoryID(), -1, null,1,-1,-1, null);
         cursor.moveToFirst();
 
         product.setCategory(cursor);

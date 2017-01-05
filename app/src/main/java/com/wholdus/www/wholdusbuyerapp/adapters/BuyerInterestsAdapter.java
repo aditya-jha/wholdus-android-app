@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
-import com.wholdus.www.wholdusbuyerapp.models.BuyerInterest;
+import com.wholdus.www.wholdusbuyerapp.models.Category;
 
 import java.util.ArrayList;
 
@@ -20,9 +20,9 @@ import java.util.ArrayList;
 public class BuyerInterestsAdapter extends BaseAdapter {
 
     private Context mContext;
-    private ArrayList<BuyerInterest> mData;
+    private ArrayList<Category> mData;
 
-    public BuyerInterestsAdapter(Context context, ArrayList<BuyerInterest> interests) {
+    public BuyerInterestsAdapter(Context context, ArrayList<Category> interests) {
         mContext = context;
         mData = interests;
     }
@@ -48,21 +48,9 @@ public class BuyerInterestsAdapter extends BaseAdapter {
             view = LayoutInflater.from(mContext).inflate(R.layout.list_item_buyer_interest, viewGroup, false);
         }
         TextView categoryName = (TextView) view.findViewById(R.id.category_name);
-        TextView priceRange = (TextView) view.findViewById(R.id.price_range);
-        TextView fabric = (TextView) view.findViewById(R.id.fabric);
 
-        BuyerInterest interest = mData.get(i);
-
-        categoryName.setText(interest.getCategoryName());
-        String priceText = String.valueOf((int)Math.ceil(interest.getMinPricePerUnit())) + "-" + String.valueOf((int)Math.ceil(interest.getMinPricePerUnit()));
-        priceRange.setText(priceText);
-
-        if (TextUtils.isEmpty(interest.getFabricFilter())) {
-            fabric.setText(mContext.getString(R.string.no_fabric_filter_text));
-        } else {
-            fabric.setText(interest.getFabricFilter());
-        }
-
+        Category category= mData.get(i);
+        categoryName.setText(category.getCategoryName());
         return view;
     }
 }

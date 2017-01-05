@@ -106,13 +106,14 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
         fragment.setArguments(bundle);
         String backStateName = fragment.getClass().getSimpleName();
         FragmentManager fm = getSupportFragmentManager();
-        //TODO : Put POP_BACK_STACK_INCLUSIVE in all activities
-        fm.popBackStackImmediate(backStateName, POP_BACK_STACK_INCLUSIVE);
+        boolean fragmentPopped =  fm.popBackStackImmediate(backStateName, 0);
 
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.handpicked_fragment_container, fragment, fragment.getClass().getSimpleName());
-        ft.addToBackStack(backStateName);
-        ft.commit();
+        if(!fragmentPopped) {
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.handpicked_fragment_container, fragment, fragment.getClass().getSimpleName());
+            ft.addToBackStack(backStateName);
+            ft.commit();
+        }
 
     }
 
@@ -137,9 +138,15 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
 
     @Override
     public void applyFilter() {
-        onBackPressed();
+        //onBackPressed();
         //TODO if open directly or clear from back stack first
         openToFragment("handpicked", null);
+        /*
+        HandPickedFragment fragment =(HandPickedFragment) getSupportFragmentManager().findFragmentByTag(HandPickedFragment.class.getSimpleName());
+        if (fragment != null){
+            fragment.resetProducts();
+            fragment.updateProducts();
+        }*/
     }
 
 }

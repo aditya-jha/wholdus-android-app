@@ -2,6 +2,7 @@ package com.wholdus.www.wholdusbuyerapp.services;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -13,13 +14,16 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategoriesTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.ProductsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
 import org.json.JSONException;
@@ -53,6 +57,10 @@ public class CatalogService extends IntentService {
                 int pageNumber = intent.getIntExtra("page_number", 0);
                 int itemsPerPage = intent.getIntExtra("items_per_page", 20);
                 fetchProducts(todo, pageNumber, itemsPerPage);
+                break;
+            case TODO.UPDATE_BUYER_INTEREST:
+                updateBuyerInterest(todo, intent);
+                break;
         }
     }
 
@@ -94,6 +102,9 @@ public class CatalogService extends IntentService {
                                     break;
                                 case R.integer.fetch_products:
                                     updateProducts(data);
+                                    break;
+                                case TODO.UPDATE_BUYER_INTEREST:
+                                    updateBuyerInterestFromJSON(data);
                                     break;
                             }
                         } catch (JSONException e) {
@@ -170,5 +181,64 @@ public class CatalogService extends IntentService {
             intent.putExtra(APIConstants.API_TOTAL_PAGES_KEY, response.getInt(APIConstants.API_TOTAL_PAGES_KEY));
         }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    private void updateBuyerInterest(int todo, Intent intent){
+        try {
+            JSONObject buyerInterest = new JSONObject();
+            int categoryID = intent.getIntExtra(CategoriesTable.COLUMN_CATEGORY_ID, -1);
+            int isActive = intent.getIntExtra(CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE, -1);
+            if (categoryID == -1 || isActive == -1) {
+                return;
+            }
+            buyerInterest.put(CategoriesTable.COLUMN_CATEGORY_ID, categoryID);
+            buyerInterest.put(CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE, isActive==1);
+            buyerInterest.put(CategoriesTable.COLUMN_CREATED_AT, "");
+            buyerInterest.put(CategoriesTable.COLUMN_UPDATED_AT, "");
+            buyerInterest.put(CategoriesTable.COLUMN_SYNCED, 0);
+            buyerInterest.put(CategoriesTable.COLUMN_BUYER_INTEREST_ID, -1);
+
+            CatalogDBHelper catalogDBHelper = new CatalogDBHelper(this);
+            catalogDBHelper.updateBuyerInterestData(buyerInterest);
+            updateAllUnsyncedBuyerInterests();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void updateBuyerInterestFromJSON(JSONObject data){
+        try {
+            CatalogDBHelper catalogDBHelper = new CatalogDBHelper(this);
+            catalogDBHelper.updateBuyerInterestData(data.getJSONObject("buyer_interest"));
+            Intent intent = new Intent(IntentFilters.CATEGORY_DATA);
+            intent.putExtra(Constants.INSERTED_UPDATED, 1);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+    }
+
+    private void updateAllUnsyncedBuyerInterests(){
+        CatalogDBHelper catalogDBHelper = new CatalogDBHelper(this);
+        String[] columns = {CategoriesTable.COLUMN_CATEGORY_ID, CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE};
+        Cursor cursor = catalogDBHelper.getCategoryData(-1,-1,null,-1,-1,0,columns);
+        while (cursor.moveToNext()){
+            try {
+                JSONObject requestBody = new JSONObject();
+                requestBody.put(CategoriesTable.COLUMN_CATEGORY_ID,
+                        cursor.getInt(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_CATEGORY_ID)));
+                requestBody.put(CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE,
+                        cursor.getInt(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE)));
+                sendBuyerInterestDataToServer(requestBody);
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void sendBuyerInterestDataToServer(JSONObject requestBody){
+        HashMap<String, String> params = new HashMap<>();
+        String url = GlobalAccessHelper.generateUrl(APIConstants.BUYER_INTEREST_URL, params);
+        volleyStringRequest(TODO.UPDATE_BUYER_INTEREST, Request.Method.POST, url, requestBody.toString());
     }
 }

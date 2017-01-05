@@ -24,10 +24,12 @@ import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.CategoriesGridAdapter;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.decorators.GridItemDecorator;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.CategoriesGridLoader;
@@ -161,6 +163,12 @@ public class CategoryGridFragment extends Fragment implements
         final int ID = view.getId();
         switch (ID) {
             case R.id.fav_icon_image_view:
+                Category category = mCategoriesData.get(position);
+                Intent intent = new Intent(getContext(), CatalogService.class);
+                intent.putExtra("TODO", TODO.UPDATE_BUYER_INTEREST);
+                intent.putExtra(CatalogContract.CategoriesTable.COLUMN_CATEGORY_ID, category.getCategoryID());
+                intent.putExtra(CatalogContract.CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE, (category.getBuyerInterestIsActive()==1)?0:1);
+                getContext().startService(intent);
                 break;
             default:
                 // open category clicked

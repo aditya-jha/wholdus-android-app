@@ -13,14 +13,4 @@
         android:drawableEnd="@drawable/ic_mode_edit_black_24dp"
         tools:text="Kurti" />
 
-    <TextView
-        android:id="@+id/fabric"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <TextView
-        android:id="@+id/price_range"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="Rs. 100 - Rs. 2000" />
-
 </LinearLayout>

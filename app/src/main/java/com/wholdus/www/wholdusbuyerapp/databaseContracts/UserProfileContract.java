@@ -50,6 +50,7 @@ public final class UserProfileContract {
         public static final String COLUMN_UPDATED_AT = "updated_at";
     }
 
+    /*
     public static final class UserInterestsTable implements BaseColumns {
         public static final String TABLE_NAME = "buyer_interests";
         public static final String COLUMN_BUYER_INTEREST_ID = "buyerinterestID";
@@ -62,7 +63,7 @@ public final class UserProfileContract {
 
         public static final String COLUMN_CREATED_AT = "created_at";
         public static final String COLUMN_UPDATED_AT = "updated_at";
-    }
+    }*/
 
     public static final class BusinessTypesTable implements BaseColumns {
         public static final String TABLE_NAME = "business_types";

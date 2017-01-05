@@ -85,9 +85,14 @@ public class CatalogContract {
         public static final String COLUMN_URL = "url";
         public static final String COLUMN_SLUG = "slug";
         public static final String COLUMN_IMAGE_URL = "image_url";
-        public static final String COLUMN_PRODUCTS_COUNT = "product_count";
         public static final String COLUMN_CREATED_AT = "created_at";
         public static final String COLUMN_UPDATED_AT = "updated_at";
+
+        public static final String COLUMN_BUYER_INTEREST_ID = "buyerinterestID";
+        public static final String COLUMN_BUYER_INTEREST_IS_ACTIVE = "is_active";
+        public static final String COLUMN_BUYER_INTEREST_CREATED_AT = "buyer_interest_created_at";
+        public static final String COLUMN_BUYER_INTEREST_UPDATED_AT = "buyer_interest_updated_at";
+        public static final String COLUMN_SYNCED = "synced";
     }
 
     public static final class SellersTable implements BaseColumns {
