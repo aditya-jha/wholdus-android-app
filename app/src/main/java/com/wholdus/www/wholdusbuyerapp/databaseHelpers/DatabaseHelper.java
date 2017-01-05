@@ -9,7 +9,6 @@ import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract.SubCartsTa
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract.CartItemsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategorySellersTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.SellerAddressTable;
-import com.wholdus.www.wholdusbuyerapp.models.BuyerInterest;
 
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract.OrderItemsTable;
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract.OrdersTable;
@@ -19,7 +18,6 @@ import static com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.SellersTable;
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.BusinessTypesTable;
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
-import static com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserInterestsTable;
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserTable;
 
 /**
@@ -84,22 +82,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String SQL_DROP_BUSINESS_TYPES_TABLE =
             "DROP TABLE IF EXISTS " + BusinessTypesTable.TABLE_NAME;
-
-    private static final String SQL_CREATE_USER_INTERESTS_TABLE =
-            "CREATE TABLE " + UserInterestsTable.TABLE_NAME + " (" +
-                    UserInterestsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
-                    UserInterestsTable.COLUMN_BUYER_INTEREST_ID + INT_TYPE + COMMA_SEP +
-                    UserInterestsTable.COLUMN_CATEGORY_ID + INT_TYPE + COMMA_SEP +
-                    UserInterestsTable.COLUMN_CATEGORY_NAME + TEXT_TYPE + COMMA_SEP +
-                    UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT + INT_TYPE + COMMA_SEP +
-                    UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT + INT_TYPE + COMMA_SEP +
-                    UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT + TEXT_TYPE + COMMA_SEP +
-                    UserInterestsTable.COLUMN_CREATED_AT + TEXT_TYPE + COMMA_SEP +
-                    UserInterestsTable.COLUMN_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
-                    UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED + INT_TYPE + " )";
-
-    private static final String SQL_DROP_USER_INTERESTS_TABLE =
-            "DROP TABLE IF EXISTS " + UserInterestsTable.TABLE_NAME;
 
     private static final String SQL_CREATE_ORDERS_TABLE =
             "CREATE TABLE " + OrdersTable.TABLE_NAME + " (" +
@@ -251,6 +233,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     CategoriesTable.COLUMN_IMAGE_URL + TEXT_TYPE + COMMA_SEP +
                     CategoriesTable.COLUMN_CREATED_AT + TEXT_TYPE + COMMA_SEP +
                     CategoriesTable.COLUMN_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
+                    CategoriesTable.COLUMN_BUYER_INTEREST_ID + INT_TYPE + COMMA_SEP +
+                    CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE + INT_TYPE + COMMA_SEP +
+                    CategoriesTable.COLUMN_BUYER_INTEREST_CREATED_AT + TEXT_TYPE + COMMA_SEP +
+                    CategoriesTable.COLUMN_BUYER_INTEREST_UPDATED_AT + TEXT_TYPE + COMMA_SEP +
+                    CategoriesTable.COLUMN_SYNCED + INT_TYPE + COMMA_SEP +
                     CategoriesTable.COLUMN_SLUG + TEXT_TYPE + " )";
 
 
@@ -385,7 +372,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_USER_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_USER_ADDRESS_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_BUSINESS_TYPES_TABLE);
-        sqLiteDatabase.execSQL(SQL_CREATE_USER_INTERESTS_TABLE);
 
         sqLiteDatabase.execSQL(SQL_CREATE_ORDERS_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_SUBORDERS_TABLE);
@@ -408,7 +394,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_DROP_USER_TABLE);
         sqLiteDatabase.execSQL(SQL_DROP_USER_ADDRESS_TABLE);
         sqLiteDatabase.execSQL(SQL_DROP_BUSINESS_TYPES_TABLE);
-        sqLiteDatabase.execSQL(SQL_DROP_USER_INTERESTS_TABLE);
 
         sqLiteDatabase.execSQL(SQL_DROP_ORDERS_TABLE);
         sqLiteDatabase.execSQL(SQL_DROP_SUBORDERS_TABLE);

@@ -24,7 +24,7 @@ public class Buyer {
 
     private ArrayList<BuyerAddress> mBuyerAddress;
 
-    private ArrayList<BuyerInterest> mBuyerInterest;
+    private ArrayList<Category> mBuyerInterest;
 
     public Buyer() {
     }
@@ -63,7 +63,7 @@ public class Buyer {
     public void setInterestData(Cursor cursor) {
         mBuyerInterest = new ArrayList<>();
         while (cursor.moveToNext()) {
-            mBuyerInterest.add(new BuyerInterest(cursor));
+            mBuyerInterest.add(new Category(cursor));
         }
     }
 
@@ -107,7 +107,7 @@ public class Buyer {
         return mBuyerAddress;
     }
 
-    public ArrayList<BuyerInterest> getBuyerInterest() {
+    public ArrayList<Category> getBuyerInterest() {
         return mBuyerInterest;
     }
 

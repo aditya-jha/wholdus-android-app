@@ -2,6 +2,7 @@ package com.wholdus.www.wholdusbuyerapp.databaseHelpers;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
@@ -42,6 +43,7 @@ public class CatalogDBHelper extends BaseDBHelper {
     private SparseArray<String> mPresentSellerAddressIDs;
     private SparseArray<String> mPresentSellerAddressHistoryIDs;
     private SparseArray<String> mPresentCategoryIDs;
+    private SparseArray<String> mPresentBuyerInterestIDs;
 
     public static String[] BasicProductColumns = {ProductsTable._ID, ProductsTable.COLUMN_PRODUCT_ID, ProductsTable.COLUMN_SELLER_ID,
             ProductsTable.COLUMN_CATEGORY_ID, ProductsTable.COLUMN_PRICE_PER_UNIT, ProductsTable.COLUMN_LOT_SIZE, ProductsTable.COLUMN_PRICE_PER_LOT,
@@ -58,18 +60,18 @@ public class CatalogDBHelper extends BaseDBHelper {
             ProductsTable.COLUMN_PRODUCT_CREATED_AT, ProductsTable.COLUMN_PRODUCT_UPDATED_AT};
 
 
-    public Cursor getAllCategories(boolean productsCount) {
-        String countQuery = "";
-        if (productsCount) {
-            countQuery = ", (SELECT COUNT(*) FROM " + ProductsTable.TABLE_NAME + " AS P " +
-                    " WHERE C." + CategoriesTable.COLUMN_CATEGORY_ID + " = P." + ProductsTable.COLUMN_CATEGORY_ID + ") AS " +
-                    CategoriesTable.COLUMN_PRODUCTS_COUNT;
-        }
-        String query = "SELECT C.*" + countQuery + " FROM " + CategoriesTable.TABLE_NAME + " AS C";
+    public Cursor getAllCategories() {
+        String query = "SELECT *" + " FROM " + CategoriesTable.TABLE_NAME;
         return getCursor(query);
     }
 
-    public Cursor getCategoryData(int categoryID, int showOnline, @Nullable String[] columns) {
+    public Cursor getCategoryData(int categoryID,
+                                  int buyerInterestID,
+                                  @Nullable ArrayList<Integer> excludeBuyerInterestIDs,
+                                  int showOnline,
+                                  int isActive,
+                                  int synced,
+                                  @Nullable String[] columns) {
         String columnNames = getColumnNamesString(columns);
         String query = "SELECT " + columnNames + " FROM " + CategoriesTable.TABLE_NAME;
         boolean whereApplied = false;
@@ -77,8 +79,24 @@ public class CatalogDBHelper extends BaseDBHelper {
             query += " WHERE " + CategoriesTable.COLUMN_CATEGORY_ID + " = " + categoryID;
             whereApplied = true;
         }
+        if (buyerInterestID != -1) {
+            query += whereClauseHelper(whereApplied) + CategoriesTable.COLUMN_BUYER_INTEREST_ID + " = " + buyerInterestID;
+            whereApplied = true;
+        }
+        if(excludeBuyerInterestIDs != null && !excludeBuyerInterestIDs.isEmpty()){
+            query += whereClauseHelper(whereApplied) + CategoriesTable.COLUMN_BUYER_INTEREST_ID + " NOT IN (" + TextUtils.join(",", excludeBuyerInterestIDs) + " )";
+            whereApplied = true;
+        }
         if (showOnline != -1) {
             query += whereClauseHelper(whereApplied) + CategoriesTable.COLUMN_SHOW_ONLINE + " = " + showOnline;
+            whereApplied = true;
+        }
+        if (isActive != -1) {
+            query += whereClauseHelper(whereApplied) + CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE + " = " + isActive;
+            whereApplied = true;
+        }
+        if (synced != -1) {
+            query += whereClauseHelper(whereApplied) + CategoriesTable.COLUMN_SYNCED + " = " + synced;
         }
         return getCursor(query);
     }
@@ -295,7 +313,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         return buyerProductsIDs;
     }
 
-    public SparseArray<String> getPresentBuyerResponseProductIDs() {
+    private SparseArray<String> getPresentBuyerResponseProductIDs() {
         if (mPresentBuyerProductResponseIDs != null) {
             return mPresentBuyerProductResponseIDs;
         }
@@ -313,12 +331,30 @@ public class CatalogDBHelper extends BaseDBHelper {
         return buyerProductResponseIDs;
     }
 
+    private SparseArray<String> getPresentBuyerInterestIDs(){
+        if (mPresentBuyerInterestIDs != null){
+            return mPresentBuyerInterestIDs;
+        }
+        String[] columns = {CategoriesTable.COLUMN_BUYER_INTEREST_ID, CategoriesTable.COLUMN_BUYER_INTEREST_UPDATED_AT};
+        ArrayList<Integer> excludeBuyerInterestIDs = new ArrayList<>();
+        excludeBuyerInterestIDs.add(0);
+        excludeBuyerInterestIDs.add(-1);
+        Cursor cursor = getCategoryData(-1,-1,excludeBuyerInterestIDs,-1,-1,-1,columns);
+        SparseArray<String> buyerInterestIDs = new SparseArray<>();
+        while (cursor.moveToNext()){
+            buyerInterestIDs.put(cursor.getInt(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_BUYER_INTEREST_ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_BUYER_INTEREST_UPDATED_AT)));
+        }
+        mPresentBuyerInterestIDs = buyerInterestIDs;
+        return buyerInterestIDs;
+    }
+
     private SparseArray<String> getPresentCategoryIDs() {
         if (mPresentCategoryIDs != null) {
             return mPresentCategoryIDs;
         }
         String[] columns = {CategoriesTable.COLUMN_CATEGORY_ID, CategoriesTable.COLUMN_UPDATED_AT};
-        Cursor cursor = getCategoryData(-1, -1, columns);
+        Cursor cursor = getCategoryData(-1, -1, null,-1, -1,-1,columns);
         SparseArray<String> categories = new SparseArray<>();
         while (cursor.moveToNext()) {
             categories.put(cursor.getInt(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_CATEGORY_ID))
@@ -436,6 +472,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         String categoryUpdatedAtServer = category.getString(CategoriesTable.COLUMN_UPDATED_AT);
         if (categoryUpdatedAtLocal == null) { // categoryID not present
             ContentValues cv = getCategoryContentValueFromJSON(category);
+            cv.putAll(getEmptyBuyerInterestContentValues());
             db.insert(CategoriesTable.TABLE_NAME, null, cv);
             mPresentCategoryIDs.put(categoryID, categoryUpdatedAtServer);
             insertUpdated = 1;
@@ -451,8 +488,45 @@ public class CatalogDBHelper extends BaseDBHelper {
         if (category.has(CategorySellersTable.TABLE_NAME)) {
             updateCategorySellers(category.getJSONArray(CategorySellersTable.TABLE_NAME), categoryID);
         }
+        if (category.has("buyer_interest")){
+            updateBuyerInterestData(category.getJSONObject("buyer_interest"));
+        }
         mDatabaseHelper.closeDatabase();
         return insertUpdated;
+    }
+
+    public void updateBuyerInterestsDataFromJSONArray(JSONArray buyerInterests) throws JSONException{
+        for (int i = 0; i < buyerInterests.length(); i++) {
+            updateBuyerInterestData(buyerInterests.getJSONObject(i));
+        }
+    }
+
+    public void updateBuyerInterestData(JSONObject buyerInterest) throws JSONException{
+        SQLiteDatabase db = mDatabaseHelper.openDatabase();
+        int buyerInterestID = buyerInterest.getInt(CategoriesTable.COLUMN_BUYER_INTEREST_ID);
+        int categoryID = buyerInterest.getInt(CategoriesTable.COLUMN_CATEGORY_ID);
+        if (buyerInterest.has("category")){
+            saveCategoryData(buyerInterest.getJSONObject("category"));
+        }
+        if(buyerInterestID == -1){
+            ContentValues contentValues = getBuyerInterestContentValuesFromJSON(buyerInterest);
+            String selection = CategoriesTable.COLUMN_CATEGORY_ID + " = " + categoryID;
+            db.update(CategoriesTable.TABLE_NAME, contentValues, selection, null);
+        } else {
+            String buyerInterestUpdatedAtLocal = getPresentBuyerInterestIDs().get(buyerInterestID);
+            String buyerInterestUpdatedAtServer = buyerInterest.getString(CategoriesTable.COLUMN_UPDATED_AT);
+            if (buyerInterestUpdatedAtLocal == null || !buyerInterestUpdatedAtLocal.equals(buyerInterestUpdatedAtServer)){
+                ContentValues values = getBuyerInterestContentValuesFromJSON(buyerInterest);
+                String selection = CategoriesTable.COLUMN_CATEGORY_ID + " = " + categoryID + " AND (( " +
+                        CategoriesTable.COLUMN_SYNCED + " = 1) OR ( " +
+                        CategoriesTable.COLUMN_SYNCED + " = 0 AND " +
+                        CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE + " = " + values.getAsInteger(CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE) + ")) ";
+                if (db.update(CategoriesTable.TABLE_NAME, values, selection, null) > 0){
+                    mPresentBuyerInterestIDs.put(buyerInterestID, buyerInterestUpdatedAtServer);
+                }
+            }
+        }
+        mDatabaseHelper.closeDatabase();
     }
 
     public int saveProductData(JSONObject product) throws JSONException {
@@ -759,6 +833,30 @@ public class CatalogDBHelper extends BaseDBHelper {
         cv.put(CategoriesTable.COLUMN_URL, category.getString(CategoriesTable.COLUMN_URL));
 
         return cv;
+    }
+
+    private ContentValues getBuyerInterestContentValuesFromJSON(JSONObject buyerInterest) throws JSONException{
+        ContentValues values = new ContentValues();
+        values.put(CategoriesTable.COLUMN_BUYER_INTEREST_ID, buyerInterest.getInt(CategoriesTable.COLUMN_BUYER_INTEREST_ID));
+        values.put(CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE, buyerInterest.getBoolean(CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE)?1:0);
+        values.put(CategoriesTable.COLUMN_BUYER_INTEREST_CREATED_AT, buyerInterest.getString(CategoriesTable.COLUMN_CREATED_AT));
+        values.put(CategoriesTable.COLUMN_BUYER_INTEREST_UPDATED_AT, buyerInterest.getString(CategoriesTable.COLUMN_UPDATED_AT));
+        if (buyerInterest.has(CategoriesTable.COLUMN_SYNCED)) {
+            values.put(CategoriesTable.COLUMN_SYNCED, buyerInterest.getInt(CategoriesTable.COLUMN_SYNCED));
+        } else {
+            values.put(CategoriesTable.COLUMN_SYNCED, 1);
+        }
+        return values;
+    }
+
+    private ContentValues getEmptyBuyerInterestContentValues() throws JSONException{
+        ContentValues values = new ContentValues();
+        values.put(CategoriesTable.COLUMN_BUYER_INTEREST_ID, 0);
+        values.put(CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE, 0);
+        values.put(CategoriesTable.COLUMN_BUYER_INTEREST_CREATED_AT, "");
+        values.put(CategoriesTable.COLUMN_BUYER_INTEREST_UPDATED_AT, "");
+        values.put(CategoriesTable.COLUMN_SYNCED, 1);
+        return values;
     }
 
     private SparseArray<String> getCategorySellersID(int categoryID) {

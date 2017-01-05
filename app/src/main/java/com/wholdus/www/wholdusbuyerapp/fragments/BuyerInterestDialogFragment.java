@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
@@ -36,15 +37,12 @@ public class BuyerInterestDialogFragment extends DialogFragment implements View.
 
     }
 
-    public static synchronized BuyerInterestDialogFragment getInstance(int categoryID, String categoryName, int minPrice, int maxPrice) {
+    public static synchronized BuyerInterestDialogFragment getInstance(int categoryID) {
         if (mInstance == null) {
             mInstance = new BuyerInterestDialogFragment();
         }
         Bundle args = new Bundle();
-        args.putInt(UserProfileContract.UserInterestsTable.COLUMN_CATEGORY_ID, categoryID);
-        args.putString(UserProfileContract.UserInterestsTable.COLUMN_CATEGORY_NAME, categoryName);
-        args.putInt(UserProfileContract.UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT, minPrice);
-        args.putInt(UserProfileContract.UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT, maxPrice);
+        args.putInt(CatalogContract.CategoriesTable.COLUMN_CATEGORY_ID, categoryID);
 
         mInstance.setArguments(args);
         return mInstance;
@@ -69,27 +67,6 @@ public class BuyerInterestDialogFragment extends DialogFragment implements View.
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        Bundle args = getArguments();
-
-        final TextView minPriceValue = (TextView) view.findViewById(R.id.min_price_value);
-        final TextView maxPriceValue = (TextView) view.findViewById(R.id.max_price_value);
-
-        CrystalRangeSeekbar priceRangeSeekBar = (CrystalRangeSeekbar) view.findViewById(R.id.price_range);
-        priceRangeSeekBar.setMinValue(FilterClass.MIN_PRICE_DEFAULT);
-        priceRangeSeekBar.setMaxValue(FilterClass.MAX_PRICE_DEFAULT);
-        priceRangeSeekBar
-                .setMinStartValue(args.getInt(UserProfileContract.UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT, FilterClass.MIN_PRICE_DEFAULT))
-                .setMaxStartValue(args.getInt(UserProfileContract.UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT, FilterClass.MAX_PRICE_DEFAULT))
-                .apply();
-
-        priceRangeSeekBar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
-            @Override
-            public void valueChanged(Number minValue, Number maxValue) {
-                maxPriceValue.setText(maxValue.toString());
-                minPriceValue.setText(minValue.toString());
-            }
-        });
 
         Button saveButton = (Button) view.findViewById(R.id.submit_button);
         saveButton.setOnClickListener(this);
@@ -133,30 +110,20 @@ public class BuyerInterestDialogFragment extends DialogFragment implements View.
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        CrystalRangeSeekbar rangeSeekbar = (CrystalRangeSeekbar) getDialog().findViewById(R.id.price_range);
-                        final int minPrice = rangeSeekbar.getSelectedMinValue().intValue();
-                        final int maxPrice = rangeSeekbar.getSelectedMaxValue().intValue();
 
-                        final int categoryID = getArguments().getInt(UserProfileContract.UserInterestsTable.COLUMN_CATEGORY_ID);
-                        final String categoryName = getArguments().getString(UserProfileContract.UserInterestsTable.COLUMN_CATEGORY_NAME);
+                        final int categoryID = getArguments().getInt(CatalogContract.CategoriesTable.COLUMN_CATEGORY_ID);
 
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                /*
                                 Intent intent = new Intent(getContext(), UserService.class);
                                 intent.putExtra("TODO", TODO.UPDATE_BUYER_INTEREST);
-                                intent.putExtra(UserProfileContract.UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT, "");
                                 intent.putExtra(UserProfileContract.UserInterestsTable.COLUMN_CATEGORY_ID, categoryID);
-                                intent.putExtra(UserProfileContract.UserInterestsTable.COLUMN_CATEGORY_NAME, categoryName);
-                                intent.putExtra(UserProfileContract.UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT, minPrice);
-                                intent.putExtra(UserProfileContract.UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT, maxPrice);
 
-                                if (maxPrice != FilterClass.MAX_PRICE_DEFAULT && minPrice != FilterClass.MIN_PRICE_DEFAULT) {
-                                    intent.putExtra(UserProfileContract.UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED, 1);
-                                } else {
-                                    intent.putExtra(UserProfileContract.UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED, 0);
-                                }
+
                                 getContext().startService(intent);
+                                */
                             }
                         });
                         dismiss();

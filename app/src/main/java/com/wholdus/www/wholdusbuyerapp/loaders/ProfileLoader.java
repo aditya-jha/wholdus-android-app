@@ -2,6 +2,7 @@ package com.wholdus.www.wholdusbuyerapp.loaders;
 
 import android.content.Context;
 
+import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.models.Buyer;
@@ -27,6 +28,8 @@ public class ProfileLoader extends AbstractLoader<Buyer> {
 
         // fetch data from DB
         UserDBHelper userDBHelper = new UserDBHelper(getContext());
+        CatalogDBHelper catalogDBHelper = new CatalogDBHelper(getContext());
+
         Buyer buyer = new Buyer();
 
         if (mLoadProfile) {
@@ -36,7 +39,7 @@ public class ProfileLoader extends AbstractLoader<Buyer> {
             buyer.setAddressData(userDBHelper.getUserAddress(-1, -1, 0, -1, null));
         }
         if (mLoadInterest) {
-            buyer.setInterestData(userDBHelper.getUserInterests(-1, -1, null));
+            buyer.setInterestData(catalogDBHelper.getCategoryData(-1,-1,null,1,1,-1,null));
         }
 
         return buyer;

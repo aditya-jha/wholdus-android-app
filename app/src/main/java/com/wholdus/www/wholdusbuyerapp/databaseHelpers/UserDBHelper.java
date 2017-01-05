@@ -11,7 +11,6 @@ import android.util.SparseArray;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.BusinessTypesTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
-import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserInterestsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserTable;
 
 import org.json.JSONArray;
@@ -67,17 +66,6 @@ public class UserDBHelper extends BaseDBHelper {
         return getCursor(query);
     }
 
-    public Cursor getUserInterests(int categoryID, int _ID, @Nullable String[] columns) {
-        String columnNames = getColumnNamesString(columns);
-        String query = "SELECT " + columnNames + " FROM " + UserInterestsTable.TABLE_NAME;
-        if (categoryID != -1) {
-            query += " WHERE " + UserInterestsTable.COLUMN_CATEGORY_ID + "=" + categoryID;
-        } else if (_ID != -1) {
-            query += " WHERE " + UserInterestsTable._ID + "=" + _ID;
-        }
-        return getCursor(query);
-    }
-
     public Cursor getBusinessTypes(@Nullable String businessTypeID) {
         String query = "SELECT * FROM " + BusinessTypesTable.TABLE_NAME;
         if (businessTypeID != null) {
@@ -117,15 +105,6 @@ public class UserDBHelper extends BaseDBHelper {
         }
         mPresentBuyerAddressHistoryIDs = buyerAddressHistoryIDs;
         return buyerAddressHistoryIDs;
-    }
-
-    public HashSet getAllUserInterestID() {
-        Cursor cursor = getUserInterests(-1, -1, new String[]{UserInterestsTable.COLUMN_CATEGORY_ID});
-        HashSet ids = new HashSet();
-        while (cursor.moveToNext()) {
-            ids.add(cursor.getInt(0));
-        }
-        return ids;
     }
 
     public int updateUserData(JSONObject data) throws JSONException {
@@ -302,60 +281,4 @@ public class UserDBHelper extends BaseDBHelper {
         return businessTypes.length();
     }
 
-    public int updateUserInterestsData(JSONObject interest) throws JSONException {
-        SQLiteDatabase db = mDatabaseHelper.openDatabase();
-
-        ContentValues values = new ContentValues();
-
-        int buyerInterestID = -1;
-        if (interest.has(UserInterestsTable.COLUMN_BUYER_INTEREST_ID)) {
-            buyerInterestID = interest.getInt(UserInterestsTable.COLUMN_BUYER_INTEREST_ID);
-        }
-        values.put(UserInterestsTable.COLUMN_BUYER_INTEREST_ID, buyerInterestID);
-        values.put(UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT, interest.getString(UserInterestsTable.COLUMN_MIN_PRICE_PER_UNIT));
-        values.put(UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT, interest.getString(UserInterestsTable.COLUMN_MAX_PRICE_PER_UNIT));
-        values.put(UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT, interest.getString(UserInterestsTable.COLUMN_FABRIC_FILTER_TEXT));
-        values.put(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED, interest.getBoolean(UserInterestsTable.COLUMN_PRICE_FILTER_APPLIED)?1:0);
-
-        int categoryID;
-        if (interest.has("category")) {
-            JSONObject category = interest.getJSONObject("category");
-            categoryID = category.getInt(UserInterestsTable.COLUMN_CATEGORY_ID);
-            values.put(UserInterestsTable.COLUMN_CATEGORY_NAME, category.getString(UserInterestsTable.COLUMN_CATEGORY_NAME));
-        } else {
-            categoryID = interest.getInt(UserInterestsTable.COLUMN_CATEGORY_ID);
-            values.put(UserInterestsTable.COLUMN_CATEGORY_NAME, interest.getString(UserInterestsTable.COLUMN_CATEGORY_NAME));
-        }
-        values.put(UserInterestsTable.COLUMN_CATEGORY_ID, categoryID);
-
-        if (getUserInterests(categoryID, -1, null).getCount() == 0) { // insert
-            db.insert(UserInterestsTable.TABLE_NAME, null, values);
-        } else {
-            String selection = UserInterestsTable.COLUMN_CATEGORY_ID + "=" + categoryID;
-            db.update(UserInterestsTable.TABLE_NAME, values, selection, null);
-        }
-        mDatabaseHelper.closeDatabase();
-        return 1;
-    }
-
-    public int updateUserInterestsData(JSONArray interests) throws JSONException {
-        SQLiteDatabase db = mDatabaseHelper.openDatabase();
-
-        try {
-            db.beginTransaction();
-
-            for (int i = 0; i < interests.length(); i++) {
-                updateUserInterestsData(interests.getJSONObject(i));
-            }
-
-            db.setTransactionSuccessful();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            db.endTransaction();
-        }
-
-        mDatabaseHelper.closeDatabase();
-        return 0;
-    }
 }
