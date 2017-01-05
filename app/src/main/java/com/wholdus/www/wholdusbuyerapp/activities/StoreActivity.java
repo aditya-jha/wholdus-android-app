@@ -52,7 +52,7 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
     public boolean onOptionsItemSelected(MenuItem item) {
         final int ID = item.getItemId();
         if (ID == R.id.action_bar_checkout) {
-            startActivity(new Intent(this, CheckoutActivity.class));
+            startActivity(new Intent(this, CartActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }

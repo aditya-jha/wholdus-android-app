@@ -29,7 +29,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
-import com.wholdus.www.wholdusbuyerapp.activities.CheckoutActivity;
+import com.wholdus.www.wholdusbuyerapp.activities.CartActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.ProductDetailActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.StoreActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductsGridAdapter;
@@ -247,7 +247,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_bar_checkout:
-                startActivity(new Intent(getContext(), CheckoutActivity.class));
+                startActivity(new Intent(getContext(), CartActivity.class));
                 break;
             case R.id.action_bar_store_home:
                 startActivity(new Intent(getContext(), StoreActivity.class));

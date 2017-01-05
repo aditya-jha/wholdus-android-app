@@ -52,9 +52,6 @@
             android:name=".activities.CategoryProductActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.CheckoutActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activities.StoreActivity"
             android:screenOrientation="portrait" />
         <activity
