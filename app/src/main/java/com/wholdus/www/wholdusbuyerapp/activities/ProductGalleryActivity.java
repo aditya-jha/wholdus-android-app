@@ -136,7 +136,7 @@ public class ProductGalleryActivity extends AppCompatActivity
         mToolbar = (Toolbar) findViewById(R.id.default_toolbar);
         setSupportActionBar(mToolbar);
 
-        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

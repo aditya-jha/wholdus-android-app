@@ -16,7 +16,6 @@ import android.widget.Toast;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.ShareIntentClass;
 
 public class StoreActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -53,7 +52,7 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
     public boolean onOptionsItemSelected(MenuItem item) {
         final int ID = item.getItemId();
         if (ID == R.id.action_bar_checkout) {
-            startActivity(new Intent(this, CheckoutActivity.class));
+            startActivity(new Intent(this, CartActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }
@@ -79,7 +78,7 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
         mToolbar.setTitle(getString(R.string.store_title));
         setSupportActionBar(mToolbar);
 
-        mToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+        mToolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
         mToolbar.setNavigationContentDescription("default");
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

@@ -54,7 +54,6 @@ public class CategoryGridFragment extends Fragment implements
     private CategoriesGridAdapter mCategoriesGridAdapter;
     private HomeListenerInterface mListener;
     private List<Category> mCategoriesData;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
     private ProgressBar mPageLoader;
     private boolean mFetchedDataFromServer, mLoaderDataLoaded;
     private ViewGroup mRootView;
@@ -92,8 +91,13 @@ public class CategoryGridFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_categories_grid, container, false);
         initReferences(mRootView);
-        getActivity().getSupportLoaderManager().initLoader(CATEGORIES_LOADER, null, this);
         return mRootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        getActivity().getSupportLoaderManager().initLoader(CATEGORIES_LOADER, null, this);
     }
 
     @Override
@@ -141,24 +145,12 @@ public class CategoryGridFragment extends Fragment implements
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Category>> loader, final ArrayList<Category> data) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                mLoaderDataLoaded = true;
-                if (data.size() > 0) {
-                    setDataToView(data);
-                    if (getActivity()!= null) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mPageLoader.setVisibility(View.GONE);
-                                mSwipeRefreshLayout.setVisibility(View.VISIBLE);
-                            }
-                        });
-                    }
-                }
-            }
-        }).start();
+        mLoaderDataLoaded = true;
+        if (data.size() > 0) {
+            setDataToView(data);
+            mPageLoader.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -185,14 +177,6 @@ public class CategoryGridFragment extends Fragment implements
     }
 
     private void initReferences(ViewGroup rootView) {
-        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getActivity().getSupportLoaderManager().initLoader(CATEGORIES_LOADER, null, CategoryGridFragment.this);
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-        });
         mPageLoader = (ProgressBar) rootView.findViewById(R.id.page_loader);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.categories_recycler_view);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);

@@ -14,6 +14,7 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.fragments.FilterFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.HandPickedFragment;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HandPickedListenerInterface;
@@ -57,7 +58,7 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
     @Override
     public void fragmentCreated(String title) {
         mToolbar.setTitle(title);
-        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,9 +79,9 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
     private String getFragmentToOpenName(Bundle savedInstanceState) {
         String openFragment;
         if (savedInstanceState == null) {
-            openFragment = getIntent().getStringExtra(getString(R.string.open_fragment_key));
+            openFragment = getIntent().getStringExtra(Constants.OPEN_FRAGMENT_KEY);
         } else {
-            openFragment = (String) savedInstanceState.getSerializable(getString(R.string.open_fragment_key));
+            openFragment = (String) savedInstanceState.getSerializable(Constants.OPEN_FRAGMENT_KEY);
         }
         if (openFragment == null) {
             openFragment = "";

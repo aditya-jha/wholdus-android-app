@@ -16,12 +16,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.fragments.CategoryGridFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.HomeFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
@@ -45,8 +44,6 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
 
         // initialize the navigation drawer
         initNavigationDrawer();
-
-
 
         openToFragment(getFragmentToOpenName(savedInstanceState), null);
     }
@@ -110,7 +107,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
             intent.putExtra(getString(R.string.selected_category_id), categoryID);
             startActivity(intent);
         } else {
-            openToFragment("categories", null);
+            openToFragment(CategoryGridFragment.class.getSimpleName(), null);
         }
     }
 
@@ -127,7 +124,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
                 }
             });
         } else if (!backEnabled && mToolbar.getNavigationContentDescription() != "default") {
-            mToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+            mToolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
             mToolbar.setNavigationContentDescription("default");
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
@@ -160,9 +157,9 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     private String getFragmentToOpenName(Bundle savedInstanceState) {
         String openFragment;
         if (savedInstanceState == null) {
-            openFragment = getIntent().getStringExtra(getString(R.string.open_fragment_key));
+            openFragment = getIntent().getStringExtra(Constants.OPEN_FRAGMENT_KEY);
         } else {
-            openFragment = (String) savedInstanceState.getSerializable(getString(R.string.open_fragment_key));
+            openFragment = (String) savedInstanceState.getSerializable(Constants.OPEN_FRAGMENT_KEY);
         }
         if (openFragment == null) {
             openFragment = "";
@@ -173,15 +170,12 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     private void openToFragment(String fragmentName, @Nullable Bundle bundle) {
         Fragment fragment;
 
-        switch (fragmentName) {
-            case "home":
-                fragment = new HomeFragment();
-                break;
-            case "categories":
-                fragment = new CategoryGridFragment();
-                break;
-            default:
-                fragment = new HomeFragment();
+        if (fragmentName.equals(HomeFragment.class.getSimpleName())) {
+            fragment = new HomeFragment();
+        } else if (fragmentName.equals(CategoryGridFragment.class.getSimpleName())) {
+            fragment = new CategoryGridFragment();
+        } else {
+            fragment = new HomeFragment();
         }
 
         fragment.setArguments(bundle);

@@ -20,7 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.integration.okhttp3.OkHttpGlideModule;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.ThumbImageAdapter;
@@ -107,7 +106,7 @@ public class ProductDetailActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_bar_checkout:
-                startActivity(new Intent(this, CheckoutActivity.class));
+                startActivity(new Intent(this, CartActivity.class));
                 break;
             case R.id.action_bar_store_home:
                 startActivity(new Intent(this, StoreActivity.class));
@@ -177,7 +176,7 @@ public class ProductDetailActivity extends AppCompatActivity
         mToolbar = (Toolbar) findViewById(R.id.default_toolbar);
         setSupportActionBar(mToolbar);
 
-        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

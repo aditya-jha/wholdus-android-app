@@ -83,6 +83,7 @@ public class CategoryProductActivity extends AppCompatActivity
         updateProducts();
     }
 
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -136,7 +137,7 @@ public class CategoryProductActivity extends AppCompatActivity
     @Override
     public void openFilter(boolean open) {
         if (open) {
-            openToFragment("filter", null);
+            openToFragment(FilterFragment.class.getSimpleName(), null);
         } else {
             onBackPressed();
         }
@@ -178,7 +179,7 @@ public class CategoryProductActivity extends AppCompatActivity
     }
 
     private void showMenuButtonInToolbar() {
-        mToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+        mToolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -206,16 +207,14 @@ public class CategoryProductActivity extends AppCompatActivity
     private void openToFragment(String fragmentName, @Nullable Bundle bundle) {
         Fragment fragment;
 
-        switch (fragmentName) {
-            case "filter":
-                mFilterFragmentActive = true;
-                showBackButtonInToolbar();
-                fragment = new FilterFragment();
-                break;
-            default:
-                mFilterFragmentActive = false;
-                showMenuButtonInToolbar();
-                fragment = new ProductsGridFragment();
+        if (fragmentName.equals(FilterFragment.class.getSimpleName())) {
+            mFilterFragmentActive = true;
+            showBackButtonInToolbar();
+            fragment = new FilterFragment();
+        } else {
+            mFilterFragmentActive = false;
+            showMenuButtonInToolbar();
+            fragment = new ProductsGridFragment();
         }
 
         fragment.setArguments(bundle);
