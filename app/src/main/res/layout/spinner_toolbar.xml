@@ -3,14 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.v7.widget.Toolbar
         android:id="@+id/spinner_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary"
+        android:layout_gravity="center_vertical"
         android:fitsSystemWindows="true"
-        android:minHeight="?android:attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.AppCompat.Light">
+        android:gravity="center_vertical"
+        android:minHeight="?actionBarSize">
 
         <Spinner
             android:id="@+id/category_spinner"
@@ -20,6 +20,6 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="2dip"
         android:background="@drawable/toolbar_drop_shadow" />
 </android.support.design.widget.AppBarLayout>
