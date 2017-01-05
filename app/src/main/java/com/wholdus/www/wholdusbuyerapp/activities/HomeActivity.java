@@ -53,6 +53,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         super.onResume();
         mDoublePressToExit = false;
         FilterClass.resetFilter();
+        FilterClass.resetCategoryFilter();
     }
 
     @Override

@@ -27,11 +27,14 @@ import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarFinalValueListen
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.FilterBrandValuesDisplayAdapter;
+import com.wholdus.www.wholdusbuyerapp.adapters.FilterCategoryValuesDisplayAdapter;
 import com.wholdus.www.wholdusbuyerapp.adapters.FilterValuesDisplayAdapter;
 import com.wholdus.www.wholdusbuyerapp.dataSource.FiltersData;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
+import com.wholdus.www.wholdusbuyerapp.loaders.CategoriesGridLoader;
 import com.wholdus.www.wholdusbuyerapp.loaders.CategorySellerLoader;
+import com.wholdus.www.wholdusbuyerapp.models.Category;
 import com.wholdus.www.wholdusbuyerapp.models.CategorySeller;
 
 import java.util.ArrayList;
@@ -51,8 +54,10 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
     private ArrayAdapter mFilterKeysAdapter;
     private FilterValuesDisplayAdapter mFilterValuesAdapter;
     private FilterBrandValuesDisplayAdapter mBrandFilterValuesAdapter;
+    private FilterCategoryValuesDisplayAdapter mCategoryFilterValuesAdapter;
     private String mSelectedFilter;
     private CategoryProductListenerInterface mListener;
+    private boolean mCategoryDisplayed = false;
 
     public FilterFragment() {
     }
@@ -77,7 +82,13 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_filter, container, false);
         setHasOptionsMenu(true);
+        Bundle args = getArguments();
+        try {
+            mCategoryDisplayed = args.getBoolean("CategoryDisplayed");
+        }
+        catch (Exception e){
 
+        }
         initReferences(rootView);
 
         return rootView;
@@ -124,6 +135,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
         switch (item.getItemId()) {
             case R.id.action_bar_clear:
                 FilterClass.resetFilter();
+                if (mCategoryDisplayed){FilterClass.resetCategoryFilter();}
                 populateValuesListView(mSelectedFilter);
                 break;
         }
@@ -176,6 +188,8 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
             case R.id.filter_values_list_view:
                 if (mSelectedFilter.equals("Brand")) {
                     mBrandFilterValuesAdapter.itemClicked(view, position);
+                } else if (mSelectedFilter.equals("Category")) {
+                    mCategoryFilterValuesAdapter.itemClicked(view, position);
                 } else {
                     mFilterValuesAdapter.itemClicked(view, position);
                 }
@@ -220,7 +234,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
             }
         });
 
-        mFilterData = FiltersData.getData();
+        mFilterData = FiltersData.getData(mCategoryDisplayed);
 
         /* TODO: better to create separate class */
         mFilterKeysAdapter = new ArrayAdapter<String>(getContext(), R.layout.list_item_filter_key, new ArrayList<>(mFilterData.keySet())) {
@@ -241,6 +255,9 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
 
         mFilterValuesAdapter = new FilterValuesDisplayAdapter(getContext(), new ArrayList<String>(), "");
         mBrandFilterValuesAdapter = new FilterBrandValuesDisplayAdapter(getContext(), new ArrayList<CategorySeller>());
+        if (mCategoryDisplayed) {
+            mCategoryFilterValuesAdapter = new FilterCategoryValuesDisplayAdapter(getContext(), new ArrayList<Category>());
+        }
         mFilterValues.setOnItemClickListener(this);
     }
 
@@ -250,10 +267,32 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
             /* TODO: implement Brand case filter loading */
             mFilterValues.setAdapter(mBrandFilterValuesAdapter);
             getActivity().getSupportLoaderManager().initLoader(1, null, this);
+        } else if (filterKey.equals("Category")){
+            mFilterValues.setAdapter(mCategoryFilterValuesAdapter);
+            getActivity().getSupportLoaderManager().initLoader(2, null, new CategoryLoaderManager());
         } else {
             mFilterValues.setAdapter(mFilterValuesAdapter);
             mFilterValuesAdapter.resetData(mFilterData.get(mSelectedFilter), mSelectedFilter);
             mFilterValuesAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private class CategoryLoaderManager implements LoaderManager.LoaderCallbacks<ArrayList<Category>> {
+
+        @Override
+        public void onLoaderReset(Loader<ArrayList<Category>> loader) {
+        }
+
+        @Override
+        public void onLoadFinished(Loader<ArrayList<Category>> loader, ArrayList<Category> data) {
+            mCategoryFilterValuesAdapter.resetData(data);
+            mCategoryFilterValuesAdapter.notifyDataSetChanged();
+        }
+
+
+        @Override
+        public Loader<ArrayList<Category>> onCreateLoader(final int id, Bundle args) {
+            return new CategoriesGridLoader(getContext());
         }
     }
 }

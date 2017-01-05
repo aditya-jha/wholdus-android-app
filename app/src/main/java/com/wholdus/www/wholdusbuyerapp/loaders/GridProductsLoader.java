@@ -47,7 +47,7 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
 
         CatalogDBHelper catalogDBHelper = new CatalogDBHelper(getContext());
 
-        HashSet<Integer> categoryID = new HashSet<>();
+        ArrayList<Integer> categoryID = new ArrayList<>();
         categoryID.add(FilterClass.getCategoryID());
 
         Cursor cursor = catalogDBHelper.getProductData(null,
