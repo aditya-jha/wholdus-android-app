@@ -72,6 +72,8 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     private RecyclerView mRecyclerView;
     private GridLayoutManager mGridLayoutManager;
     private Snackbar mSnackbar;
+    private TextView mNoProducts;
+
     private Queue<Integer> mRequestQueue;
 
     private String mFilters;
@@ -145,9 +147,10 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
             public void onRefresh() {
                 final int oldTotalPages = mTotalPages;
                 resetVariables();
+                mPageNumber = 0;
                 mTotalPages = oldTotalPages;
-                mSwipeRefreshLayout.setRefreshing(false);
                 loadData();
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         });
 
@@ -167,6 +170,8 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
             }
         });
         mRecyclerView.setLayoutManager(mGridLayoutManager);
+
+        mNoProducts = (TextView) view.findViewById(R.id.no_products);
     }
 
     @Override
@@ -420,7 +425,13 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                     showSnackbarToUpdateUI(totalPages);
                 }
             }
+        } else if (updatedInserted == -1) {
+            if (mNoProducts.getVisibility() == View.GONE) {
+                mNoProducts.setVisibility(View.VISIBLE);
+                mSwipeRefreshLayout.setVisibility(View.GONE);
+            }
         }
+
         mTotalPages = totalPages;
         if (mTotalPages == 1) {
             removeDummyObject();
@@ -440,7 +451,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     }
 
     private void removeDummyObject() {
-        if (mProducts.size() > 0) {
+        if (mProducts.size() > 0 && mProducts.get(mProducts.size()-1) == null) {
             mProducts.remove(mProducts.size() - 1);
             mAdapter.notifyItemRemoved(mProducts.size());
         }

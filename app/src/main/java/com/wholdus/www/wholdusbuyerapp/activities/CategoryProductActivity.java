@@ -104,19 +104,13 @@ public class CategoryProductActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-        FilterClass.resetFilter();
-        FilterClass.resetCategoryFilter();
-    }
-
-    @Override
-    public void onAttachFragment(android.app.Fragment fragment) {
-        super.onAttachFragment(fragment);
-        Log.d(this.getClass().getSimpleName(), fragment.getClass().getSimpleName() + " attached");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        FilterClass.resetFilter();
+        FilterClass.resetCategoryFilter();
     }
 
     @Override
