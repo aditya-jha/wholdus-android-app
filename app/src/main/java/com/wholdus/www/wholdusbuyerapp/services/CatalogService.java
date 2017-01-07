@@ -200,6 +200,9 @@ public class CatalogService extends IntentService {
 
             CatalogDBHelper catalogDBHelper = new CatalogDBHelper(this);
             catalogDBHelper.updateBuyerInterestData(buyerInterest);
+            Intent broadcastIntent = new Intent(IntentFilters.CATEGORY_DATA);
+            broadcastIntent.putExtra(Constants.INSERTED_UPDATED, 1);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
             updateAllUnsyncedBuyerInterests();
         } catch (Exception e){
             e.printStackTrace();
@@ -210,9 +213,9 @@ public class CatalogService extends IntentService {
         try {
             CatalogDBHelper catalogDBHelper = new CatalogDBHelper(this);
             catalogDBHelper.updateBuyerInterestData(data.getJSONObject("buyer_interest"));
-            Intent intent = new Intent(IntentFilters.CATEGORY_DATA);
-            intent.putExtra(Constants.INSERTED_UPDATED, 1);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+            //Intent intent = new Intent(IntentFilters.CATEGORY_DATA);
+            //intent.putExtra(Constants.INSERTED_UPDATED, 1);
+            //LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         }catch (JSONException e){
             e.printStackTrace();
         }

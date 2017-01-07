@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -25,7 +26,7 @@ public final class FilterClass {
     };
     private static final String[] mSortServerString = {"latest", "price_ascending", "price_descending"};
 
-    private static int mCategoryID;
+    private static ArrayList<Integer> mCategoryIDs= new ArrayList<>();
     private static int mMinPrice = MIN_PRICE_DEFAULT;
     private static int mMaxPrice = MAX_PRICE_DEFAULT;
     private static int mSelectedSort = 0;
@@ -37,12 +38,19 @@ public final class FilterClass {
 
 
     public static int getCategoryID() {
-        return mCategoryID;
+        if (mCategoryIDs.isEmpty()){
+            return -1;
+        } else {
+            return mCategoryIDs.get(0);
+        }
     }
 
     public static void setCategoryID(int id) {
-        mCategoryID = id;
-        mFilterApplied = true;
+        mCategoryIDs.clear();
+        if (id > 0) {
+            mCategoryIDs.add(id);
+            mFilterApplied = true;
+        }
     }
 
     public static void resetFilter() {
@@ -54,6 +62,32 @@ public final class FilterClass {
         mMinPrice = MIN_PRICE_DEFAULT;
         mMaxPrice = MAX_PRICE_DEFAULT;
         mFilterApplied = false;
+    }
+
+    public static void resetCategoryFilter(){
+        mCategoryIDs.clear();
+    }
+
+    public static void toggleCategoryID(int id) {
+        if (id <= 0){
+            return;
+        }
+        if (!mCategoryIDs.contains(id)) {
+            mCategoryIDs.add(id);
+        } else {
+            mCategoryIDs.remove((Integer) id);
+        }
+    }
+
+    public static boolean hasCategoryID(int id){
+        return mCategoryIDs.contains(id);
+    }
+
+    public static ArrayList<Integer> getCategoryIDs(){
+        if (mCategoryIDs.isEmpty()){
+            return null;
+        }
+        return mCategoryIDs;
     }
 
     public static boolean isFilterApplied(){
@@ -139,8 +173,8 @@ public final class FilterClass {
 
     public static HashMap<String, String> getFilterHashMap() {
         HashMap<String, String> params = new HashMap<>();
-        if (mCategoryID != -1) {
-            params.put("categoryID", String.valueOf(mCategoryID));
+        if (mCategoryIDs.size() != 0) {
+            params.put("categoryID", TextUtils.join(",", mCategoryIDs));
         }
         if (mBrands.size() != 0) {
             params.put("sellerID", TextUtils.join(",", mBrands));
