@@ -163,6 +163,7 @@ public class CategoryGridFragment extends Fragment implements
         final int ID = view.getId();
         switch (ID) {
             case R.id.fav_icon_image_view:
+                mPageLoader.setVisibility(View.GONE);
                 Category category = mCategoriesData.get(position);
                 Intent intent = new Intent(getContext(), CatalogService.class);
                 intent.putExtra("TODO", TODO.UPDATE_BUYER_INTEREST);
@@ -219,9 +220,10 @@ public class CategoryGridFragment extends Fragment implements
     }
 
     private void setDataToView(final List<Category> data) {
-        if (mCategoriesData.size() == 0 && data.size() != 0) {
+        if (data.size() != 0) {
+            mCategoriesData.clear();
             mCategoriesData.addAll(data);
-            mCategoriesGridAdapter.notifyItemRangeInserted(0, mCategoriesData.size());
+            mCategoriesGridAdapter.notifyDataSetChanged();
         }
     }
 

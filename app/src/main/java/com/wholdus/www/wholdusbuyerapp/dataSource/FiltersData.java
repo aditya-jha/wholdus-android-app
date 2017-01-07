@@ -11,7 +11,7 @@ import java.util.LinkedHashMap;
  */
 
 public class FiltersData {
-    public static LinkedHashMap<String, ArrayList<String>> getData() {
+    public static LinkedHashMap<String, ArrayList<String>> getData(boolean categoryDisplayed) {
         LinkedHashMap<String, ArrayList<String>> data = new LinkedHashMap<>();
 
         /* TODO: validate moving these values dynamic */
@@ -52,11 +52,16 @@ public class FiltersData {
                 "XXL",
                 "XXXL"
         };
+        if (categoryDisplayed){
+            data.put("Category", new ArrayList<String>());
+        }
 
         data.put("Fabric", new ArrayList<>(Arrays.asList(fabric)));
         data.put("Brand", new ArrayList<String>());
         data.put("Colors", new ArrayList<>(Arrays.asList(colors)));
         data.put("Sizes", new ArrayList<>(Arrays.asList(sizes)));
+
+
 
         return data;
     }

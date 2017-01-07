@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,10 @@ import com.daprlabs.aaron.swipedeck.SwipeDeck;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductSwipeDeckAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HandPickedListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
@@ -31,6 +35,7 @@ import com.wholdus.www.wholdusbuyerapp.interfaces.ProductCardListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProductsLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
 import com.wholdus.www.wholdusbuyerapp.services.BuyerProductService;
+import com.wholdus.www.wholdusbuyerapp.services.CatalogService;
 
 import java.util.ArrayList;
 
@@ -42,6 +47,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
 
     private HandPickedListenerInterface mListener;
     private final int PRODUCTS_DB_LOADER = 30;
+    private BroadcastReceiver mBuyerProductServiceResponseReceiver;
     private BroadcastReceiver mProductServiceResponseReceiver;
     private ProductsLoaderManager mProductsLoader;
     ArrayList<Product> mProductsArrayList;
@@ -61,6 +67,8 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     private int mProductBuffer = 8;
     private boolean mHasSwiped = true;
     private boolean mFirstLoad = true;
+    private int mProductsPageNumber, mTotalProductPages;
+    private final int mProductsLimit = 20;
 
     public HandPickedFragment() {
     }
@@ -91,10 +99,16 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_handpicked, container, false);
         initReferences(rootView);
+        mBuyerProductServiceResponseReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                handleBuyerProductAPIResponse();
+            }
+        };
         mProductServiceResponseReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                handleAPIResponse();
+                handleProductAPIResponse(intent);
             }
         };
         return rootView;
@@ -113,13 +127,17 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         mProductsLoader = new ProductsLoaderManager();
 
         IntentFilter intentFilter = new IntentFilter(getString(R.string.buyer_product_data_updated));
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mProductServiceResponseReceiver, intentFilter);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mBuyerProductServiceResponseReceiver, intentFilter);
+
+        IntentFilter productIntentFilter = new IntentFilter(IntentFilters.PRODUCT_DATA);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mProductServiceResponseReceiver, productIntentFilter);
+
         if (mProductsArrayList.isEmpty()) {
             updateProducts();
         }
     }
 
-    private void handleAPIResponse() {
+    private void handleBuyerProductAPIResponse() {
         if (getActivity() != null && mProductsLeft < mProductBuffer) {
             getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, mProductsLoader);
         }
@@ -174,6 +192,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             @Override
             public void onClick(View view) {
                 //resetProducts();
+                //FilterClass.setCategoryID(-1);
                 mListener.openFilter(true);
                 mListener.fragmentCreated("Filter");
             }
@@ -219,7 +238,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
 
         if (mProductsLeft < mProductBuffer) {
             getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, mProductsLoader);
-            fetchBuyerProducts();
+            updateProducts();
         }
     }
 
@@ -326,11 +345,49 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         mHasSwiped = true;
         mPosition = 0;
         mProductsLeft = 0;
+        mProductsPageNumber = 1;
+        mTotalProductPages = -1;
         setButtonsState(false);
     }
 
     public void updateProducts(){
         fetchBuyerProducts();
         getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, mProductsLoader);
+        if (FilterClass.isFilterApplied()){
+            fetchProducts();
+        }
+    }
+
+    private void fetchProducts(){
+        if (mTotalProductPages == -1 || mTotalProductPages >= mProductsPageNumber) {
+            Intent intent = new Intent(getContext(), CatalogService.class);
+            intent.putExtra("TODO", R.integer.fetch_products);
+            intent.putExtra("page_number", mProductsPageNumber);
+            intent.putExtra("items_per_page", mProductsLimit);
+            getActivity().startService(intent);
+        }
+    }
+
+    private void handleProductAPIResponse(final Intent intent){
+        Bundle extras = intent.getExtras();
+        if (extras.getString(Constants.ERROR_RESPONSE) != null) {
+            return;
+        }
+        final int pageNumber = intent.getIntExtra(APIConstants.API_PAGE_NUMBER_KEY, -1);
+        final int totalPages = intent.getIntExtra(APIConstants.API_TOTAL_PAGES_KEY, 1);
+        final int updatedInserted = intent.getIntExtra(Constants.INSERTED_UPDATED, 0);
+        Log.d(this.getClass().getSimpleName(), "page number from api: " + pageNumber);
+        Log.d(this.getClass().getSimpleName(), "total pages: " + totalPages);
+        if (updatedInserted > 0) {
+            if (mProductsPageNumber == 1 && pageNumber == 1) {
+                handleBuyerProductAPIResponse();
+            } else if (mProductsPageNumber > pageNumber){
+                handleBuyerProductAPIResponse();
+            } else if (mProductsPageNumber == pageNumber) {
+                handleBuyerProductAPIResponse();
+                mProductsPageNumber++;
+            }
+        }
+        mTotalProductPages = totalPages;
     }
 }

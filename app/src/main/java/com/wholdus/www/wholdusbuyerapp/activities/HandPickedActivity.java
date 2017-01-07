@@ -39,15 +39,14 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
             extras = null;
         }
 
-        FilterClass.resetFilter();
-
         openToFragment(getFragmentToOpenName(savedInstanceState), extras);
     }
 
     @Override
     protected void onStop() {
-        super.onStop();
         FilterClass.resetFilter();
+        FilterClass.resetCategoryFilter();
+        super.onStop();
     }
 
     private void initToolbar(){
@@ -97,6 +96,10 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
                 fragment = new HandPickedFragment();
                 break;
             case "filter":
+                if (bundle == null){
+                    bundle = new Bundle();
+                }
+                bundle.putBoolean("CategoryDisplayed", true);
                 fragment = new FilterFragment();
                 break;
             default:

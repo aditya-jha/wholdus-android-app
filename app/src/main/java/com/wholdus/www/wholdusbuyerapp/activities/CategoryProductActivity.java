@@ -61,6 +61,7 @@ public class CategoryProductActivity extends AppCompatActivity
                 FilterClass.setCategoryID((int) mCategorySpinner.getSelectedItemId());
                 if (!mFilterFragmentActive) {
                     if (oldCategoryID != FilterClass.getCategoryID()) {
+                        FilterClass.resetFilter();
                         updateProducts();
                     }
                 }
@@ -103,6 +104,7 @@ public class CategoryProductActivity extends AppCompatActivity
     protected void onStop() {
         super.onStop();
         FilterClass.resetFilter();
+        FilterClass.resetCategoryFilter();
     }
 
     @Override
@@ -150,7 +152,8 @@ public class CategoryProductActivity extends AppCompatActivity
 
     @Override
     public void applyFilter() {
-        onBackPressed();
+        //onBackPressed();
+        openToFragment("", null);
         updateProducts();
     }
 

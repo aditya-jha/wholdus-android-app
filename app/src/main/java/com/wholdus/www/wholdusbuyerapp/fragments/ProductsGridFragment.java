@@ -315,16 +315,11 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 ShareIntentClass.shareImage(getContext(), (ImageView) view, mProducts.get(position).getName());
                 break;
             case R.id.cart_image_view:
-                if (mProducts.get(position).getCartCount() > 0) {
-                    /* TODO: go to checkout */
-
-                } else {
-                    CartDialogFragment cartDialog = new CartDialogFragment();
-                    Bundle args = new Bundle();
-                    args.putInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, mProducts.get(position).getProductID());
-                    cartDialog.setArguments(args);
-                    cartDialog.show(getFragmentManager(), cartDialog.getClass().getSimpleName());
-                }
+                CartDialogFragment cartDialog = new CartDialogFragment();
+                Bundle args = new Bundle();
+                args.putInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, mProducts.get(position).getProductID());
+                cartDialog.setArguments(args);
+                cartDialog.show(getFragmentManager(), cartDialog.getClass().getSimpleName());
                 break;
             case R.id.fav_icon_image_view:
                 GridProductModel product = mProducts.get(position);
@@ -334,9 +329,9 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 intent = new Intent(getContext(), BuyerProductService.class);
                 intent.putExtra("TODO", TODO.UPDATE_PRODUCT_RESPONSE);
                 intent.putExtra(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, product.getProductID());
-                intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONDED_FROM, 0);
+                intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONDED_FROM, 1);
                 intent.putExtra(CatalogContract.ProductsTable.COLUMN_HAS_SWIPED, false);
-                intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONSE_CODE, product.getLikeStatus() ? 1 : 0);
+                intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONSE_CODE, product.getLikeStatus() ? 1 : 2);
 
                 getContext().startService(intent);
                 break;

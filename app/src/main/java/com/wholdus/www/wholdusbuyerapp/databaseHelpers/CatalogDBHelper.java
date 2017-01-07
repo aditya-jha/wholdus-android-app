@@ -114,7 +114,7 @@ public class CatalogDBHelper extends BaseDBHelper {
                                  @Nullable ArrayList<Integer> buyerProductResponseIDs,
                                  @Nullable ArrayList<Integer> excludeBuyerProductResponseIDs,
                                  @Nullable HashSet<String> sellerIDs,
-                                 @Nullable HashSet<Integer> categoryIDs,
+                                 @Nullable ArrayList<Integer> categoryIDs,
                                  int priceGreaterThan,
                                  int priceLowerThan,
                                  @Nullable HashSet<String> fabrics,

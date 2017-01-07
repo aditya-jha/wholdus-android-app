@@ -48,7 +48,7 @@ public class HomeFragment extends Fragment {
     private ProductItemClickListener mProductItemClickListener;
     private LinearLayoutManager mProductsLayoutManager;
     private ProductsLoaderManager mProductsLoader;
-    private final int PRODUCTS_DB_LOADER = 30;
+    private final int PRODUCTS_DB_LOADER = 901;
 
     public HomeFragment() {
     }
