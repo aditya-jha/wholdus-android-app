@@ -206,4 +206,6 @@
 
     <string name="logout_loader_title">You will be missed!</string>
     <string name="logout_loader_message">Logging out&#8230;</string>
+
+    <string name="products_updated">Products Updated</string>
 </resources>

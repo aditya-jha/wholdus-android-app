@@ -12,6 +12,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
@@ -108,6 +109,12 @@ public class CategoryProductActivity extends AppCompatActivity
     }
 
     @Override
+    public void onAttachFragment(android.app.Fragment fragment) {
+        super.onAttachFragment(fragment);
+        Log.d(this.getClass().getSimpleName(), fragment.getClass().getSimpleName() + " attached");
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
     }
@@ -199,8 +206,8 @@ public class CategoryProductActivity extends AppCompatActivity
     private void updateProducts() {
         ProductsGridFragment fragment = (ProductsGridFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         if (fragment != null) {
-            fragment.refreshData();
-            fragment.updateData();
+            fragment.resetVariables();
+            fragment.loadData();
         } else {
             // fragment is not added yet
             openToFragment("", null);
