@@ -178,7 +178,7 @@ public class CategoryProductActivity extends AppCompatActivity
     }
 
     private void showBackButtonInToolbar() {
-        mToolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_white_32dp);
+        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

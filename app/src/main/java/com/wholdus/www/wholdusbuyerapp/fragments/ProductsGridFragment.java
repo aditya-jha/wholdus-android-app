@@ -118,6 +118,8 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 resetVariables();
             }
             loadData();
+        } else if (mProducts.size() > 0) {
+            mPageLoader.setVisibility(View.INVISIBLE);
         }
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.setOnLoadMoreListener(this);
@@ -174,7 +176,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
 
         // restore recycler view position
-        mRecyclerView.scrollToPosition(mRecyclerViewPosition);
+        mGridLayoutManager.scrollToPosition(mRecyclerViewPosition);
     }
 
     @Override
@@ -183,7 +185,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
 
         // save recycler view position
-        mRecyclerViewPosition = mGridLayoutManager.findFirstCompletelyVisibleItemPosition();
+        mRecyclerViewPosition = mGridLayoutManager.findFirstVisibleItemPosition();
     }
 
     @Override
