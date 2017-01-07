@@ -17,6 +17,7 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategoriesTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.ProductsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
+import com.wholdus.www.wholdusbuyerapp.fragments.ProductsGridFragment;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
@@ -74,7 +75,7 @@ public class CatalogService extends IntentService {
         params.put("product_show_online", "1");
         params.put("seller_details", "1");
         String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.product_url), params);
-        Log.d(this.getClass().getSimpleName(), "making call for page: " + pageNumber);
+        Log.d(ProductsGridFragment.class.getSimpleName(), "making call for page: " + pageNumber);
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }
 

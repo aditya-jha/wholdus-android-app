@@ -44,6 +44,7 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
         ArrayList<Integer> responseCodes = new ArrayList<>();
         responseCodes.add(0);
         responseCodes.add(1);
+        responseCodes.add(2);
 
         CatalogDBHelper catalogDBHelper = new CatalogDBHelper(getContext());
 
