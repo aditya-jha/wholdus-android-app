@@ -87,6 +87,21 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
 
                 }
                 break;
+            case "OrderDetails":
+                activityClass = AccountActivity.class;
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "orderDetails");
+                String orderID = bundle.getString("orderID", "");
+                if (orderID.equals("")){
+                    return;
+                }
+                Bundle args = new Bundle();
+                try {
+                    args.putInt("orderID", Integer.parseInt(orderID.trim()));
+                }catch (Exception e){
+                    return;
+                }
+                intent.putExtras(args);
+                break;
             default:
                 return;
         }

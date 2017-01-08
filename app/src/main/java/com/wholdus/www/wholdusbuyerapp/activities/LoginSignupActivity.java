@@ -23,7 +23,14 @@ import com.wholdus.www.wholdusbuyerapp.fragments.RegisterFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ResetPasswordFragment;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.LoginSignupListenerInterface;
+import com.wholdus.www.wholdusbuyerapp.services.BuyerProductService;
+import com.wholdus.www.wholdusbuyerapp.services.CatalogService;
+import com.wholdus.www.wholdusbuyerapp.services.OrderService;
+import com.wholdus.www.wholdusbuyerapp.services.UserService;
+
+import static java.security.AccessController.getContext;
 
 public class LoginSignupActivity extends AppCompatActivity implements LoginSignupListenerInterface {
 
@@ -121,6 +128,24 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
     @Override
     public void loginSuccess() {
         // start HomeActivity and finish this activity
+
+        Intent categoryIntent = new Intent(this, CatalogService.class);
+        categoryIntent.putExtra("TODO", R.integer.fetch_categories);
+        categoryIntent.putExtra(getString(R.string.seller_category_details), true);
+        startService(categoryIntent);
+
+        Intent userIntent = new Intent(this, UserService.class);
+        userIntent.putExtra("TODO", TODO.FETCH_USER_PROFILE);
+        startService(userIntent);
+
+        Intent buyerProductIntent = new Intent(this, BuyerProductService.class);
+        buyerProductIntent.putExtra("TODO", TODO.FETCH_BUYER_PRODUCTS);
+        startService(buyerProductIntent);
+
+        Intent orderIntent = new Intent(this, OrderService.class);
+        orderIntent.putExtra("TODO", R.string.fetch_orders);
+        startService(orderIntent);
+
         Intent intent = new Intent(this, HomeActivity.class);
         intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "home");
         startActivity(intent);

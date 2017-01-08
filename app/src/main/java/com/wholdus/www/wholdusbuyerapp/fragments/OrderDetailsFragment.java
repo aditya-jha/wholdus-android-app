@@ -149,6 +149,7 @@ public class OrderDetailsFragment extends Fragment {
                 mOrder= data.get(0);
                 setViewForOrders();
             }
+            //TODO Handle case for no order ID
         }
 
 
