@@ -15,6 +15,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.ProductsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.models.BuyerProductResponse;
@@ -51,6 +52,9 @@ public class BuyerProductService extends IntentService {
             case TODO.UPDATE_PRODUCT_RESPONSE:
                 updateProductResponseInDB(intent);
                 break;
+            case TODO.FETCH_BUYER_PRODUCTS_RESPONSE:
+                fetchBuyerProductResponse(TODO.FETCH_BUYER_PRODUCTS_RESPONSE, intent);
+                break;
         }
     }
 
@@ -65,7 +69,23 @@ public class BuyerProductService extends IntentService {
         params.put("seller_details", "1");
         params.put("items_per_page", "20");
         params.put("page_number", String.valueOf(pageNumber));
-        String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_product_url), params);
+        String url = GlobalAccessHelper.generateUrl(APIConstants.BUYER_PRODUCT_URL, params);
+        volleyStringRequest(todo, Request.Method.GET, url, null);
+    }
+
+    private void fetchBuyerProductResponse(int todo, Intent intent) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put(APIConstants.API_ITEM_PER_PAGE_KEY,
+                String.valueOf(intent.getIntExtra(APIConstants.API_ITEM_PER_PAGE_KEY, 20)));
+        params.put(APIConstants.API_PAGE_NUMBER_KEY,
+                String.valueOf(intent.getIntExtra(APIConstants.API_PAGE_NUMBER_KEY, 1)));
+        params.put(APIConstants.API_RESPONSE_CODE_KEY, intent.getStringExtra(APIConstants.API_RESPONSE_CODE_KEY));
+        params.put("product_details", "1");
+        params.put("product_details_details", "1");
+        params.put("product_image_details", "1");
+        params.put("category_details", "1");
+        params.put("seller_details", "1");
+        String url = GlobalAccessHelper.generateUrl(APIConstants.BUYER_PRODUCT_RESPONSE_URL, params);
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }
 
@@ -110,6 +130,7 @@ public class BuyerProductService extends IntentService {
         try {
             switch (todo) {
                 case TODO.FETCH_BUYER_PRODUCTS:
+                case TODO.FETCH_BUYER_PRODUCTS_RESPONSE:
                     saveBuyerProductsToDB(response);
                     break;
                 case TODO.UPDATE_PRODUCT_RESPONSE:

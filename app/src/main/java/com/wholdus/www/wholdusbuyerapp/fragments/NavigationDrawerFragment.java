@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.AccountActivity;
+import com.wholdus.www.wholdusbuyerapp.activities.CategoryProductActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HomeActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.LoginSignupActivity;
@@ -166,8 +167,10 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
                 break;
             case 4:
                 // open rejected products
-                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "rejectedProducts");
-                break;
+                Intent rejectedProductsIntent = new Intent(getContext(), CategoryProductActivity.class);
+                rejectedProductsIntent.putExtra(Constants.TYPE, Constants.REJECTED_PRODUCTS);
+                startActivity(rejectedProductsIntent);
+                return true;
             default:
                 return false;
         }

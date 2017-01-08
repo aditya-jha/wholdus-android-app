@@ -21,8 +21,12 @@ public class APIConstants {
     public static final String BUYER_INTEREST_URL = "users/buyer/buyerinterest/";
     public static final String FIREBASE_TOKEN_REGISTRATION_URL = "users/buyer/firebase/token/";
 
+    public static final String BUYER_PRODUCT_URL = "users/buyer/buyerproducts/";
+    public static final String BUYER_PRODUCT_RESPONSE_URL = "users/buyer/buyerproducts/response/";
+
     public static final String API_PAGE_NUMBER_KEY = "page_number";
     public static final String API_TOTAL_PAGES_KEY = "total_pages";
+    public static final String API_ITEM_PER_PAGE_KEY = "items_per_page";
     public static final String BUYER_LOGIN_KEY = "buyer_login";
     public static final String LOGIN_API_DATA = "login_api_data";
 
@@ -35,4 +39,5 @@ public class APIConstants {
     public static final String REGISTRATION_TOKEN_KEY = "registration_token";
     public static final String FORGOT_PASSWORD_TOKEN = "forgot_password_token";
     public static final String OTP_NUMBER_KEY = "otp_number";
+    public static final String API_RESPONSE_CODE_KEY = "responded";
 }
