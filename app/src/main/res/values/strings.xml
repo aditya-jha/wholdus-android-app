@@ -172,7 +172,7 @@
     <string name="cart_summary_order_value">Order Value :&#160;</string>
     <string name="cart_summary_shipping">Shipping :&#160;</string>
     <string name="cart_summary_no_products">You have no products in your cart</string>
-    <string name="cart_summary_continue_shopping">CONTINUE SHOPPING</string>
+    <string name="cart_summary_continue_shopping">CONTINUE BROWSING</string>
 
     <string name="cart_item_price_per_piece">Price/pc:</string>
     <string name="cart_item_pieces">Pieces:</string>

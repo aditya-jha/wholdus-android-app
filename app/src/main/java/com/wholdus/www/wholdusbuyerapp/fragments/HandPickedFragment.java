@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +50,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     private final int PRODUCTS_DB_LOADER = 30;
     private BroadcastReceiver mBuyerProductServiceResponseReceiver;
     private BroadcastReceiver mProductServiceResponseReceiver;
+    private BroadcastReceiver mSpecificProductServiceResponseReceiver;
     private ProductsLoaderManager mProductsLoader;
     ArrayList<Product> mProductsArrayList;
     ArrayList<Integer> mExcludeProductIDs;
@@ -111,6 +113,14 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
                 handleProductAPIResponse(intent);
             }
         };
+        if (mProductIDs!= null){
+            mSpecificProductServiceResponseReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    handleBuyerProductAPIResponse();
+                }
+            };
+        }
         return rootView;
     }
 
@@ -132,8 +142,42 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         IntentFilter productIntentFilter = new IntentFilter(IntentFilters.PRODUCT_DATA);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mProductServiceResponseReceiver, productIntentFilter);
 
+        if (mProductIDs != null){
+            IntentFilter specificProductIntentFilter = new IntentFilter(IntentFilters.SPECIFIC_PRODUCT_DATA);
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(mSpecificProductServiceResponseReceiver, specificProductIntentFilter);
+        }
+
         if (mProductsArrayList.isEmpty()) {
             updateProducts();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mBuyerProductServiceResponseReceiver != null) {
+            try {
+                LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mBuyerProductServiceResponseReceiver);
+            } catch (Exception e){
+
+            }
+            mBuyerProductServiceResponseReceiver = null;
+        }
+        if (mProductServiceResponseReceiver != null) {
+            try {
+                LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mProductServiceResponseReceiver);
+            } catch (Exception e){
+
+            }
+            mProductServiceResponseReceiver = null;
+        }
+        if (mSpecificProductServiceResponseReceiver != null) {
+            try {
+                LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mSpecificProductServiceResponseReceiver);
+            } catch (Exception e){
+
+            }
+            mSpecificProductServiceResponseReceiver = null;
         }
     }
 
@@ -183,6 +227,9 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             public void onClick(View view) {
                 FragmentManager fragmentManager = getFragmentManager();
                 CartDialogFragment dialogFragment = new CartDialogFragment();
+                Bundle args = new Bundle();
+                args.putInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, mProductsArrayList.get(mPosition).getProductID());
+                dialogFragment.setArguments(args);
                 dialogFragment.show(fragmentManager, dialogFragment.getClass().getSimpleName());
             }
         });
@@ -251,7 +298,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         //TODO: Add products to adapter correctly(not ones already present)
 
         if (data.size() == 0) {
-            if (!mFirstLoad && mProductsArrayList.size() == 0) {
+            if (!mFirstLoad && mProductsArrayList.size() == 0 && mProductIDs == null) {
                 setNoProductsLeftView();
             }
             if (mFirstLoad) {
@@ -324,6 +371,10 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             ArrayList<Integer> responseCodes = new ArrayList<>();
             responseCodes.add(0);
             // TODO : ?? Also add condition so that buyer product Id is not 0
+            if (mProductIDs != null){
+                responseCodes.add(1);
+                responseCodes.add(2);
+            }
             return new ProductsLoader(getContext(), mProductIDs, mExcludeProductIDs, responseCodes, null, 15);
         }
     }
@@ -356,6 +407,17 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         if (FilterClass.isFilterApplied()){
             fetchProducts();
         }
+        if (mProductIDs!= null){
+            fetchSpecificProducts();
+        }
+    }
+
+    private void fetchSpecificProducts(){
+        Intent intent = new Intent(getContext(), CatalogService.class);
+        intent.putExtra("TODO", R.integer.fetch_specific_products);
+        intent.putExtra("productIDs", TextUtils.join(",", mProductIDs));
+        intent.putExtra("items_per_page", String.valueOf(mProductIDs.size()));
+        getActivity().startService(intent);
     }
 
     private void fetchProducts(){

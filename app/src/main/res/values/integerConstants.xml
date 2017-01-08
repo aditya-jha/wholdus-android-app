@@ -5,4 +5,5 @@
 
     <integer name="fetch_categories">2</integer>
     <integer name="fetch_products">3</integer>
+    <integer name="fetch_specific_products">4</integer>
 </resources>

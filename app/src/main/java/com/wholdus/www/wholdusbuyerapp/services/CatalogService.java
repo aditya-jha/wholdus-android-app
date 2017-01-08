@@ -61,6 +61,9 @@ public class CatalogService extends IntentService {
             case TODO.UPDATE_BUYER_INTEREST:
                 updateBuyerInterest(todo, intent);
                 break;
+            case R.integer.fetch_specific_products:
+                fetchSpecificProducts(todo, intent);
+                break;
         }
     }
 
@@ -78,8 +81,21 @@ public class CatalogService extends IntentService {
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }
 
+    private void fetchSpecificProducts(int todo, Intent intent){
+        HashMap<String, String> params = new HashMap<>();
+        params.put(ProductsTable.COLUMN_PRODUCT_ID, intent.getStringExtra("productIDs"));
+        params.put("items_per_page", intent.getStringExtra("items_per_page"));
+        params.put("page_number", "1");
+        params.put("product_image_details", "1");
+        params.put("product_details_details", "1");
+        params.put("product_show_online", "1");
+        params.put("seller_details", "1");
+        String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.product_url), params);
+        volleyStringRequest(todo, Request.Method.GET, endPoint, null);
+    }
+
     private void fetchCategories(int todo, boolean categoryDetails) {
-        HashMap<String, String> params = new HashMap<>();;
+        HashMap<String, String> params = new HashMap<>();
         if (categoryDetails) {
             params.put("seller_category_details", "1");
         }
@@ -103,6 +119,9 @@ public class CatalogService extends IntentService {
                                 case R.integer.fetch_products:
                                     updateProducts(data);
                                     break;
+                                case R.integer.fetch_specific_products:
+                                    updateSpecificProducts(data);
+                                    break;
                                 case TODO.UPDATE_BUYER_INTEREST:
                                     updateBuyerInterestFromJSON(data);
                                     break;
@@ -123,6 +142,7 @@ public class CatalogService extends IntentService {
                         case R.integer.fetch_products:
                             updateProducts(null);
                             break;
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -181,6 +201,16 @@ public class CatalogService extends IntentService {
             intent.putExtra(APIConstants.API_TOTAL_PAGES_KEY, response.getInt(APIConstants.API_TOTAL_PAGES_KEY));
         }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+    private void updateSpecificProducts(JSONObject response) throws JSONException {
+
+        if (response != null) {
+            Intent intent = new Intent(IntentFilters.SPECIFIC_PRODUCT_DATA);
+            CatalogDBHelper catalogDBHelper = new CatalogDBHelper(this);
+            catalogDBHelper.saveProductsFromJSONArray(response.getJSONArray(ProductsTable.TABLE_NAME));
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        }
+
     }
 
     private void updateBuyerInterest(int todo, Intent intent){

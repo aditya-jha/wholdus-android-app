@@ -55,8 +55,9 @@
             android:name=".activities.StoreActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.HandPickedActivity"
-            android:screenOrientation="portrait" />
+            android:name=".activities.HandPickedActivity">
+            android:screenOrientation="portrait"
+        </activity>
         <activity
             android:name=".activities.ProductDetailActivity"
             android:screenOrientation="portrait"
