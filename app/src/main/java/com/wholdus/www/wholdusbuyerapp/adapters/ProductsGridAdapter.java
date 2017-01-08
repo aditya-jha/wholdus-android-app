@@ -1,6 +1,7 @@
 package com.wholdus.www.wholdusbuyerapp.adapters;
 
 import android.content.Context;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,8 +21,6 @@ import com.wholdus.www.wholdusbuyerapp.models.GridProductModel;
 
 import java.util.ArrayList;
 
-import static com.bumptech.glide.Glide.with;
-
 /**
  * Created by aditya on 15/12/16.
  */
@@ -31,14 +30,50 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private Context mContext;
     private ArrayList<GridProductModel> mData;
     private ItemClickListener mListener;
+    private OnLoadMoreListener onLoadMoreListener;
 
     private static final int PRODUCT_VIEW = 0;
     private static final int LOADER_VIEW = 1;
 
-    public ProductsGridAdapter(Context context, ArrayList<GridProductModel> products, final ItemClickListener listener) {
+    private int mVisibleThreshold = 1;
+    private int mLastVisibleItem, mTotalItemCount;
+    private boolean mLoading;
+
+    public interface OnLoadMoreListener {
+        void onLoadMore();
+    }
+
+    public void setLoaded() {
+        mLoading = false;
+    }
+
+    public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
+        this.onLoadMoreListener = onLoadMoreListener;
+    }
+
+    public ProductsGridAdapter(Context context, ArrayList<GridProductModel> products, final ItemClickListener listener, RecyclerView recyclerView) {
         mContext = context;
         mData = products;
         mListener = listener;
+
+        if (recyclerView.getLayoutManager() instanceof GridLayoutManager) {
+
+            final GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+
+                    mTotalItemCount = gridLayoutManager.getItemCount();
+                    mLastVisibleItem = gridLayoutManager.findLastVisibleItemPosition();
+                    if (!mLoading && mTotalItemCount <= (mLastVisibleItem + mVisibleThreshold)) {
+                        // End has been reached
+                        onLoadMoreListener.onLoadMore();
+                        mLoading = true;
+                    }
+                }
+            });
+        }
     }
 
     @Override
@@ -48,12 +83,7 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemViewType(int position) {
-        GridProductModel gridProductModel = mData.get(position);
-        if (gridProductModel.getName() == null) {
-            return LOADER_VIEW;
-        } else {
-            return PRODUCT_VIEW;
-        }
+        return mData.get(position) == null ? LOADER_VIEW : PRODUCT_VIEW;
     }
 
     @Override
@@ -66,7 +96,7 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 viewHolder = new ProgressViewHolder(inflater.inflate(R.layout.layout_progress_bar, parent, false));
                 break;
             default:
-                viewHolder =  new ProductViewHolder(inflater.inflate(R.layout.layout_product_grid, parent, false));
+                viewHolder = new ProductViewHolder(inflater.inflate(R.layout.layout_product_grid, parent, false));
         }
 
         return viewHolder;

@@ -31,19 +31,17 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
     };
 
     private int mOffset, mLimit;
+    private ArrayList<Integer> mResponseCodes;
 
-    public GridProductsLoader(Context context, int pageNumber, int limit) {
+    public GridProductsLoader(Context context, int pageNumber, int limit, ArrayList<Integer> responseCodes) {
         super(context);
         mLimit = limit;
         mOffset = pageNumber > 0 ? (pageNumber - 1) * mLimit : 0;
+        mResponseCodes = responseCodes;
     }
 
     @Override
     public ArrayList<GridProductModel> loadInBackground() {
-
-        ArrayList<Integer> responseCodes = new ArrayList<>();
-        responseCodes.add(0);
-        responseCodes.add(1);
 
         CatalogDBHelper catalogDBHelper = new CatalogDBHelper(getContext());
 
@@ -63,7 +61,7 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
                 FilterClass.getSelectedItems("Fabric"),
                 FilterClass.getSelectedItems("Colors"),
                 FilterClass.getSelectedItems("Sizes"),
-                responseCodes, //TODO : Put appropriate response codes
+                mResponseCodes,
                 0,
                 1,
                 1,

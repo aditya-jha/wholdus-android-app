@@ -17,6 +17,7 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategoriesTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.ProductsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
+import com.wholdus.www.wholdusbuyerapp.fragments.ProductsGridFragment;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
@@ -26,6 +27,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -77,7 +79,7 @@ public class CatalogService extends IntentService {
         params.put("product_show_online", "1");
         params.put("seller_details", "1");
         String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.product_url), params);
-        Log.d(this.getClass().getSimpleName(), "making call for page: " + pageNumber);
+        Log.d(ProductsGridFragment.class.getSimpleName(), "making call for page: " + pageNumber);
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }
 
@@ -194,9 +196,13 @@ public class CatalogService extends IntentService {
             intent.putExtra(Constants.ERROR_RESPONSE, "Error");
         } else {
             CatalogDBHelper catalogDBHelper = new CatalogDBHelper(this);
-            int updatedInserted = catalogDBHelper.saveProductsFromJSONArray(response.getJSONArray(ProductsTable.TABLE_NAME));
-
-            intent.putExtra(Constants.INSERTED_UPDATED, updatedInserted);
+            JSONArray products = response.getJSONArray(ProductsTable.TABLE_NAME);
+            if (products.length() == 0) {
+                intent.putExtra(Constants.INSERTED_UPDATED, -1);
+            } else {
+                int updatedInserted = catalogDBHelper.saveProductsFromJSONArray(products);
+                intent.putExtra(Constants.INSERTED_UPDATED, updatedInserted);
+            }
             intent.putExtra(APIConstants.API_PAGE_NUMBER_KEY, response.getInt(APIConstants.API_PAGE_NUMBER_KEY));
             intent.putExtra(APIConstants.API_TOTAL_PAGES_KEY, response.getInt(APIConstants.API_TOTAL_PAGES_KEY));
         }

@@ -2,6 +2,7 @@ package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,6 +13,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
@@ -21,6 +23,7 @@ import com.wholdus.www.wholdusbuyerapp.adapters.CategorySpinnerAdapter;
 import com.wholdus.www.wholdusbuyerapp.fragments.FilterFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProductsGridFragment;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.CategoriesGridLoader;
@@ -36,6 +39,7 @@ public class CategoryProductActivity extends AppCompatActivity
     private static final int CATEGORY_LOADER = 0;
     private Spinner mCategorySpinner;
     private boolean mFilterFragmentActive;
+    private int mType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,8 @@ public class CategoryProductActivity extends AppCompatActivity
 
         Intent intent = getIntent();
         FilterClass.setCategoryID(intent.getIntExtra(getString(R.string.selected_category_id), 1));
+        mType = intent.getIntExtra(Constants.TYPE, Constants.ALL_PRODUCTS);
+
         mFilterFragmentActive = false;
 
         // initialize the toolbar
@@ -103,13 +109,13 @@ public class CategoryProductActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-        FilterClass.resetFilter();
-        FilterClass.resetCategoryFilter();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        FilterClass.resetFilter();
+        FilterClass.resetCategoryFilter();
     }
 
     @Override
@@ -139,7 +145,7 @@ public class CategoryProductActivity extends AppCompatActivity
     @Override
     public void openFilter(boolean open) {
         if (open) {
-            openToFragment(FilterFragment.class.getSimpleName(), null);
+            openToFragment(FilterFragment.class.getSimpleName(), new Bundle());
         } else {
             onBackPressed();
         }
@@ -153,7 +159,7 @@ public class CategoryProductActivity extends AppCompatActivity
     @Override
     public void applyFilter() {
         //onBackPressed();
-        openToFragment("", null);
+        openToFragment("", new Bundle());
         updateProducts();
     }
 
@@ -171,7 +177,7 @@ public class CategoryProductActivity extends AppCompatActivity
     }
 
     private void showBackButtonInToolbar() {
-        mToolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_white_32dp);
+        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -199,15 +205,15 @@ public class CategoryProductActivity extends AppCompatActivity
     private void updateProducts() {
         ProductsGridFragment fragment = (ProductsGridFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         if (fragment != null) {
-            fragment.refreshData();
-            fragment.updateData();
+            fragment.resetVariables();
+            fragment.loadData();
         } else {
             // fragment is not added yet
-            openToFragment("", null);
+            openToFragment("", new Bundle());
         }
     }
 
-    private void openToFragment(String fragmentName, @Nullable Bundle bundle) {
+    private void openToFragment(String fragmentName, @NonNull Bundle bundle) {
         Fragment fragment;
 
         if (fragmentName.equals(FilterFragment.class.getSimpleName())) {
@@ -216,6 +222,7 @@ public class CategoryProductActivity extends AppCompatActivity
             fragment = new FilterFragment();
         } else {
             mFilterFragmentActive = false;
+            bundle.putInt(Constants.TYPE, mType);
             showMenuButtonInToolbar();
             fragment = new ProductsGridFragment();
         }

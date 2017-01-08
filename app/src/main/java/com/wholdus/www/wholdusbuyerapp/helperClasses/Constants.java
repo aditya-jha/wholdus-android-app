@@ -27,5 +27,8 @@ public final class Constants {
     public static final String OPEN_FRAGMENT_KEY = "openFragment";
     public static final String OPEN_ACTIVITY_KEY = "openActivity";
     public static final String BACK_FRAGMENT = "backFragment";
-
+    public static final String TYPE = "type";
+    public static final int REJECTED_PRODUCTS = 2;
+    public static final int FAV_PRODUCTS = 1;
+    public static final int ALL_PRODUCTS = 0;
 }

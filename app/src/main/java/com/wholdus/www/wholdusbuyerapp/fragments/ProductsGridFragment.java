@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.CartActivity;
@@ -37,7 +40,6 @@ import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.decorators.GridItemDecorator;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.EndlessRecyclerViewScrollListener;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
@@ -51,33 +53,37 @@ import com.wholdus.www.wholdusbuyerapp.services.BuyerProductService;
 import com.wholdus.www.wholdusbuyerapp.services.CatalogService;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * Created by aditya on 8/12/16.
  */
 
 public class ProductsGridFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<GridProductModel>>,
-        View.OnClickListener, ItemClickListener {
+        View.OnClickListener, ItemClickListener, ProductsGridAdapter.OnLoadMoreListener, SwipeRefreshLayout.OnRefreshListener {
 
     private CategoryProductListenerInterface mListener;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private String mFilters;
     private ArrayList<GridProductModel> mProducts;
-    private ProductsGridAdapter mProductsGridAdapter;
-    private RecyclerView mProductsRecyclerView;
-    private EndlessRecyclerViewScrollListener mOnScrollListener;
+    private ProductsGridAdapter mAdapter;
     private BroadcastReceiver mReceiver;
-    private GridLayoutManager mGridLayoutManager;
     private ProgressBar mPageLoader;
     private LinearLayout mPageLayout;
-    private ViewGroup mRootView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private RecyclerView mRecyclerView;
+    private GridLayoutManager mGridLayoutManager;
     private Snackbar mSnackbar;
-    private boolean mLoaderLoading, mLoadMore;
+    private TextView mNoProducts;
 
-    private int mPageNumber, mTotalPages, mRecyclerViewPosition;
+    private Queue<Integer> mRequestQueue;
 
-    private final int mLimit = 20;
-    public static final int PRODUCTS_GRID_LOADER = 2;
+    private String mFilters;
+    private int mPageNumber, mTotalPages, mRecyclerViewPosition, mLoadMoreData, mActivePageCall;
+    private boolean mLoaderLoading;
+    private ArrayList<Integer> mResponseCodes;
+
+    private final int PRODUCTS_GRID_LOADER = 2;
+    private final int mLIMIT = 30;
 
     public ProductsGridFragment() {
     }
@@ -85,23 +91,14 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            mListener = (CategoryProductListenerInterface) context;
-        } catch (ClassCastException cee) {
-            Log.e(getClass().getSimpleName(), " must implement " + CategoryProductListenerInterface.class.getSimpleName());
-        }
+        mListener = (CategoryProductListenerInterface) context;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mProducts = new ArrayList<>();
-        mRecyclerViewPosition = 0;
-        mPageNumber = 1;
-        mTotalPages = -1;
-        mLoaderLoading = false;
-        mLoadMore = false;
-
+        initResponseCodes(getArguments());
+        resetVariables();
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -113,36 +110,51 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_products_grid, container, false);
         setHasOptionsMenu(true);
+        return inflater.inflate(R.layout.fragment_products_grid, container, false);
+    }
 
-        mPageLoader = (ProgressBar) mRootView.findViewById(R.id.page_loader);
-        mPageLayout = (LinearLayout) mRootView.findViewById(R.id.page_layout);
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (mAdapter == null) {
+            mAdapter = new ProductsGridAdapter(getContext(), mProducts, this, mRecyclerView);
+            if (mProducts.size() != 0) {
+                resetVariables();
+            }
+            loadData();
+        } else if (mProducts.size() > 0) {
+            mPageLoader.setVisibility(View.INVISIBLE);
+        }
+        mRecyclerView.setAdapter(mAdapter);
+        mAdapter.setOnLoadMoreListener(this);
+        Log.d(this.getClass().getSimpleName(), "onactivitycreated");
+    }
 
-        Button filterButton = (Button) mRootView.findViewById(R.id.filter_button);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mPageLoader = (ProgressBar) view.findViewById(R.id.page_loader);
+        mPageLayout = (LinearLayout) view.findViewById(R.id.page_layout);
+
+        Button filterButton = (Button) view.findViewById(R.id.filter_button);
         filterButton.setOnClickListener(this);
 
-        Button sortButton = (Button) mRootView.findViewById(R.id.sort_button);
+        Button sortButton = (Button) view.findViewById(R.id.sort_button);
         sortButton.setOnClickListener(this);
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) mRootView.findViewById(R.id.swipe_container);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                final int oldTotalPages = mTotalPages;
-                refreshData();
-                mTotalPages = oldTotalPages;
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-        });
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        mProductsRecyclerView = (RecyclerView) mRootView.findViewById(R.id.products_recycler_view);
-        mProductsRecyclerView.addItemDecoration(new GridItemDecorator(2, getResources().getDimensionPixelSize(R.dimen.card_margin_horizontal), true, 0));
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.products_recycler_view);
+        mRecyclerView.addItemDecoration(new GridItemDecorator(2,
+                getResources().getDimensionPixelSize(R.dimen.card_margin_horizontal), true, 0));
         mGridLayoutManager = new GridLayoutManager(getContext(), 2);
         mGridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                switch (mProductsGridAdapter.getItemViewType(position)) {
+                switch (mAdapter.getItemViewType(position)) {
                     case 1:
                         return 2;
                     default:
@@ -150,58 +162,9 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 }
             }
         });
+        mRecyclerView.setLayoutManager(mGridLayoutManager);
 
-        mProductsRecyclerView.setLayoutManager(mGridLayoutManager);
-
-        mOnScrollListener = new EndlessRecyclerViewScrollListener(mGridLayoutManager) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                if (mLoaderLoading) {
-                    mLoadMore = true;
-                } else {
-                    mLoadMore = false;
-                    updateData();
-                }
-            }
-        };
-        mProductsRecyclerView.addOnScrollListener(mOnScrollListener);
-
-        return mRootView;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        if (mProducts.size() > 0) {
-            mPageLoader.setVisibility(View.INVISIBLE);
-            mPageLayout.setVisibility(View.VISIBLE);
-        } else {
-            mPageLayout.setVisibility(View.INVISIBLE);
-            mPageLoader.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        if (mProductsGridAdapter == null) {
-            mProductsGridAdapter = new ProductsGridAdapter(getContext(), mProducts, this);
-            if (mProducts.size() == 0) {
-                updateData();
-            } else {
-                refreshData();
-            }
-        }
-        mProductsRecyclerView.setAdapter(mProductsGridAdapter);
-
-        Log.d(this.getClass().getSimpleName(), "onactivitycreated");
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.d(this.getClass().getSimpleName(), "onstart");
+        mNoProducts = (TextView) view.findViewById(R.id.no_products);
     }
 
     @Override
@@ -210,31 +173,23 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         IntentFilter intentFilter = new IntentFilter(IntentFilters.PRODUCT_DATA);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
 
-        restoreRecyclerViewPosition();
+        // restore recycler view position
+        mGridLayoutManager.scrollToPosition(mRecyclerViewPosition);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
-        saveRecyclerViewPosition();
-    }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+        // save recycler view position
+        mRecyclerViewPosition = mGridLayoutManager.findFirstVisibleItemPosition();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        Log.d(this.getClass().getSimpleName(), "onstart");
     }
 
     @Override
@@ -259,11 +214,11 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     @Override
     public Loader<ArrayList<GridProductModel>> onCreateLoader(int id, Bundle args) {
         mLoaderLoading = true;
-        return new GridProductsLoader(getContext(), mPageNumber, mLimit);
+        return new GridProductsLoader(getContext(), mPageNumber, mLIMIT, mResponseCodes);
     }
 
     @Override
-    public void onLoadFinished(Loader<ArrayList<GridProductModel>> loader, final ArrayList<GridProductModel> data) {
+    public void onLoadFinished(Loader<ArrayList<GridProductModel>> loader, ArrayList<GridProductModel> data) {
         mLoaderLoading = false;
         if (data.size() != 0) {
             if (mPageLoader.getVisibility() == View.VISIBLE) {
@@ -271,20 +226,21 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 mPageLayout.setVisibility(View.VISIBLE);
             }
             final int oldPosition = mProducts.size();
+            final int scrollerPosition = mGridLayoutManager.findFirstVisibleItemPosition();
             removeDummyObject();
             mProducts.addAll(data);
-            if (mTotalPages == 1 || (mTotalPages == mPageNumber)) {
-                mProductsGridAdapter.notifyItemRangeInserted(oldPosition, data.size());
-            } else {
-                mProducts.add(new GridProductModel());
-                mProductsGridAdapter.notifyItemRangeInserted(oldPosition, data.size() + 1);
+            mAdapter.notifyItemRangeInserted(oldPosition, data.size());
+            if (scrollerPosition >= 0) {
+                View firstVisible = mGridLayoutManager.findViewByPosition(scrollerPosition);
+                mGridLayoutManager.scrollToPositionWithOffset(scrollerPosition, firstVisible.getTop());
             }
-        } else {
+            mAdapter.setLoaded();
+        } else if (!hasNextPage()) {
             removeDummyObject();
         }
-        if (mLoadMore) {
-            mLoadMore = false;
-            updateData();
+        if (mLoadMoreData > 0) {
+            mLoadMoreData--;
+            loadData();
         }
     }
 
@@ -315,23 +271,28 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 ShareIntentClass.shareImage(getContext(), (ImageView) view, mProducts.get(position).getName());
                 break;
             case R.id.cart_image_view:
-                CartDialogFragment cartDialog = new CartDialogFragment();
-                Bundle args = new Bundle();
-                args.putInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, mProducts.get(position).getProductID());
-                cartDialog.setArguments(args);
-                cartDialog.show(getFragmentManager(), cartDialog.getClass().getSimpleName());
+                if (mProducts.get(position).getCartCount() > 0) {
+                    /* TODO: go to checkout */
+
+                } else {
+                    CartDialogFragment cartDialog = new CartDialogFragment();
+                    Bundle args = new Bundle();
+                    args.putInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, mProducts.get(position).getProductID());
+                    cartDialog.setArguments(args);
+                    cartDialog.show(getFragmentManager(), cartDialog.getClass().getSimpleName());
+                }
                 break;
             case R.id.fav_icon_image_view:
                 GridProductModel product = mProducts.get(position);
                 product.toggleLikeStatus();
-                mProductsGridAdapter.notifyItemChanged(position, product);
+                mAdapter.notifyItemChanged(position, product);
 
                 intent = new Intent(getContext(), BuyerProductService.class);
                 intent.putExtra("TODO", TODO.UPDATE_PRODUCT_RESPONSE);
                 intent.putExtra(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, product.getProductID());
-                intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONDED_FROM, 1);
+                intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONDED_FROM, 0);
                 intent.putExtra(CatalogContract.ProductsTable.COLUMN_HAS_SWIPED, false);
-                intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONSE_CODE, product.getLikeStatus() ? 1 : 2);
+                intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONSE_CODE, product.getLikeStatus() ? 1 : 0);
 
                 getContext().startService(intent);
                 break;
@@ -342,39 +303,132 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         }
     }
 
-    public void updateData() {
+    @Override
+    public void onLoadMore() {
+        //add progress item
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                mLoadMoreData++;
+
+                if (!mLoaderLoading) {
+                    mLoadMoreData--;
+                    loadData();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onRefresh() {
+        final int oldTotalPages = mTotalPages;
+        resetVariables();
+        mPageNumber = 0;
+        mTotalPages = oldTotalPages;
+        loadData();
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    public void loadData() {
         String filters = FilterClass.getFilterString();
 
         // if the filter is not same then set page number to 1 and clean current products
         // else increment pageNumber
         if (!filters.equals(mFilters)) {
             mFilters = filters;
-            mPageNumber = 1;
-
-            resetAdapterState();
+            resetVariables();
         } else {
             mPageNumber++;
         }
 
         if (hasNextPage()) {
+            if (mProducts.size() > 0 && mProducts.get(mProducts.size() - 1) != null) {
+                mProducts.add(null);
+                mAdapter.notifyItemInserted(mProducts.size() - 1);
+            }
+            mRequestQueue.add(mPageNumber);
             fetchProductsFromServer();
             getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
         }
     }
 
+    private void initResponseCodes(Bundle args) {
+        final int type = args.getInt(Constants.TYPE);
+        mResponseCodes = new ArrayList<>();
+        switch (type) {
+            case Constants.FAV_PRODUCTS:
+                mResponseCodes.add(Constants.FAV_PRODUCTS);
+                break;
+            case Constants.REJECTED_PRODUCTS:
+                mResponseCodes.add(Constants.REJECTED_PRODUCTS);
+                break;
+            default:
+                mResponseCodes.add(Constants.FAV_PRODUCTS);
+                mResponseCodes.add(Constants.REJECTED_PRODUCTS);
+                mResponseCodes.add(Constants.ALL_PRODUCTS);
+        }
+    }
+
+    public void resetVariables() {
+        mPageNumber = 1;
+        mTotalPages = -1;
+        mRecyclerViewPosition = 0;
+        mLoadMoreData = 0;
+        mActivePageCall = 0;
+
+        if (mRequestQueue == null) {
+            mRequestQueue = new LinkedList<>();
+        } else {
+            mRequestQueue.clear();
+        }
+
+        if (mProducts == null) {
+            mProducts = new ArrayList<>();
+        } else {
+            resetAdapterState();
+        }
+    }
+
+    private boolean hasNextPage() {
+        return (mTotalPages == -1 || mPageNumber <= mTotalPages);
+    }
+
     private void fetchProductsFromServer() {
-        Intent intent = new Intent(getContext(), CatalogService.class);
-        intent.putExtra("TODO", R.integer.fetch_products);
-        intent.putExtra("page_number", mPageNumber);
-        intent.putExtra("items_per_page", mLimit);
-        getActivity().startService(intent);
+        if (mRequestQueue.size() > 0) {
+            int pageNumber = mRequestQueue.element();
+            if (pageNumber == mActivePageCall) {
+                return;
+            }
+            mActivePageCall = mPageNumber;
+
+            if (mResponseCodes.size() == 1) {
+                Intent bpResponse = new Intent(getContext(), BuyerProductService.class);
+                bpResponse.putExtra("TODO", TODO.FETCH_BUYER_PRODUCTS_RESPONSE);
+                bpResponse.putExtra(APIConstants.API_ITEM_PER_PAGE_KEY, mLIMIT);
+                bpResponse.putExtra(APIConstants.API_PAGE_NUMBER_KEY, pageNumber);
+                bpResponse.putExtra(APIConstants.API_RESPONSE_CODE_KEY, TextUtils.join(",", mResponseCodes));
+                getActivity().startService(bpResponse);
+            } else {
+                Intent intent = new Intent(getContext(), CatalogService.class);
+                intent.putExtra("TODO", R.integer.fetch_products);
+                intent.putExtra(APIConstants.API_TOTAL_PAGES_KEY, pageNumber);
+                intent.putExtra(APIConstants.API_ITEM_PER_PAGE_KEY, mLIMIT);
+                getActivity().startService(intent);
+            }
+        }
     }
 
     private void handleOnBroadcastReceive(final Intent intent) {
+        if (mRequestQueue.size() > 0) {
+            mRequestQueue.remove();
+        }
+
         Bundle extras = intent.getExtras();
-        if (extras.getString(Constants.ERROR_RESPONSE) != null && mPageLoader.getVisibility() == View.VISIBLE) {
-            mPageLoader.setVisibility(View.INVISIBLE);
-            showErrorMessage();
+        if (extras.getString(Constants.ERROR_RESPONSE) != null) {
+            if (mPageLoader.getVisibility() == View.VISIBLE) {
+                mPageLoader.setVisibility(View.INVISIBLE);
+                showErrorMessage();
+            }
             return;
         }
         final int pageNumber = intent.getIntExtra(APIConstants.API_PAGE_NUMBER_KEY, -1);
@@ -383,57 +437,67 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         Log.d(this.getClass().getSimpleName(), "page number from api: " + pageNumber);
         Log.d(this.getClass().getSimpleName(), "total pages: " + totalPages);
         if (updatedInserted > 0) {
-            if (mPageNumber == 1 && pageNumber == 1) {
-                refreshData();
-            } else if (mPageNumber > pageNumber){
-                showSnackbarToUpdateUI(totalPages);
-            } else if (mPageNumber == pageNumber) {
+            // if loader is active means no product in local, simply show
+            if (mPageLoader.getVisibility() == View.VISIBLE) {
+                resetVariables();
                 getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
-                mPageNumber++;
+            }
+            // if page number is 1 then flicker and reload data
+            else if (mPageNumber == 1 && pageNumber == 1) {
+                resetVariables();
+                getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
+                Toast.makeText(getContext(), getString(R.string.products_updated), Toast.LENGTH_LONG).show();
+            } else {
+                final int scrollPosition = mGridLayoutManager.findLastVisibleItemPosition();
+                if (scrollPosition > mProducts.size() - 2) {
+                    getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
+                } else {
+                    showSnackbarToUpdateUI(totalPages);
+                }
+            }
+        } else if (updatedInserted == -1) {
+            if (mNoProducts.getVisibility() == View.GONE) {
+                mNoProducts.setVisibility(View.VISIBLE);
+                mSwipeRefreshLayout.setVisibility(View.GONE);
             }
         }
+
         mTotalPages = totalPages;
         if (mTotalPages == 1) {
             removeDummyObject();
+        } else if (mRequestQueue.size() > 0) {
+            fetchProductsFromServer();
         }
     }
 
-    private boolean hasNextPage() {
-        return mTotalPages == -1 || mPageNumber <= mTotalPages;
-    }
-
-    /*
-        Reset page number and total pages
-        Remove all Items from Adapter and notify it
-        Restart Loader
-     */
-    public void refreshData() {
-        mPageNumber = 1;
-        mTotalPages = -1;
-        resetAdapterState();
-        getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
-    }
-
-    public void resetAdapterState() {
+    private void resetAdapterState() {
         int totalItems = mProducts.size();
         if (totalItems > 0) {
             mProducts.clear();
-            mProductsGridAdapter.notifyItemRangeRemoved(0, totalItems);
+            if (mAdapter != null) {
+                mAdapter.notifyItemRangeRemoved(0, totalItems);
+            }
         }
     }
 
-    private void saveRecyclerViewPosition() {
-        mRecyclerViewPosition = mGridLayoutManager.findFirstCompletelyVisibleItemPosition();
-    }
-
-    private void restoreRecyclerViewPosition() {
-        mProductsRecyclerView.scrollToPosition(mRecyclerViewPosition);
+    private void removeDummyObject() {
+        if (mProducts.size() > 0 && mProducts.get(mProducts.size()-1) == null) {
+            mProducts.remove(mProducts.size() - 1);
+            mAdapter.notifyItemRemoved(mProducts.size());
+        }
     }
 
     private void showErrorMessage() {
         if (mSnackbar != null && mSnackbar.isShownOrQueued()) {
             mSnackbar.dismiss();
         }
+
+        final View view = getView();
+        if (view == null) {
+            Log.d(ProductsGridFragment.class.getSimpleName(), "get view was null");
+            return;
+        }
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -443,7 +507,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 } else {
                     message = getString(R.string.no_internet_access);
                 }
-                mSnackbar = Snackbar.make(mRootView, message, Snackbar.LENGTH_INDEFINITE)
+                mSnackbar = Snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE)
                         .setAction(R.string.retry_text, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -469,15 +533,22 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         if (mSnackbar != null && mSnackbar.isShownOrQueued()) {
             mSnackbar.dismiss();
         }
+
+        final View view = getView();
+        if (view == null) {
+            Log.d(ProductsGridFragment.class.getSimpleName(), "get view was null");
+            return;
+        }
+
         new Thread(new Runnable() {
             @Override
             public void run() {
 
-                mSnackbar = Snackbar.make(mRootView, getString(R.string.new_products_message), Snackbar.LENGTH_INDEFINITE)
+                mSnackbar = Snackbar.make(view, getString(R.string.new_products_message), Snackbar.LENGTH_INDEFINITE)
                         .setAction(R.string.show_text, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                refreshData();
+                                resetVariables();
                                 mTotalPages = totalPages;
                                 getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, ProductsGridFragment.this);
                             }
@@ -492,14 +563,5 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 });
             }
         }).start();
-    }
-
-    private void removeDummyObject() {
-        int oldPosition = mProducts.size();
-        if (oldPosition != 0) {
-            oldPosition--;
-            mProducts.remove(oldPosition);
-            mProductsGridAdapter.notifyItemRemoved(oldPosition);
-        }
     }
 }
