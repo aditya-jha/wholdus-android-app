@@ -208,4 +208,5 @@
     <string name="logout_loader_message">Logging out&#8230;</string>
 
     <string name="products_updated">Products Updated</string>
+    <string name="no_products_filter">No products for this filter. Please change filter to discover latest products</string>
 </resources>

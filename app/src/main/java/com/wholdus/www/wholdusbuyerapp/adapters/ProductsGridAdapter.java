@@ -3,7 +3,6 @@ package com.wholdus.www.wholdusbuyerapp.adapters;
 import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.wholdus.www.wholdusbuyerapp.R;
-import com.wholdus.www.wholdusbuyerapp.fragments.ProductsGridFragment;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.models.GridProductModel;
@@ -70,9 +68,7 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     mLastVisibleItem = gridLayoutManager.findLastVisibleItemPosition();
                     if (!mLoading && mTotalItemCount <= (mLastVisibleItem + mVisibleThreshold)) {
                         // End has been reached
-                        // Do something
                         onLoadMoreListener.onLoadMore();
-                        Log.d(ProductsGridFragment.class.getSimpleName(), "on load more called with total item count: " + mTotalItemCount);
                         mLoading = true;
                     }
                 }

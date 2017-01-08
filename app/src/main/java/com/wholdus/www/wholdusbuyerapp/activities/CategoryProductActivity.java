@@ -2,6 +2,7 @@ package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -22,6 +23,7 @@ import com.wholdus.www.wholdusbuyerapp.adapters.CategorySpinnerAdapter;
 import com.wholdus.www.wholdusbuyerapp.fragments.FilterFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProductsGridFragment;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.CategoriesGridLoader;
@@ -37,6 +39,7 @@ public class CategoryProductActivity extends AppCompatActivity
     private static final int CATEGORY_LOADER = 0;
     private Spinner mCategorySpinner;
     private boolean mFilterFragmentActive;
+    private int mType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +48,8 @@ public class CategoryProductActivity extends AppCompatActivity
 
         Intent intent = getIntent();
         FilterClass.setCategoryID(intent.getIntExtra(getString(R.string.selected_category_id), 1));
+        mType = intent.getIntExtra(Constants.TYPE, Constants.ALL_PRODUCTS);
+
         mFilterFragmentActive = false;
 
         // initialize the toolbar
@@ -104,19 +109,13 @@ public class CategoryProductActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-        FilterClass.resetFilter();
-        FilterClass.resetCategoryFilter();
-    }
-
-    @Override
-    public void onAttachFragment(android.app.Fragment fragment) {
-        super.onAttachFragment(fragment);
-        Log.d(this.getClass().getSimpleName(), fragment.getClass().getSimpleName() + " attached");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        FilterClass.resetFilter();
+        FilterClass.resetCategoryFilter();
     }
 
     @Override
@@ -146,7 +145,7 @@ public class CategoryProductActivity extends AppCompatActivity
     @Override
     public void openFilter(boolean open) {
         if (open) {
-            openToFragment(FilterFragment.class.getSimpleName(), null);
+            openToFragment(FilterFragment.class.getSimpleName(), new Bundle());
         } else {
             onBackPressed();
         }
@@ -160,7 +159,7 @@ public class CategoryProductActivity extends AppCompatActivity
     @Override
     public void applyFilter() {
         //onBackPressed();
-        openToFragment("", null);
+        openToFragment("", new Bundle());
         updateProducts();
     }
 
@@ -210,11 +209,11 @@ public class CategoryProductActivity extends AppCompatActivity
             fragment.loadData();
         } else {
             // fragment is not added yet
-            openToFragment("", null);
+            openToFragment("", new Bundle());
         }
     }
 
-    private void openToFragment(String fragmentName, @Nullable Bundle bundle) {
+    private void openToFragment(String fragmentName, @NonNull Bundle bundle) {
         Fragment fragment;
 
         if (fragmentName.equals(FilterFragment.class.getSimpleName())) {
@@ -223,6 +222,7 @@ public class CategoryProductActivity extends AppCompatActivity
             fragment = new FilterFragment();
         } else {
             mFilterFragmentActive = false;
+            bundle.putInt(Constants.TYPE, mType);
             showMenuButtonInToolbar();
             fragment = new ProductsGridFragment();
         }
