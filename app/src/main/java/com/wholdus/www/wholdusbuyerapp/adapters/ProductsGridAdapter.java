@@ -66,7 +66,7 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                     mTotalItemCount = gridLayoutManager.getItemCount();
                     mLastVisibleItem = gridLayoutManager.findLastVisibleItemPosition();
-                    if (!mLoading && mTotalItemCount <= (mLastVisibleItem + mVisibleThreshold)) {
+                    if (mTotalItemCount > 0 && !mLoading && mTotalItemCount <= (mLastVisibleItem + mVisibleThreshold)) {
                         // End has been reached
                         onLoadMoreListener.onLoadMore();
                         mLoading = true;

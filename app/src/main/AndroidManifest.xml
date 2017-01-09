@@ -114,6 +114,8 @@
         <service
             android:name=".services.FirebaseNotificationService"
             android:exported="false" />
+
+        <activity android:name=".activities.HelpSupportActivity"></activity>
     </application>
 
 </manifest>

@@ -43,11 +43,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
 
         initNavigationDrawer(savedInstanceState);
         initToolbar();
-        Intent intent = getIntent();
-        Bundle extras = null;
-        if (intent != null){
-            extras = intent.getExtras();
-        }
+        Bundle extras = getIntent().getExtras();
 
         openToFragment(getFragmentToOpenName(savedInstanceState), extras);
     }
