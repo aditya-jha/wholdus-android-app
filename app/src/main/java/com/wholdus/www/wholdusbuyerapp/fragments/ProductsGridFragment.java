@@ -411,7 +411,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
             } else {
                 Intent intent = new Intent(getContext(), CatalogService.class);
                 intent.putExtra("TODO", R.integer.fetch_products);
-                intent.putExtra(APIConstants.API_TOTAL_PAGES_KEY, pageNumber);
+                intent.putExtra(APIConstants.API_PAGE_NUMBER_KEY, pageNumber);
                 intent.putExtra(APIConstants.API_ITEM_PER_PAGE_KEY, mLIMIT);
                 getActivity().startService(intent);
             }
