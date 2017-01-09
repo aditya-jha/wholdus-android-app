@@ -1,30 +1,33 @@
 package com.wholdus.www.wholdusbuyerapp.fragments;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
-import com.google.android.gms.vision.text.Line;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductHomePageAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
-import com.wholdus.www.wholdusbuyerapp.decorators.GridItemDecorator;
 import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.ContactsHelperClass;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProductsLoader;
@@ -32,11 +35,14 @@ import com.wholdus.www.wholdusbuyerapp.models.Product;
 
 import java.util.ArrayList;
 
+import static com.wholdus.www.wholdusbuyerapp.R.id.help;
+import static com.wholdus.www.wholdusbuyerapp.R.id.transition_current_scene;
+
 /**
  * Created by aditya on 16/11/16.
  */
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private HomeListenerInterface mListener;
 
@@ -48,7 +54,9 @@ public class HomeFragment extends Fragment {
     private ProductItemClickListener mProductItemClickListener;
     private LinearLayoutManager mProductsLayoutManager;
     private ProductsLoaderManager mProductsLoader;
+
     private final int PRODUCTS_DB_LOADER = 901;
+    private static final int CONTACTS_PERMISSION = 0;
 
     public HomeFragment() {
     }
@@ -56,11 +64,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            mListener = (HomeListenerInterface) context;
-        } catch (ClassCastException cee) {
-            Log.e(this.getClass().getSimpleName(), " must implemet " + HomeListenerInterface.class.getSimpleName());
-        }
+        mListener = (HomeListenerInterface) context;
     }
 
     @Override
@@ -72,26 +76,23 @@ public class HomeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_home, container, false);
+        return inflater.inflate(R.layout.fragment_home, container, false);
+    }
 
-        Button button = (Button) rootView.findViewById(R.id.categories);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Bundle bundle = new Bundle();
-                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "Button");
-                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "categories button");
-                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-                    }
-                }).start();
-                mListener.openCategory(-1);
-            }
-        });
-        mProductsRecyclerView = (RecyclerView) rootView.findViewById(R.id.products_recycler_view);
-        //TODO : If necessary set horizontal layout manager
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        Button categoriesButton = (Button) view.findViewById(R.id.categories);
+        categoriesButton.setOnClickListener(this);
+
+        Button helpButton = (Button) view.findViewById(help);
+        helpButton.setOnClickListener(this);
+
+        Button notificationButton = (Button) view.findViewById(R.id.notification);
+        notificationButton.setOnClickListener(this);
+
+        mProductsRecyclerView = (RecyclerView) view.findViewById(R.id.products_recycler_view);
         mProductsRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mProducts = new ArrayList<>();
         mProductItemClickListener = new ProductItemClickListener();
@@ -100,7 +101,6 @@ public class HomeFragment extends Fragment {
         mProductsRecyclerView.setLayoutManager(mProductsLayoutManager);
         mProductsRecyclerView.addItemDecoration(new RecyclerViewSpaceItemDecoration(0, getResources().getDimensionPixelSize(R.dimen.card_margin_horizontal)));
         mProductsRecyclerView.setAdapter(mProductHomePageAdapter);
-        return rootView;
     }
 
     private class ProductItemClickListener implements ItemClickListener{
@@ -120,6 +120,80 @@ public class HomeFragment extends Fragment {
         mListener.fragmentCreated(getString(R.string.app_name), false);
         mProductsLoader = new ProductsLoaderManager();
         getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, mProductsLoader);
+    }
+
+    @Override
+    public void onClick(View view) {
+        final int ID = view.getId();
+        switch (ID) {
+            case R.id.categories:
+                mListener.openCategory(-1);
+                break;
+            case help:
+                helpButtonClicked();
+                break;
+            case R.id.notification:
+                Toast.makeText(getContext(), "Notification Button Clicked", Toast.LENGTH_SHORT).show();
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case CONTACTS_PERMISSION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    helpButtonClicked();
+                } else {
+                    Toast.makeText(getContext(), "Permission needed to chat with us", Toast.LENGTH_SHORT).show();
+                }
+        }
+    }
+
+    private void helpButtonClicked() {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "help");
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "help on home screen clicked");
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
+        final Context context = getContext();
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    ContactsHelperClass contactsHelperClass = new ContactsHelperClass(context);
+                    String savedNumber = contactsHelperClass.getSavedNumber();
+                    if (savedNumber != null) {
+                        openWhatsapp(context, savedNumber);
+                    } else {
+                        contactsHelperClass.saveWholdusContacts();
+                        savedNumber = contactsHelperClass.getSavedNumber();
+                        if (savedNumber != null) openWhatsapp(context, savedNumber);
+                    }
+
+                }
+            }).start();
+        } else {
+            requestPermissions(new String[] { Manifest.permission.WRITE_CONTACTS }, CONTACTS_PERMISSION);
+        }
+    }
+
+    private void openWhatsapp(final Context context, final String number) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final Uri uri = Uri.parse("smsto:" + number);
+                    Intent i = new Intent(Intent.ACTION_SENDTO, uri);
+                    i.putExtra("sms_body", "I need some help");
+                    i.setPackage("com.whatsapp");
+                    context.startActivity(i);
+                } catch (Exception e) {
+                    Toast.makeText(context, "Unable to open whatsapp", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     public void setViewForProducts(ArrayList<Product> products){
