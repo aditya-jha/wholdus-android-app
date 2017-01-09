@@ -2,10 +2,13 @@ package com.wholdus.www.wholdusbuyerapp.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.URLUtil;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -54,6 +57,8 @@ public class OrderItemsAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup viewGroup) {
         final ViewHolder holder;
 
+        //TODO Listview set height problems - Look into it :IMP
+
         if(convertView == null){
             convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_layout_order_items, viewGroup, false);
             holder = new ViewHolder();
@@ -61,20 +66,23 @@ public class OrderItemsAdapter extends BaseAdapter {
             holder.pricePerPiece = (TextView) convertView.findViewById(R.id.order_item_product_price_per_piece_text_view);
             holder.total = (TextView) convertView.findViewById(R.id.order_item_final_price_text_view);
             holder.pieces = (TextView) convertView.findViewById(R.id.order_item_pieces_text_view);
+            holder.status = (TextView) convertView.findViewById(R.id.order_item_status_text_view);
             holder.progressBar = (ProgressBar) convertView.findViewById(R.id.loading_indicator);
             holder.productImage = (ImageView) convertView.findViewById(R.id.product_image);
+            holder.tracking = (Button) convertView.findViewById(R.id.order_item_track_button);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        OrderItem orderItem = mData.get(position);
+        final OrderItem orderItem = mData.get(position);
         final Product product = orderItem.getProduct();
 
         holder.productName.setText(product.getName());
         holder.pieces.setText(String.valueOf(orderItem.getPieces()));
         holder.pricePerPiece.setText("Rs. " + String.format("%.0f", product.getMinPricePerUnit()));
         holder.total.setText("Rs. " + String.format("%.0f", orderItem.getFinalPrice()));
+        holder.status.setText(orderItem.getOrderItemStatusDisplay());
 
         Glide.with(mContext)
                 .load(product.getImageUrl(Constants.SMALL_IMAGE, "1"))
@@ -91,6 +99,23 @@ public class OrderItemsAdapter extends BaseAdapter {
             }
         });
 
+        if (orderItem.getTrackingUrl() != null && URLUtil.isValidUrl(orderItem.getTrackingUrl())){
+            //holder.tracking.setVisibility(View.VISIBLE);
+            holder.tracking.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(orderItem.getTrackingUrl()));
+                        mContext.startActivity(intent);
+                    } catch (Exception e){
+
+                    }
+                }
+            });
+        } else {
+            holder.tracking.setVisibility(View.GONE);
+        }
+
         return convertView;
     }
 
@@ -101,7 +126,9 @@ public class OrderItemsAdapter extends BaseAdapter {
         TextView pricePerPiece;
         TextView pieces;
         TextView total;
+        TextView status;
         ImageView productImage;
         ProgressBar progressBar;
+        Button tracking;
     }
 }

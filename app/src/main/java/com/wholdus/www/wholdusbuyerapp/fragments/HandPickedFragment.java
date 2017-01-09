@@ -368,14 +368,18 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
 
         @Override
         public Loader<ArrayList<Product>> onCreateLoader(final int id, Bundle args) {
+            int productLimit;
             ArrayList<Integer> responseCodes = new ArrayList<>();
             responseCodes.add(0);
             // TODO : ?? Also add condition so that buyer product Id is not 0
             if (mProductIDs != null){
                 responseCodes.add(1);
                 responseCodes.add(2);
+                productLimit = mProductIDs.size();
+            }else {
+                productLimit = 15;
             }
-            return new ProductsLoader(getContext(), mProductIDs, mExcludeProductIDs, responseCodes, null, 15);
+            return new ProductsLoader(getContext(), mProductIDs, mExcludeProductIDs, responseCodes, null, productLimit);
         }
     }
 

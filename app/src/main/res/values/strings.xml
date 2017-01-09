@@ -86,6 +86,8 @@
     <string name="order_item_price_per_piece">Price/pc:</string>
     <string name="order_item_pieces">Pieces:</string>
     <string name="order_item_total">Total:</string>
+    <string name="order_item_status">Status:</string>
+    <string name="order_item_track">Track</string>
 
     <!-- keys -->
     <string name="name_key">name</string>
