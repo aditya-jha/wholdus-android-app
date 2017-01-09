@@ -124,7 +124,6 @@ public class ForgotPasswordFragment extends Fragment implements View.OnClickList
         final int ID = view.getId();
         switch (ID) {
             case R.id.request_otp_button:
-                mProgressBar.setVisibility(View.VISIBLE);
                 requestOTP(true);
                 break;
             case R.id.back_button:
@@ -193,6 +192,7 @@ public class ForgotPasswordFragment extends Fragment implements View.OnClickList
 
         if (InputValidationHelper.isValidMobileNumber(mMobileNumberWrapper, mobileNumber)) {
             if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED || !requestPermission) {
+                mProgressBar.setVisibility(View.VISIBLE);
                 requestOTPAPICall();
             } else {
                 requestPermissions(new String[]{Manifest.permission.RECEIVE_SMS}, RECEIVE_SMS_REQUEST);
