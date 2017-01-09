@@ -449,7 +449,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 Toast.makeText(getContext(), getString(R.string.products_updated), Toast.LENGTH_LONG).show();
             } else {
                 final int scrollPosition = mGridLayoutManager.findLastVisibleItemPosition();
-                if (scrollPosition > mProducts.size() - 2) {
+                if (scrollPosition >= mProducts.size() - 2) {
                     getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
                 } else {
                     showSnackbarToUpdateUI(totalPages);
