@@ -6,11 +6,9 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
-
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
@@ -56,8 +54,7 @@
         <activity
             android:name=".activities.StoreActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activities.HandPickedActivity">
+        <activity android:name=".activities.HandPickedActivity">
             android:screenOrientation="portrait"
         </activity>
         <activity
@@ -116,7 +113,7 @@
 
         <service
             android:name=".services.FirebaseNotificationService"
-            android:exported="false"></service>
+            android:exported="false" />
     </application>
 
 </manifest>
