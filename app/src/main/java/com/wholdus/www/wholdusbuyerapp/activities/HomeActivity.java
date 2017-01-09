@@ -11,12 +11,14 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.fragments.CategoryGridFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.HomeFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
@@ -24,6 +26,10 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class HomeActivity extends AppCompatActivity implements HomeListenerInterface {
 
@@ -33,6 +39,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        routeToActivity();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
@@ -46,6 +53,61 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         initNavigationDrawer();
 
         openToFragment(getFragmentToOpenName(savedInstanceState), null);
+    }
+
+    public void routeToActivity(){
+        Intent receivedIntent = getIntent();
+        if (getIntent() == null){
+            return;
+        }
+        Bundle bundle = receivedIntent.getBundleExtra("router");
+        if (bundle == null){
+            return;
+        }
+        Class activityClass;
+        Intent intent = new Intent();
+
+        String activityToStart = bundle.getString("activity", "");
+
+        switch (activityToStart) {
+            case "Handpicked":
+                activityClass = HandPickedActivity.class;
+                String productIDs = bundle.getString("productIDs", "");
+                if (!productIDs.equals("")){
+                    try {
+                        ArrayList<String> productIDsStringArray = new ArrayList<>(Arrays.asList(TextUtils.split(productIDs, ",")));
+                        ArrayList<Integer> productIDsArray = new ArrayList<>();
+                        for (String productID:productIDsStringArray){
+                            productIDsArray.add(Integer.parseInt(productID.trim()));
+                        }
+                        intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME,productIDsArray);
+                    }catch (Exception e){
+
+                    }
+
+                }
+                break;
+            case "OrderDetails":
+                activityClass = AccountActivity.class;
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "orderDetails");
+                String orderID = bundle.getString("orderID", "");
+                if (orderID.equals("")){
+                    return;
+                }
+                Bundle args = new Bundle();
+                try {
+                    args.putInt("orderID", Integer.parseInt(orderID.trim()));
+                }catch (Exception e){
+                    return;
+                }
+                intent.putExtras(args);
+                break;
+            default:
+                return;
+        }
+
+        intent.setClass(getApplicationContext(), activityClass);
+        startActivity(intent);
     }
 
     @Override
