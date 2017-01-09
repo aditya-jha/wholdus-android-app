@@ -1,10 +1,10 @@
 package com.wholdus.www.wholdusbuyerapp.services;
 
-import android.app.ProgressDialog;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -13,10 +13,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.WholdusApplication;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -29,19 +27,22 @@ import java.util.Map;
 public class BaseAPIService {
 
     private Context mContext;
+    private String REQUEST_TAG;
 
-    public BaseAPIService() {
-    }
-
-    public void setActivityCompat(Context context) {
+    public BaseAPIService(Context context, String tag) {
         mContext = context;
+        REQUEST_TAG = tag;
     }
 
     public String generateUrl(String endPoint) {
         return mContext.getString(R.string.api_base) + endPoint;
     }
 
-    public void volleyStringRequest(int method, String endPoint, final String jsonData, final String REQUEST_TAG) {
+    public void cancelRequests() {
+        VolleySingleton.getInstance(mContext).cancelPendingRequests(REQUEST_TAG);
+    }
+
+    public void volleyStringRequest(int method, String endPoint, final String jsonData) {
 
         StringRequest stringRequest = new StringRequest(method, endPoint,
                 new Response.Listener<String>() {
@@ -49,7 +50,7 @@ public class BaseAPIService {
                     public void onResponse(String response) {
                         Intent intent = new Intent(mContext.getString(R.string.api_response));
                         intent.putExtra(mContext.getString(R.string.api_response_data_key), response);
-                        mContext.sendBroadcast(intent);
+                        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -63,15 +64,16 @@ public class BaseAPIService {
                 }
                 Toast.makeText(mContext, error.toString(), Toast.LENGTH_LONG).show();
             }
-        }
-        ) {
+        }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 params.put("Accept", "version=1");
+                params.put("Authorization", getAccessToken());
                 return params;
             }
 
+            @Nullable
             @Override
             public byte[] getBody() throws AuthFailureError {
                 try {
@@ -84,5 +86,17 @@ public class BaseAPIService {
         };
 
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest, REQUEST_TAG);
+    }
+
+    private String getAccessToken() {
+        WholdusApplication wholdusApplication = (WholdusApplication)((Activity) mContext).getApplication();
+        String accessToken = wholdusApplication.getAccessToken();
+        return "access_token=" + accessToken;
+    }
+
+    private String getRefreshToken() {
+        WholdusApplication wholdusApplication = (WholdusApplication)((Activity) mContext).getApplication();
+        String accessToken = wholdusApplication.getRefreshToken();
+        return "refresh_token=" + accessToken;
     }
 }

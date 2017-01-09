@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="_ID">0</integer>
+    <integer name="addressID">1</integer>
+
+    <integer name="fetch_categories">2</integer>
+    <integer name="fetch_products">3</integer>
+    <integer name="fetch_specific_products">4</integer>
+</resources>

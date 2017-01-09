@@ -1,54 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_vertical"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/wholdus_logo" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/login_fragment_header" />
-
-    <include layout="@layout/layout_mobile_password" />
-
-    <Button
-        android:id="@+id/login_submit_button"
-        style="@style/Widget.AppCompat.Button.Colored"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        style="@style/AppTheme.DefaultCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/login_fragment_header" />
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/forgot_password_textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:text="@string/forgot_password_fragment_header" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:orientation="horizontal">
-
-        <TextView
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/no_account" />
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/wholdus_logo" />
 
         <TextView
+            style="@style/AppTheme.ImportantText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/login_fragment_header" />
+
+        <include layout="@layout/layout_mobile_number_input" />
+
+        <include layout="@layout/layout_password_input" />
+
+        <Button
+            android:id="@+id/login_submit_button"
+            style="@style/AppTheme.ColoredButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/login_fragment_header" />
+
+        <Button
+            android:id="@+id/forgot_password_textView"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/forgot_password_fragment_header"
+            android:textAllCaps="false" />
+
+        <Button
             android:id="@+id/signup_text"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/signup_button_on_login_fragment" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="-10dp"
+            android:text="@string/no_account"
+            android:textAllCaps="false" />
 
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="@style/AppTheme.DefaultCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
-</LinearLayout>
+</ScrollView>

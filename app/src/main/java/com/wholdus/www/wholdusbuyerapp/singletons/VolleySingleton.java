@@ -18,16 +18,21 @@ public class VolleySingleton {
     private static VolleySingleton mVolleySingleton;
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
-    private static Context mContext;
+    private Context mContext;
 
     private VolleySingleton(Context context) {
         mContext = context;
         mRequestQueue = getRequestQueue();
         VolleyLog.DEBUG = true;
+
+        /*
+         * TODO: Implement Disk Based Cache for Bitmap
+         * https://github.com/rdrobinson3/VolleyImageCacheExample/
+         */
         mImageLoader = new ImageLoader(mRequestQueue,
                 new ImageLoader.ImageCache() {
                     private final LruCache<String, Bitmap>
-                            cache = new LruCache<String, Bitmap>(20);
+                            cache = new LruCache<>(4 * 1024 * 1024);
 
                     @Override
                     public Bitmap getBitmap(String url) {
@@ -36,7 +41,9 @@ public class VolleySingleton {
 
                     @Override
                     public void putBitmap(String url, Bitmap bitmap) {
-                        cache.put(url, bitmap);
+                        if (cache.get(url) == null) {
+                            cache.put(url, bitmap);
+                        }
                     }
                 });
     }
@@ -48,7 +55,7 @@ public class VolleySingleton {
         return mVolleySingleton;
     }
 
-    public RequestQueue getRequestQueue() {
+    private RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
             // getApplicationContext() is key, it keeps you from leaking the
             // Activity or BroadcastReceiver if someone passes one in.

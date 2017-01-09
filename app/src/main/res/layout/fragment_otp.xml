@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    style="@style/AppTheme.DefaultCard">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/wholdus_logo" />
+
+    <TextView
+        style="@style/AppTheme.ImportantText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/otp_key" />
+
+    <include layout="@layout/layout_otp_input" />
+
+    <Button
+        android:id="@+id/submit_otp"
+        style="@style/AppTheme.ColoredButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/submit" />
+
+    <include layout="@layout/layout_resend_otp_button" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="@style/AppTheme.DefaultCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>

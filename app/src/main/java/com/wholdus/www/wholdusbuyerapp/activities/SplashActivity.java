@@ -1,21 +1,26 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
+import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.wholdus.www.wholdusbuyerapp.R;
-import com.wholdus.www.wholdusbuyerapp.aynctasks.LoginHelperAsyncTask;
+import com.wholdus.www.wholdusbuyerapp.databaseHelpers.DatabaseHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.LoginHelper;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private final String LOG_TAG = "SplashActivity";
-
+    private Bundle mArgs;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getIntent()!= null) {
+            mArgs = getIntent().getExtras();
+        }
+
         proceed();
     }
 
@@ -30,28 +35,49 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void proceed() {
-        LoginHelperAsyncTask loginHelperAsyncTask = new LoginHelperAsyncTask(this, new LoginHelperAsyncTask.AsyncResponse() {
+        final Context context = this;
+
+        new Thread(new Runnable() {
             @Override
-            public void processFinish(Boolean result) {
-
-                final Boolean output = result;
-
-                if (output) {
-                    startLoginSignupActivity(HomeActivity.class);
-                } else {
-                    startLoginSignupActivity(LoginSignupActivity.class);
-                }
+            public void run() {
+                // so that database is created on first open
+                DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getApplicationContext());
+                SQLiteDatabase db = databaseHelper.openDatabase();
+                databaseHelper.closeDatabase();
+                LoginHelper loginHelper = new LoginHelper(context);
+                startNewActivity(getRoutingIntent(
+                        loginHelper.checkIfLoggedIn()
+                ));
             }
-        });
-
-        loginHelperAsyncTask.execute("checkIfLoggedIn");
+        }).start();
     }
 
-    private void startLoginSignupActivity(Class classToStart) {
-        Intent intent = new Intent(this, classToStart);
+    private void startNewActivity(final Intent intent) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                startActivity(intent);
+                finish();
+                overridePendingTransition(0, 0);
+            }
+        });
+    }
+
+    public Intent getRoutingIntent(boolean loggedIn){
+
+        Class activityClass;
+        Intent intent = new Intent();
+
+        if (!loggedIn){
+            activityClass = IntroActivity.class;
+        }
+        else {
+            activityClass = HomeActivity.class;
+            intent.putExtra("router", mArgs);
+        }
+
+        intent.setClass(getApplicationContext(), activityClass);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-        overridePendingTransition(0, 0);
+        return intent;
     }
 }

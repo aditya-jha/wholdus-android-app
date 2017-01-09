@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/card_padding_vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@string/font_family_medium"
+                    android:text="@string/checkout_confirm_address_delivery_address"
+                    android:textColor="@color/primary_text"
+                    android:textSize="18sp"
+                    />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@string/font_family_medium"
+                    android:text="@string/checkout_confirm_address_select_another"
+                    android:id="@+id/checkout_confirm_address_select_another_text_view"
+                    android:textColor="@color/primary_text"
+                    android:textSize="18sp"
+                    />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="@dimen/card_margin_vertical"
+                android:background="@color/divider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/alias_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_place_black_24dp"
+                    android:drawableStart="@drawable/ic_place_black_24dp"
+                    android:fontFamily="@string/font_family_medium"
+                    android:text="@string/order_card_order_number"
+                    android:textColor="@color/primary_text"
+                    android:textSize="18sp"
+                    tools:text="Home" />
+
+                <TextView
+                    android:id="@+id/contact_number_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@string/font_family_regular"
+                    android:text="@string/order_card_order_number"
+                    android:textColor="@color/primary_text"
+                    android:textSize="16sp"
+                    tools:text="7417485915" />
+
+                <TextView
+                    android:id="@+id/address_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@string/font_family_regular"
+                    android:text="@string/order_card_order_number"
+                    android:textColor="@color/primary_text"
+                    android:textSize="16sp"
+                    tools:text="454/21, Chanakya puri colony, Lane no. 1" />
+
+                <TextView
+                    android:id="@+id/city_state_pincode_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@string/font_family_regular"
+                    android:text="@string/order_card_order_number"
+                    android:textColor="@color/primary_text"
+                    android:textSize="16sp"
+                    tools:text="Mumbai, Maharastra, 485001" />
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

@@ -12,18 +12,19 @@ public class NavigationDrawerData {
     public static LinkedHashMap<String, List<String>> getData() {
         LinkedHashMap<String, List<String>> data = new LinkedHashMap<>();
 
-        ArrayList<String> handPicked = new ArrayList<>();
-        data.put("Hand Picked For You", handPicked);
+        data.put("Home", new ArrayList<String>());
+        data.put("Hand Picked For You", new ArrayList<String>());
 
         ArrayList<String> store = new ArrayList<>();
+        store.add("Store Home");
         store.add("Store Products");
-        store.add("Purchase Requests");
         data.put("My Store", store);
 
         ArrayList<String> account = new ArrayList<>();
         account.add("My Profile");
+        account.add("My Addresses");
         account.add("My Orders");
-        account.add("Categories I Deal In");
+        account.add("My Preferences");
         account.add("Rejected Products");
         data.put("My Account", account);
 
@@ -33,6 +34,9 @@ public class NavigationDrawerData {
         helpSupport.add("Policies");
         helpSupport.add("About Us");
         data.put("Help And Support", helpSupport);
+
+        data.put("Updates", new ArrayList<String>());
+        data.put("Logout", new ArrayList<String>());
 
         return data;
     }

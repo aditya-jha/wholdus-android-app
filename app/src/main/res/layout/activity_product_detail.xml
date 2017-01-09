@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_product_detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.wholdus.www.wholdusbuyerapp.activities.ProductDetailActivity">
+
+    <include layout="@layout/default_toolbar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:isScrollContainer="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include layout="@layout/layout_image_card_view" />
+
+            <include layout="@layout/layout_product_details_card_view" />
+
+            <include layout="@layout/layout_delivery_card_view" />
+
+            <include layout="@layout/layout_replacement_card_view" />
+
+            <include layout="@layout/layout_more_product_details" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/toolbar_drop_shadow" />
+
+    <LinearLayout
+        style="@style/ThemeOverlay.AppCompat.Light"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/fav_icon"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_favorite_border_black_28dp" />
+
+        <Button
+            android:id="@+id/cart_button"
+            style="@style/AppTheme.ColoredButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_add_shopping_cart_white_28dp"
+            android:drawableStart="@drawable/ic_add_shopping_cart_white_28dp"
+            android:text="@string/add_to_cart" />
+
+        <ImageButton
+            android:id="@+id/share_button"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_share_black_24dp" />
+    </LinearLayout>
+</LinearLayout>

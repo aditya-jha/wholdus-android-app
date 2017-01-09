@@ -17,10 +17,8 @@ public class InputValidationHelper {
         Matcher phoneMatcher = phonePattern.matcher(inputValue);
         String error = null;
 
-        if (inputValue.isEmpty()) {
-            error = "Please enter your mobile number";
-        } else if (!phoneMatcher.matches()) {
-            error = "Please check your number";
+        if (inputValue.isEmpty() || !phoneMatcher.matches()) {
+            error = "Please enter valid mobile number";
         } else if (inputValue.length() < 9) {
             error = "Mobile number has to be 10 digits";
         }
@@ -44,7 +42,43 @@ public class InputValidationHelper {
         String error = null;
 
         if (inputValue.isEmpty()) {
-            error = "Please Enter your name";
+            error = "Please enter your name";
+        }
+
+        return returnHelper(wrapper, error);
+    }
+
+    public static boolean isValidPincode(@Nullable TextInputLayout wrapper, String inputValue) {
+        String error = null;
+
+        if (inputValue.isEmpty()) {
+            error = "Please enter your pincode";
+        } else if (inputValue.length() != 6) {
+            error = "Please check your pincode";
+        } else {
+            try {
+                Integer.parseInt(inputValue);
+            } catch (Exception e) {
+                error = "Please check your pincode";
+            }
+        }
+
+        return returnHelper(wrapper, error);
+    }
+
+    public static boolean isValidOTP(@Nullable TextInputLayout wrapper, String inputValue) {
+        String error = null;
+
+        if (inputValue.isEmpty()) {
+            error = "Please enter the OTP received";
+        } else if (inputValue.length() != 6) {
+            error = "Invalid OTP";
+        } else {
+            try {
+                Integer.parseInt(inputValue);
+            } catch (Exception e) {
+                error = "Invalid OTP";
+            }
         }
 
         return returnHelper(wrapper, error);

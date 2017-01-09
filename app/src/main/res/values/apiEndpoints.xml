@@ -1,8 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--<string name="api_base">http://api.wholdus.com/</string>-->
-    <string name="api_base">http://192.168.1.5:8000/</string>
+    <string name="website_url">http://www.wholdus.com/</string>
+    <string name="api_base">http://13.76.211.119:8000/</string>
     <string name="login_url">users/buyer/login/</string>
     <string name="signup_url">leads/buyer/</string>
     <string name="forgot_password_url"></string>
+
+    <!-- buyer related apis -->
+    <string name="buyer_details_url">users/buyer/</string>
+    <string name="buyer_address_url">users/buyer/address/</string>
+
+    <!-- business types api -->
+    <string name="business_types_url">users/businesstype/</string>
+
+    <!-- orders api -->
+    <string name="orders_url">orders/</string>
+
+    <!-- buyer products api -->
+    <string name="buyer_product_url">users/buyer/buyerproducts/</string>
+    <string name="buyer_product_response_url">users/buyer/buyerproducts/response/</string>
+
+    <!-- product api -->
+    <string name="product_url">products/</string>
+
+    <!-- cart api -->
+    <string name="cart_url">cart/</string>
+    <string name="cart_item_url">cart/item/</string>
+    <string name="checkout_url">checkout/</string>
 </resources>

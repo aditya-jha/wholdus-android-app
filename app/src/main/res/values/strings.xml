@@ -2,7 +2,7 @@
     <string name="app_name">Wholdus</string>
 
     <!-- INTRODUCTION page texts -->
-    <string name="intro_page_1">Buy best products from manufacturers and brands at factory prices</string>
+    <string name="intro_page_1">Explore latest products from manufacturers &amp; brands</string>
     <string name="intro_page_2">Get them delivered to your doorstep, hassle free</string>
     <string name="intro_page_3">Get your own online store for free</string>
     <string name="start_button">START</string>
@@ -10,22 +10,205 @@
     <!-- ACTION BAR items -->
     <string name="action_bar_store_home">Go to your Store</string>
     <string name="action_bar_checkout">Proceed to Checkout</string>
+    <string name="action_bar_clear">CLEAR</string>
 
     <!-- Mobile Number and Password helper layout -->
     <string name="hint_mobile_number">Mobile Number</string>
     <string name="hint_password">Password</string>
-
-    <!-- Login Fragment -->
+    <string name="hint_name">Your name</string>
     <string name="login_fragment_header">Login</string>
-    <string name="signup_button_on_login_fragment"><u>Create one</u></string>
-    <string name="no_account">No account yet? </string>
-    <string name="login_progress_message">Credentials verified! Loggin you in..</string>
-    <string name="login_error_message">Invalid Credentials! Please try again</string>
+    <string name="register_fragment_header">Register</string>
 
+    <string name="submit">submit</string>
+    <string name="otp_key">OTP</string>
+    <string name="resend_otp"><u>Resend OTP</u></string>
+    <string name="already_member">Already a member?  <u>Login</u></string>
+    <string name="no_account">No account yet?  <u>Create one</u></string>
+    <string name="already_registered_error">Mobile Number or Email Already Registered</string>
+    <string name="verifying_credentials">Verifying Credentials&#8230;</string>
+    <string name="login_progress_message">Logging you in&#8230;</string>
+    <string name="invalid_credentials">Invalid Credentials! Please try again</string>
+    <string name="unregistered_mobile_number">Have you registered?</string>
+    <string name="empty_otp">Please enter the OTP received</string>
+    <string name="token_expired">Token expired, Please register again</string>
+    <string name="reset_password_title">Reset Password</string>
+    <string name="invalid_otp_error">Invalid OTP</string>
+    <string name="password_reset_success">Password reset successful</string>
+    <string name="next_button">Next</string>
     <!-- ForgotPassword Fragment -->
     <string name="forgot_password_fragment_header">Forgot Password</string>
-    <string name="back_button_fragment">BACK</string>
+    <string name="back_button_fragment">GO BACK</string>
     <string name="request_otp">REQUEST OTP</string>
-    <string name="forgot_password_intro_text">We just need your registered mobile number help you reset your password</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="forgot_password_intro_text">We just need your registered mobile number to help you reset your password</string>
 
+    <!-- Account Activity -->
+    <string-array name="account_activity_fragments">
+        <item>profile</item>
+        <item>orders</item>
+        <item>rejectedProducts</item>
+        <item>editPersonalDetails</item>
+    </string-array>
+
+    <!-- Profile Fragment -->
+    <string name="personal_details">Personal Details</string>
+    <string name="address">Address</string>
+    <string name="no_address">No address Saved</string>
+    <string name="add_key">ADD</string>
+
+    <!-- Edit Profile Fragment -->
+    <string name="business_type_title">My Business Type</string>
+    <string name="save_text">SAVE</string>
+
+    <!-- Edit Address Fragment -->
+    <string name="save_current_address_text">Use My Current Location</string>
+    <string name="cancel_text">Cancel</string>
+    <string name="address_alias_key">Address Nickname</string>
+
+    <!-- Buyer Interest Fragment -->
+    <string name="buyer_interest_fragment_title">My Preferences</string>
+
+    <!-- Order Fragment -->
+    <string name="order_card_order_number">ORD-NO :&#160;</string>
+    <string name="order_card_date">Date :&#160;</string>
+    <string name="order_card_amount">Amount : Rs. </string>
+    <string name="order_card_suborder_pieces">Pieces :&#160;</string>
+    <string name="order_card_sellers_in_order">Sellers in Order:</string>
+
+    <!-- Order Details Fragment -->
+    <string name="order_details_pieces">Pieces:</string>
+    <string name="order_details_products">Products:</string>
+    <string name="order_details_order_value">Order Value:</string>
+    <string name="order_details_cod_charge">COD Charge:</string>
+    <string name="order_details_shipping">Shipping:</string>
+    <string name="order_details_total_amount">Total Amount:</string>
+
+    <string name="order_item_price_per_piece">Price/pc:</string>
+    <string name="order_item_pieces">Pieces:</string>
+    <string name="order_item_total">Total:</string>
+
+    <!-- keys -->
+    <string name="name_key">name</string>
+    <string name="mobile_number_key">Mobile Number</string>
+    <string name="whatsapp_number_key">Whatsapp Number</string>
+    <string name="company_name_key">Company Name</string>
+    <string name="business_type_key">Business Type</string>
+    <string name="email_key">E-mail</string>
+    <string name="pincode_key">Pincode</string>
+    <string name="landmark_key">Landmark</string>
+    <string name="city_key">City</string>
+    <string name="state_key">State</string>
+    <string name="help_key">Help</string>
+    <string name="categories_key">Categories</string>
+    <string name="notification_key">Updates</string>
+    <string name="retry_text">Retry</string>
+    <string name="api_error_message">Ops! Something went wrong</string>
+    <string name="timeout_error">Very slow internet connection</string>
+    <string name="no_internet_access">No Internet Connection</string>
+    <string name="new_products_message">New Products Available</string>
+    <string name="show_text">SHOW</string>
+    <!-- messages -->
+    <string name="back_press_message">Press again to exit Wholdus</string>
+
+    <!-- products grid fragment -->
+    <string name="sort_text">SORT</string>
+    <string name="filter_text">FILTER</string>
+
+    <!-- filter fragment -->
+    <string name="filter_footer_title">Filter Products</string>
+    <string name="max_price_key">Max Price</string>
+    <string name="min_price_key">Min Price</string>
+
+    <!-- sort dialog fragment -->
+    <string name="sort_by">SORT BY</string>
+    <string name="sort_newest_first">Newest First</string>
+    <string name="sort_price_low_to_high">Price - Low to High</string>
+    <string name="sort_price_high_to_low">Price - High to Low</string>
+
+    <!-- product Detail Activity -->
+    <string name="fabric_key">Fabric</string>
+    <string name="size_key">Sizes</string>
+    <string name="color_key">Colors</string>
+    <string name="brand_key">Brand</string>
+    <string name="add_to_cart">Add To Cart</string>
+    <string name="mrp_key">MRP</string>
+    <string name="lot_description_key">Lot Description</string>
+
+    <string name="delivery_options">Delivery Options</string>
+    <string name="check">Check</string>
+    <string name="delivery_text">Surface delivery in 8-10 days</string>
+
+    <string name="replacement_policy_title">Replacement Policy</string>
+    <string name="replacement_policy_text">Defective products can be replaced within 3 days of delivery</string>
+
+    <string name="more_product_details_title">More Product Details</string>
+    <string name="pattern_key">Pattern</string>
+    <string name="style_key">Style</string>
+    <string name="work_key">Work</string>
+
+    <string name="seller_details_title">Seller Details</string>
+    <string name="location_key">Location</string>
+    <string name="speciality_key">Speciality</string>
+    <string name="view_store_key">View Store</string>
+
+    <!-- handpicked fragment -->
+    <string name="like_key">Like</string>
+    <string name="dislike_key">Dislike</string>
+    <string name="set_price_key">Set Price</string>
+    <string name="no_products_left">Return in some time for more products</string>
+    <string name="filter_no_products">No products for filter</string>
+
+    <!-- cart dialog fragment -->
+    <string name="lot_size_key">Lot Size :</string>
+    <string name="lot_details_key">Details :</string>
+    <string name="price_per_piece">Price/pc</string>
+    <string name="pieces_key">Pieces</string>
+    <string name="total_price_key">Total</string>
+    <string name="cart_dialog_shipping_condition">*Shipping charge extra = Rs.35/kg</string>
+    <string name="cart_dialog_add_to_cart">ADD TO CART</string>
+
+    <!-- cart summary fragment -->
+    <string name="cart_summary_proceed">PROCEED</string>
+    <string name="cart_summary_order_value">Order Value :&#160;</string>
+    <string name="cart_summary_shipping">Shipping :&#160;</string>
+    <string name="cart_summary_no_products">Your cart looks empty.\nWant to add products to your cart?</string>
+    <string name="cart_summary_continue_shopping">CONTINUE SHOPPING</string>
+
+    <string name="cart_item_price_per_piece">Price/pc:</string>
+    <string name="cart_item_pieces">Pieces:</string>
+    <string name="cart_item_total">Total:</string>
+
+    <string name="checkout_confirm_address_delivery_address">Delivery Address</string>
+    <string name="checkout_confirm_address_select_another">SELECT ANOTHER</string>
+
+    <string name="checkout_payment_method_cod">Cash on Delivery</string>
+    <string name="checkout_payment_method_cod_description">2% COD Charge</string>
+    <string name="checkout_payment_method_neft">NEFT</string>
+    <string name="checkout_payment_method_credit">Credit</string>
+    <string name="checkout_payment_method_credit_description">15 transactions to avail credit</string>
+
+    <string name="price_per_pcs_format">Rs. %1$s/pc</string>
+    <string name="price_format">Rs. %1$s</string>
+
+    <string name="share_description">Share</string>
+
+    <string name="product_share_text">%1$s. More Details at %2$s</string>
+    <string name="store_share_text">Hey! Check out %1$s online store %2$s at: %3$s</string>
+
+    <string name="store_title">Your Store</string>
+    <string name="edit_store_title">Edit Store Details</string>
+    <string name="share_store">Share Your Store</string>
+    <string name="store_products">My Products</string>
+
+    <string name="no_fabric_filter_text">All Fabric</string>
+    <string name="fragment_buyer_interest_dialog_title">Add %1$s to your favorite categories</string>
+    <string name="price_range_selection_text">Select your price range</string>
+
+    <string name="logout_loader_title">You will be missed!</string>
+    <string name="logout_loader_message">Logging out&#8230;</string>
+
+    <string name="products_updated">Products Updated</string>
+    <string name="no_products_filter">No products for this filter. Please change filter to discover latest products</string>
+
+    <string name="faq_title">FAQs</string>
 </resources>

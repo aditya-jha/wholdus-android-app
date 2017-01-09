@@ -1,63 +1,80 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
+import android.animation.ArgbEvaluator;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
-import android.util.Log;
-import android.util.TypedValue;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.wholdus.www.wholdusbuyerapp.R;
-import com.wholdus.www.wholdusbuyerapp.adapters.ViewPagerAdapter;
-import com.wholdus.www.wholdusbuyerapp.fragments.IntroSlideFragment;
+import com.wholdus.www.wholdusbuyerapp.adapters.IntroViewPagerAdapter;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 
-public class IntroActivity extends FragmentActivity implements IntroSlideFragment.OnIntroSlideListener {
+public class IntroActivity extends FragmentActivity {
 
-    private LinearLayout mIntroPagerDots;
-    private ViewPager mViewPager;
-    private PagerAdapter mPagerAdapter;
-    private final int TOTAL_DOTS = 3;
+    private static final int TOTAL_DOTS = 3;
     private ImageView[] mDots;
     private int mLastIntroPagerPosition;
+    private Button mNextButton;
+    private ViewPager mViewPager;
+    private Integer[] mColors;
+    private ArgbEvaluator mArgbEvaluator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
 
-        if(savedInstanceState != null) {
-            Log.v("bundle ", savedInstanceState.toString());
-            return;
-        }
+        mArgbEvaluator = new ArgbEvaluator();
+        setColors();
         initIntroPagerDots();
         initViewPagerSettings();
-    }
-
-    @Override
-    public void onStartButtonClicked() {
-        Intent intent = new Intent(this, LoginSignupActivity.class);
-        startActivity(intent);
-        finish();
+        mNextButton = (Button) findViewById(R.id.start_button);
+        mNextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int position = mViewPager.getCurrentItem();
+                if (position == TOTAL_DOTS - 1) {
+                    Intent intent = new Intent(getApplicationContext(), LoginSignupActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    mViewPager.setCurrentItem(position + 1);
+                }
+            }
+        });
     }
 
     private void initViewPagerSettings() {
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
-        mPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), TOTAL_DOTS, this);
+        PagerAdapter mPagerAdapter = new IntroViewPagerAdapter(getSupportFragmentManager(), TOTAL_DOTS, this);
         mViewPager.setAdapter(mPagerAdapter);
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+                if (position < (TOTAL_DOTS - 1) && position < (mColors.length - 1)) {
+                    mViewPager.setBackgroundColor((Integer) mArgbEvaluator.evaluate(positionOffset, mColors[position], mColors[position + 1]));
+                } else {
+                    // the last page color
+                    mViewPager.setBackgroundColor(mColors[mColors.length - 1]);
+                }
             }
 
             @Override
             public void onPageSelected(int position) {
                 setIntroPagerDots(position);
+                if (position == TOTAL_DOTS - 1) {
+                    mNextButton.setText(getApplicationContext().getString(R.string.start_button));
+                } else {
+                    mNextButton.setText(getApplicationContext().getString(R.string.next_button));
+                }
             }
 
             @Override
@@ -67,38 +84,40 @@ public class IntroActivity extends FragmentActivity implements IntroSlideFragmen
         });
     }
 
-    private int getPixelFromDPValue(int dpValue) {
-        int pixelValue = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dpValue,
-                getResources().getDisplayMetrics()
-        );
-        return pixelValue;
-    }
-
     private void initIntroPagerDots() {
-        mIntroPagerDots = (LinearLayout) findViewById(R.id.introPagerDots);
+        LinearLayout mIntroPagerDots = (LinearLayout) findViewById(R.id.intro_pager_dots);
         mDots = new ImageView[TOTAL_DOTS];
 
-        for(int i=0; i<TOTAL_DOTS; i++) {
+        for (int i = 0; i < TOTAL_DOTS; i++) {
             mDots[i] = new ImageView(this);
-            mDots[i].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.nonselected_dot));
+            mDots[i].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.non_selected_dot_white));
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
-            params.setMargins(getPixelFromDPValue(10), 0, getPixelFromDPValue(10), 0);
+            params.setMargins(
+                    (int) HelperFunctions.convertPixelsToDp(10, this),
+                    0,
+                    (int) HelperFunctions.convertDpToPixel(10, this),
+                    0);
 
             mIntroPagerDots.addView(mDots[i], params);
         }
         mLastIntroPagerPosition = 0;
-        mDots[mLastIntroPagerPosition].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.selected_dot));
+        mDots[mLastIntroPagerPosition].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.selected_dot_white));
     }
 
     private void setIntroPagerDots(int position) {
-        mDots[mLastIntroPagerPosition].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.nonselected_dot));
-        mDots[position].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.selected_dot));
+        mDots[mLastIntroPagerPosition].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.non_selected_dot_white));
+        mDots[position].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.selected_dot_white));
         mLastIntroPagerPosition = position;
+    }
+
+    private void setColors() {
+        mColors = new Integer[TOTAL_DOTS];
+        mColors[0] = getResources().getColor(R.color.slide_1_color);
+        mColors[1] = getResources().getColor(R.color.slide_2_color);
+        mColors[2] = getResources().getColor(R.color.slide_3_color);
     }
 }
