@@ -105,6 +105,8 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 handleOnBroadcastReceive(intent);
             }
         };
+        IntentFilter intentFilter = new IntentFilter(IntentFilters.PRODUCT_DATA);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
     }
 
     @Nullable
@@ -170,8 +172,6 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onResume() {
         super.onResume();
-        IntentFilter intentFilter = new IntentFilter(IntentFilters.PRODUCT_DATA);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
 
         // restore recycler view position
         mGridLayoutManager.scrollToPosition(mRecyclerViewPosition);
@@ -180,10 +180,14 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
-
         // save recycler view position
         mRecyclerViewPosition = mGridLayoutManager.findFirstVisibleItemPosition();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
 
     @Override
@@ -271,16 +275,11 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 ShareIntentClass.shareImage(getContext(), (ImageView) view, mProducts.get(position).getName());
                 break;
             case R.id.cart_image_view:
-                if (mProducts.get(position).getCartCount() > 0) {
-                    /* TODO: go to checkout */
-
-                } else {
-                    CartDialogFragment cartDialog = new CartDialogFragment();
-                    Bundle args = new Bundle();
-                    args.putInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, mProducts.get(position).getProductID());
-                    cartDialog.setArguments(args);
-                    cartDialog.show(getFragmentManager(), cartDialog.getClass().getSimpleName());
-                }
+                CartDialogFragment cartDialog = new CartDialogFragment();
+                Bundle args = new Bundle();
+                args.putInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, mProducts.get(position).getProductID());
+                cartDialog.setArguments(args);
+                cartDialog.show(getFragmentManager(), cartDialog.getClass().getSimpleName());
                 break;
             case R.id.fav_icon_image_view:
                 GridProductModel product = mProducts.get(position);
@@ -305,7 +304,6 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoadMore() {
-        //add progress item
         new Handler().post(new Runnable() {
             @Override
             public void run() {
@@ -449,7 +447,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 Toast.makeText(getContext(), getString(R.string.products_updated), Toast.LENGTH_LONG).show();
             } else {
                 final int scrollPosition = mGridLayoutManager.findLastVisibleItemPosition();
-                if (scrollPosition >= mProducts.size() - 2) {
+                if (scrollPosition >= mProducts.size() - 2 || pageNumber == mPageNumber) {
                     getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
                 } else {
                     showSnackbarToUpdateUI(totalPages);

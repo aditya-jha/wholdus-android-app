@@ -747,7 +747,11 @@ public class CatalogDBHelper extends BaseDBHelper {
         cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_ID, data.getInt(ProductsTable.COLUMN_BUYER_PRODUCT_ID));
         cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_CREATED_AT, data.getString(ProductsTable.COLUMN_PRODUCT_CREATED_AT));
         cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_UPDATED_AT, data.getString(ProductsTable.COLUMN_PRODUCT_UPDATED_AT));
-        cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_IS_ACTIVE, data.getBoolean(ProductsTable.COLUMN_BUYER_PRODUCT_IS_ACTIVE) ? 1 : 0);
+        try {
+            cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_IS_ACTIVE, data.getBoolean(ProductsTable.COLUMN_BUYER_PRODUCT_IS_ACTIVE) ? 1 : 0);
+        } catch (Exception e) {
+            cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_IS_ACTIVE, data.getInt(ProductsTable.COLUMN_BUYER_PRODUCT_IS_ACTIVE));
+        }
 
         return cv;
     }

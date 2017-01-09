@@ -177,7 +177,7 @@
     <string name="cart_item_price_per_piece">Price/pc:</string>
     <string name="cart_item_pieces">Pieces:</string>
     <string name="cart_item_total">Total:</string>
-    
+
     <string name="checkout_confirm_address_delivery_address">Delivery Address</string>
     <string name="checkout_confirm_address_select_another">SELECT ANOTHER</string>
 
@@ -209,4 +209,6 @@
 
     <string name="products_updated">Products Updated</string>
     <string name="no_products_filter">No products for this filter. Please change filter to discover latest products</string>
+
+    <string name="faq_title">FAQs</string>
 </resources>
