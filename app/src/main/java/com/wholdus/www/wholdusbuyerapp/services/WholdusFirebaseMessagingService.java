@@ -2,24 +2,16 @@ package com.wholdus.www.wholdusbuyerapp.services;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
-import android.util.Log;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.SplashActivity;
 
-import org.json.JSONObject;
-
-import java.util.HashMap;
 import java.util.Map;
 
 import static android.app.Notification.DEFAULT_ALL;
@@ -34,34 +26,38 @@ public class WholdusFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         //super.onMessageReceived(remoteMessage);
 
-        RemoteMessage.Notification notification = remoteMessage.getNotification();
-        Map<String, String> data = remoteMessage.getData();
+        try {
+            RemoteMessage.Notification notification = remoteMessage.getNotification();
+            Map<String, String> data = remoteMessage.getData();
 
-        if ((data == null || data.isEmpty()) && notification == null){
-            return;
-        }
+            if ((data == null || data.isEmpty()) && notification == null) {
+                return;
+            }
 
-        if (data.containsKey("has_notification") && data.get("has_notification").equals("true")){
-            String notificationTitle = null;
-            String notificationBody = null;
-            if (data.containsKey("notification_title")){
-                notificationTitle = data.get("notification_title");
+            if (data.containsKey("has_notification") && data.get("has_notification").equals("true")) {
+                String notificationTitle = null;
+                String notificationBody = null;
+                if (data.containsKey("notification_title")) {
+                    notificationTitle = data.get("notification_title");
+                }
+                if (data.containsKey("notification_body")) {
+                    notificationBody = data.get("notification_body");
+                }
+                buildNotification(notificationTitle, notificationBody, data);
+            } else if (notification != null) {
+                buildNotification(notification.getTitle(), notification.getBody(), data);
             }
-            if (data.containsKey("notification_body")){
-                notificationBody = data.get("notification_body");
-            }
-            buildNotification(notificationTitle, notificationBody, data);
-        }
-        else if (notification != null){
-            buildNotification(notification.getTitle(), notification.getBody(), data);
+        } catch (Exception e) {
+            e.printStackTrace();
+            FirebaseCrash.report(e);
         }
     }
 
-    public void buildNotification(String title, String body, Map<String, String> data){
+    public void buildNotification(String title, String body, Map<String, String> data) {
         Intent intent = new Intent(this, SplashActivity.class);
-        if (data != null && !data.isEmpty()){
+        if (data != null && !data.isEmpty()) {
             for (Map.Entry<String, String> entry : data.entrySet()) {
-                intent.putExtra(entry.getKey(),entry.getValue());
+                intent.putExtra(entry.getKey(), entry.getValue());
             }
 
         }
@@ -71,7 +67,7 @@ public class WholdusFirebaseMessagingService extends FirebaseMessagingService {
         if (title == null) {
             title = "Wholdus";
         }
-        if (body == null){
+        if (body == null) {
             title = "New catalog arrived";
         }
         notificationBuilder.setContentTitle(title);
