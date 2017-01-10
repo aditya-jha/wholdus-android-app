@@ -35,6 +35,16 @@ public class HelpSupportActivity extends AppCompatActivity implements HelpSuppor
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+            finish();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     public void fragmentCreated(String title) {
         modifyToolbar(title);
     }
