@@ -57,7 +57,7 @@ public final class HelperFunctions {
         params.height = totalHeight + ((listView.getDividerHeight()) * (listAdapter.getCount()));
 
         listView.setLayoutParams(params);
-        listView.requestLayout();
+        //listView.requestLayout();
     }
 
     public static Date getDateObjectFromString(String dateStr){
