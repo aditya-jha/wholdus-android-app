@@ -217,21 +217,19 @@ public class CategoryGridFragment extends Fragment implements
     }
 
     private void setDataToView(final List<Category> data) {
-        if (data.size() != 0) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    mCategoriesData.clear();
-                    mCategoriesData.addAll(data);
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mCategoriesGridAdapter.notifyDataSetChanged();
-                        }
-                    });
-                }
-            }).start();
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mCategoriesData.clear();
+                mCategoriesData.addAll(data);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCategoriesGridAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }).start();
     }
 
     private void showErrorMessage() {
