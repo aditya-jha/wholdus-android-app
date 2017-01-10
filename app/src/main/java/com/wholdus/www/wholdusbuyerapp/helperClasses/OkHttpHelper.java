@@ -39,6 +39,17 @@ public class OkHttpHelper {
         return APIConstants.TEMP_API_BASE + endpoint;
     }
 
+    public static Response makeGetRequest(Context context, String url) throws IOException {
+        OkHttpClient okHttpClient = OkHttpHelper.getClient(context);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+
+        return okHttpClient.newCall(request).execute();
+    }
+
     public static Response makePostRequest(Context context, String url, String data) throws IOException {
         RequestBody requestBody = RequestBody.create(JSON, data);
         OkHttpClient okHttpClient = OkHttpHelper.getClient(context);

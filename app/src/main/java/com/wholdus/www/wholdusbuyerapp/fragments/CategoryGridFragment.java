@@ -66,11 +66,7 @@ public class CategoryGridFragment extends Fragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            mListener = (HomeListenerInterface) context;
-        } catch (ClassCastException cee) {
-            Log.e(this.getClass().getSimpleName(), " must implement " + HomeListenerInterface.class.getSimpleName());
-        }
+        mListener = (HomeListenerInterface) context;
     }
 
     @Override
@@ -134,6 +130,7 @@ public class CategoryGridFragment extends Fragment implements
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener = null;
     }
 
     @Override
@@ -220,11 +217,19 @@ public class CategoryGridFragment extends Fragment implements
     }
 
     private void setDataToView(final List<Category> data) {
-        if (data.size() != 0) {
-            mCategoriesData.clear();
-            mCategoriesData.addAll(data);
-            mCategoriesGridAdapter.notifyDataSetChanged();
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mCategoriesData.clear();
+                mCategoriesData.addAll(data);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCategoriesGridAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }).start();
     }
 
     private void showErrorMessage() {

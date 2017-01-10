@@ -19,6 +19,7 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.AccountActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.CategoryProductActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
+import com.wholdus.www.wholdusbuyerapp.activities.HelpSupportActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HomeActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.LoginSignupActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.StoreActivity;
@@ -185,12 +186,28 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
     }
 
     private boolean handleHelpSupportCase(int childPosition) {
-        switch (childPosition) {
-            case 1:
-                return true;
-            default:
-                return false;
+        Intent intent = new Intent(getContext(), HelpSupportActivity.class);
+
+        String openFragmentName = "";
+        if (mBundle != null) {
+            openFragmentName = mBundle.getString(Constants.OPEN_FRAGMENT_KEY, "none");
         }
+        switch (childPosition) {
+            case 0:
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, FAQFragment.class.getSimpleName());
+                break;
+            case 1:
+                break;
+            default:
+                break;
+        }
+
+        if (intent.getExtras().getString(Constants.OPEN_FRAGMENT_KEY, "none").equals(openFragmentName)) {
+            return false;
+        }
+
+        startActivity(intent);
+        return true;
     }
 
     private void logout() {

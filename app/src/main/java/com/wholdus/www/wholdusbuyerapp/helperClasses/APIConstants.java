@@ -24,6 +24,8 @@ public class APIConstants {
     public static final String BUYER_PRODUCT_URL = "users/buyer/buyerproducts/";
     public static final String BUYER_PRODUCT_RESPONSE_URL = "users/buyer/buyerproducts/response/";
 
+    public static final String FAQ_URL = "general/faqs/";
+
     public static final String API_PAGE_NUMBER_KEY = "page_number";
     public static final String API_TOTAL_PAGES_KEY = "total_pages";
     public static final String API_ITEM_PER_PAGE_KEY = "items_per_page";
