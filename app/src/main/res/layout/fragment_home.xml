@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/card_margin_vertical"
+            android:paddingLeft="@dimen/card_margin_horizontal"
+            android:paddingRight="@dimen/card_margin_horizontal"
+            android:paddingTop="@dimen/card_margin_vertical">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/products_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/toolbar_drop_shadow" />
+
+    <LinearLayout style="@style/AppTheme.BottomBar">
+
+        <Button
+            android:id="@+id/categories"
+            style="@style/AppTheme.HomeBottomButton"
+            android:drawableTop="@drawable/ic_list_black_24dp"
+            android:text="@string/categories_key"
+            android:textColor="@color/primary_text" />
+
+        <Button
+            android:id="@+id/help"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:drawableTop="@drawable/ic_help_outline_black_24dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:text="@string/help_key"
+            android:textColor="@color/primary_text" />
+
+        <Button
+            android:id="@+id/notification"
+            style="@style/AppTheme.HomeBottomButton"
+            android:drawableTop="@drawable/ic_notifications_none_black_24dp"
+            android:text="@string/notification_key"
+            android:textColor="@color/primary_text" />
+    </LinearLayout>
+</LinearLayout>

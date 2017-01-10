@@ -1,11 +1,132 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="android:textColorPrimary">@color/primary_text</item>
+        <item name="android:fontFamily">@string/font_family_regular</item>
     </style>
 
+    <!-- Splash Screen Theme -->
+    <style name="SplashTheme" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/background_splash</item>
+    </style>
+
+    <style name="AppTheme.Activity" parent="AppTheme">
+        <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginTop">@dimen/activity_vertical_margin</item>
+        <item name="android:layout_marginBottom">@dimen/activity_vertical_margin</item>
+    </style>
+
+    <style name="AppTheme.DefaultCard" parent="AppTheme">
+        <item name="android:layout_marginLeft">@dimen/card_margin_horizontal</item>
+        <item name="android:layout_marginRight">@dimen/card_margin_horizontal</item>
+        <item name="android:layout_marginTop">@dimen/card_margin_vertical</item>
+    </style>
+
+    <style name="AppTheme.TitleText" parent="AppTheme">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:fontFamily">@string/font_family_black</item>
+        <item name="android:padding">@dimen/title_text_padding</item>
+    </style>
+
+    <style name="AppTheme.NormalText" parent="AppTheme">
+        <item name="android:paddingLeft">@dimen/title_text_padding</item>
+        <item name="android:paddingBottom">@dimen/title_text_padding</item>
+    </style>
+
+    <style name="AppTheme.BoldText" parent="AppTheme">
+        <item name="android:paddingLeft">@dimen/title_text_padding</item>
+        <item name="android:paddingBottom">@dimen/title_text_padding</item>
+    </style>
+
+    <style name="AppTheme.BoldTextMedium" parent="AppTheme.BoldText">
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingTop">@dimen/secondary_text_padding_top</item>
+    </style>
+
+    <style name="AppTheme.BoldTextLarge" parent="AppTheme.BoldText">
+        <item name="android:textSize">18sp</item>
+        <item name="android:paddingTop">@dimen/secondary_text_padding_top</item>
+    </style>
+
+    <style name="AppTheme.ListItem" parent="AppTheme">
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:fontFamily">@string/font_family_regular</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="AppTheme.BottomBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/primary</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="AppTheme.HomeBottomButton" parent="Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginLeft">0dp</item>
+        <item name="android:layout_marginRight">0dp</item>
+    </style>
+
+    <style name="AppTheme.ColoredButton" parent="Base.Widget.AppCompat.Button.Colored">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="AppTheme.CardImageButton" parent="Base.Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="AppTheme.SecondaryText" parent="AppTheme">
+        <item name="android:textColor">@color/secondary_text</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:drawablePadding">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingTop">@dimen/secondary_text_padding_top</item>
+        <item name="android:paddingBottom">@dimen/secondary_text_padding_top</item>
+    </style>
+
+    <style name="AppTheme.ImportantText" parent="AppTheme">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="AppTheme.SecondaryTextKey" parent="AppTheme.SecondaryText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="AppTheme.ImportantTextValue" parent="AppTheme.ImportantText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">2</item>
+    </style>
+
+    <style name="AppTheme.Divider" parent="AppTheme.DefaultCard">
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/divider</item>
+        <item name="android:layout_marginBottom">@dimen/text_divider_gap</item>
+    </style>
+
+    <style name="TextLabel" parent="TextAppearance.AppCompat">
+        <item name="android:textColorHint">@color/primary_text</item>
+        <item name="android:textSize">14sp</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="colorControlNormal">@color/primary_text</item>
+        <item name="colorControlActivated">@color/accent</item>
+        <item name="android:textColorHighlight">@color/accent</item>
+        <item name="android:textColorLink">@color/accent</item>
+    </style>
 </resources>
