@@ -64,8 +64,6 @@ public class LoginAPIService extends IntentService {
                     intent.getStringExtra(UserProfileContract.UserTable.COLUMN_NAME));
             data.put(UserProfileContract.UserTable.COLUMN_PASSWORD,
                     intent.getStringExtra(UserProfileContract.UserTable.COLUMN_PASSWORD));
-            data.put(UserProfileContract.UserTable.COLUMN_EMAIL,
-                    intent.getStringExtra(UserProfileContract.UserTable.COLUMN_EMAIL));
 
             Response response = OkHttpHelper.makePostRequest(getApplicationContext(),
                     OkHttpHelper.generateUrl(APIConstants.REGISTER_URL), data.toString());
