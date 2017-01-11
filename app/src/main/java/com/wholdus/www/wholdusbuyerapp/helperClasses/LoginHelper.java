@@ -21,6 +21,7 @@ public class LoginHelper {
     private static final String ACCESS_TOKEN_KEY = "access_token";
     private static final String REFRESH_TOKEN_KEY = "refresh_token";
     private static final String BUYER_ID_KEY = UserProfileContract.UserTable.COLUMN_BUYER_ID;
+    private static final String MOBILE_NUMBER_KEY = UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER;
 
     private Context mContext;
 
@@ -35,11 +36,12 @@ public class LoginHelper {
             final String aToken = sp.getString(ACCESS_TOKEN_KEY, null);
             final String rToken = sp.getString(REFRESH_TOKEN_KEY, null);
             final int buyerID = sp.getInt(BUYER_ID_KEY, -1);
+            final String mobileNumber = sp.getString(MOBILE_NUMBER_KEY, null);
 
-            if (aToken == null || rToken == null || buyerID == -1) {
+            if (aToken == null || rToken == null || buyerID == -1 || mobileNumber == null) {
                 return false;
             } else {
-                setTokens(aToken, rToken, buyerID);
+                setTokens(aToken, rToken, buyerID, mobileNumber);
                 return true;
             }
         } catch (ClassCastException e) {
@@ -55,14 +57,17 @@ public class LoginHelper {
         try {
             final String aToken = apiResponse.getString(ACCESS_TOKEN_KEY);
             final String rToken = apiResponse.getString(REFRESH_TOKEN_KEY);
-            final int buyerID = apiResponse.getJSONObject("buyer").getInt(BUYER_ID_KEY);
+            JSONObject buyer = apiResponse.getJSONObject("buyer");
+            final int buyerID = buyer.getInt(BUYER_ID_KEY);
+            final String mobileNUmber = buyer.getString(MOBILE_NUMBER_KEY);
 
             editor.putString(ACCESS_TOKEN_KEY, aToken);
             editor.putString(REFRESH_TOKEN_KEY, rToken);
             editor.putInt(BUYER_ID_KEY, buyerID);
+            editor.putString(MOBILE_NUMBER_KEY, mobileNUmber);
             editor.apply();
 
-            setTokens(aToken, rToken, buyerID);
+            setTokens(aToken, rToken, buyerID, mobileNUmber);
         } catch (Exception e) {
             FirebaseCrash.report(e);
             e.printStackTrace();
@@ -84,6 +89,7 @@ public class LoginHelper {
             editor.remove(ACCESS_TOKEN_KEY);
             editor.remove(REFRESH_TOKEN_KEY);
             editor.remove(BUYER_ID_KEY);
+            editor.remove(MOBILE_NUMBER_KEY);
             editor.apply();
         } catch (Exception e) {
             e.printStackTrace();
@@ -108,10 +114,10 @@ public class LoginHelper {
         return mContext.getSharedPreferences("LoginHelperSharedPreference", Context.MODE_PRIVATE);
     }
 
-    private void setTokens(String aToken, String rToken, int buyerID) {
+    private void setTokens(String aToken, String rToken, int buyerID, String mobileNumber) {
         try {
             WholdusApplication wholdusApplication = ((WholdusApplication) ((Activity) mContext).getApplication());
-            wholdusApplication.setTokens(aToken, rToken, buyerID);
+            wholdusApplication.setTokens(aToken, rToken, buyerID, mobileNumber);
         } catch (Exception e) {
         }
     }

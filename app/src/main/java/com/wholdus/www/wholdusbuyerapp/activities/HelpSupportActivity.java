@@ -1,5 +1,6 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.fragments.ContactUsFragment;
@@ -49,6 +51,18 @@ public class HelpSupportActivity extends AppCompatActivity implements HelpSuppor
     @Override
     public void fragmentCreated(String title) {
         modifyToolbar(title);
+    }
+
+    @Override
+    public void hideSoftKeyboard(View view) {
+        try {
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void initToolbar() {
