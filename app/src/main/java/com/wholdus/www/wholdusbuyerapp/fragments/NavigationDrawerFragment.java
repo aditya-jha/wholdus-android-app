@@ -25,8 +25,10 @@ import com.wholdus.www.wholdusbuyerapp.activities.LoginSignupActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.StoreActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.NavigationDrawerAdapter;
 import com.wholdus.www.wholdusbuyerapp.dataSource.NavigationDrawerData;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.LoginHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -193,12 +195,26 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
             openFragmentName = mBundle.getString(Constants.OPEN_FRAGMENT_KEY, "none");
         }
         switch (childPosition) {
-            case 0:
-                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, FAQFragment.class.getSimpleName());
+            case 0: // contact us
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, ContactUsFragment.class.getSimpleName());
                 break;
             case 1:
+                intent.putExtra("TODO", APIConstants.ABOUT_US_URL);
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, HelpSupportFragment.class.getSimpleName());
                 break;
-            default:
+            case 2:
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, FAQFragment.class.getSimpleName());
+                break;
+            case 3:
+                intent.putExtra("TODO", APIConstants.RETURN_REFUND_POLICY);
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, HelpSupportFragment.class.getSimpleName());
+                break;
+            case 4:
+                intent.putExtra("TODO", APIConstants.PRIVACY_POLICY);
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, HelpSupportFragment.class.getSimpleName());
+                break;
+            default: // about us, privacy, return
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, ContactUsFragment.class.getSimpleName());
                 break;
         }
 
@@ -206,6 +222,7 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
             return false;
         }
 
+        intent.putExtra(Constants.OPEN_ACTIVITY_KEY, HelpSupportActivity.class.getSimpleName());
         startActivity(intent);
         return true;
     }
