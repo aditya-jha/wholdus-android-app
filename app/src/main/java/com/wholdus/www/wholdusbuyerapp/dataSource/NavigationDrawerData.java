@@ -29,10 +29,11 @@ public class NavigationDrawerData {
         data.put("My Account", account);
 
         ArrayList<String> helpSupport = new ArrayList<>();
-        helpSupport.add("FAQs");
         helpSupport.add("Contact Us");
-        helpSupport.add("Policies");
         helpSupport.add("About Us");
+        helpSupport.add("FAQs");
+        helpSupport.add("Return & Refund Policy");
+        helpSupport.add("Privacy Policy");
         data.put("Help And Support", helpSupport);
 
         data.put("Updates", new ArrayList<String>());

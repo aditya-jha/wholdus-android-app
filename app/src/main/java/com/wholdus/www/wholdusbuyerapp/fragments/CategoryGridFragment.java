@@ -222,12 +222,14 @@ public class CategoryGridFragment extends Fragment implements
             public void run() {
                 mCategoriesData.clear();
                 mCategoriesData.addAll(data);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mCategoriesGridAdapter.notifyDataSetChanged();
-                    }
-                });
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mCategoriesGridAdapter.notifyDataSetChanged();
+                        }
+                    });
+                }
             }
         }).start();
     }
