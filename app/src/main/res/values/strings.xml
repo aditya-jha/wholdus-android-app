@@ -100,7 +100,7 @@
     <string name="landmark_key">Landmark</string>
     <string name="city_key">City</string>
     <string name="state_key">State</string>
-    <string name="help_key">Help</string>
+    <string name="help_key">Chat</string>
     <string name="categories_key">Categories</string>
     <string name="notification_key">Updates</string>
     <string name="retry_text">Retry</string>

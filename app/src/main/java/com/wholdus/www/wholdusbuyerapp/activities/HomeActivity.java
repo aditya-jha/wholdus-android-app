@@ -178,7 +178,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     public void fragmentCreated(String title, boolean backEnabled) {
         mToolbar.setTitle(title);
         if (backEnabled && mToolbar.getNavigationContentDescription() != "backEnabled") {
-            mToolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_white_32dp);
+            mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
             mToolbar.setNavigationContentDescription("backEnabled");
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
@@ -200,7 +200,6 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
 
     private void initToolbar() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
         // set default toolbar as the action bar for this activity
         mToolbar = (Toolbar) findViewById(R.id.default_toolbar);
         setSupportActionBar(mToolbar);
