@@ -210,7 +210,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mListener.loginClicked(null);
+                                    Toast.makeText(getContext(), getString(R.string.api_error_message), Toast.LENGTH_SHORT).show();
                                 }
                             });
                         } else {
