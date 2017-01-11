@@ -19,7 +19,5 @@
         style="@style/AppTheme.DefaultCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/nonselected_dot_6dp"
-        android:drawablePadding="@dimen/card_margin_horizontal"
-        android:drawableStart="@drawable/nonselected_dot_6dp" />
+        android:drawablePadding="@dimen/card_margin_horizontal" />
 </LinearLayout>
