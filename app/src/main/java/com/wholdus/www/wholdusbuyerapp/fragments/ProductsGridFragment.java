@@ -229,11 +229,13 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 mPageLoader.setVisibility(View.INVISIBLE);
                 mPageLayout.setVisibility(View.VISIBLE);
             }
+
             final int oldPosition = mProducts.size();
             final int scrollerPosition = mGridLayoutManager.findFirstVisibleItemPosition();
             removeDummyObject();
             mProducts.addAll(data);
-            mAdapter.notifyItemRangeInserted(oldPosition, data.size());
+            //mAdapter.notifyItemRangeInserted(oldPosition, data.size());
+            mAdapter.notifyDataSetChanged();
             if (scrollerPosition >= 0) {
                 View firstVisible = mGridLayoutManager.findViewByPosition(scrollerPosition);
                 mGridLayoutManager.scrollToPositionWithOffset(scrollerPosition, firstVisible.getTop());
@@ -308,7 +310,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
             @Override
             public void run() {
                 mLoadMoreData++;
-
+                Log.d(ProductsGridFragment.class.getSimpleName(), "Total products count: " + mProducts.size());
                 if (!mLoaderLoading) {
                     mLoadMoreData--;
                     loadData();
@@ -443,6 +445,11 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
             // if page number is 1 then flicker and reload data
             else if (mPageNumber == 1 && pageNumber == 1) {
                 resetVariables();
+                final int oldPosition = mProducts.size();
+                if (mPageNumber == 1 && oldPosition > 0) {
+                    mProducts.clear();
+                    mAdapter.notifyItemRangeRemoved(0, oldPosition);
+                }
                 getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
                 Toast.makeText(getContext(), getString(R.string.products_updated), Toast.LENGTH_LONG).show();
             } else {

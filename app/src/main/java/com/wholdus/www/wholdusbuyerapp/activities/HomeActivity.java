@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -50,10 +51,11 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        routeToActivity();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        routeToActivity();
 
         // check for google play api
         HelperFunctions.checkGooglePlay(this);
@@ -65,64 +67,6 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         initNavigationDrawer();
 
         openToFragment(getFragmentToOpenName(savedInstanceState), null);
-    }
-
-    public void routeToActivity(){
-        Intent receivedIntent = getIntent();
-        if (getIntent() == null){
-            return;
-        }
-        Bundle bundle = receivedIntent.getBundleExtra("router");
-        if (bundle == null){
-            return;
-        }
-        Class activityClass;
-        Intent intent = new Intent();
-
-        String activityToStart = bundle.getString("activity", "");
-
-        switch (activityToStart) {
-            case "Handpicked":
-                activityClass = HandPickedActivity.class;
-                String productIDs = bundle.getString("productIDs", "");
-                if (!productIDs.equals("")){
-                    try {
-                        ArrayList<String> productIDsStringArray = new ArrayList<>(Arrays.asList(TextUtils.split(productIDs, ",")));
-                        ArrayList<Integer> productIDsArray = new ArrayList<>();
-                        for (String productID:productIDsStringArray){
-                            productIDsArray.add(Integer.parseInt(productID.trim()));
-                        }
-                        intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME,productIDsArray);
-                    }catch (Exception e){
-
-                    }
-
-                }
-                break;
-            case "OrderDetails":
-                activityClass = AccountActivity.class;
-                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "orderDetails");
-                String orderID = bundle.getString("orderID", "");
-                if (orderID.equals("")){
-                    return;
-                }
-                Bundle args = new Bundle();
-                try {
-                    args.putInt("orderID", Integer.parseInt(orderID.trim()));
-                }catch (Exception e){
-                    return;
-                }
-                intent.putExtras(args);
-                break;
-            case "Help":
-                helpButtonClicked();
-                return;
-            default:
-                return;
-        }
-
-        intent.setClass(getApplicationContext(), activityClass);
-        startActivity(intent);
     }
 
     @Override
@@ -213,6 +157,46 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         }
     }
 
+    @Override
+    public void helpButtonClicked() {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "help");
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "help on home screen clicked");
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    ContactsHelperClass contactsHelperClass = new ContactsHelperClass(getApplicationContext());
+                    String savedNumber = contactsHelperClass.getSavedNumber();
+                    if (savedNumber != null) {
+                        openWhatsapp(savedNumber);
+                    } else {
+                        contactsHelperClass.saveWholdusContacts();
+                        savedNumber = contactsHelperClass.getSavedNumber();
+                        if (savedNumber != null) openWhatsapp(savedNumber);
+                    }
+                }
+            }).start();
+        } else {
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.WRITE_CONTACTS}, CONTACTS_PERMISSION);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case CONTACTS_PERMISSION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    helpButtonClicked();
+                } else {
+                    Toast.makeText(this, "Permission needed to chat with us", Toast.LENGTH_SHORT).show();
+                }
+        }
+    }
+
     private void initToolbar() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         // set default toolbar as the action bar for this activity
@@ -267,51 +251,9 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
             ft.addToBackStack(backStateName);
             ft.commit();
         }
-
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case CONTACTS_PERMISSION:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    helpButtonClicked();
-                } else {
-                    Toast.makeText(this, "Permission needed to chat with us", Toast.LENGTH_SHORT).show();
-                }
-        }
-    }
-
-    public void helpButtonClicked() {
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "help");
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "help on home screen clicked");
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-
-        final Context context = this;
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    ContactsHelperClass contactsHelperClass = new ContactsHelperClass(context);
-                    String savedNumber = contactsHelperClass.getSavedNumber();
-                    if (savedNumber != null) {
-                        openWhatsapp(context, savedNumber);
-                    } else {
-                        contactsHelperClass.saveWholdusContacts();
-                        savedNumber = contactsHelperClass.getSavedNumber();
-                        if (savedNumber != null) openWhatsapp(context, savedNumber);
-                    }
-
-                }
-            }).start();
-        } else {
-            ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_CONTACTS);
-        }
-    }
-
-    private void openWhatsapp(final Context context, final String number) {
+    private void openWhatsapp(final String number) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -320,14 +262,72 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
                     Intent i = new Intent(Intent.ACTION_SENDTO, uri);
                     i.putExtra("sms_body", "I need some help");
                     i.setPackage("com.whatsapp");
-                    context.startActivity(i);
+                    startActivity(i);
                 } catch (Exception e) {
-                    Intent intent = new Intent(context, HelpSupportActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), HelpSupportActivity.class);
                     intent.putExtra(Constants.OPEN_FRAGMENT_KEY, ContactUsFragment.class.getSimpleName());
                     intent.putExtra(Constants.OPEN_ACTIVITY_KEY, HelpSupportActivity.class.getSimpleName());
                     startActivity(intent);
                 }
             }
         });
+    }
+
+    public void routeToActivity(){
+        Intent receivedIntent = getIntent();
+        if (getIntent() == null){
+            return;
+        }
+        Bundle bundle = receivedIntent.getBundleExtra("router");
+        if (bundle == null){
+            return;
+        }
+        Class activityClass;
+        Intent intent = new Intent();
+
+        String activityToStart = bundle.getString("activity", "");
+
+        switch (activityToStart) {
+            case "Handpicked":
+                activityClass = HandPickedActivity.class;
+                String productIDs = bundle.getString("productIDs", "");
+                if (!productIDs.equals("")){
+                    try {
+                        ArrayList<String> productIDsStringArray = new ArrayList<>(Arrays.asList(TextUtils.split(productIDs, ",")));
+                        ArrayList<Integer> productIDsArray = new ArrayList<>();
+                        for (String productID:productIDsStringArray){
+                            productIDsArray.add(Integer.parseInt(productID.trim()));
+                        }
+                        intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME,productIDsArray);
+                    }catch (Exception e){
+
+                    }
+
+                }
+                break;
+            case "OrderDetails":
+                activityClass = AccountActivity.class;
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "orderDetails");
+                String orderID = bundle.getString("orderID", "");
+                if (orderID.equals("")){
+                    return;
+                }
+                Bundle args = new Bundle();
+                try {
+                    args.putInt("orderID", Integer.parseInt(orderID.trim()));
+                }catch (Exception e){
+                    return;
+                }
+                intent.putExtras(args);
+                break;
+            case "Help":
+                helpButtonClicked();
+                return;
+            default:
+                return;
+        }
+
+        intent.setClass(getApplicationContext(), activityClass);
+        startActivity(intent);
     }
 }
