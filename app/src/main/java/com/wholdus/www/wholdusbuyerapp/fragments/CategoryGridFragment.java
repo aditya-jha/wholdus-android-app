@@ -104,7 +104,7 @@ public class CategoryGridFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
-        mListener.fragmentCreated("All Categories", false);
+        mListener.fragmentCreated("All Categories", true);
         IntentFilter intentFilter = new IntentFilter(IntentFilters.CATEGORY_DATA);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
         fetchDataFromServer();
@@ -222,12 +222,14 @@ public class CategoryGridFragment extends Fragment implements
             public void run() {
                 mCategoriesData.clear();
                 mCategoriesData.addAll(data);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mCategoriesGridAdapter.notifyDataSetChanged();
-                    }
-                });
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mCategoriesGridAdapter.notifyDataSetChanged();
+                        }
+                    });
+                }
             }
         }).start();
     }

@@ -12,7 +12,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.fragments.ContactUsFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.FAQFragment;
+import com.wholdus.www.wholdusbuyerapp.fragments.HelpSupportFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HelpSupportListenerInterface;
@@ -28,10 +30,10 @@ public class HelpSupportActivity extends AppCompatActivity implements HelpSuppor
         setContentView(R.layout.activity_help_support);
 
         Bundle extras = getIntent().getExtras();
-        initNavigationDrawer();
+        initNavigationDrawer(extras);
         initToolbar();
 
-        openToFragment(extras.getString(Constants.OPEN_FRAGMENT_KEY), null);
+        openToFragment(extras.getString(Constants.OPEN_FRAGMENT_KEY), extras);
     }
 
     @Override
@@ -69,8 +71,9 @@ public class HelpSupportActivity extends AppCompatActivity implements HelpSuppor
         mToolbar.setTitle(title);
     }
 
-    private void initNavigationDrawer() {
+    private void initNavigationDrawer(@Nullable Bundle args) {
         Fragment navDrawerFragment = new NavigationDrawerFragment();
+        navDrawerFragment.setArguments(args);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.navigation_drawer_fragment, navDrawerFragment).commit();
     }
@@ -80,8 +83,12 @@ public class HelpSupportActivity extends AppCompatActivity implements HelpSuppor
 
         if (fragmentName.equals(FAQFragment.class.getSimpleName())) {
             fragment = new FAQFragment();
+        } else if (fragmentName.equals(HelpSupportFragment.class.getSimpleName())) {
+            fragment = new HelpSupportFragment();
+        } else if (fragmentName.equals(ContactUsFragment.class.getSimpleName())) {
+            fragment = new ContactUsFragment();
         } else {
-            fragment = new FAQFragment();
+            fragment = new ContactUsFragment();
         }
 
         fragment.setArguments(bundle);
@@ -96,6 +103,5 @@ public class HelpSupportActivity extends AppCompatActivity implements HelpSuppor
             ft.addToBackStack(backStateName);
             ft.commit();
         }
-
     }
 }

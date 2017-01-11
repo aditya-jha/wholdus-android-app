@@ -4,45 +4,40 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.wholdus.www.wholdusbuyerapp.R;
-import com.wholdus.www.wholdusbuyerapp.adapters.FAQAdapter;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.OkHttpHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HelpSupportListenerInterface;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import okhttp3.Response;
 
 /**
- * Created by aditya on 9/1/17.
+ * Created by aditya on 11/1/17.
  */
 
-public class FAQFragment extends Fragment {
+public class HelpSupportFragment extends Fragment {
 
     private HelpSupportListenerInterface mListener;
-    private ExpandableListView mExpandableListView;
-    private FAQAdapter mAdapter;
-    private LinkedHashMap<String, List<Map<String, String>>> mFAQData;
+    private String mTitle, mURL, mAPIResponseKey, mContent;
     private ProgressBar mPageLoader;
+    private ScrollView mPageLayout;
+    private TextView mContentTextView;
     private boolean mShowData;
 
-    public FAQFragment() {}
+    public HelpSupportFragment() {
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -59,7 +54,8 @@ public class FAQFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_faq, container, false);
+        setFragmentUsage();
+        return inflater.inflate(R.layout.fragment_helpsupport, container, false);
     }
 
     @Override
@@ -67,20 +63,22 @@ public class FAQFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mPageLoader = (ProgressBar) view.findViewById(R.id.page_loader);
+        mPageLayout = (ScrollView) view.findViewById(R.id.page_layout);
+        mContentTextView = (TextView) view.findViewById(R.id.content);
 
-        mFAQData = new LinkedHashMap<>();
-        mExpandableListView = (ExpandableListView) view.findViewById(R.id.expandable_list_view);
-        mExpandableListView.setChildDivider(getResources().getDrawable(android.R.color.white));
-        fetchFAQFromServer();
+        fetchContentFromServer();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mListener.fragmentCreated(getString(R.string.faq_title));
-        if (mShowData && mFAQData != null) {
-            showData();
-        }
+        mListener.fragmentCreated(mTitle);
+        if (mShowData) showData();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
     @Override
@@ -89,33 +87,41 @@ public class FAQFragment extends Fragment {
         mListener = null;
     }
 
-    private void fetchFAQFromServer() {
-        mExpandableListView.setVisibility(View.INVISIBLE);
+    private void setFragmentUsage() {
+        Bundle args = getArguments();
+        String todo = args.getString("TODO", APIConstants.ABOUT_US_URL);
+
+        switch (todo) {
+            case APIConstants.ABOUT_US_URL:
+                mTitle = getString(R.string.aboutus_title);
+                mURL = OkHttpHelper.generateUrl(APIConstants.ABOUT_US_URL);
+                mAPIResponseKey = "about_us";
+                break;
+            case APIConstants.PRIVACY_POLICY:
+                mTitle = getString(R.string.privacy_policy_title);
+                mURL = OkHttpHelper.generateUrl(APIConstants.PRIVACY_POLICY);
+                mAPIResponseKey = "privacy_policy";
+                break;
+            case APIConstants.RETURN_REFUND_POLICY:
+                mTitle = getString(R.string.return_refund_title);
+                mURL = OkHttpHelper.generateUrl(APIConstants.RETURN_REFUND_POLICY);
+                mAPIResponseKey = "terms_and_conditions";
+                break;
+        }
+    }
+
+    private void fetchContentFromServer() {
+        mPageLayout.setVisibility(View.INVISIBLE);
         mPageLoader.setVisibility(View.VISIBLE);
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Response response = OkHttpHelper.makeGetRequest(getActivity().getApplicationContext(), OkHttpHelper.generateUrl(APIConstants.FAQ_URL));
+                    Response response = OkHttpHelper.makeGetRequest(getActivity().getApplicationContext(), mURL);
                     if (response.isSuccessful()) {
-                        JSONArray faqs = new JSONObject(response.body().string()).getJSONArray("faqs");
+                        mContent = new JSONObject(response.body().string()).getString(mAPIResponseKey);
                         response.body().close();
-
-                        for (int i=0; i<faqs.length(); i++) {
-                            JSONObject faq = faqs.getJSONObject(i);
-                            JSONArray entries = faq.getJSONArray("faqentries");
-
-                            ArrayList<Map<String, String>> faqEntries = new ArrayList<>();
-                            for (int j=0; j<entries.length(); j++) {
-                                JSONObject qaEntry = entries.getJSONObject(j);
-                                Map<String, String> qa = new HashMap<>();
-                                qa.put("question", qaEntry.getString("question"));
-                                qa.put("answer", qaEntry.getString("answer"));
-                                faqEntries.add(qa);
-                            }
-                            mFAQData.put(faq.getString("topic"), faqEntries);
-                        }
                         showData();
                     } else {
                         showError();
@@ -123,6 +129,7 @@ public class FAQFragment extends Fragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                     FirebaseCrash.report(e);
+                    showError();
                 }
             }
         }).start();
@@ -133,11 +140,12 @@ public class FAQFragment extends Fragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mExpandableListView.setVisibility(View.VISIBLE);
-                    mPageLoader.setVisibility(View.INVISIBLE);
-                    mAdapter = new FAQAdapter(getContext(), mFAQData);
-                    mExpandableListView.setAdapter(mAdapter);
-                    mShowData = false;
+                    if (mContent != null) {
+                        mPageLoader.setVisibility(View.INVISIBLE);
+                        mPageLayout.setVisibility(View.VISIBLE);
+                        mContentTextView.setText(Html.fromHtml(mContent));
+                        mShowData = false;
+                    }
                 }
             });
         } else {

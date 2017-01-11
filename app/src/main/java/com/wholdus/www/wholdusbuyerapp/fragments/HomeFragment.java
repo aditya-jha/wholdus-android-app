@@ -22,11 +22,14 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crash.FirebaseCrash;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
+import com.wholdus.www.wholdusbuyerapp.activities.HelpSupportActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductHomePageAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ContactsHelperClass;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
@@ -133,12 +136,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 mListener.helpButtonClicked();
                 break;
             case R.id.notification:
-                Toast.makeText(getContext(), "Notification Button Clicked", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
-
-
 
     public void setViewForProducts(ArrayList<Product> products){
         mProducts.clear();
