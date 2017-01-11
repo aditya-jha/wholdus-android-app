@@ -11,6 +11,11 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.SplashActivity;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.NotificationContract.NotificationTable;
+import com.wholdus.www.wholdusbuyerapp.databaseHelpers.NotificationDBHelper;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Map;
 
@@ -42,6 +47,15 @@ public class WholdusFirebaseMessagingService extends FirebaseMessagingService {
                 }
                 if (data.containsKey("notification_body")) {
                     notificationBody = data.get("notification_body");
+                }
+                NotificationDBHelper notificationDBHelper = new NotificationDBHelper(getApplicationContext());
+                try {
+                    JSONObject notificationJSON = new JSONObject();
+                    notificationJSON.put(NotificationTable.COLUMN_NOTIFICATION_JSON, new JSONObject(data));
+                    notificationJSON.put(NotificationTable.COLUMN_NOTIFICATION_TYPE, "general");
+                    notificationDBHelper.saveNotificationData(notificationJSON);
+                } catch (JSONException e){
+
                 }
                 buildNotification(notificationTitle, notificationBody, data);
             } else if (notification != null) {

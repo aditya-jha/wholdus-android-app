@@ -71,6 +71,9 @@
         <activity
             android:name=".activities.CartActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.NotificationActivity"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".services.LoginAPIService"

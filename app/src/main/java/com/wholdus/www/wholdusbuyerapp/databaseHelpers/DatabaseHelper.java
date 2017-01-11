@@ -9,6 +9,7 @@ import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract.SubCartsTa
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract.CartItemsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategorySellersTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.SellerAddressTable;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.NotificationContract.NotificationTable;
 
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract.OrderItemsTable;
 import static com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract.OrdersTable;
@@ -339,6 +340,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SQL_DROP_CART_ITEMS_TABLE =
             "DROP TABLE IF EXISTS " + CartItemsTable.TABLE_NAME;
 
+    private static final String SQL_CREATE_NOTIFICATION_TABLE =
+            "CREATE TABLE " + NotificationTable.TABLE_NAME + " (" +
+                    NotificationTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
+                    NotificationTable.COLUMN_NOTIFICATION_TYPE + TEXT_TYPE + COMMA_SEP +
+                    NotificationTable.COLUMN_NOTIFICATION_TIME + TEXT_TYPE + COMMA_SEP +
+                    NotificationTable.COLUMN_NOTIFICATION_JSON + TEXT_TYPE + " )";
+
+    private static final String SQL_DROP_NOTIFICATION_TABLE =
+            "DROP TABLE IF EXISTS " + NotificationTable.TABLE_NAME;
+
     private static DatabaseHelper instance;
 
     //TODO : CREATE indexes on certain columns if necessary like product_id
@@ -387,6 +398,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_SUBCART_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_CART_ITEMS_TABLE);
 
+        sqLiteDatabase.execSQL(SQL_CREATE_NOTIFICATION_TABLE);
+
     }
 
     @Override
@@ -408,6 +421,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_DROP_CART_TABLE);
         sqLiteDatabase.execSQL(SQL_DROP_SUBCART_TABLE);
         sqLiteDatabase.execSQL(SQL_DROP_CART_ITEMS_TABLE);
+
+        sqLiteDatabase.execSQL(SQL_DROP_NOTIFICATION_TABLE);
 
         onCreate(sqLiteDatabase);
     }
