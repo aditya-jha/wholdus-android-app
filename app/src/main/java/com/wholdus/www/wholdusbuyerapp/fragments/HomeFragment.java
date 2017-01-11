@@ -22,11 +22,14 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crash.FirebaseCrash;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
+import com.wholdus.www.wholdusbuyerapp.activities.HelpSupportActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductHomePageAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ContactsHelperClass;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
@@ -133,7 +136,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 helpButtonClicked();
                 break;
             case R.id.notification:
-                Toast.makeText(getContext(), "Notification Button Clicked", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -157,21 +159,24 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "help on home screen clicked");
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
-        final Context context = getContext();
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    ContactsHelperClass contactsHelperClass = new ContactsHelperClass(context);
-                    String savedNumber = contactsHelperClass.getSavedNumber();
-                    if (savedNumber != null) {
-                        openWhatsapp(context, savedNumber);
-                    } else {
-                        contactsHelperClass.saveWholdusContacts();
-                        savedNumber = contactsHelperClass.getSavedNumber();
-                        if (savedNumber != null) openWhatsapp(context, savedNumber);
+                    try {
+                        ContactsHelperClass contactsHelperClass = new ContactsHelperClass(getActivity().getApplicationContext());
+                        String savedNumber = contactsHelperClass.getSavedNumber();
+                        if (savedNumber != null) {
+                            openWhatsapp(savedNumber);
+                        } else {
+                            contactsHelperClass.saveWholdusContacts();
+                            savedNumber = contactsHelperClass.getSavedNumber();
+                            if (savedNumber != null) openWhatsapp(savedNumber);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        FirebaseCrash.report(e);
                     }
-
                 }
             }).start();
         } else {
@@ -179,7 +184,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void openWhatsapp(final Context context, final String number) {
+    private void openWhatsapp(final String number) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -188,9 +193,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     Intent i = new Intent(Intent.ACTION_SENDTO, uri);
                     i.putExtra("sms_body", "I need some help");
                     i.setPackage("com.whatsapp");
-                    context.startActivity(i);
+                    getContext().startActivity(i);
                 } catch (Exception e) {
-                    Toast.makeText(context, "Unable to open whatsapp", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getContext(), HelpSupportActivity.class);
+                    intent.putExtra(Constants.OPEN_FRAGMENT_KEY, ContactUsFragment.class.getSimpleName());
+                    intent.putExtra(Constants.OPEN_ACTIVITY_KEY, HelpSupportActivity.class.getSimpleName());
+                    getContext().startActivity(intent);
                 }
             }
         });

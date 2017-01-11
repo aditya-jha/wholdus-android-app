@@ -30,7 +30,7 @@ public class HelpSupportActivity extends AppCompatActivity implements HelpSuppor
         setContentView(R.layout.activity_help_support);
 
         Bundle extras = getIntent().getExtras();
-        initNavigationDrawer();
+        initNavigationDrawer(extras);
         initToolbar();
 
         openToFragment(extras.getString(Constants.OPEN_FRAGMENT_KEY), extras);
@@ -71,8 +71,9 @@ public class HelpSupportActivity extends AppCompatActivity implements HelpSuppor
         mToolbar.setTitle(title);
     }
 
-    private void initNavigationDrawer() {
+    private void initNavigationDrawer(@Nullable Bundle args) {
         Fragment navDrawerFragment = new NavigationDrawerFragment();
+        navDrawerFragment.setArguments(args);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.navigation_drawer_fragment, navDrawerFragment).commit();
     }
