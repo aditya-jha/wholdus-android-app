@@ -9,4 +9,6 @@ public interface HomeListenerInterface {
     void openCategory(int categoryID);
 
     void fragmentCreated(String fragmentName, boolean backEnabled);
+
+    void helpButtonClicked();
 }

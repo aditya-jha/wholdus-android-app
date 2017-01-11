@@ -59,7 +59,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private ProductsLoaderManager mProductsLoader;
 
     private final int PRODUCTS_DB_LOADER = 901;
-    private static final int CONTACTS_PERMISSION = 0;
+
 
     public HomeFragment() {
     }
@@ -133,78 +133,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 mListener.openCategory(-1);
                 break;
             case help:
-                helpButtonClicked();
+                mListener.helpButtonClicked();
                 break;
             case R.id.notification:
                 break;
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case CONTACTS_PERMISSION:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    helpButtonClicked();
-                } else {
-                    Toast.makeText(getContext(), "Permission needed to chat with us", Toast.LENGTH_SHORT).show();
-                }
-        }
-    }
-
-    private void helpButtonClicked() {
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "help");
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "help on home screen clicked");
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        ContactsHelperClass contactsHelperClass = new ContactsHelperClass(getActivity().getApplicationContext());
-                        String savedNumber = contactsHelperClass.getSavedNumber();
-                        if (savedNumber != null) {
-                            openWhatsapp(savedNumber);
-                        } else {
-                            contactsHelperClass.saveWholdusContacts();
-                            savedNumber = contactsHelperClass.getSavedNumber();
-                            if (savedNumber != null) openWhatsapp(savedNumber);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        FirebaseCrash.report(e);
-                    }
-                }
-            }).start();
-        } else {
-            requestPermissions(new String[]{Manifest.permission.WRITE_CONTACTS}, CONTACTS_PERMISSION);
-        }
-    }
-
-    private void openWhatsapp(final String number) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final Uri uri = Uri.parse("smsto:" + number);
-                    Intent i = new Intent(Intent.ACTION_SENDTO, uri);
-                    i.putExtra("sms_body", "I need some help");
-                    i.setPackage("com.whatsapp");
-                    getContext().startActivity(i);
-                } catch (Exception e) {
-                    Intent intent = new Intent(getContext(), HelpSupportActivity.class);
-                    intent.putExtra(Constants.OPEN_FRAGMENT_KEY, ContactUsFragment.class.getSimpleName());
-                    intent.putExtra(Constants.OPEN_ACTIVITY_KEY, HelpSupportActivity.class.getSimpleName());
-                    getContext().startActivity(intent);
-                }
-            }
-        });
-    }
-
-    public void setViewForProducts(ArrayList<Product> products) {
+    public void setViewForProducts(ArrayList<Product> products){
         mProducts.clear();
         mProducts.addAll(products);
         mProductHomePageAdapter.notifyDataSetChanged();
