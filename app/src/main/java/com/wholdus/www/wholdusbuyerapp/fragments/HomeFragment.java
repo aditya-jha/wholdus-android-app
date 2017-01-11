@@ -100,20 +100,20 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         mProductsRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mProducts = new ArrayList<>();
         mProductItemClickListener = new ProductItemClickListener();
-        mProductHomePageAdapter = new ProductHomePageAdapter(getContext(), mProducts,mProductItemClickListener);
+        mProductHomePageAdapter = new ProductHomePageAdapter(getContext(), mProducts, mProductItemClickListener);
         mProductsLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         mProductsRecyclerView.setLayoutManager(mProductsLayoutManager);
         mProductsRecyclerView.addItemDecoration(new RecyclerViewSpaceItemDecoration(0, getResources().getDimensionPixelSize(R.dimen.card_margin_horizontal)));
         mProductsRecyclerView.setAdapter(mProductHomePageAdapter);
     }
 
-    private class ProductItemClickListener implements ItemClickListener{
+    private class ProductItemClickListener implements ItemClickListener {
         @Override
         public void itemClicked(View view, int position, int id) {
             Intent intent = new Intent(getContext(), HandPickedActivity.class);
             ArrayList<Integer> productIDs = new ArrayList<>();
             productIDs.add(mProducts.get(position).getProductID());
-            intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME,productIDs);
+            intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME, productIDs);
             startActivity(intent);
         }
     }

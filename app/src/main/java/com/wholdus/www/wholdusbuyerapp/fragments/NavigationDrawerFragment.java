@@ -28,7 +28,6 @@ import com.wholdus.www.wholdusbuyerapp.dataSource.NavigationDrawerData;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.LoginHelper;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -206,11 +205,11 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
                 intent.putExtra(Constants.OPEN_FRAGMENT_KEY, FAQFragment.class.getSimpleName());
                 break;
             case 3:
-                intent.putExtra("TODO", APIConstants.RETURN_REFUND_POLICY);
+                intent.putExtra("TODO", APIConstants.RETURN_REFUND_POLICY_URL);
                 intent.putExtra(Constants.OPEN_FRAGMENT_KEY, HelpSupportFragment.class.getSimpleName());
                 break;
             case 4:
-                intent.putExtra("TODO", APIConstants.PRIVACY_POLICY);
+                intent.putExtra("TODO", APIConstants.PRIVACY_POLICY_URL);
                 intent.putExtra(Constants.OPEN_FRAGMENT_KEY, HelpSupportFragment.class.getSimpleName());
                 break;
             default: // about us, privacy, return
