@@ -1,12 +1,18 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -17,12 +23,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.fragments.CategoryGridFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.HomeFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.ContactsHelperClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
@@ -36,9 +44,12 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     private DrawerLayout mDrawerLayout;
     private boolean mDoublePressToExit;
     private Toolbar mToolbar;
+    private FirebaseAnalytics mFirebaseAnalytics;
+    private static final int CONTACTS_PERMISSION = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         routeToActivity();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
@@ -102,6 +113,9 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
                 }
                 intent.putExtras(args);
                 break;
+            case "Help":
+                helpButtonClicked();
+                return;
             default:
                 return;
         }
@@ -254,5 +268,63 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
             ft.commit();
         }
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case CONTACTS_PERMISSION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    helpButtonClicked();
+                } else {
+                    Toast.makeText(this, "Permission needed to chat with us", Toast.LENGTH_SHORT).show();
+                }
+        }
+    }
+
+    public void helpButtonClicked() {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "help");
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "help on home screen clicked");
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
+        final Context context = this;
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    ContactsHelperClass contactsHelperClass = new ContactsHelperClass(context);
+                    String savedNumber = contactsHelperClass.getSavedNumber();
+                    if (savedNumber != null) {
+                        openWhatsapp(context, savedNumber);
+                    } else {
+                        contactsHelperClass.saveWholdusContacts();
+                        savedNumber = contactsHelperClass.getSavedNumber();
+                        if (savedNumber != null) openWhatsapp(context, savedNumber);
+                    }
+
+                }
+            }).start();
+        } else {
+            ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_CONTACTS);
+        }
+    }
+
+    private void openWhatsapp(final Context context, final String number) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final Uri uri = Uri.parse("smsto:" + number);
+                    Intent i = new Intent(Intent.ACTION_SENDTO, uri);
+                    i.putExtra("sms_body", "I need some help");
+                    i.setPackage("com.whatsapp");
+                    context.startActivity(i);
+                } catch (Exception e) {
+                    Toast.makeText(context, "Unable to open whatsapp", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }
