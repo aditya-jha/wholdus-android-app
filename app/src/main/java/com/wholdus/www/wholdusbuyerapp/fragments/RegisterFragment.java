@@ -224,7 +224,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         intent.putExtra(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, mobileNumber);
         intent.putExtra(UserProfileContract.UserTable.COLUMN_NAME, name);
         intent.putExtra(UserProfileContract.UserTable.COLUMN_PASSWORD, password);
-        intent.putExtra(UserProfileContract.UserTable.COLUMN_EMAIL, "aditya@wholdus.com");
         getActivity().startService(intent);
     }
 }
