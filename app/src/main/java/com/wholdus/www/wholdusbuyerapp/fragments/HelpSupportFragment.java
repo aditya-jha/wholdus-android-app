@@ -97,14 +97,14 @@ public class HelpSupportFragment extends Fragment {
                 mURL = OkHttpHelper.generateUrl(APIConstants.ABOUT_US_URL);
                 mAPIResponseKey = "about_us";
                 break;
-            case APIConstants.PRIVACY_POLICY:
+            case APIConstants.PRIVACY_POLICY_URL:
                 mTitle = getString(R.string.privacy_policy_title);
-                mURL = OkHttpHelper.generateUrl(APIConstants.PRIVACY_POLICY);
+                mURL = OkHttpHelper.generateUrl(APIConstants.PRIVACY_POLICY_URL);
                 mAPIResponseKey = "privacy_policy";
                 break;
-            case APIConstants.RETURN_REFUND_POLICY:
+            case APIConstants.RETURN_REFUND_POLICY_URL:
                 mTitle = getString(R.string.return_refund_title);
-                mURL = OkHttpHelper.generateUrl(APIConstants.RETURN_REFUND_POLICY);
+                mURL = OkHttpHelper.generateUrl(APIConstants.RETURN_REFUND_POLICY_URL);
                 mAPIResponseKey = "terms_and_conditions";
                 break;
         }

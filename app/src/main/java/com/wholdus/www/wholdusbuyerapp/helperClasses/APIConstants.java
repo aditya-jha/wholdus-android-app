@@ -26,8 +26,9 @@ public class APIConstants {
 
     public static final String FAQ_URL = "general/faqs/";
     public static final String ABOUT_US_URL = "general/aboutus/";
-    public static final String PRIVACY_POLICY = "general/privacypolicy/";
-    public static final String RETURN_REFUND_POLICY = "general/termsandconditions/";
+    public static final String PRIVACY_POLICY_URL = "general/privacypolicy/";
+    public static final String RETURN_REFUND_POLICY_URL = "general/termsandconditions/";
+    public static final String CONTACT_US_URL = "leads/contactus/";
 
     public static final String API_PAGE_NUMBER_KEY = "page_number";
     public static final String API_TOTAL_PAGES_KEY = "total_pages";

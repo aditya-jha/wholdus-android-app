@@ -43,6 +43,10 @@ public final class GlobalAccessHelper {
         return ((WholdusApplication) context).getBuyerID();
     }
 
+    public static String getMobileNumber(Context context) {
+        return ((WholdusApplication) context).getMobileNumber();
+    }
+
     public static String getUrlStringFromHashMap(@Nullable HashMap<String, String> params) {
         String url = "?";
         if (params != null) {

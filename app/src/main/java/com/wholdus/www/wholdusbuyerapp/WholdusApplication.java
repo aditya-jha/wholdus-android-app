@@ -15,6 +15,7 @@ public class WholdusApplication extends MultiDexApplication {
     private String mAccessToken;
     private String mRefreshToken;
     private int mBuyerID;
+    private String mMobileNumber;
 
     @Override
     public void onCreate() {
@@ -40,10 +41,11 @@ public class WholdusApplication extends MultiDexApplication {
         MultiDex.install(WholdusApplication.this);
     }
 
-    public void setTokens(String aToken, String rToken, int buyerID) {
+    public void setTokens(String aToken, String rToken, int buyerID, String mobileNumner) {
         mAccessToken = aToken;
         mRefreshToken = rToken;
         mBuyerID = buyerID;
+        mMobileNumber = mobileNumner;
     }
 
     public String getAccessToken() {
@@ -56,5 +58,9 @@ public class WholdusApplication extends MultiDexApplication {
 
     public int getBuyerID() {
         return mBuyerID;
+    }
+
+    public String getMobileNumber() {
+        return mMobileNumber;
     }
 }

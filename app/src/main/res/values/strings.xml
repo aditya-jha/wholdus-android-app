@@ -101,6 +101,7 @@
     <string name="city_key">City</string>
     <string name="state_key">State</string>
     <string name="help_key">Chat</string>
+    <string name="chat_key">Chat With Us</string>
     <string name="categories_key">Categories</string>
     <string name="notification_key">Updates</string>
     <string name="retry_text">Retry</string>
@@ -217,4 +218,10 @@
     <string name="privacy_policy_title">Privacy Policy</string>
     <string name="return_refund_title">Return &amp; Refund Policy</string>
     <string name="contact_us_title">Contact Us</string>
+
+    <string name="phone1">8800971126</string>
+    <string name="phone2">8791947227</string>
+    <string name="your_message">Whats on your mind?</string>
+    <string name="contact_us_message">Have something to say?</string>
+    <string name="contact_us_sucess">We will get back to you soon</string>
 </resources>
