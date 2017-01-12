@@ -35,7 +35,7 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int PRODUCT_VIEW = 0;
     private static final int LOADER_VIEW = 1;
 
-    private int mVisibleThreshold = 1;
+    private int mVisibleThreshold = 10;
     private int mLastVisibleItem, mTotalItemCount;
     private boolean mLoading;
 

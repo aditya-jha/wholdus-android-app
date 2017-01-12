@@ -205,6 +205,7 @@ public class CatalogService extends IntentService {
             }
             intent.putExtra(APIConstants.API_PAGE_NUMBER_KEY, response.getInt(APIConstants.API_PAGE_NUMBER_KEY));
             intent.putExtra(APIConstants.API_TOTAL_PAGES_KEY, response.getInt(APIConstants.API_TOTAL_PAGES_KEY));
+            intent.putExtra(APIConstants.TOTAL_ITEMS_KEY, response.getInt(APIConstants.TOTAL_ITEMS_KEY));
         }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }

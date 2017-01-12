@@ -205,8 +205,8 @@ public class CategoryProductActivity extends AppCompatActivity
     private void updateProducts() {
         ProductsGridFragment fragment = (ProductsGridFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         if (fragment != null) {
-            fragment.resetVariables();
-            fragment.loadData();
+//            fragment.resetVariables();
+//            fragment.loadData();
         } else {
             // fragment is not added yet
             openToFragment("", new Bundle());
