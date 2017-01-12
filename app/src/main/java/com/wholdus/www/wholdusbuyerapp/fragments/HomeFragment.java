@@ -26,6 +26,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HelpSupportActivity;
+import com.wholdus.www.wholdusbuyerapp.activities.NotificationActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductHomePageAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
@@ -136,6 +137,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 mListener.helpButtonClicked();
                 break;
             case R.id.notification:
+                Intent intent = new Intent(getContext(), NotificationActivity.class);
+                getContext().startActivity(intent);
                 break;
         }
     }
