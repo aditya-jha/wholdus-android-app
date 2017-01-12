@@ -105,8 +105,14 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 handleOnBroadcastReceive(intent);
             }
         };
-        IntentFilter intentFilter = new IntentFilter(IntentFilters.PRODUCT_DATA);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
+
+        if (mResponseCodes.size() == 1) {
+            IntentFilter bpIntentFilter = new IntentFilter(getString(R.string.buyer_product_data_updated));
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, bpIntentFilter);
+        } else {
+            IntentFilter intentFilter = new IntentFilter(IntentFilters.PRODUCT_DATA);
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
+        }
     }
 
     @Nullable

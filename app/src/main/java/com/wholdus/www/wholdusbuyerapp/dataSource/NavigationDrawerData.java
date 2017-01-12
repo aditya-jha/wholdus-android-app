@@ -15,10 +15,8 @@ public class NavigationDrawerData {
         data.put("Home", new ArrayList<String>());
         data.put("Hand Picked For You", new ArrayList<String>());
 
-        ArrayList<String> store = new ArrayList<>();
-        store.add("Store Home");
-        store.add("Store Products");
-        data.put("My Store", store);
+        ArrayList<String> shortlist = new ArrayList<>();
+        data.put("Shortlist", shortlist);
 
         ArrayList<String> account = new ArrayList<>();
         account.add("My Profile");

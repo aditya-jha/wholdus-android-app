@@ -208,6 +208,7 @@ public class CatalogService extends IntentService {
         }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
+
     private void updateSpecificProducts(JSONObject response) throws JSONException {
 
         if (response != null) {

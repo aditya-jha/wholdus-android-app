@@ -22,6 +22,7 @@ import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HelpSupportActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HomeActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.LoginSignupActivity;
+import com.wholdus.www.wholdusbuyerapp.activities.NotificationActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.StoreActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.NavigationDrawerAdapter;
 import com.wholdus.www.wholdusbuyerapp.dataSource.NavigationDrawerData;
@@ -95,8 +96,14 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
             case 1:
                 startActivity(new Intent(getContext(), HandPickedActivity.class));
                 break;
+            case 2:
+                // open rejected products
+                Intent shortlistIntent = new Intent(getContext(), CategoryProductActivity.class);
+                shortlistIntent.putExtra(Constants.TYPE, Constants.FAV_PRODUCTS);
+                startActivity(shortlistIntent);
+                break;
             case 5:
-                Toast.makeText(getContext(), "Notification clicked", Toast.LENGTH_SHORT).show();
+                getContext().startActivity(new Intent(getContext(), NotificationActivity.class));
                 break;
             case 6:
                 logout();
@@ -111,9 +118,6 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
     @Override
     public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
         switch (groupPosition) {
-            case 2:
-                handleStoreCase(childPosition);
-                break;
             case 3:
                 handleAccountCase(childPosition);
                 break;
@@ -124,22 +128,6 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
                 return false;
         }
         mDrawerLayout.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    private boolean handleStoreCase(int childPosition) {
-        switch (childPosition) {
-            case 0:
-                if (!mBundle.getString(Constants.OPEN_ACTIVITY_KEY, "none").equals(StoreActivity.class.getSimpleName())) {
-                    Intent intent = new Intent(getContext(), StoreActivity.class);
-                    startActivity(intent);
-                }
-                break;
-            case 4:
-                return true;
-            default:
-                return false;
-        }
         return true;
     }
 
