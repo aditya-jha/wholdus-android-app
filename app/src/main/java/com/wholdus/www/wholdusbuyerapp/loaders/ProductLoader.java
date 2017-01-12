@@ -5,6 +5,7 @@ import android.database.Cursor;
 
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
+import com.wholdus.www.wholdusbuyerapp.models.SellerAddress;
 
 import java.util.ArrayList;
 
@@ -63,14 +64,23 @@ public class ProductLoader extends AbstractLoader<Product> {
         product.setProductDetails(cursor);
 
         cursor = catalogDBHelper.getSellerData(product.getSellerID(), null);
-        cursor.moveToFirst();
+        if (cursor.getCount() > 0){
+            cursor.moveToFirst();
+            product.setSeller(cursor);
 
-        product.setSeller(cursor);
+            cursor = catalogDBHelper.getSellerAddressData(-1, 0, product.getSellerID(), null);
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                product.getSeller().setSellerAddress(new SellerAddress(cursor));
+            }
+        }
 
         cursor = catalogDBHelper.getCategoryData(product.getCategoryID(), -1, null,1,-1,-1, null);
-        cursor.moveToFirst();
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            product.setCategory(cursor);
+        }
 
-        product.setCategory(cursor);
 
         return product;
     }

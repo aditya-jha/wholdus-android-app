@@ -53,7 +53,7 @@ public class ProductDetailActivity extends AppCompatActivity
     private RecyclerView mThumbImagesRecyclerView;
     private TextView mProductName, mProductPrice, mProductMrp, mLotSize, mLotDescription,
             mProductFabric, mProductColor, mProductSizes, mProductBrand,
-            mProductPattern, mProductStyle, mProductWork, mSellerLocation, mSellerSpeciality;
+            mProductPattern, mProductStyle, mProductWork, mSellerName, mSellerLocation, mSellerSpeciality;
     private ImageButton mShareButton, mFavButton;
     private Button mCartButton;
     private BroadcastReceiver mCartServiceResponseReceiver;
@@ -90,6 +90,7 @@ public class ProductDetailActivity extends AppCompatActivity
         mProductStyle = (TextView) findViewById(R.id.style);
         mProductWork = (TextView) findViewById(R.id.work);
 
+        mSellerName = (TextView) findViewById(R.id.seller_name);
         mSellerLocation = (TextView) findViewById(R.id.seller_location);
         mSellerSpeciality = (TextView) findViewById(R.id.seller_speciality);
 
@@ -288,6 +289,14 @@ public class ProductDetailActivity extends AppCompatActivity
         mProductPattern.setText(mProduct.getProductDetails().getPackagingDetails());
         mProductStyle.setText(mProduct.getProductDetails().getStyle());
         mProductWork.setText(mProduct.getProductDetails().getWorkDecorationType());
+
+        if (mProduct.getSeller() != null) {
+            mSellerName.setText(mProduct.getSeller().getCompanyName());
+            mSellerSpeciality.setText(mProduct.getSeller().getCompanyProfile());
+            if (mProduct.getSeller().getSellerAddress() != null){
+                mSellerLocation.setText(mProduct.getSeller().getSellerAddress().getCity());
+            }
+        }
 
         setFavButtonImage();
     }

@@ -75,6 +75,7 @@ public class CartService extends IntentService{
         params.put("product_image_details", "1");
         params.put("category_details", "1");
         params.put("seller_details", "1");
+        params.put("seller_address_details", "1");
         String url = GlobalAccessHelper.generateUrl(getString(R.string.cart_url), params);
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }

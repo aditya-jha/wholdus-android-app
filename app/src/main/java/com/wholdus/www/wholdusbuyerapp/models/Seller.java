@@ -20,6 +20,8 @@ public class Seller {
     private String mCreatedAt;
     private String mUpdatedAt;
 
+    private SellerAddress mSellerAddress;
+
     public Seller() {
     }
 
@@ -65,5 +67,9 @@ public class Seller {
     public String getUpdatedAt() {
         return mUpdatedAt;
     }
+
+    public SellerAddress getSellerAddress(){return mSellerAddress;}
+
+    public void setSellerAddress(SellerAddress sellerAddress){ mSellerAddress = sellerAddress;}
 
 }
