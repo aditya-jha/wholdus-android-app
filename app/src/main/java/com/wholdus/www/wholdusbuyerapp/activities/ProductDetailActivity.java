@@ -4,8 +4,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -19,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,7 +34,11 @@ import com.wholdus.www.wholdusbuyerapp.adapters.ThumbImageAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.fragments.CartDialogFragment;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.OkHttpHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ShareIntentClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
@@ -40,7 +48,14 @@ import com.wholdus.www.wholdusbuyerapp.models.CartItem;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
 import com.wholdus.www.wholdusbuyerapp.services.BuyerProductService;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import okhttp3.Response;
+
+import static com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants.API_TOTAL_ITEMS_KEY;
 
 public class ProductDetailActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Product>, ItemClickListener,
@@ -55,11 +70,17 @@ public class ProductDetailActivity extends AppCompatActivity
             mProductFabric, mProductColor, mProductSizes, mProductBrand,
             mProductPattern, mProductStyle, mProductWork, mSellerName, mSellerLocation, mSellerSpeciality;
     private ImageButton mShareButton, mFavButton;
-    private Button mCartButton;
+    private Button mCartButton, mCheckPincodeButton;
+    private TextInputEditText mPincodeEditText;
+    private TextInputLayout mPincodeWrapper;
+    private String mPincodeText = "";
     private BroadcastReceiver mCartServiceResponseReceiver;
 
     private static final int PRODUCT_LOADER = 10;
     private static final int CART_ITEM_LOADER = 11;
+    private static final String SHIPPING_SHARED_PREFERENCES = "ShippingSharedPreference";
+    private static final String PINCODE_KEY = "PincodeKey";
+    private static final String SHIPPING_AVAILABLE_KEY = "ShippingAvailableKey";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +123,18 @@ public class ProductDetailActivity extends AppCompatActivity
 
         mCartButton = (Button) findViewById(R.id.cart_button);
         mCartButton.setOnClickListener(this);
+
+        mPincodeEditText = (TextInputEditText) findViewById(R.id.pincode_edit_text);
+        mPincodeWrapper = (TextInputLayout) findViewById(R.id.pincode_wrapper);
+        mCheckPincodeButton = (Button) findViewById(R.id.check_pincode);
+        mCheckPincodeButton.setOnClickListener(this);
+
+        SharedPreferences shippingPreferences = getSharedPreferences(SHIPPING_SHARED_PREFERENCES,MODE_PRIVATE);
+        String pincode = shippingPreferences.getString(PINCODE_KEY, null);
+        if (pincode != null){
+            mPincodeText = pincode;
+            setPincodeShipping(shippingPreferences.getBoolean(SHIPPING_AVAILABLE_KEY, true));
+        }
 
         getSupportLoaderManager().initLoader(PRODUCT_LOADER, null, this);
 
@@ -212,7 +245,92 @@ public class ProductDetailActivity extends AppCompatActivity
             case R.id.share_button:
                 ShareIntentClass.shareImage(this, mDisplayImage, mProduct.getProductDetails().getDisplayName());
                 break;
+            case R.id.check_pincode:
+                if (mCheckPincodeButton.getText().equals(getString(R.string.check))) {
+                    mPincodeText = mPincodeEditText.getText().toString();
+                    if (InputValidationHelper.isValidPincode(mPincodeWrapper, mPincodeText)) {
+                        startPincodeCheckRequest();
+                        mCheckPincodeButton.setEnabled(false);
+                    }
+                } else {
+                    SharedPreferences shippingPreferences = getSharedPreferences(SHIPPING_SHARED_PREFERENCES,MODE_PRIVATE);
+                    SharedPreferences.Editor editor = shippingPreferences.edit();
+                    editor.clear();
+                    editor.commit();
+                    clearPincodeCheck();
+                }
         }
+    }
+
+    private void clearPincodeCheck(){
+        mPincodeWrapper.setHintEnabled(true);
+        mPincodeEditText.setHint("Pincode");
+        mCheckPincodeButton.setText(getString(R.string.check));
+        mPincodeEditText.setText("");
+        mPincodeEditText.setEnabled(true);
+    }
+
+    private void setPincodeShipping(boolean shippingAvailable){
+        mPincodeWrapper.setHintEnabled(false);
+        mCheckPincodeButton.setText("Change");
+        mCheckPincodeButton.setEnabled(true);
+        if (shippingAvailable){
+            mPincodeEditText.setText("Delivers at " + mPincodeText);
+        } else {
+            mPincodeEditText.setText("No delivery at " + mPincodeText);
+        }
+        mPincodeEditText.setEnabled(false);
+    }
+
+    private void startPincodeCheckRequest(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("pincode_code", mPincodeText);
+                    params.put("cod_available", "1");
+                    params.put("regular_delivery_available", "1");
+                    String url = GlobalAccessHelper.generateUrl(APIConstants.PINCODE_SERVICEABILITY_URL,params);
+                    Response response = OkHttpHelper.makeGetRequest(getApplicationContext(), url);
+                    if (response.isSuccessful()) {
+                        JSONObject responseJSON = new JSONObject(response.body().string());
+                        final int totalItems = responseJSON.getInt(API_TOTAL_ITEMS_KEY);
+                        response.body().close();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SharedPreferences shippingPreferences = getSharedPreferences(SHIPPING_SHARED_PREFERENCES,MODE_PRIVATE);
+                                SharedPreferences.Editor editor = shippingPreferences.edit();
+                                editor.putString(PINCODE_KEY, mPincodeText);
+                                editor.putBoolean(SHIPPING_AVAILABLE_KEY, totalItems > 0);
+                                editor.commit();
+                                setPincodeShipping(totalItems > 0);
+                            }
+                        });
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                clearPincodeCheck();
+                            }
+                        });
+                    }
+                } catch (Exception e) {
+                    try {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                clearPincodeCheck();
+                            }
+                        });
+                    } catch (Exception e1){
+                        e1.printStackTrace();
+                    }
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     private void loadDisplayImage(int position) {

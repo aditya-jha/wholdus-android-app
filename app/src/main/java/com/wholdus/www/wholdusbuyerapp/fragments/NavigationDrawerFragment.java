@@ -22,6 +22,7 @@ import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HelpSupportActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HomeActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.LoginSignupActivity;
+import com.wholdus.www.wholdusbuyerapp.activities.NotificationActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.StoreActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.NavigationDrawerAdapter;
 import com.wholdus.www.wholdusbuyerapp.dataSource.NavigationDrawerData;
@@ -96,7 +97,7 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
                 startActivity(new Intent(getContext(), HandPickedActivity.class));
                 break;
             case 5:
-                Toast.makeText(getContext(), "Notification clicked", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getContext(), NotificationActivity.class));
                 break;
             case 6:
                 logout();

@@ -32,14 +32,20 @@
                 android:focusableInTouchMode="true"
                 android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/pincode_edit_text"
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/pincode_wrapper"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="2"
-                    android:hint="@string/pincode_key"
-                    android:inputType="number"
-                    android:maxLength="6" />
+                    android:layout_height="wrap_content">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/pincode_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:hint="@string/pincode_key" />
+
+                </android.support.design.widget.TextInputLayout>
 
                 <Button
                     android:id="@+id/check_pincode"
