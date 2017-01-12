@@ -223,6 +223,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<ArrayList<GridProductModel>> loader, ArrayList<GridProductModel> data) {
+        mAdapter.setLoaded();
         mLoaderLoading = false;
         if (data.size() != 0) {
             if (mPageLoader.getVisibility() == View.VISIBLE) {
@@ -240,7 +241,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 View firstVisible = mGridLayoutManager.findViewByPosition(scrollerPosition);
                 mGridLayoutManager.scrollToPositionWithOffset(scrollerPosition, firstVisible.getTop());
             }
-            mAdapter.setLoaded();
+
         } else if (!hasNextPage()) {
             removeDummyObject();
         }
@@ -437,13 +438,16 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         Log.d(this.getClass().getSimpleName(), "page number from api: " + pageNumber);
         Log.d(this.getClass().getSimpleName(), "total pages: " + totalPages);
         if (updatedInserted > 0) {
+            final int scrollPosition = mGridLayoutManager.findLastVisibleItemPosition();
+            final int activePage = (scrollPosition+31)/31;
+
             // if loader is active means no product in local, simply show
             if (mPageLoader.getVisibility() == View.VISIBLE) {
                 resetVariables();
                 getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
             }
             // if page number is 1 then flicker and reload data
-            else if (mPageNumber == 1 && pageNumber == 1) {
+            else if (activePage == 1 && pageNumber == 1) {
                 resetVariables();
                 final int oldPosition = mProducts.size();
                 if (mPageNumber == 1 && oldPosition > 0) {
@@ -453,7 +457,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
                 Toast.makeText(getContext(), getString(R.string.products_updated), Toast.LENGTH_LONG).show();
             } else {
-                final int scrollPosition = mGridLayoutManager.findLastVisibleItemPosition();
+
                 if (scrollPosition >= mProducts.size() - 2 || pageNumber == mPageNumber) {
                     getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
                 } else {
