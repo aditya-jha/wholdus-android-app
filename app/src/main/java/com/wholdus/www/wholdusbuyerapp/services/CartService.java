@@ -203,6 +203,9 @@ public class CartService extends IntentService{
             cartItem.put(CartItemsTable.COLUMN_SYNCED, 0);
 
             cartDBHelper.saveCartItemDataFromJSONObject(cartItem);
+            Bundle bundle = new Bundle();
+            bundle.putInt(CartItemsTable.COLUMN_PIECES,intent.getIntExtra(CartItemsTable.COLUMN_PIECES, 1));
+            sendCartItemWriteBroadCast(bundle);
             startLoaderForSendingCartItems();
         }catch (Exception e){
             e.printStackTrace();
@@ -211,6 +214,14 @@ public class CartService extends IntentService{
 
     private void sendCartDataUpdatedBroadCast(@Nullable String extra) {
         Intent intent = new Intent(getString(R.string.cart_data_updated));
+        if (extra != null) {
+            intent.putExtra("extra", extra);
+        }
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    private void sendCartItemWriteBroadCast(@Nullable Bundle extra) {
+        Intent intent = new Intent(getString(R.string.cart_item_written));
         if (extra != null) {
             intent.putExtra("extra", extra);
         }

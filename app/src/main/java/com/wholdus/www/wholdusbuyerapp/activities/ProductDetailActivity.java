@@ -1,10 +1,15 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,18 +22,23 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.ThumbImageAdapter;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
+import com.wholdus.www.wholdusbuyerapp.fragments.CartDialogFragment;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ShareIntentClass;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
+import com.wholdus.www.wholdusbuyerapp.loaders.CartItemLoader;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProductLoader;
+import com.wholdus.www.wholdusbuyerapp.models.CartItem;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
+import com.wholdus.www.wholdusbuyerapp.services.BuyerProductService;
 
 import java.util.ArrayList;
 
@@ -44,8 +54,12 @@ public class ProductDetailActivity extends AppCompatActivity
     private TextView mProductName, mProductPrice, mProductMrp, mLotSize, mLotDescription,
             mProductFabric, mProductColor, mProductSizes, mProductBrand,
             mProductPattern, mProductStyle, mProductWork, mSellerLocation, mSellerSpeciality;
+    private ImageButton mShareButton, mFavButton;
+    private Button mCartButton;
+    private BroadcastReceiver mCartServiceResponseReceiver;
 
     private static final int PRODUCT_LOADER = 10;
+    private static final int CART_ITEM_LOADER = 11;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,16 +93,28 @@ public class ProductDetailActivity extends AppCompatActivity
         mSellerLocation = (TextView) findViewById(R.id.seller_location);
         mSellerSpeciality = (TextView) findViewById(R.id.seller_speciality);
 
-        ImageButton shareButton = (ImageButton) findViewById(R.id.share_button);
-        shareButton.setOnClickListener(this);
+        mShareButton = (ImageButton) findViewById(R.id.share_button);
+        mShareButton.setOnClickListener(this);
 
-        ImageButton favButton = (ImageButton) findViewById(R.id.fav_icon);
-        favButton.setOnClickListener(this);
+        mFavButton = (ImageButton) findViewById(R.id.fav_icon);
+        mFavButton.setOnClickListener(this);
 
-        Button cartButton = (Button) findViewById(R.id.cart_button);
-        cartButton.setOnClickListener(this);
+        mCartButton = (Button) findViewById(R.id.cart_button);
+        mCartButton.setOnClickListener(this);
 
         getSupportLoaderManager().initLoader(PRODUCT_LOADER, null, this);
+
+        getSupportLoaderManager().initLoader(CART_ITEM_LOADER, null, new CartItemLoaderManager(this));
+
+        mCartServiceResponseReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                onReceiveCartIntent(intent);
+            }
+        };
+
+        IntentFilter intentFilter = new IntentFilter(getString(R.string.cart_item_written));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mCartServiceResponseReceiver, intentFilter);
     }
 
     @Override
@@ -100,6 +126,14 @@ public class ProductDetailActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
+        if (mCartServiceResponseReceiver != null) {
+            try {
+                LocalBroadcastManager.getInstance(this).unregisterReceiver(mCartServiceResponseReceiver);
+            } catch (Exception e){
+
+            }
+            mCartServiceResponseReceiver = null;
+        }
     }
 
     @Override
@@ -127,8 +161,11 @@ public class ProductDetailActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<Product> loader, Product data) {
-        mProduct = data;
-        setDataToView();
+        if (data != null){
+            mProduct = data;
+            setDataToView();
+        }
+        // TODO Handle case for product ID not found
     }
 
     @Override
@@ -151,10 +188,25 @@ public class ProductDetailActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.fav_icon:
-                Toast.makeText(this, "fav button clicked", Toast.LENGTH_SHORT).show();
+                mProduct.toggleLikeStatus();
+                setFavButtonImage();
+
+                intent = new Intent(this, BuyerProductService.class);
+                intent.putExtra("TODO", TODO.UPDATE_PRODUCT_RESPONSE);
+                intent.putExtra(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, mProduct.getProductID());
+                intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONDED_FROM, 2);
+                intent.putExtra(CatalogContract.ProductsTable.COLUMN_HAS_SWIPED, false);
+                intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONSE_CODE, mProduct.getLikeStatus() ? 1 : 2);
+
+                startService(intent);
                 break;
             case R.id.cart_button:
-                Toast.makeText(this, "cart button clicked", Toast.LENGTH_SHORT).show();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                CartDialogFragment dialogFragment = new CartDialogFragment();
+                Bundle args = new Bundle();
+                args.putInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, mProductID);
+                dialogFragment.setArguments(args);
+                dialogFragment.show(fragmentManager, dialogFragment.getClass().getSimpleName());
                 break;
             case R.id.share_button:
                 ShareIntentClass.shareImage(this, mDisplayImage, mProduct.getProductDetails().getDisplayName());
@@ -222,7 +274,11 @@ public class ProductDetailActivity extends AppCompatActivity
         mProductPrice.setText(String.format(getString(R.string.price_per_pcs_format), String.valueOf(mProduct.getMinPricePerUnit())));
         mProductMrp.setText(String.format(getString(R.string.price_format), String.valueOf(mProduct.getPricePerUnit())));
         mLotSize.setText(String.valueOf(mProduct.getLotSize()));
-        mLotDescription.setText(mProduct.getProductDetails().getLotDescription());
+        if (mProduct.getProductDetails().getLotDescription().equals("")) {
+            mLotDescription.setText(String.valueOf(mProduct.getLotSize()) + " pieces per lot");
+        } else {
+            mLotDescription.setText(mProduct.getProductDetails().getLotDescription());
+        }
 
         mProductFabric.setText(mProduct.getFabricGSM());
         mProductColor.setText(mProduct.getColours());
@@ -232,5 +288,57 @@ public class ProductDetailActivity extends AppCompatActivity
         mProductPattern.setText(mProduct.getProductDetails().getPackagingDetails());
         mProductStyle.setText(mProduct.getProductDetails().getStyle());
         mProductWork.setText(mProduct.getProductDetails().getWorkDecorationType());
+
+        setFavButtonImage();
     }
+
+    private void setFavButtonImage(){
+        mFavButton.setImageResource(mProduct.getLikeStatus() ? R.drawable.ic_favorite_red_24dp : R.drawable.ic_favorite_border_black_24dp);
+    }
+
+    private class CartItemLoaderManager implements LoaderManager.LoaderCallbacks<ArrayList<CartItem>> {
+        private Context mContext;
+        CartItemLoaderManager(Context context){
+            mContext = context;
+        }
+        @Override
+        public void onLoaderReset(Loader<ArrayList<CartItem>> loader) {
+
+        }
+
+        @Override
+        public void onLoadFinished(Loader<ArrayList<CartItem>> loader, ArrayList<CartItem> data) {
+            if (!data.isEmpty()) {
+                setCartButtonText(data.get(0).getPieces());
+            }
+        }
+
+        @Override
+        public Loader<ArrayList<CartItem>> onCreateLoader(int id, Bundle args) {
+            return new CartItemLoader(mContext, -1, null, -1, mProductID, -1, false, null);
+        }
+    }
+
+    private void setCartButtonText(int pieces){
+        String buttonText = String.valueOf(pieces);
+        if (pieces == 1){
+            buttonText += " pc in cart";
+        } else {
+            buttonText += " pcs in cart";
+        }
+        mCartButton.setText(buttonText);
+    }
+
+    private void onReceiveCartIntent(Intent intent){
+        if (intent != null){
+            try {
+                Bundle bundle = intent.getBundleExtra("extra");
+                int pieces = bundle.getInt(CartContract.CartItemsTable.COLUMN_PIECES);
+                setCartButtonText(pieces);
+            }catch (Exception e){
+
+            }
+        }
+    }
+
 }
