@@ -33,10 +33,8 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
     private int mOffset, mLimit;
     private ArrayList<Integer> mResponseCodes;
 
-    public GridProductsLoader(Context context, int pageNumber, int limit, ArrayList<Integer> responseCodes) {
+    public GridProductsLoader(Context context, ArrayList<Integer> responseCodes) {
         super(context);
-        mLimit = limit;
-        mOffset = pageNumber > 0 ? (pageNumber - 1) * mLimit : 0;
         mResponseCodes = responseCodes;
     }
 
@@ -67,8 +65,8 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
                 1,
                 1,
                 new String[] {FilterClass.getSortString()}, // ORDER BY
-                mLimit,
-                mOffset,
+                -1,
+                -1,
                 columns);
         return GridProductModel.getGridProducts(cursor);
     }

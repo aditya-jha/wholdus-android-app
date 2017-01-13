@@ -36,6 +36,8 @@ public class APIConstants {
     public static final String API_TOTAL_PAGES_KEY = "total_pages";
     public static final String API_TOTAL_ITEMS_KEY = "total_items";
     public static final String API_ITEM_PER_PAGE_KEY = "items_per_page";
+    public static final String TOTAL_ITEMS_KEY = "total_items";
+
     public static final String BUYER_LOGIN_KEY = "buyer_login";
     public static final String LOGIN_API_DATA = "login_api_data";
 

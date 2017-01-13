@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategoriesTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.ProductsTable;
@@ -564,52 +565,91 @@ public class CatalogDBHelper extends BaseDBHelper {
         return insertUpdated;
     }
 
-    public void saveBuyerProductsDataFromJSONArray(JSONArray buyerProducts) throws JSONException {
+    public int saveBuyerProductsDataFromJSONArray(JSONArray buyerProducts) throws JSONException {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
+        int insertedUpdated = 0;
+
         try {
             db.beginTransaction();
             for (int i = 0; i < buyerProducts.length(); i++) {
-                saveBuyerProductData(buyerProducts.getJSONObject(i));
+                insertedUpdated += saveBuyerProductData(buyerProducts.getJSONObject(i));
             }
             db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
+            insertedUpdated = 0;
         } finally {
             db.endTransaction();
         }
 
         mDatabaseHelper.closeDatabase();
+        return insertedUpdated;
     }
 
-    public void saveBuyerProductData(JSONObject buyerProduct) throws JSONException {
+    public int saveBuyerProductData(JSONObject buyerProduct) throws JSONException {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
+        int insertedUpdated = 0;
+
         if (!buyerProduct.has("product")) {
-            return;
+            return insertedUpdated;
         }
+
         JSONObject product = buyerProduct.getJSONObject("product");
-        saveProductData(product);
+        insertedUpdated = saveProductData(product);
+
         int productID = product.getInt(ProductsTable.COLUMN_PRODUCT_ID);
         int buyerProductID = buyerProduct.getInt(ProductsTable.COLUMN_BUYER_PRODUCT_ID);
+
         String buyerProductUpdatedAtLocal = getPresentBuyerProductIDs().get(buyerProductID);
         String buyerProductUpdatedAtServer = buyerProduct.getString(ProductsTable.COLUMN_PRODUCT_UPDATED_AT);
+
         if (buyerProductUpdatedAtLocal == null || !buyerProductUpdatedAtLocal.equals(buyerProductUpdatedAtServer)) {
             ContentValues values = getBuyerProductContentValuesFromJSONObject(buyerProduct);
             String selection = ProductsTable.COLUMN_PRODUCT_ID + " = " + productID;
-            db.update(ProductsTable.TABLE_NAME, values, selection, null);
+            insertedUpdated = db.update(ProductsTable.TABLE_NAME, values, selection, null);
             mPresentBuyerProductIDs.put(buyerProductID, buyerProductUpdatedAtServer);
         }
         mDatabaseHelper.closeDatabase();
+        return insertedUpdated;
     }
 
-    public void saveBuyerProductResponseData(JSONObject buyerProductResponse) throws JSONException {
+    public int saveBPResponseDataFromJSONArray(JSONArray buyerProducts) throws JSONException {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
-        if (!buyerProductResponse.has("product")) {
-            return;
+        int insertedUpdated = 0;
+
+        try {
+            db.beginTransaction();
+
+            for (int i=0; i<buyerProducts.length(); i++) {
+                insertedUpdated += saveBuyerProductResponseData(buyerProducts.getJSONObject(i));
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
+            FirebaseCrash.report(e);
+            insertedUpdated = 0;
+        } finally {
+            db.endTransaction();
         }
+
+        mDatabaseHelper.closeDatabase();
+        return insertedUpdated;
+    }
+
+    public int saveBuyerProductResponseData(JSONObject buyerProductResponse) throws JSONException {
+        SQLiteDatabase db = mDatabaseHelper.openDatabase();
+        int insertedUpdated = 0;
+
+        if (!buyerProductResponse.has("product")) {
+            return insertedUpdated;
+        }
+
         JSONObject product = buyerProductResponse.getJSONObject("product");
-        saveProductData(product);
+        insertedUpdated = saveProductData(product);
+
         int productID = product.getInt(ProductsTable.COLUMN_PRODUCT_ID);
         int buyerProductResponseID = buyerProductResponse.getInt(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID);
+
         // Send buyer product response Id as -1 if being created locally
         if (buyerProductResponseID == -1) {
             ContentValues values = getBuyerProductResponseContentValuesFromJSONObject(buyerProductResponse);
@@ -625,12 +665,14 @@ public class CatalogDBHelper extends BaseDBHelper {
                         ProductsTable.COLUMN_SYNCED + " = 1) OR ( " +
                         ProductsTable.COLUMN_SYNCED + " = 0 AND " +
                         ProductsTable.COLUMN_RESPONSE_CODE + " = " + values.getAsInteger(ProductsTable.COLUMN_RESPONSE_CODE) + ")) ";
-                if (db.update(ProductsTable.TABLE_NAME, values, selection, null) > 0) {
+                insertedUpdated = db.update(ProductsTable.TABLE_NAME, values, selection, null);
+                if (insertedUpdated > 0) {
                     mPresentBuyerProductResponseIDs.put(buyerProductResponseID, buyerProductResponseUpdatedAtServer);
                 }
             }
         }
         mDatabaseHelper.closeDatabase();
+        return insertedUpdated;
     }
 
     public void saveSellerAddressFromJsonArray(JSONArray sellerAddress) throws JSONException {
@@ -747,10 +789,12 @@ public class CatalogDBHelper extends BaseDBHelper {
         cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_ID, data.getInt(ProductsTable.COLUMN_BUYER_PRODUCT_ID));
         cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_CREATED_AT, data.getString(ProductsTable.COLUMN_PRODUCT_CREATED_AT));
         cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_UPDATED_AT, data.getString(ProductsTable.COLUMN_PRODUCT_UPDATED_AT));
-        try {
-            cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_IS_ACTIVE, data.getBoolean(ProductsTable.COLUMN_BUYER_PRODUCT_IS_ACTIVE) ? 1 : 0);
-        } catch (Exception e) {
-            cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_IS_ACTIVE, data.getInt(ProductsTable.COLUMN_BUYER_PRODUCT_IS_ACTIVE));
+        if (data.has(ProductsTable.COLUMN_BUYER_PRODUCT_IS_ACTIVE)) {
+            try {
+                cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_IS_ACTIVE, data.getBoolean(ProductsTable.COLUMN_BUYER_PRODUCT_IS_ACTIVE) ? 1 : 0);
+            } catch (Exception e) {
+                cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_IS_ACTIVE, data.getInt(ProductsTable.COLUMN_BUYER_PRODUCT_IS_ACTIVE));
+            }
         }
 
         return cv;

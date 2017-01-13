@@ -16,6 +16,7 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.ProductsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.models.BuyerProductResponse;
@@ -132,8 +133,10 @@ public class BuyerProductService extends IntentService {
         try {
             switch (todo) {
                 case TODO.FETCH_BUYER_PRODUCTS:
-                case TODO.FETCH_BUYER_PRODUCTS_RESPONSE:
                     saveBuyerProductsToDB(response);
+                    break;
+                case TODO.FETCH_BUYER_PRODUCTS_RESPONSE:
+                    saveBuyerProductResponseToDB(response);
                     break;
                 case TODO.UPDATE_PRODUCT_RESPONSE:
                     saveBuyerProductResponseToDB(response);
@@ -145,19 +148,23 @@ public class BuyerProductService extends IntentService {
     }
 
     private void saveBuyerProductsToDB(String response) throws JSONException {
-        JSONObject data = new JSONObject(response);
-        // TODO Handle pagination
-        CatalogDBHelper dbHelper = new CatalogDBHelper(this);
-        JSONArray buyerProducts = data.getJSONArray("buyer_products");
-        dbHelper.saveBuyerProductsDataFromJSONArray(buyerProducts);
-        sendBuyerProductDataUpdatedBroadCast(null);
-        //TODO : Possibly fetch a minimum of 50 buyer products
-    }
-
-    private void sendBuyerProductDataUpdatedBroadCast(@Nullable String extra) {
         Intent intent = new Intent(getString(R.string.buyer_product_data_updated));
-        if (extra != null) {
-            intent.putExtra("extra", extra);
+        if (response == null) {
+            // error response
+            intent.putExtra(Constants.ERROR_RESPONSE, "Error");
+        } else {
+            JSONObject data = new JSONObject(response);
+            JSONArray buyerProducts = data.getJSONArray("buyer_products");
+
+            if (buyerProducts.length() == 0) {
+                intent.putExtra(Constants.INSERTED_UPDATED, -1);
+            } else {
+                CatalogDBHelper dbHelper = new CatalogDBHelper(this);
+                int updatedInserted = dbHelper.saveBuyerProductsDataFromJSONArray(buyerProducts);
+                intent.putExtra(Constants.INSERTED_UPDATED, updatedInserted);
+            }
+            intent.putExtra(APIConstants.API_PAGE_NUMBER_KEY, data.getInt(APIConstants.API_PAGE_NUMBER_KEY));
+            intent.putExtra(APIConstants.API_TOTAL_PAGES_KEY, data.getInt(APIConstants.API_TOTAL_PAGES_KEY));
         }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
@@ -202,9 +209,34 @@ public class BuyerProductService extends IntentService {
     }
 
     private void saveBuyerProductResponseToDB(String response) throws JSONException {
-        JSONObject data = new JSONObject(response);
-        CatalogDBHelper dbHelper = new CatalogDBHelper(this);
-        dbHelper.saveBuyerProductResponseData(data.getJSONObject("buyer_product_response"));
+        Intent intent = new Intent(getString(R.string.buyer_product_data_updated));
+        if (response == null) {
+            // error response
+            intent.putExtra(Constants.ERROR_RESPONSE, "Error");
+        } else {
+            int updatedInserted = 0;
+            JSONObject data = new JSONObject(response);
+            CatalogDBHelper dbHelper = new CatalogDBHelper(this);
+
+            if (data.has("buyer_product_response")) {
+                JSONObject bpResponse = data.getJSONObject("buyer_product_response");
+                updatedInserted = dbHelper.saveBuyerProductResponseData(bpResponse);
+                intent.putExtra(Constants.INSERTED_UPDATED, updatedInserted);
+            } else {
+                JSONArray buyerProducts = data.getJSONArray("buyer_products");
+
+                if (buyerProducts.length() == 0) {
+                    intent.putExtra(Constants.INSERTED_UPDATED, -1);
+                } else {
+                    updatedInserted = dbHelper.saveBPResponseDataFromJSONArray(buyerProducts);
+                    intent.putExtra(Constants.INSERTED_UPDATED, updatedInserted);
+                }
+                intent.putExtra(APIConstants.API_PAGE_NUMBER_KEY, data.getInt(APIConstants.API_PAGE_NUMBER_KEY));
+                intent.putExtra(APIConstants.API_TOTAL_PAGES_KEY, data.getInt(APIConstants.API_TOTAL_PAGES_KEY));
+                intent.putExtra(APIConstants.TOTAL_ITEMS_KEY, data.getInt(APIConstants.TOTAL_ITEMS_KEY));
+            }
+        }
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     private void sendBuyerProductResponseToServer(BuyerProductResponse buyerProductResponse) {
@@ -227,7 +259,7 @@ public class BuyerProductService extends IntentService {
     }
 
     private void updateAllUnsyncedBuyerProductResponses(@Nullable CatalogDBHelper catalogDBHelper) {
-        catalogDBHelper  = catalogDBHelper == null ? new CatalogDBHelper(this) : catalogDBHelper;
+        catalogDBHelper = catalogDBHelper == null ? new CatalogDBHelper(this) : catalogDBHelper;
         String[] columns = {
                 ProductsTable.COLUMN_PRODUCT_ID,
                 ProductsTable.COLUMN_RESPONSE_CODE,

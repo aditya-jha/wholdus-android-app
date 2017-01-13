@@ -30,50 +30,24 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private Context mContext;
     private ArrayList<GridProductModel> mData;
     private ItemClickListener mListener;
-    private OnLoadMoreListener onLoadMoreListener;
 
     private static final int PRODUCT_VIEW = 0;
     private static final int LOADER_VIEW = 1;
 
-    private int mVisibleThreshold = 1;
-    private int mLastVisibleItem, mTotalItemCount;
-    private boolean mLoading;
-
-    public interface OnLoadMoreListener {
-        void onLoadMore();
-    }
-
-    public void setLoaded() {
-        mLoading = false;
-    }
-
-    public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
-        this.onLoadMoreListener = onLoadMoreListener;
-    }
-
-    public ProductsGridAdapter(Context context, ArrayList<GridProductModel> products, final ItemClickListener listener, RecyclerView recyclerView) {
+    public ProductsGridAdapter(Context context, ArrayList<GridProductModel> products, final ItemClickListener listener) {
         mContext = context;
         mData = products;
         mListener = listener;
+    }
 
-        if (recyclerView.getLayoutManager() instanceof GridLayoutManager) {
+    public void clear() {
+        mData.clear();
+        notifyDataSetChanged();
+    }
 
-            final GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
-            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
-
-                    mTotalItemCount = gridLayoutManager.getItemCount();
-                    mLastVisibleItem = gridLayoutManager.findLastVisibleItemPosition();
-                    if (mTotalItemCount > 0 && !mLoading && mTotalItemCount <= (mLastVisibleItem + mVisibleThreshold)) {
-                        // End has been reached
-                        onLoadMoreListener.onLoadMore();
-                        mLoading = true;
-                    }
-                }
-            });
-        }
+    public void add(ArrayList<GridProductModel> products) {
+        mData.addAll(products);
+        notifyDataSetChanged();
     }
 
     @Override
