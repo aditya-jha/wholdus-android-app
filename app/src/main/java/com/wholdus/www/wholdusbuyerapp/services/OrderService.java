@@ -53,6 +53,7 @@ public class OrderService extends IntentService {
         params.put("page_number", String.valueOf(pageNumber));
         params.put("sub_order_details", "1");
         params.put("seller_details", "1");
+        params.put("seller_address_details", "1");
         params.put("order_item_details", "1");
         params.put("product_details", "1");
         params.put("product_details_details","1");

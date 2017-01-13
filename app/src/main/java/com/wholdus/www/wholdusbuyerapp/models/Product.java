@@ -30,6 +30,7 @@ public class Product {
     private String mColours;
     private String mFabricGSM;
     private String mSizes;
+    private boolean mLiked;
 
     private int mSellerID;
     private int mCategoryID;
@@ -66,6 +67,7 @@ public class Product {
         mImagePathString = cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_IMAGE_PATH))
                 + "%s/" + cursor.getString(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_IMAGE_NAME))
                 + "-%s.jpg";
+        mLiked = cursor.getInt(cursor.getColumnIndexOrThrow(CatalogContract.ProductsTable.COLUMN_RESPONSE_CODE)) == 1;
     }
 
     public static ArrayList<Product> getProductsFromCursor(Cursor cursor) {
@@ -181,4 +183,8 @@ public class Product {
     public void setCategory(Cursor cursor) {
         mCategory = new Category(cursor);
     }
+
+    public boolean getLikeStatus() {return mLiked;}
+
+    public void toggleLikeStatus() {mLiked = !mLiked;}
 }

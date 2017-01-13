@@ -3,7 +3,10 @@ package com.wholdus.www.wholdusbuyerapp.fragments;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +18,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +39,10 @@ import com.wholdus.www.wholdusbuyerapp.services.UserService;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by aditya on 29/11/16.
@@ -57,6 +65,9 @@ public class EditAddressFragment extends Fragment implements LoaderManager.Loade
 
     private static final int PERMISSION_ACCESS_COARSE_LOCATION = 0;
     private int USER_ADDRESS_LOADER = 80;
+
+    private static final String SHIPPING_SHARED_PREFERENCES = "ShippingSharedPreference";
+    private static final String PINCODE_KEY = "PincodeKey";
 
     public EditAddressFragment() {
     }
@@ -90,11 +101,24 @@ public class EditAddressFragment extends Fragment implements LoaderManager.Loade
         if (mAddressID == -1 && m_ID == -1) {
             // Create new buyer model
             mBuyerAddress = new BuyerAddress();
+
         } else {
             getActivity().getSupportLoaderManager().restartLoader(USER_ADDRESS_LOADER, null, this);
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (mAddressID == -1 && m_ID == -1) {
+            SharedPreferences shippingPreferences = getActivity().getSharedPreferences(SHIPPING_SHARED_PREFERENCES,MODE_PRIVATE);
+            String pincode = shippingPreferences.getString(PINCODE_KEY, null);
+            if (pincode != null){
+                mPincodeEditText.setText(pincode);
+            }
+        }
     }
 
     @Override
@@ -155,9 +179,14 @@ public class EditAddressFragment extends Fragment implements LoaderManager.Loade
                 if (ContextCompat.checkSelfPermission(getContext(),
                         Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                    double lat = location.getLatitude(),
-                            lng = location.getLongitude();
-                    Toast.makeText(getContext(), lat + " , " + lng, Toast.LENGTH_SHORT).show();
+                    if (location != null) {
+                        double lat = location.getLatitude();
+                        double lng = location.getLongitude();
+                        getAddressFromLocation(location);
+                        Toast.makeText(getContext(), String.valueOf(lat) + " , " + String.valueOf(lng), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "Could not fetch location", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
@@ -171,6 +200,64 @@ public class EditAddressFragment extends Fragment implements LoaderManager.Loade
                 Toast.makeText(getContext(), "Error google", Toast.LENGTH_SHORT).show();
             }
         }).addApi(LocationServices.API).build();
+    }
+
+    private void getAddressFromLocation(final Location location){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+                try {
+                    List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                    if (addresses == null || addresses.size()  == 0){
+                        Toast.makeText(getContext(), "Could not fetch location", Toast.LENGTH_SHORT).show();
+                    }else {
+                        final Address address = addresses.get(0);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                setDataFromLocation(address);
+                            }
+                        });
+                    }
+                } catch (Exception e){
+                    Toast.makeText(getContext(), "Could not fetch location", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    private void setDataFromLocation(Address address){
+        //TODO : set buyer mobile number in mobile number
+        if (address.getPostalCode() != null){
+            mPincodeEditText.setText(address.getPostalCode());
+        }
+        if (address.getLocality() != null){
+            mCityEditText.setText(address.getLocality());
+        } else if (address.getSubAdminArea() != null){
+            mCityEditText.setText(address.getSubAdminArea());
+        }
+        if (address.getAdminArea() != null){
+            mStateEditText.setText(address.getAdminArea());
+        }
+        String addressText = "";
+
+        if (address.getSubThoroughfare() != null){
+            addressText += address.getSubThoroughfare() + ", ";
+        }
+        if (address.getThoroughfare() != null){
+            addressText += address.getThoroughfare() + ", ";
+        }
+        if (address.getSubLocality() != null){
+            addressText += address.getSubLocality() + ", ";
+        }
+        if (address.getLocality() != null){
+            addressText += address.getLocality();
+        }
+
+        mAddressEditText.setText(addressText);
+
     }
 
     private void initReferences(ViewGroup rootView) {

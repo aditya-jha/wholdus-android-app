@@ -238,15 +238,15 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     }
 
     private void setViewForProceedButtonLayout(){
-        if (mCart != null){
+        if (mCart == null || mCart.getPieces() == 0){
+            mProceedButton.setEnabled(false);
+            mProceedButtonLayout.setVisibility(View.GONE);
+        } else {
+            mProceedButtonLayout.setVisibility(View.VISIBLE);
             mTotalTextView.setText("Total: Rs. " + String.format("%.0f",mCart.getFinalPrice()));
             mProductsPiecesTextView.setText(String.valueOf(mCart.getProductCount()) + " products - "
                     + String.valueOf(mCart.getPieces()) + " pieces");
             mProceedButton.setEnabled(true);
-        } else {
-            mTotalTextView.setText("");
-            mProductsPiecesTextView.setText("");
-            mProceedButton.setEnabled(false);
         }
     }
 

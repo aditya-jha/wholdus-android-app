@@ -38,7 +38,7 @@ public class NotificationDBHelper extends BaseDBHelper {
         if (type != null && !type.equals("")){
             query += whereClauseHelper(whereApplied) + NotificationTable.COLUMN_NOTIFICATION_TYPE + " = " + type;
         }
-
+        query += " ORDER BY " + NotificationTable._ID + " DESC ";
         return getCursor(query);
     }
 

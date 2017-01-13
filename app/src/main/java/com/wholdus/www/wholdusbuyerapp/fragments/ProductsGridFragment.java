@@ -291,9 +291,9 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 intent = new Intent(getContext(), BuyerProductService.class);
                 intent.putExtra("TODO", TODO.UPDATE_PRODUCT_RESPONSE);
                 intent.putExtra(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, product.getProductID());
-                intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONDED_FROM, 0);
+                intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONDED_FROM, 1);
                 intent.putExtra(CatalogContract.ProductsTable.COLUMN_HAS_SWIPED, false);
-                intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONSE_CODE, product.getLikeStatus() ? 1 : 0);
+                intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONSE_CODE, product.getLikeStatus() ? 1 : 2);
 
                 getContext().startService(intent);
                 break;

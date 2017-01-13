@@ -220,7 +220,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
                 mSwipeDeck.swipeTopCardLeft(2000);
             }
         });
-        //TODO : Implement add to cart and set store price fragments
+
         mAddToCartButton = (ImageButton) rootView.findViewById(R.id.hand_picked_cart_button);
         mAddToCartButton.setOnClickListener(new View.OnClickListener() {
             @Override
