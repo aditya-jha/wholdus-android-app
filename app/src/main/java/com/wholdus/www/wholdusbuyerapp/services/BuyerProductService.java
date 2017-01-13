@@ -68,6 +68,7 @@ public class BuyerProductService extends IntentService {
         params.put("product_image_details", "1");
         params.put("category_details", "1");
         params.put("seller_details", "1");
+        params.put("seller_address_details", "1");
         params.put("items_per_page", "20");
         params.put("page_number", String.valueOf(pageNumber));
         String url = GlobalAccessHelper.generateUrl(APIConstants.BUYER_PRODUCT_URL, params);
@@ -86,6 +87,7 @@ public class BuyerProductService extends IntentService {
         params.put("product_image_details", "1");
         params.put("category_details", "1");
         params.put("seller_details", "1");
+        params.put("seller_address_details", "1");
         String url = GlobalAccessHelper.generateUrl(APIConstants.BUYER_PRODUCT_RESPONSE_URL, params);
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }

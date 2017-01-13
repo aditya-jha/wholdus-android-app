@@ -153,6 +153,7 @@
     <string name="location_key">Location</string>
     <string name="speciality_key">Speciality</string>
     <string name="view_store_key">View Store</string>
+    <string name="seller_name_key">Name</string>
 
     <!-- handpicked fragment -->
     <string name="like_key">Like</string>

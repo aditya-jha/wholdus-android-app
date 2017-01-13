@@ -50,7 +50,7 @@ public class CatalogDBHelper extends BaseDBHelper {
             ProductsTable.COLUMN_CATEGORY_ID, ProductsTable.COLUMN_PRICE_PER_UNIT, ProductsTable.COLUMN_LOT_SIZE, ProductsTable.COLUMN_PRICE_PER_LOT,
             ProductsTable.COLUMN_MIN_PRICE_PER_UNIT, ProductsTable.COLUMN_MARGIN, ProductsTable.COLUMN_URL, ProductsTable.COLUMN_IMAGE_NAME,
             ProductsTable.COLUMN_IMAGE_COUNT, ProductsTable.COLUMN_IMAGE_NUMBERS, ProductsTable.COLUMN_IMAGE_PATH, ProductsTable.COLUMN_NAME,
-            ProductsTable.COLUMN_COLOURS, ProductsTable.COLUMN_FABRIC_GSM, ProductsTable.COLUMN_SIZES};
+            ProductsTable.COLUMN_COLOURS, ProductsTable.COLUMN_FABRIC_GSM, ProductsTable.COLUMN_SIZES, ProductsTable.COLUMN_RESPONSE_CODE};
 
     public static String[] ExtraProductColumns = {ProductsTable.COLUMN_PRODUCT_DETAILS_ID, ProductsTable.COLUMN_UNIT, ProductsTable.COLUMN_DISPLAY_NAME,
             ProductsTable.COLUMN_DELETE_STATUS, ProductsTable.COLUMN_SHOW_ONLINE, ProductsTable.COLUMN_WARRANTY, ProductsTable.COLUMN_SPECIAL_FEATURE,
