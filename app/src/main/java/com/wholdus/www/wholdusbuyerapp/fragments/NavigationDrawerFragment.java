@@ -100,6 +100,7 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
                 // open rejected products
                 Intent shortlistIntent = new Intent(getContext(), CategoryProductActivity.class);
                 shortlistIntent.putExtra(Constants.TYPE, Constants.FAV_PRODUCTS);
+                shortlistIntent.getIntExtra(getString(R.string.selected_category_id), 1);
                 startActivity(shortlistIntent);
                 break;
             case 5:

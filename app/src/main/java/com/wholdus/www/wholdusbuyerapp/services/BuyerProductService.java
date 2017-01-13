@@ -231,6 +231,7 @@ public class BuyerProductService extends IntentService {
                 }
                 intent.putExtra(APIConstants.API_PAGE_NUMBER_KEY, data.getInt(APIConstants.API_PAGE_NUMBER_KEY));
                 intent.putExtra(APIConstants.API_TOTAL_PAGES_KEY, data.getInt(APIConstants.API_TOTAL_PAGES_KEY));
+                intent.putExtra(APIConstants.TOTAL_ITEMS_KEY, data.getInt(APIConstants.TOTAL_ITEMS_KEY));
             }
         }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);

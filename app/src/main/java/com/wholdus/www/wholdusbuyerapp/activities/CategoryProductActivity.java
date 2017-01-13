@@ -160,7 +160,6 @@ public class CategoryProductActivity extends AppCompatActivity
     public void applyFilter() {
         //onBackPressed();
         openToFragment("", new Bundle());
-        updateProducts();
     }
 
     private void initToolbar() {
@@ -205,8 +204,7 @@ public class CategoryProductActivity extends AppCompatActivity
     private void updateProducts() {
         ProductsGridFragment fragment = (ProductsGridFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         if (fragment != null) {
-//            fragment.resetVariables();
-//            fragment.loadData();
+            fragment.loadData();
         } else {
             // fragment is not added yet
             openToFragment("", new Bundle());
