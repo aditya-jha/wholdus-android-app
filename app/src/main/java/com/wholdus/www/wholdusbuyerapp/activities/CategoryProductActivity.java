@@ -162,6 +162,11 @@ public class CategoryProductActivity extends AppCompatActivity
         openToFragment("", new Bundle());
     }
 
+    @Override
+    public void filterFragmentActive(boolean isActive) {
+        mFilterFragmentActive = isActive;
+    }
+
     private void initToolbar() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -175,7 +180,7 @@ public class CategoryProductActivity extends AppCompatActivity
         }
     }
 
-    private void showBackButtonInToolbar() {
+    public void showBackButtonInToolbar() {
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,7 +191,8 @@ public class CategoryProductActivity extends AppCompatActivity
         });
     }
 
-    private void showMenuButtonInToolbar() {
+    @Override
+    public void showMenuButtonInToolbar() {
         mToolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

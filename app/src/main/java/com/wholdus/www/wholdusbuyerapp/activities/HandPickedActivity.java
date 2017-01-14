@@ -78,6 +78,16 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
         }
     }
 
+    @Override
+    public void showMenuButtonInToolbar() {
+
+    }
+
+    @Override
+    public void filterFragmentActive(boolean isActive) {
+
+    }
+
     private String getFragmentToOpenName(Bundle savedInstanceState) {
         String openFragment;
         if (savedInstanceState == null) {
