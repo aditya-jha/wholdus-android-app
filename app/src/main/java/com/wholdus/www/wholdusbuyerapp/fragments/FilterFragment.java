@@ -102,6 +102,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mListener.filterFragmentActive(true);
         // set default selected item in filter keys listview
         mFilterKeys.requestFocusFromTouch();
         mFilterKeys.setSelection(0);

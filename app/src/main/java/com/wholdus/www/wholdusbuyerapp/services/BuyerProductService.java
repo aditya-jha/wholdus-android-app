@@ -13,10 +13,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.ProductsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.models.BuyerProductResponse;
@@ -82,6 +84,9 @@ public class BuyerProductService extends IntentService {
         params.put(APIConstants.API_PAGE_NUMBER_KEY,
                 String.valueOf(intent.getIntExtra(APIConstants.API_PAGE_NUMBER_KEY, 1)));
         params.put(APIConstants.API_RESPONSE_CODE_KEY, intent.getStringExtra(APIConstants.API_RESPONSE_CODE_KEY));
+        if (intent.getIntExtra(CatalogContract.CategoriesTable.COLUMN_CATEGORY_ID, -1) != -1) {
+            params.put("categoryID", intent.getIntExtra(CatalogContract.CategoriesTable.COLUMN_CATEGORY_ID, -1) + "");
+        }
         params.put("product_details", "1");
         params.put("product_details_details", "1");
         params.put("product_image_details", "1");

@@ -11,4 +11,8 @@ public interface CategoryProductListenerInterface {
     void sortClicked();
 
     void applyFilter();
+
+    void showMenuButtonInToolbar();
+
+    void filterFragmentActive(boolean isActive);
 }
