@@ -5,17 +5,16 @@
     android:layout_height="match_parent"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    tools:background="@color/accent"
-    tools:ignore="MissingPrefix">
+    tools:background="@color/accent">
 
     <ImageView
         android:id="@+id/imageView"
-        fontPath="font/Raleway-Regular.ttf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
-        tools:src="@drawable/slide_1" />
+        android:contentDescription="@string/intro_page_1"
+        tools:src="@drawable/slide_2" />
 
     <TextView
         android:id="@+id/textView"
@@ -23,6 +22,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:textColor="@android:color/white"
-        android:textSize="24sp"
-        tools:text="@string/intro_page_1" />
+        android:padding="@dimen/card_margin_horizontal"
+        android:textSize="20sp"
+        tools:text="@string/intro_page_2" />
 </LinearLayout>

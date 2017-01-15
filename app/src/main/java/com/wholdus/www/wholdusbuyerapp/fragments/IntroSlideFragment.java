@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TypeFaceProvider;
 
 /**
  * Created by aditya on 6/11/16.
@@ -40,8 +41,10 @@ public class IntroSlideFragment extends Fragment {
 
         ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
         imageView.setImageResource(mImageResourceID);
+        imageView.setContentDescription(mDisplayText);
 
         TextView textView = (TextView) view.findViewById(R.id.textView);
         textView.setText(mDisplayText);
+        textView.setTypeface(TypeFaceProvider.getTypeFace(getContext(), TypeFaceProvider.FONT_MEDIUM));
     }
 }

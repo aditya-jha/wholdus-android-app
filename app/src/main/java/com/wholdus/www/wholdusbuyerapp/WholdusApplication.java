@@ -6,9 +6,6 @@ import android.support.multidex.MultiDexApplication;
 
 import com.facebook.stetho.Stetho;
 
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
-
 /**
  * Created by aditya on 20/11/16.
  */
@@ -35,18 +32,12 @@ public class WholdusApplication extends MultiDexApplication {
         // Initialize Stetho with the Initializer
         Stetho.initialize(initializer);
 
-        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/Raleway-Medium.ttf")
-                .setFontAttrId(R.attr.fontPath)
-                .build()
-        );
-
         mBuyerID = -1;
     }
 
     @Override
     protected void attachBaseContext(Context base) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(base));
+        super.attachBaseContext(base);
         MultiDex.install(WholdusApplication.this);
     }
 
