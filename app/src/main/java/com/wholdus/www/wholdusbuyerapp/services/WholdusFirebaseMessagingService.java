@@ -88,7 +88,7 @@ public class WholdusFirebaseMessagingService extends FirebaseMessagingService {
         notificationBuilder.setContentText(body);
         notificationBuilder.setDefaults(DEFAULT_ALL);
         notificationBuilder.setAutoCancel(true);
-        notificationBuilder.setSmallIcon(R.mipmap.wholdus_logo);
+        notificationBuilder.setSmallIcon(R.drawable.wholdus_logo);
         notificationBuilder.setColor(getResources().getColor(R.color.accent));
         notificationBuilder.setContentIntent(pendingIntent);
         NotificationManager notificationManagerCompat = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

@@ -40,6 +40,7 @@ public class IntroSlideFragment extends Fragment {
 
         ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
         imageView.setImageResource(mImageResourceID);
+        imageView.setContentDescription(mDisplayText);
 
         TextView textView = (TextView) view.findViewById(R.id.textView);
         textView.setText(mDisplayText);

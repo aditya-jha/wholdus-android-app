@@ -52,11 +52,7 @@ public class ForgotPasswordFragment extends Fragment implements View.OnClickList
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            mListener = (LoginSignupListenerInterface) context;
-        } catch (ClassCastException cee) {
-            Log.d(this.getClass().getSimpleName(), " must implement " + LoginSignupListenerInterface.class.getSimpleName());
-        }
+        mListener = (LoginSignupListenerInterface) context;
     }
 
     @Override

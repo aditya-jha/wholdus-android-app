@@ -10,13 +10,11 @@ import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
@@ -50,11 +48,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            mListener = (LoginSignupListenerInterface) context;
-        } catch (ClassCastException cce) {
-            Log.d(this.getClass().getSimpleName(), " must implement mListener interface");
-        }
+        mListener = (LoginSignupListenerInterface) context;
     }
 
     @Override
@@ -66,8 +60,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
                 handleAPIResponse(intent);
             }
         };
-        IntentFilter intentFilter = new IntentFilter(IntentFilters.LOGIN_SIGNUP_DATA);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
     }
 
     @Nullable
@@ -88,8 +80,17 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mProgressBar.setVisibility(View.INVISIBLE);
+        IntentFilter intentFilter = new IntentFilter(IntentFilters.LOGIN_SIGNUP_DATA);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
 
     @Override
@@ -100,7 +101,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
     @Override
     public void onDestroy() {
         super.onDestroy();
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
 
     @Override
@@ -137,9 +137,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
     }
 
     private void initFragment(View rootView) {
-
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
-        mProgressBar.setVisibility(View.INVISIBLE);
 
         Button loginSubmitButton = (Button) rootView.findViewById(R.id.login_submit_button);
         loginSubmitButton.setOnClickListener(this);
@@ -151,6 +149,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
         forgotPasswordTextView.setOnClickListener(this);
 
         mMobileNumberWrapper = (TextInputLayout) rootView.findViewById(R.id.mobile_number_wrapper);
+
         mPasswordWrapper = (TextInputLayout) rootView.findViewById(R.id.password_wrapper);
 
         mMobileNumberEditText = (TextInputEditText) rootView.findViewById(R.id.mobile_number_edit_text);
@@ -195,7 +194,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
     }
 
     private void handleAPIResponse(Intent intent) {
-        mProgressBar.setVisibility(View.INVISIBLE);
         Bundle extras = intent.getExtras();
         int todo = extras.getInt("TODO", -1);
         String data = extras.getString(APIConstants.LOGIN_API_DATA);
@@ -215,23 +213,35 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    mProgressBar.setVisibility(View.INVISIBLE);
                                     Toast.makeText(getContext(), getString(R.string.api_error_message), Toast.LENGTH_SHORT).show();
                                 }
                             });
                         } else {
-                            getActivity().startService(new Intent(getActivity().getApplicationContext(), FirebaseNotificationService.class));
-                            mListener.loginSuccess();
+                            if (getActivity() != null) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mProgressBar.setVisibility(View.INVISIBLE);
+                                        getContext().startService(new Intent(getActivity().getApplicationContext(), FirebaseNotificationService.class));
+                                        mListener.loginSuccess();
+                                    }
+                                });
+                            }
                         }
                     }
                 }).start();
                 break;
             case 401:
+                mProgressBar.setVisibility(View.INVISIBLE);
                 mMobileNumberWrapper.setError(data);
                 break;
             case 403:
+                mProgressBar.setVisibility(View.INVISIBLE);
                 mMobileNumberWrapper.setError(data);
                 break;
             default:
+                mProgressBar.setVisibility(View.INVISIBLE);
                 if (HelperFunctions.isNetworkAvailable(getActivity().getApplicationContext())) {
                     if (data != null && data.contains("SocketTimeoutException")) {
                         Toast.makeText(getActivity().getApplicationContext(), getString(R.string.timeout_error), Toast.LENGTH_SHORT).show();

@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_vertical"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:background="@color/accent">
 
     <ImageView
         android:id="@+id/imageView"
@@ -12,6 +13,7 @@
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
+        android:contentDescription="@string/intro_page_1"
         tools:src="@drawable/slide_2" />
 
     <TextView
@@ -19,8 +21,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:textSize="@dimen/intro_text_size"
-        android:textStyle="bold"
         android:textColor="@android:color/white"
-        tools:text="something great about wholdus goes here" />
+        android:padding="@dimen/card_margin_horizontal"
+        android:textSize="20sp"
+        android:fontFamily="@string/font_condensed"
+        tools:text="@string/intro_page_2" />
 </LinearLayout>

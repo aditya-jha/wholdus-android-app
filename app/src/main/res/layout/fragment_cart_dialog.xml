@@ -156,7 +156,6 @@
         style="@style/AppTheme.ImportantText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@string/font_family_medium"
         android:paddingTop="@dimen/card_margin_horizontal"
         android:text="@string/cart_dialog_shipping_condition" />
 </LinearLayout>

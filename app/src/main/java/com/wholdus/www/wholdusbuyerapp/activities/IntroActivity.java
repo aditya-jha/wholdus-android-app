@@ -18,7 +18,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 
 public class IntroActivity extends FragmentActivity {
 
-    private static final int TOTAL_DOTS = 3;
+    private static final int TOTAL_DOTS = 2;
     private ImageView[] mDots;
     private int mLastIntroPagerPosition;
     private Button mNextButton;
@@ -35,6 +35,7 @@ public class IntroActivity extends FragmentActivity {
         setColors();
         initIntroPagerDots();
         initViewPagerSettings();
+
         mNextButton = (Button) findViewById(R.id.start_button);
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,6 +119,5 @@ public class IntroActivity extends FragmentActivity {
         mColors = new Integer[TOTAL_DOTS];
         mColors[0] = getResources().getColor(R.color.slide_1_color);
         mColors[1] = getResources().getColor(R.color.slide_2_color);
-        mColors[2] = getResources().getColor(R.color.slide_3_color);
     }
 }

@@ -81,7 +81,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         super.onViewCreated(view, savedInstanceState);
 
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
-        mProgressBar.setVisibility(View.INVISIBLE);
 
         Button registerButton = (Button) view.findViewById(R.id.register_submit_button);
         registerButton.setOnClickListener(this);
@@ -111,6 +110,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onResume() {
         super.onResume();
+        mProgressBar.setVisibility(View.INVISIBLE);
         IntentFilter intentFilter = new IntentFilter(IntentFilters.LOGIN_SIGNUP_DATA);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
     }
@@ -155,6 +155,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         switch (requestCode) {
             case RECEIVE_SMS_REQUEST:
                 registerUser(false);
+                break;
         }
     }
 

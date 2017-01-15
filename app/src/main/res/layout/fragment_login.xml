@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        style="@style/AppTheme.DefaultCard"
+        style="@style/AppTheme.Activity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
@@ -14,14 +14,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/logo_content_description"
             android:src="@drawable/wholdus_logo" />
 
         <TextView
-            style="@style/AppTheme.ImportantText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="@string/login_fragment_header" />
+            android:fontFamily="@string/font_normal"
+            android:text="@string/login_fragment_header"
+            android:textAllCaps="true"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <include layout="@layout/layout_mobile_number_input" />
 
@@ -29,9 +34,10 @@
 
         <Button
             android:id="@+id/login_submit_button"
-            style="@style/AppTheme.ColoredButton"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/card_margin_horizontal"
             android:text="@string/login_fragment_header" />
 
         <Button
@@ -55,8 +61,8 @@
 
         <ProgressBar
             android:id="@+id/progress_bar"
-            style="@style/AppTheme.DefaultCard"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/card_margin_horizontal" />
     </LinearLayout>
 </ScrollView>

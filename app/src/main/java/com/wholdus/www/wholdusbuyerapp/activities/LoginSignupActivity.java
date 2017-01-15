@@ -14,9 +14,11 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.fragments.ForgotPasswordFragment;
+import com.wholdus.www.wholdusbuyerapp.fragments.HomeFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.LoginFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.OTPFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.RegisterFragment;
@@ -41,7 +43,7 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_signup);
 
-        openFragment(new LoginFragment());
+        openFragment(new RegisterFragment());
     }
 
     @Override
@@ -87,35 +89,50 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
 
     @Override
     public void singupClicked(@Nullable String mobileNumber) {
-        RegisterFragment fragment = new RegisterFragment();
-        if (mobileNumber != null) {
-            Bundle bundle = new Bundle();
-            bundle.putString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, mobileNumber);
-            fragment.setArguments(bundle);
+        try {
+            RegisterFragment fragment = new RegisterFragment();
+            if (mobileNumber != null) {
+                Bundle bundle = new Bundle();
+                bundle.putString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, mobileNumber);
+                fragment.setArguments(bundle);
+            }
+            openFragment(fragment);
+        } catch (Exception e) {
+            e.printStackTrace();
+            FirebaseCrash.report(e);
         }
-        openFragment(fragment);
     }
 
     @Override
     public void loginClicked(@Nullable String mobileNumber) {
-        LoginFragment fragment = new LoginFragment();
-        if (mobileNumber != null) {
-            Bundle bundle = new Bundle();
-            bundle.putString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, mobileNumber);
-            fragment.setArguments(bundle);
+        try {
+            LoginFragment fragment = new LoginFragment();
+            if (mobileNumber != null) {
+                Bundle bundle = new Bundle();
+                bundle.putString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, mobileNumber);
+                fragment.setArguments(bundle);
+            }
+            openFragment(fragment);
+        } catch (Exception e) {
+            e.printStackTrace();
+            FirebaseCrash.report(e);
         }
-        openFragment(fragment);
     }
 
     @Override
     public void forgotPasswordClicked(@Nullable String mobileNumber) {
-        ForgotPasswordFragment fragment = new ForgotPasswordFragment();
-        if (mobileNumber != null) {
-            Bundle bundle = new Bundle();
-            bundle.putString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, mobileNumber);
-            fragment.setArguments(bundle);
+        try {
+            ForgotPasswordFragment fragment = new ForgotPasswordFragment();
+            if (mobileNumber != null) {
+                Bundle bundle = new Bundle();
+                bundle.putString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, mobileNumber);
+                fragment.setArguments(bundle);
+            }
+            openFragment(fragment);
+        } catch (Exception e) {
+            e.printStackTrace();
+            FirebaseCrash.report(e);
         }
-        openFragment(fragment);
     }
 
     @Override
@@ -127,29 +144,16 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
 
     @Override
     public void loginSuccess() {
-        // start HomeActivity and finish this activity
-
-//        Intent categoryIntent = new Intent(this, CatalogService.class);
-//        categoryIntent.putExtra("TODO", R.integer.fetch_categories);
-//        categoryIntent.putExtra(getString(R.string.seller_category_details), true);
-//        startService(categoryIntent);
-
-        Intent userIntent = new Intent(this, UserService.class);
-        userIntent.putExtra("TODO", TODO.FETCH_USER_PROFILE);
-        startService(userIntent);
-
-        Intent buyerProductIntent = new Intent(this, BuyerProductService.class);
-        buyerProductIntent.putExtra("TODO", TODO.FETCH_BUYER_PRODUCTS);
-        startService(buyerProductIntent);
-
-        Intent orderIntent = new Intent(this, OrderService.class);
-        orderIntent.putExtra("TODO", R.string.fetch_orders);
-        startService(orderIntent);
-
-        Intent intent = new Intent(this, HomeActivity.class);
-        intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "home");
-        startActivity(intent);
-        finish();
+        try {
+            // start HomeActivity and finish this activity
+            Intent intent = new Intent(this, HomeActivity.class);
+            intent.putExtra(Constants.OPEN_FRAGMENT_KEY, HomeFragment.class.getSimpleName());
+            startActivity(intent);
+            finish();
+        } catch (Exception e) {
+            e.printStackTrace();
+            FirebaseCrash.report(e);
+        }
     }
 
     @Override
@@ -166,8 +170,13 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
 
     @Override
     public void openOTPFragment(@NonNull Bundle bundle) {
-        OTPFragment fragment = new OTPFragment();
-        fragment.setArguments(bundle);
-        openFragment(fragment);
+        try {
+            OTPFragment fragment = new OTPFragment();
+            fragment.setArguments(bundle);
+            openFragment(fragment);
+        } catch (Exception e) {
+            e.printStackTrace();
+            FirebaseCrash.report(e);
+        }
     }
 }

@@ -56,11 +56,7 @@ public class OTPFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            mListener = (LoginSignupListenerInterface) context;
-        } catch (ClassCastException cee) {
-            Log.e(this.getClass().getSimpleName(), " must implement " + LoginSignupListenerInterface.class.getSimpleName());
-        }
+        mListener = (LoginSignupListenerInterface) context;
     }
 
     @Override
@@ -114,6 +110,8 @@ public class OTPFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
+        mProgressBar.setVisibility(View.INVISIBLE);
+
         IntentFilter smsIntentFilter = new IntentFilter(IntentFilters.SMS_DATA);
         smsIntentFilter.setPriority(1000);
         getActivity().registerReceiver(mSMSReceiver, smsIntentFilter);
@@ -127,6 +125,11 @@ public class OTPFragment extends Fragment implements View.OnClickListener {
         super.onPause();
         getActivity().unregisterReceiver(mSMSReceiver);
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     @Override
@@ -193,10 +196,12 @@ public class OTPFragment extends Fragment implements View.OnClickListener {
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        mProgressBar.setVisibility(View.INVISIBLE);
                                         mListener.loginSuccess();
                                     }
                                 });
                             } else {
+                                mProgressBar.setVisibility(View.INVISIBLE);
                                 getActivity().startService(new Intent(getActivity().getApplicationContext(), FirebaseNotificationService.class));
                                 mListener.loginSuccess();
                             }
@@ -205,13 +210,16 @@ public class OTPFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case 403:
+                mProgressBar.setVisibility(View.INVISIBLE);
                 Toast.makeText(getContext(), getString(R.string.token_expired), Toast.LENGTH_SHORT).show();
                 mListener.singupClicked(mMobileNumber);
                 break;
             case 400:
+                mProgressBar.setVisibility(View.INVISIBLE);
                 Toast.makeText(getContext(), getString(R.string.invalid_otp_error), Toast.LENGTH_SHORT).show();
                 break;
             default:
+                mProgressBar.setVisibility(View.INVISIBLE);
                 if (HelperFunctions.isNetworkAvailable(getContext())) {
                     Toast.makeText(getContext(), getString(R.string.api_error_message), Toast.LENGTH_SHORT).show();
                 } else {
@@ -227,11 +235,12 @@ public class OTPFragment extends Fragment implements View.OnClickListener {
             public void run() {
                 if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())) {
                     final String otp = HelperFunctions.getOTPFromSMS(intent);
-                    if (otp != null) {
+                    if (otp != null && getActivity() != null) {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 mOTPEditText.setText(otp);
+                                verifyOTP();
                             }
                         });
                     }
