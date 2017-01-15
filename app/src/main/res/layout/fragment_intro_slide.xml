@@ -4,23 +4,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_vertical"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:background="@color/accent"
+    tools:ignore="MissingPrefix">
 
     <ImageView
         android:id="@+id/imageView"
+        fontPath="font/Raleway-Regular.ttf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
-        tools:src="@drawable/slide_2" />
+        tools:src="@drawable/slide_1" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:textSize="@dimen/intro_text_size"
-        android:textStyle="bold"
         android:textColor="@android:color/white"
-        tools:text="something great about wholdus goes here" />
+        android:textSize="24sp"
+        tools:text="@string/intro_page_1" />
 </LinearLayout>

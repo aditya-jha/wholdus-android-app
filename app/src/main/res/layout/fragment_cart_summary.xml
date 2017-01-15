@@ -27,7 +27,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="2dp"
-                    android:fontFamily="@string/font_family_regular"
                     android:gravity="center_horizontal"
                     android:text="@string/cart_summary_order_value"
                     android:textColor="@color/primary_text"
@@ -38,7 +37,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="2dp"
-                    android:fontFamily="@string/font_family_medium"
                     android:gravity="center_horizontal"
                     android:textColor="@color/primary_text"
                     android:textSize="16sp" />
@@ -55,7 +53,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="2dp"
-                    android:fontFamily="@string/font_family_regular"
                     android:gravity="center_horizontal"
                     android:text="@string/cart_summary_shipping"
                     android:textColor="@color/primary_text"
@@ -66,7 +63,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="2dp"
-                    android:fontFamily="@string/font_family_medium"
                     android:gravity="center_horizontal"
                     android:textColor="@color/primary_text"
                     android:textSize="16sp" />
@@ -92,7 +88,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@string/font_family_regular"
                 android:gravity="center_horizontal"
                 android:text="@string/cart_summary_no_products"
                 android:textColor="@color/primary_text"

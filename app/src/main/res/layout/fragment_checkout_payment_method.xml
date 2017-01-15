@@ -21,7 +21,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@string/font_family_regular"
                     android:text="@string/checkout_payment_method_cod"
                     android:textColor="@color/primary_text"
                     android:textSize="20sp" />
@@ -40,7 +39,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@string/font_family_regular"
                 android:text="@string/checkout_payment_method_cod_description"
                 android:textColor="@color/secondary_text"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
@@ -61,7 +59,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@string/font_family_regular"
                     android:text="@string/checkout_payment_method_neft"
                     android:textColor="@color/primary_text"
                     android:textSize="20sp" />
@@ -92,7 +89,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@string/font_family_regular"
                     android:text="@string/checkout_payment_method_credit"
                     android:textColor="@color/primary_text"
                     android:textSize="20sp" />
@@ -111,7 +107,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@string/font_family_regular"
                 android:text="@string/checkout_payment_method_credit_description"
                 android:textColor="@color/secondary_text"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
@@ -134,7 +129,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@string/font_family_regular"
                 tools:text="@string/checkout_payment_method_cod"
                 android:id="@+id/payment_method_description"
                 android:textColor="@color/primary_text"
