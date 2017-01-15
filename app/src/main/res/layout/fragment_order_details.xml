@@ -31,7 +31,6 @@
                         android:id="@+id/order_date_text_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@string/font_family_medium"
                         android:textColor="@color/primary_text"
                         android:textSize="18sp"
                         tools:text="26 Sep, 2016" />
@@ -46,7 +45,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="@dimen/card_margin_horizontal"
-                        android:fontFamily="@string/font_family_medium"
                         android:textColor="@color/primary_text"
                         android:textSize="18sp"
                         tools:text="Shipped" />
@@ -81,7 +79,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:fontFamily="@string/font_family_regular"
                                 android:text="@string/order_details_products"
                                 android:textColor="@color/secondary_text"
                                 android:textSize="16sp" />
@@ -91,7 +88,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:fontFamily="@string/font_family_regular"
                                 android:textColor="@color/primary_text"
                                 android:textSize="16sp"
                                 tools:text="50" />
@@ -108,7 +104,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:fontFamily="@string/font_family_regular"
                                 android:text="@string/order_details_pieces"
                                 android:textColor="@color/secondary_text"
                                 android:textSize="16sp" />
@@ -118,7 +113,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:fontFamily="@string/font_family_regular"
                                 android:textColor="@color/primary_text"
                                 android:textSize="16sp"
                                 tools:text="50" />
@@ -150,7 +144,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:fontFamily="@string/font_family_regular"
                                 android:text="@string/order_details_order_value"
                                 android:textColor="@color/secondary_text"
                                 android:textSize="16sp" />
@@ -160,7 +153,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:fontFamily="@string/font_family_regular"
                                 android:textColor="@color/primary_text"
                                 android:textSize="16sp"
                                 tools:text="Rs. 8000" />
@@ -176,7 +168,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:fontFamily="@string/font_family_regular"
                                 android:text="@string/order_details_cod_charge"
                                 android:textColor="@color/secondary_text"
                                 android:textSize="16sp" />
@@ -186,7 +177,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:fontFamily="@string/font_family_regular"
                                 android:textColor="@color/primary_text"
                                 android:textSize="16sp"
                                 tools:text="Rs. 100" />
@@ -202,7 +192,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:fontFamily="@string/font_family_regular"
                                 android:text="@string/order_details_shipping"
                                 android:textColor="@color/secondary_text"
                                 android:textSize="16sp" />
@@ -212,7 +201,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:fontFamily="@string/font_family_regular"
                                 android:textColor="@color/primary_text"
                                 android:textSize="16sp"
                                 tools:text="Rs. 400" />
@@ -228,7 +216,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:fontFamily="@string/font_family_regular"
                                 android:text="@string/order_details_total_amount"
                                 android:textColor="@color/secondary_text"
                                 android:textSize="16sp" />
@@ -238,7 +225,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:fontFamily="@string/font_family_regular"
                                 android:textColor="@color/primary_text"
                                 android:textSize="16sp"
                                 tools:text="Rs. 8500" />

@@ -48,11 +48,7 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            mListener = (LoginSignupListenerInterface) context;
-        } catch (ClassCastException cee) {
-            cee.printStackTrace();
-        }
+        mListener = (LoginSignupListenerInterface) context;
     }
 
     @Override
@@ -108,7 +104,6 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
         mForgotPasswordToken = getArguments().getString(APIConstants.FORGOT_PASSWORD_TOKEN, null);
         if (mForgotPasswordToken == null) {
             mListener.forgotPasswordClicked(getArguments().getString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER));
-            return;
         }
     }
 
@@ -125,6 +120,7 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
     @Override
     public void onPause() {
         super.onPause();
+        getActivity().unregisterReceiver(mReceiver);
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
 
@@ -171,12 +167,12 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
     }
 
     private void handleAPIResponse(final Intent intent) {
-        mProgressBar.setVisibility(View.INVISIBLE);
         final int responseCode = intent.getIntExtra(APIConstants.RESPONSE_CODE, 500);
 
         switch (responseCode) {
             case 200:
                 if (intent.getIntExtra("TODO", -1) == TODO.RESEND_OTP) {
+                    mProgressBar.setVisibility(View.INVISIBLE);
                     return;
                 }
                 new Thread(new Runnable() {
@@ -184,31 +180,40 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
                     public void run() {
                         LoginHelper loginHelper = new LoginHelper(getContext());
                         if (loginHelper.checkIfLoggedIn()) {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(getContext(), getString(R.string.password_reset_success), Toast.LENGTH_SHORT).show();
-                                    mListener.loginSuccess();
-                                }
-                            });
+                            if (getActivity() != null) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mProgressBar.setVisibility(View.INVISIBLE);
+                                        Toast.makeText(getContext(), getString(R.string.password_reset_success), Toast.LENGTH_SHORT).show();
+                                        mListener.loginSuccess();
+                                    }
+                                });
+                            }
                         } else {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mListener.loginClicked(null);
-                                }
-                            });
+                            if (getActivity() != null) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mProgressBar.setVisibility(View.INVISIBLE);
+                                        mListener.loginClicked(null);
+                                    }
+                                });
+                            }
                         }
                     }
                 }).start();
                 break;
             case 400:
+                mProgressBar.setVisibility(View.INVISIBLE);
                 Toast.makeText(getContext(), getString(R.string.invalid_otp_error), Toast.LENGTH_SHORT).show();
                 break;
             case 403:
+                mProgressBar.setVisibility(View.INVISIBLE);
                 Toast.makeText(getContext(), getString(R.string.token_expired), Toast.LENGTH_SHORT).show();
                 break;
             default:
+                mProgressBar.setVisibility(View.INVISIBLE);
                 if (HelperFunctions.isNetworkAvailable(getActivity().getApplicationContext())) {
                     Toast.makeText(getContext(), getString(R.string.api_error_message), Toast.LENGTH_SHORT).show();
                 } else {
@@ -222,7 +227,7 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
             @Override
             public void run() {
                 final String otp = HelperFunctions.getOTPFromSMS(intent);
-                if (otp != null) {
+                if (otp != null && getActivity() != null) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

@@ -123,13 +123,14 @@ public final class HelperFunctions {
                         msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
                     }
 
-                    //msg_from = msgs[i].getOriginatingAddress();
-                    Matcher m = p.matcher(msgs[i].getMessageBody());
-
-                    if (m.find()) {
-                        final String otp = m.group();
-                        if (InputValidationHelper.isValidOTP(null, otp)) {
-                            return otp;
+                    String msg_from = msgs[i].getOriginatingAddress();
+                    if (msg_from.contains("WHOLDS")) {
+                        Matcher m = p.matcher(msgs[i].getMessageBody());
+                        if (m.find()) {
+                            final String otp = m.group();
+                            if (InputValidationHelper.isValidOTP(null, otp)) {
+                                return otp;
+                            }
                         }
                     }
                 }
