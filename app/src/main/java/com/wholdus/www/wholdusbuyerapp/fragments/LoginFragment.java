@@ -60,8 +60,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
                 handleAPIResponse(intent);
             }
         };
-        IntentFilter intentFilter = new IntentFilter(IntentFilters.LOGIN_SIGNUP_DATA);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
     }
 
     @Nullable
@@ -82,8 +80,17 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mProgressBar.setVisibility(View.INVISIBLE);
+        IntentFilter intentFilter = new IntentFilter(IntentFilters.LOGIN_SIGNUP_DATA);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
 
     @Override
@@ -94,7 +101,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
     @Override
     public void onDestroy() {
         super.onDestroy();
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
 
     @Override
@@ -132,7 +138,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
 
     private void initFragment(View rootView) {
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
-        mProgressBar.setVisibility(View.INVISIBLE);
 
         Button loginSubmitButton = (Button) rootView.findViewById(R.id.login_submit_button);
         loginSubmitButton.setOnClickListener(this);
