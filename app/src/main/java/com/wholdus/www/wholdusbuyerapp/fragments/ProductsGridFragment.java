@@ -485,15 +485,10 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
         Bundle extras = intent.getExtras();
         if (extras.getString(Constants.ERROR_RESPONSE) != null) {
-            new Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    if (mPageLoader.getVisibility() == View.VISIBLE) {
-                        mPageLoader.setVisibility(View.INVISIBLE);
-                        showErrorMessage();
-                    }
-                }
-            });
+            if (mPageLoader.getVisibility() == View.VISIBLE) {
+                mPageLoader.setVisibility(View.INVISIBLE);
+                showErrorMessage();
+            }
             return;
         }
 
