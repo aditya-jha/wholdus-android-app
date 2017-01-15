@@ -28,6 +28,7 @@ import com.wholdus.www.wholdusbuyerapp.adapters.NavigationDrawerAdapter;
 import com.wholdus.www.wholdusbuyerapp.dataSource.NavigationDrawerData;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.LoginHelper;
 
 import java.util.ArrayList;
@@ -94,6 +95,8 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
                 }
                 break;
             case 1:
+                FilterClass.resetFilter();
+                FilterClass.resetCategoryFilter();
                 startActivity(new Intent(getContext(), HandPickedActivity.class));
                 break;
             case 2:
