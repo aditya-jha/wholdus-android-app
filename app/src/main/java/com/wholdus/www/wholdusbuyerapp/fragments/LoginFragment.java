@@ -66,6 +66,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
                 handleAPIResponse(intent);
             }
         };
+        IntentFilter intentFilter = new IntentFilter(IntentFilters.LOGIN_SIGNUP_DATA);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
     }
 
     @Nullable
@@ -83,19 +85,22 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
     @Override
     public void onStart() {
         super.onStart();
-        IntentFilter intentFilter = new IntentFilter(IntentFilters.LOGIN_SIGNUP_DATA);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
 
     @Override
@@ -228,7 +233,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
                 break;
             default:
                 if (HelperFunctions.isNetworkAvailable(getActivity().getApplicationContext())) {
-                    if (data != null && data.contains("timeout")) {
+                    if (data != null && data.contains("SocketTimeoutException")) {
                         Toast.makeText(getActivity().getApplicationContext(), getString(R.string.timeout_error), Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getActivity().getApplicationContext(), getString(R.string.api_error_message), Toast.LENGTH_SHORT).show();
