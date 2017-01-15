@@ -2,19 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/list_item_height"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/list_item_height"
         android:layout_marginStart="@dimen/list_item_height"
-        android:layout_weight="1"
-        android:drawableLeft="@drawable/nonselected_dot_6dp"
         android:drawablePadding="@dimen/activity_horizontal_margin"
-        android:drawableStart="@drawable/nonselected_dot_6dp"
         android:gravity="center_vertical"
+        android:paddingBottom="@dimen/card_padding_vertical"
+        android:paddingTop="@dimen/card_padding_vertical"
+        tools:drawableLeft="@drawable/ic_person_black_24dp"
         tools:text="@string/app_name" />
 </LinearLayout>
