@@ -12,6 +12,8 @@
     <string name="action_bar_checkout">Proceed to Checkout</string>
     <string name="action_bar_clear">CLEAR</string>
 
+    <string name="logo_content_description">@string/intro_page_1</string>
+
     <!-- Mobile Number and Password helper layout -->
     <string name="hint_mobile_number">Mobile Number</string>
     <string name="hint_password">Password</string>

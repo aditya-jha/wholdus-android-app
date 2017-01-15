@@ -15,7 +15,6 @@ import android.widget.LinearLayout;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.IntroViewPagerAdapter;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.TypeFaceProvider;
 
 public class IntroActivity extends FragmentActivity {
 
@@ -38,8 +37,6 @@ public class IntroActivity extends FragmentActivity {
         initViewPagerSettings();
 
         mNextButton = (Button) findViewById(R.id.start_button);
-        mNextButton.setTypeface(TypeFaceProvider.getTypeFace(this, TypeFaceProvider.FONT_REGULAR));
-
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

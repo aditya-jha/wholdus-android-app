@@ -24,5 +24,6 @@
         android:textColor="@android:color/white"
         android:padding="@dimen/card_margin_horizontal"
         android:textSize="20sp"
+        android:fontFamily="@string/font_condensed"
         tools:text="@string/intro_page_2" />
 </LinearLayout>

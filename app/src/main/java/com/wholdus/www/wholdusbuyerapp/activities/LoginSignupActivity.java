@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.fragments.ForgotPasswordFragment;
+import com.wholdus.www.wholdusbuyerapp.fragments.HomeFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.LoginFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.OTPFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.RegisterFragment;
@@ -41,7 +42,7 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_signup);
 
-        openFragment(new LoginFragment());
+        openFragment(new RegisterFragment());
     }
 
     @Override
@@ -128,26 +129,8 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
     @Override
     public void loginSuccess() {
         // start HomeActivity and finish this activity
-
-//        Intent categoryIntent = new Intent(this, CatalogService.class);
-//        categoryIntent.putExtra("TODO", R.integer.fetch_categories);
-//        categoryIntent.putExtra(getString(R.string.seller_category_details), true);
-//        startService(categoryIntent);
-
-        Intent userIntent = new Intent(this, UserService.class);
-        userIntent.putExtra("TODO", TODO.FETCH_USER_PROFILE);
-        startService(userIntent);
-
-        Intent buyerProductIntent = new Intent(this, BuyerProductService.class);
-        buyerProductIntent.putExtra("TODO", TODO.FETCH_BUYER_PRODUCTS);
-        startService(buyerProductIntent);
-
-        Intent orderIntent = new Intent(this, OrderService.class);
-        orderIntent.putExtra("TODO", R.string.fetch_orders);
-        startService(orderIntent);
-
         Intent intent = new Intent(this, HomeActivity.class);
-        intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "home");
+        intent.putExtra(Constants.OPEN_FRAGMENT_KEY, HomeFragment.class.getSimpleName());
         startActivity(intent);
         finish();
     }

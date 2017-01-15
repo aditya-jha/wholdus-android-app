@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        style="@style/AppTheme.DefaultCard"
+        style="@style/AppTheme.Activity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
@@ -14,6 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/logo_content_description"
             android:src="@drawable/wholdus_logo" />
 
         <TextView
@@ -43,9 +44,10 @@
 
         <Button
             android:id="@+id/register_submit_button"
-            style="@style/AppTheme.ColoredButton"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/card_margin_horizontal"
             android:text="@string/register_fragment_header" />
 
         <TextView
@@ -59,7 +61,7 @@
 
         <ProgressBar
             android:id="@+id/progress_bar"
-            style="@style/AppTheme.DefaultCard"
+            android:layout_margin="@dimen/card_margin_horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
