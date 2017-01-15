@@ -1,14 +1,9 @@
 package com.wholdus.www.wholdusbuyerapp.helperClasses;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
-
-import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import java.io.IOException;
-import java.util.HashMap;
 
-import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -28,7 +23,6 @@ public class OkHttpHelper {
     public static synchronized OkHttpClient getClient(Context context) {
         if (mOkHttpClient == null) {
             mOkHttpClient = new OkHttpClient.Builder()
-                    .addNetworkInterceptor(new StethoInterceptor())
                     .addInterceptor(new RequestTokenInterceptor(context))
                     .build();
         }
