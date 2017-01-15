@@ -27,26 +27,32 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HelpSupportActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.NotificationActivity;
+import com.wholdus.www.wholdusbuyerapp.adapters.CategoryHomePageAdapter;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductHomePageAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ContactsHelperClass;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
+import com.wholdus.www.wholdusbuyerapp.loaders.CategoriesGridLoader;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProductsLoader;
+import com.wholdus.www.wholdusbuyerapp.models.Category;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
 
 import java.util.ArrayList;
 
 import static com.wholdus.www.wholdusbuyerapp.R.id.help;
+import static com.wholdus.www.wholdusbuyerapp.R.id.media_actions;
 import static com.wholdus.www.wholdusbuyerapp.R.id.transition_current_scene;
 
 /**
  * Created by aditya on 16/11/16.
  */
 
-public class HomeFragment extends Fragment implements View.OnClickListener {
+public class HomeFragment extends Fragment implements View.OnClickListener, ItemClickListener {
 
     private HomeListenerInterface mListener;
 
@@ -55,11 +61,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private RecyclerView mProductsRecyclerView;
     private ArrayList<Product> mProducts;
     private ProductHomePageAdapter mProductHomePageAdapter;
-    private ProductItemClickListener mProductItemClickListener;
-    private LinearLayoutManager mProductsLayoutManager;
     private ProductsLoaderManager mProductsLoader;
 
+    private RecyclerView mCategoriesRecyclerView;
+    private ArrayList<Category> mCategories;
+    private CategoryHomePageAdapter mCategoryHomePageAdapter;
+    private CategoryLoaderManager mCategoriesLoader;
+
     private final int PRODUCTS_DB_LOADER = 901;
+    private final int CATEGORIES_DB_LOADER = 902;
 
 
     public HomeFragment() {
@@ -99,23 +109,39 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         mProductsRecyclerView = (RecyclerView) view.findViewById(R.id.products_recycler_view);
         mProductsRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mProducts = new ArrayList<>();
-        mProductItemClickListener = new ProductItemClickListener();
-        mProductHomePageAdapter = new ProductHomePageAdapter(getContext(), mProducts, mProductItemClickListener);
-        mProductsLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        mProductsRecyclerView.setLayoutManager(mProductsLayoutManager);
+        mProductHomePageAdapter = new ProductHomePageAdapter(getContext(), mProducts, this);
+        mProductsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         mProductsRecyclerView.addItemDecoration(new RecyclerViewSpaceItemDecoration(0, getResources().getDimensionPixelSize(R.dimen.card_margin_horizontal)));
         mProductsRecyclerView.setAdapter(mProductHomePageAdapter);
+
+        mCategoriesRecyclerView = (RecyclerView) view.findViewById(R.id.categories_recycler_view);
+        mCategoriesRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mCategories = new ArrayList<>();
+        mCategoryHomePageAdapter = new CategoryHomePageAdapter(getContext(), mCategories, this);
+        mCategoriesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        mCategoriesRecyclerView.addItemDecoration(new RecyclerViewSpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.card_margin_vertical),0));
+        mCategoriesRecyclerView.setAdapter(mCategoryHomePageAdapter);
+        //mProductsRecyclerView.setVerticalScrollBarEnabled(false);
+        mCategoriesRecyclerView.setNestedScrollingEnabled(false);
     }
 
-    private class ProductItemClickListener implements ItemClickListener {
-        @Override
-        public void itemClicked(View view, int position, int id) {
-            Intent intent = new Intent(getContext(), HandPickedActivity.class);
-            ArrayList<Integer> productIDs = new ArrayList<>();
-            productIDs.add(mProducts.get(position).getProductID());
-            intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME, productIDs);
-            startActivity(intent);
+    @Override
+    public void itemClicked(View view, int position, int id) {
+        final int ID = view.getId();
+        Intent intent = new Intent(getContext(), HandPickedActivity.class);
+        switch (ID) {
+            case R.id.layout_product_home_page:
+                ArrayList<Integer> productIDs = new ArrayList<>();
+                productIDs.add(mProducts.get(position).getProductID());
+                intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME, productIDs);
+                startActivity(intent);
+                break;
+            case R.id.category_name:
+                FilterClass.setCategoryID(mCategories.get(position).getCategoryID());
+                startActivity(intent);
+                break;
         }
+
     }
 
     @Override
@@ -124,6 +150,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         mListener.fragmentCreated(getString(R.string.app_name), false);
         mProductsLoader = new ProductsLoaderManager();
         getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, mProductsLoader);
+
+        mCategoriesLoader = new CategoryLoaderManager();
+        getActivity().getSupportLoaderManager().restartLoader(CATEGORIES_DB_LOADER, null, mCategoriesLoader);
     }
 
     @Override
@@ -148,6 +177,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         mProducts.addAll(products);
         mProductHomePageAdapter.notifyDataSetChanged();
     }
+    public void setViewForCategories(ArrayList<Category> categories){
+        ArrayList<Category> categoriesToRemove = new ArrayList<>();
+        for (Category category:categories){
+            if (category.getProducts().size() < 10){
+                categoriesToRemove.add(category);
+            }
+        }
+        categories.removeAll(categoriesToRemove);
+        mCategories.clear();
+        mCategories.addAll(categories);
+        mCategoryHomePageAdapter.notifyDataSetChanged();
+    }
 
     private class ProductsLoaderManager implements LoaderManager.LoaderCallbacks<ArrayList<Product>> {
 
@@ -167,6 +208,24 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             responseCodes.add(0);
             // TODO : ?? Also add condition so that buyer product Id is not 0
             return new ProductsLoader(getContext(), null, null, responseCodes, null, 10);
+        }
+    }
+
+    private class CategoryLoaderManager implements LoaderManager.LoaderCallbacks<ArrayList<Category>> {
+
+        @Override
+        public void onLoaderReset(Loader<ArrayList<Category>> loader) {
+        }
+
+        @Override
+        public void onLoadFinished(Loader<ArrayList<Category>> loader, ArrayList<Category> data) {
+            setViewForCategories(data);
+        }
+
+
+        @Override
+        public Loader<ArrayList<Category>> onCreateLoader(final int id, Bundle args) {
+            return new CategoriesGridLoader(getContext(), true);
         }
     }
 }

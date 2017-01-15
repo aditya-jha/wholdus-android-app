@@ -502,7 +502,9 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         Log.d(this.getClass().getSimpleName(), "total pages: " + totalPages);
         if (updatedInserted > 0) {
             if (!mLoaderLoading) {
-                getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
+                if (getActivity()!= null) {
+                    getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
+                }
             } else {
                 mLoadMoreData = true;
             }

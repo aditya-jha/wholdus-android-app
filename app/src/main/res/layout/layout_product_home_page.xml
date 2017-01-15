@@ -2,6 +2,7 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="180dp"
+    android:id="@+id/layout_product_home_page"
     android:layout_height="wrap_content">
 
     <LinearLayout
