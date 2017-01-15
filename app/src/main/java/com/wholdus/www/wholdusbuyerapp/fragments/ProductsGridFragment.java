@@ -68,13 +68,11 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     private ProductsGridAdapter mAdapter;
     private BroadcastReceiver mReceiver;
     private ProgressBar mPageLoader;
-    private LinearLayout mPageLayout;
+    private LinearLayout mPageLayout, mNoProducts;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private GridLayoutManager mGridLayoutManager;
     private Snackbar mSnackbar;
-    private TextView mNoProducts;
-
     private Queue<Integer> mRequestQueue;
     private HashSet<Integer> mPagesLoaded;
 
@@ -130,6 +128,8 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         mListener.showMenuButtonInToolbar();
         mListener.filterFragmentActive(false);
 
+        setVisibility(View.VISIBLE, View.INVISIBLE, View.INVISIBLE);
+
         if (mAdapter == null) {
             mAdapter = new ProductsGridAdapter(getContext(), mProducts, this);
             if (mProducts.size() != 0) {
@@ -153,19 +153,10 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
             }
         });
 
-        String filter = FilterClass.getFilterString();
-        if (mFilters == null || !FilterClass.getFilterString().equals(mFilters)) {
-            mFilters = filter;
-//            mAdapter.clear();
-            resetVariables();
-            getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, ProductsGridFragment.this);
-            mRequestQueue.add(1);
-            fetchProductsFromServer();
-        } else if (mProducts.size() > 0){
-            mPageLoader.setVisibility(View.INVISIBLE);
-            mPageLayout.setVisibility(View.VISIBLE);
-            mNoProducts.setVisibility(View.INVISIBLE);
+        if (mProducts.size() > 0) {
+            setVisibility(View.INVISIBLE, View.VISIBLE, View.INVISIBLE);
         }
+        loadData();
 
         Log.d(this.getClass().getSimpleName(), "onactivitycreated");
     }
@@ -179,6 +170,9 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
         Button filterButton = (Button) view.findViewById(R.id.filter_button);
         filterButton.setOnClickListener(this);
+
+        Button filterButtonNoProducts = (Button) view.findViewById(R.id.filter_button_no_products);
+        filterButtonNoProducts.setOnClickListener(this);
 
         Button sortButton = (Button) view.findViewById(R.id.sort_button);
         sortButton.setOnClickListener(this);
@@ -203,7 +197,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         });
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 
-        mNoProducts = (TextView) view.findViewById(R.id.no_products);
+        mNoProducts = (LinearLayout) view.findViewById(R.id.no_products);
     }
 
     @Override
@@ -294,8 +288,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 }
 
                 if (mPageLoader.getVisibility() == View.VISIBLE) {
-                    mPageLoader.setVisibility(View.INVISIBLE);
-                    mPageLayout.setVisibility(View.VISIBLE);
+                    setVisibility(View.INVISIBLE, View.VISIBLE, View.INVISIBLE);
                 }
 
                 if (firstVisible >= 0) {
@@ -331,6 +324,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.filter_button:
+            case R.id.filter_button_no_products:
                 mListener.openFilter(true);
                 break;
             case R.id.sort_button:
@@ -389,7 +383,21 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     }
 
     public void loadData() {
-        onActivityCreated(null);
+        //onActivityCreated(null);
+        String filter = FilterClass.getFilterString();
+        if (mFilters == null || !FilterClass.getFilterString().equals(mFilters)) {
+            mFilters = filter;
+            resetVariables();
+            getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, ProductsGridFragment.this);
+            mRequestQueue.add(1);
+            fetchProductsFromServer();
+        }
+    }
+
+    private void setVisibility(int loader, int layout, int error) {
+        if (loader != -1) mPageLoader.setVisibility(loader);
+        if (layout != -1) mPageLayout.setVisibility(layout);
+        if (error != -1) mNoProducts.setVisibility(error);
     }
 
     private void initResponseCodes(Bundle args) {
@@ -492,9 +500,9 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
             return;
         }
 
+        mTotalProductsOnServer = intent.getIntExtra(APIConstants.TOTAL_ITEMS_KEY, -1);
         final int pageNumber = intent.getIntExtra(APIConstants.API_PAGE_NUMBER_KEY, -1);
         final int totalPages = intent.getIntExtra(APIConstants.API_TOTAL_PAGES_KEY, 1);
-        mTotalProductsOnServer = intent.getIntExtra(APIConstants.TOTAL_ITEMS_KEY, -1);
         final int updatedInserted = intent.getIntExtra(Constants.INSERTED_UPDATED, 0);
 
         mTotalPages = totalPages;
@@ -507,10 +515,11 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 mLoadMoreData = true;
             }
         } else if (updatedInserted == -1) {
-            if (mNoProducts.getVisibility() == View.GONE) {
-                mNoProducts.setVisibility(View.VISIBLE);
-                mSwipeRefreshLayout.setVisibility(View.GONE);
+            if (mNoProducts.getVisibility() == View.INVISIBLE) {
+                setVisibility(View.INVISIBLE, View.INVISIBLE, View.VISIBLE);
             }
+        } else if (mPageLoader.getVisibility() == View.VISIBLE && mTotalProductsOnServer > 0) {
+            getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
         }
 
         if (mProducts.size() > 0 && mProducts.get(mProducts.size() - 1) == null && mProducts.size() - 1 == mTotalProductsOnServer) {
