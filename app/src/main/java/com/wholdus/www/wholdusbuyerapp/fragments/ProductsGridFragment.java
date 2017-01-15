@@ -254,14 +254,11 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<ArrayList<GridProductModel>> loader, final ArrayList<GridProductModel> data) {
-        int lVisible = -1, fVisible = -1;
+        int firstVisible = -1, lastVisible = -1;
         if (mGridLayoutManager != null) {
-            lVisible = mGridLayoutManager.findLastCompletelyVisibleItemPosition();
-            fVisible = mGridLayoutManager.findFirstVisibleItemPosition();
+            lastVisible = mGridLayoutManager.findLastCompletelyVisibleItemPosition();
+            firstVisible = mGridLayoutManager.findFirstVisibleItemPosition();
         }
-
-        final int firstVisible = fVisible;
-        final int lastVisible = lVisible;
 
         if (data.size() > 0) {
             int diff = 0, runCount = mProducts.size();
@@ -395,9 +392,9 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     }
 
     private void setVisibility(int loader, int layout, int error) {
-        if (loader != -1) mPageLoader.setVisibility(loader);
-        if (layout != -1) mPageLayout.setVisibility(layout);
-        if (error != -1) mNoProducts.setVisibility(error);
+        mPageLoader.setVisibility(loader);
+        mPageLayout.setVisibility(layout);
+        mNoProducts.setVisibility(error);
     }
 
     private void initResponseCodes(Bundle args) {
