@@ -211,7 +211,7 @@ public class CatalogDBHelper extends BaseDBHelper {
             whereApplied = true;
         }
         if (orderBy == null || orderBy.length == 0) {
-            orderBy = new String[]{ProductsTable.COLUMN_PRODUCT_ID + " DESC "};
+            orderBy = new String[]{ProductsTable.COLUMN_PRODUCT_SCORE + " DESC "};
         }
         query += " ORDER BY " + TextUtils.join(", ", orderBy);
         if (limit != -1) {
@@ -730,6 +730,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         values.put(ProductsTable.COLUMN_SELLER_ID, seller.getInt(SellersTable.COLUMN_SELLER_ID));
         JSONObject productDetails = product.getJSONObject("details");
         values.put(ProductsTable.COLUMN_PRODUCT_DETAILS_ID, productDetails.getInt(ProductsTable.COLUMN_PRODUCT_DETAILS_ID));
+        values.put(ProductsTable.COLUMN_PRODUCT_SCORE, product.getDouble(ProductsTable.COLUMN_PRODUCT_SCORE));
         values.put(ProductsTable.COLUMN_PRICE_PER_UNIT, product.getDouble(ProductsTable.COLUMN_PRICE_PER_UNIT));
         values.put(ProductsTable.COLUMN_LOT_SIZE, product.getInt(ProductsTable.COLUMN_LOT_SIZE));
         values.put(ProductsTable.COLUMN_PRICE_PER_LOT, product.getDouble(ProductsTable.COLUMN_PRICE_PER_LOT));
