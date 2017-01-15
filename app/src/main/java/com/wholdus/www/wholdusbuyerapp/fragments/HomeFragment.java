@@ -34,7 +34,9 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ContactsHelperClass;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
+import com.wholdus.www.wholdusbuyerapp.loaders.CategoriesGridLoader;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProductsLoader;
+import com.wholdus.www.wholdusbuyerapp.models.Category;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
 
 import java.util.ArrayList;
@@ -167,6 +169,23 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             responseCodes.add(0);
             // TODO : ?? Also add condition so that buyer product Id is not 0
             return new ProductsLoader(getContext(), null, null, responseCodes, null, 10);
+        }
+    }
+
+    private class CategoryLoaderManager implements LoaderManager.LoaderCallbacks<ArrayList<Category>> {
+
+        @Override
+        public void onLoaderReset(Loader<ArrayList<Category>> loader) {
+        }
+
+        @Override
+        public void onLoadFinished(Loader<ArrayList<Category>> loader, ArrayList<Category> data) {
+        }
+
+
+        @Override
+        public Loader<ArrayList<Category>> onCreateLoader(final int id, Bundle args) {
+            return new CategoriesGridLoader(getContext(), true);
         }
     }
 }

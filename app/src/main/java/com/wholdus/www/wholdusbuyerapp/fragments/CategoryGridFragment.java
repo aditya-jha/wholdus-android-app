@@ -136,7 +136,7 @@ public class CategoryGridFragment extends Fragment implements
     @Override
     public Loader<ArrayList<Category>> onCreateLoader(int id, Bundle args) {
         mLoaderDataLoaded = false;
-        mLoader = new CategoriesGridLoader(getContext());
+        mLoader = new CategoriesGridLoader(getContext(), false);
         return mLoader;
     }
 
