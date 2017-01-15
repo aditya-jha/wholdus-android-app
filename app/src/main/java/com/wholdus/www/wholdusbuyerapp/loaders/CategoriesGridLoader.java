@@ -5,8 +5,10 @@ import android.content.Context;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.UserDBHelper;
 import com.wholdus.www.wholdusbuyerapp.models.Category;
+import com.wholdus.www.wholdusbuyerapp.models.Product;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by aditya on 10/12/16.
@@ -14,14 +16,24 @@ import java.util.ArrayList;
 
 public class CategoriesGridLoader extends AbstractLoader<ArrayList<Category>> {
 
-    public CategoriesGridLoader(Context context) {
+    private boolean mInitialiseProducts;
+
+    public CategoriesGridLoader(Context context, boolean initialiseProducts) {
         super(context);
+        mInitialiseProducts = initialiseProducts;
     }
 
     @Override
     public ArrayList<Category> loadInBackground() {
         CatalogDBHelper catalogDBHelper = new CatalogDBHelper(getContext());
-        return Category.getCategoryArrayList(catalogDBHelper.getCategoryData(-1,-1,null,1,-1,-1,null));
+        ArrayList<Category> categories = Category.getCategoryArrayList(catalogDBHelper.getCategoryData(-1,-1,null,1,-1,-1,null));
+
+        if (mInitialiseProducts){
+            for (Category category:categories){
+                category.setProducts(Product.getProductsFromCursor(catalogDBHelper.getProductData(null,null,null,null,null,null,null,new ArrayList<>(Arrays.asList(category.getCategoryID())),-1,-1,null,null,null,new ArrayList<>(Arrays.asList(0,1)),0,1,-1,-1,null,10,0,null)));
+            }
+        }
+        return categories;
     }
 
     public void deleteData() {

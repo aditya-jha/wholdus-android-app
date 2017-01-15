@@ -39,8 +39,8 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
             extras = null;
         }
 
-        FilterClass.resetCategoryFilter();
-        FilterClass.resetFilter();
+        //FilterClass.resetCategoryFilter();
+        //FilterClass.resetFilter();
 
         openToFragment(getFragmentToOpenName(savedInstanceState), extras);
     }

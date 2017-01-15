@@ -20,6 +20,8 @@ public class Category {
     private int mBuyerInterestIsActive;
     private int mSynced;
 
+    ArrayList<Product> mProducts;
+
 
     public Category() {
     }
@@ -69,4 +71,8 @@ public class Category {
         }
         return categories;
     }
+
+    public ArrayList<Product> getProducts(){return mProducts;}
+
+    public void setProducts(ArrayList<Product> products){mProducts = products;}
 }
