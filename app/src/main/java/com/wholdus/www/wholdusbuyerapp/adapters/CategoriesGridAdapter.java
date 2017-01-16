@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
@@ -61,6 +62,7 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
         Glide.with(mContext)
                 .load(category.getImageURL())
                 .asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .into(new BitmapImageViewTarget(holder.mIconImageView) {
                     @Override
                     protected void setResource(Bitmap resource) {
@@ -91,7 +93,6 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
 
             itemView.setOnClickListener(this);
             mFavIconImageView.setOnClickListener(this);
-            //TODO Implement adding and removing category from buyer interest
         }
 
         @Override

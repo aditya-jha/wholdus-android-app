@@ -23,7 +23,7 @@
                 android:id="@+id/products_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/card_margin_vertical"/>
+                android:layout_marginBottom="@dimen/card_margin_vertical" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/categories_recycler_view"
@@ -42,11 +42,18 @@
     <LinearLayout style="@style/AppTheme.BottomBar">
 
         <Button
-            android:id="@+id/categories"
-            style="@style/AppTheme.HomeBottomButton"
-            android:drawableTop="@drawable/ic_list_black_24dp"
-            android:text="@string/categories_key"
-            android:textColor="@color/primary_text" />
+            android:id="@+id/shortlist"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/ic_favorite_black_24dp"
+            android:fontFamily="@string/font_condensed"
+            android:text="@string/shortlist_text"
+            android:textColor="@color/primary_text"
+            android:textStyle="normal" />
 
         <Button
             android:id="@+id/help"
@@ -55,17 +62,26 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
-            android:drawableTop="@drawable/ic_help_outline_black_24dp"
+            android:drawableTop="@drawable/ic_chat_bubble_black_24dp"
+            android:fontFamily="@string/font_condensed"
             android:paddingLeft="0dp"
             android:paddingRight="0dp"
             android:text="@string/help_key"
-            android:textColor="@color/primary_text" />
+            android:textColor="@color/primary_text"
+            android:textStyle="normal" />
 
         <Button
             android:id="@+id/notification"
-            style="@style/AppTheme.HomeBottomButton"
-            android:drawableTop="@drawable/ic_notifications_none_black_24dp"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/ic_notifications_black_24dp"
+            android:fontFamily="@string/font_condensed"
             android:text="@string/notification_key"
-            android:textColor="@color/primary_text" />
+            android:textColor="@color/primary_text"
+            android:textStyle="normal" />
     </LinearLayout>
 </LinearLayout>

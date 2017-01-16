@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -14,15 +13,16 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -69,7 +69,7 @@ public class ProductDetailActivity extends AppCompatActivity
     private TextView mProductName, mProductPrice, mProductMrp, mLotSize, mLotDescription,
             mProductFabric, mProductColor, mProductSizes, mProductBrand,
             mProductPattern, mProductStyle, mProductWork, mSellerName, mSellerLocation, mSellerSpeciality;
-    private ImageButton mShareButton, mFavButton;
+    private ImageButton mFavButton;
     private Button mCartButton, mCheckPincodeButton;
     private TextInputEditText mPincodeEditText;
     private TextInputLayout mPincodeWrapper;
@@ -78,6 +78,7 @@ public class ProductDetailActivity extends AppCompatActivity
 
     private static final int PRODUCT_LOADER = 10;
     private static final int CART_ITEM_LOADER = 11;
+
     private static final String SHIPPING_SHARED_PREFERENCES = "ShippingSharedPreference";
     private static final String PINCODE_KEY = "PincodeKey";
     private static final String SHIPPING_AVAILABLE_KEY = "ShippingAvailableKey";
@@ -99,7 +100,6 @@ public class ProductDetailActivity extends AppCompatActivity
 
         mProductName = (TextView) findViewById(R.id.product_name);
         mProductPrice = (TextView) findViewById(R.id.product_price);
-        mProductMrp = (TextView) findViewById(R.id.product_mrp);
         mLotSize = (TextView) findViewById(R.id.lot_size);
         mLotDescription = (TextView) findViewById(R.id.lot_description);
         mProductFabric = (TextView) findViewById(R.id.fabric);
@@ -115,8 +115,8 @@ public class ProductDetailActivity extends AppCompatActivity
         mSellerLocation = (TextView) findViewById(R.id.seller_location);
         mSellerSpeciality = (TextView) findViewById(R.id.seller_speciality);
 
-        mShareButton = (ImageButton) findViewById(R.id.share_button);
-        mShareButton.setOnClickListener(this);
+        ImageButton shareButton = (ImageButton) findViewById(R.id.share_button);
+        shareButton.setOnClickListener(this);
 
         mFavButton = (ImageButton) findViewById(R.id.fav_icon);
         mFavButton.setOnClickListener(this);
@@ -129,9 +129,9 @@ public class ProductDetailActivity extends AppCompatActivity
         mCheckPincodeButton = (Button) findViewById(R.id.check_pincode);
         mCheckPincodeButton.setOnClickListener(this);
 
-        SharedPreferences shippingPreferences = getSharedPreferences(SHIPPING_SHARED_PREFERENCES,MODE_PRIVATE);
+        SharedPreferences shippingPreferences = getSharedPreferences(SHIPPING_SHARED_PREFERENCES, MODE_PRIVATE);
         String pincode = shippingPreferences.getString(PINCODE_KEY, null);
-        if (pincode != null){
+        if (pincode != null) {
             mPincodeText = pincode;
             setPincodeShipping(shippingPreferences.getBoolean(SHIPPING_AVAILABLE_KEY, true));
         }
@@ -163,7 +163,7 @@ public class ProductDetailActivity extends AppCompatActivity
         if (mCartServiceResponseReceiver != null) {
             try {
                 LocalBroadcastManager.getInstance(this).unregisterReceiver(mCartServiceResponseReceiver);
-            } catch (Exception e){
+            } catch (Exception e) {
 
             }
             mCartServiceResponseReceiver = null;
@@ -176,8 +176,11 @@ public class ProductDetailActivity extends AppCompatActivity
             case R.id.action_bar_checkout:
                 startActivity(new Intent(this, CartActivity.class));
                 break;
-            case R.id.action_bar_store_home:
-                startActivity(new Intent(this, StoreActivity.class));
+            case R.id.action_bar_shortlist:
+                Intent shortlistIntent = new Intent(this, CategoryProductActivity.class);
+                shortlistIntent.putExtra(Constants.TYPE, Constants.FAV_PRODUCTS);
+                shortlistIntent.getIntExtra(getString(R.string.selected_category_id), 1);
+                startActivity(shortlistIntent);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -195,7 +198,7 @@ public class ProductDetailActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<Product> loader, Product data) {
-        if (data != null){
+        if (data != null) {
             mProduct = data;
             setDataToView();
         }
@@ -253,16 +256,16 @@ public class ProductDetailActivity extends AppCompatActivity
                         mCheckPincodeButton.setEnabled(false);
                     }
                 } else {
-                    SharedPreferences shippingPreferences = getSharedPreferences(SHIPPING_SHARED_PREFERENCES,MODE_PRIVATE);
+                    SharedPreferences shippingPreferences = getSharedPreferences(SHIPPING_SHARED_PREFERENCES, MODE_PRIVATE);
                     SharedPreferences.Editor editor = shippingPreferences.edit();
                     editor.clear();
-                    editor.commit();
+                    editor.apply();
                     clearPincodeCheck();
                 }
         }
     }
 
-    private void clearPincodeCheck(){
+    private void clearPincodeCheck() {
         mPincodeWrapper.setHintEnabled(true);
         mPincodeEditText.setHint("Pincode");
         mCheckPincodeButton.setText(getString(R.string.check));
@@ -270,11 +273,11 @@ public class ProductDetailActivity extends AppCompatActivity
         mPincodeEditText.setEnabled(true);
     }
 
-    private void setPincodeShipping(boolean shippingAvailable){
+    private void setPincodeShipping(boolean shippingAvailable) {
         mPincodeWrapper.setHintEnabled(false);
         mCheckPincodeButton.setText("Change");
         mCheckPincodeButton.setEnabled(true);
-        if (shippingAvailable){
+        if (shippingAvailable) {
             mPincodeEditText.setText("Delivers at " + mPincodeText);
         } else {
             mPincodeEditText.setText("No delivery at " + mPincodeText);
@@ -282,7 +285,7 @@ public class ProductDetailActivity extends AppCompatActivity
         mPincodeEditText.setEnabled(false);
     }
 
-    private void startPincodeCheckRequest(){
+    private void startPincodeCheckRequest() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -291,7 +294,7 @@ public class ProductDetailActivity extends AppCompatActivity
                     params.put("pincode_code", mPincodeText);
                     params.put("cod_available", "1");
                     params.put("regular_delivery_available", "1");
-                    String url = GlobalAccessHelper.generateUrl(APIConstants.PINCODE_SERVICEABILITY_URL,params);
+                    String url = GlobalAccessHelper.generateUrl(APIConstants.PINCODE_SERVICEABILITY_URL, params);
                     Response response = OkHttpHelper.makeGetRequest(getApplicationContext(), url);
                     if (response.isSuccessful()) {
                         JSONObject responseJSON = new JSONObject(response.body().string());
@@ -300,11 +303,11 @@ public class ProductDetailActivity extends AppCompatActivity
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                SharedPreferences shippingPreferences = getSharedPreferences(SHIPPING_SHARED_PREFERENCES,MODE_PRIVATE);
+                                SharedPreferences shippingPreferences = getSharedPreferences(SHIPPING_SHARED_PREFERENCES, MODE_PRIVATE);
                                 SharedPreferences.Editor editor = shippingPreferences.edit();
                                 editor.putString(PINCODE_KEY, mPincodeText);
                                 editor.putBoolean(SHIPPING_AVAILABLE_KEY, totalItems > 0);
-                                editor.commit();
+                                editor.apply();
                                 setPincodeShipping(totalItems > 0);
                             }
                         });
@@ -324,7 +327,7 @@ public class ProductDetailActivity extends AppCompatActivity
                                 clearPincodeCheck();
                             }
                         });
-                    } catch (Exception e1){
+                    } catch (Exception e1) {
                         e1.printStackTrace();
                     }
                     e.printStackTrace();
@@ -365,7 +368,7 @@ public class ProductDetailActivity extends AppCompatActivity
     }
 
     private void setDataToView() {
-        mToolbar.setTitle(mProduct.getName());
+        mToolbar.setTitle(Html.fromHtml("<small>" + mProduct.getName() + "</small>"));
 
         ArrayList<String> imageUrls = mProduct.getAllImageUrls(Constants.EXTRA_SMALL_IMAGE);
         if (imageUrls.size() == 0) {
@@ -376,12 +379,7 @@ public class ProductDetailActivity extends AppCompatActivity
             mThumbImagesRecyclerView.setVisibility(View.GONE);
         } else {
             loadDisplayImage(0); // load image
-            mThumbImagesRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
-                @Override
-                public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                    outRect.left = 15;
-                }
-            });
+            mThumbImagesRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.HORIZONTAL));
             ThumbImageAdapter mThumbImageAdapter = new ThumbImageAdapter(this, imageUrls, this);
             mThumbImagesRecyclerView.setAdapter(mThumbImageAdapter);
             if (imageUrls.size() == 1) { // Remove Thumb Image Section from View
@@ -391,7 +389,6 @@ public class ProductDetailActivity extends AppCompatActivity
 
         mProductName.setText(mProduct.getProductDetails().getDisplayName());
         mProductPrice.setText(String.format(getString(R.string.price_per_pcs_format), String.valueOf(mProduct.getMinPricePerUnit())));
-        mProductMrp.setText(String.format(getString(R.string.price_format), String.valueOf(mProduct.getPricePerUnit())));
         mLotSize.setText(String.valueOf(mProduct.getLotSize()));
         if (mProduct.getProductDetails().getLotDescription().equals("")) {
             mLotDescription.setText(String.valueOf(mProduct.getLotSize()) + " pieces per lot");
@@ -411,7 +408,7 @@ public class ProductDetailActivity extends AppCompatActivity
         if (mProduct.getSeller() != null) {
             mSellerName.setText(mProduct.getSeller().getCompanyName());
             mSellerSpeciality.setText(mProduct.getSeller().getCompanyProfile());
-            if (mProduct.getSeller().getSellerAddress() != null){
+            if (mProduct.getSeller().getSellerAddress() != null) {
                 mSellerLocation.setText(mProduct.getSeller().getSellerAddress().getCity());
             }
         }
@@ -419,15 +416,17 @@ public class ProductDetailActivity extends AppCompatActivity
         setFavButtonImage();
     }
 
-    private void setFavButtonImage(){
+    private void setFavButtonImage() {
         mFavButton.setImageResource(mProduct.getLikeStatus() ? R.drawable.ic_favorite_red_24dp : R.drawable.ic_favorite_border_black_24dp);
     }
 
     private class CartItemLoaderManager implements LoaderManager.LoaderCallbacks<ArrayList<CartItem>> {
         private Context mContext;
-        CartItemLoaderManager(Context context){
+
+        CartItemLoaderManager(Context context) {
             mContext = context;
         }
+
         @Override
         public void onLoaderReset(Loader<ArrayList<CartItem>> loader) {
 
@@ -446,9 +445,9 @@ public class ProductDetailActivity extends AppCompatActivity
         }
     }
 
-    private void setCartButtonText(int pieces){
+    private void setCartButtonText(int pieces) {
         String buttonText = String.valueOf(pieces);
-        if (pieces == 1){
+        if (pieces == 1) {
             buttonText += " pc in cart";
         } else {
             buttonText += " pcs in cart";
@@ -456,13 +455,13 @@ public class ProductDetailActivity extends AppCompatActivity
         mCartButton.setText(buttonText);
     }
 
-    private void onReceiveCartIntent(Intent intent){
-        if (intent != null){
+    private void onReceiveCartIntent(Intent intent) {
+        if (intent != null) {
             try {
                 Bundle bundle = intent.getBundleExtra("extra");
                 int pieces = bundle.getInt(CartContract.CartItemsTable.COLUMN_PIECES);
                 setCartButtonText(pieces);
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
         }

@@ -2,163 +2,230 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <android.support.v7.widget.CardView
-        style="@style/AppTheme.DefaultCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/card_padding_vertical"
+            android:paddingLeft="@dimen/activity_vertical_margin"
+            android:paddingRight="@dimen/activity_vertical_margin"
+            android:paddingTop="@dimen/card_padding_vertical">
 
             <TextView
                 android:id="@+id/product_name"
-                style="@style/AppTheme.BoldTextMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@string/font_condensed"
+                android:maxLines="2"
+                android:textColor="@color/primary_text"
+                android:textSize="16sp"
                 tools:text="Product Name" />
 
             <View
-                style="@style/AppTheme.Divider"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="0.5dp"
+                android:layout_margin="@dimen/text_divider_gap"
                 android:background="@color/divider" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@string/font_normal"
+                    android:paddingBottom="@dimen/text_divider_gap"
+                    android:paddingTop="@dimen/text_divider_gap"
+                    android:text="@string/price_per_piece"
+                    android:textColor="@color/secondary_text" />
 
                 <TextView
                     android:id="@+id/product_price"
-                    style="@style/AppTheme.BoldTextMedium"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:textColor="@android:color/holo_green_dark"
-                    tools:text="Rs. 220/pcs" />
-
-                <TextView
-                    style="@style/AppTheme.SecondaryText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="@dimen/secondary_text_padding_top"
-                    android:text="@string/mrp_key" />
-
-                <TextView
-                    android:id="@+id/product_mrp"
-                    style="@style/AppTheme.ImportantText"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2" />
-
+                    android:layout_weight="2"
+                    android:fontFamily="@string/font_normal"
+                    android:paddingBottom="@dimen/text_divider_gap"
+                    android:paddingTop="@dimen/text_divider_gap"
+                    android:textColor="@color/accent"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/card_margin_horizontal"
                 android:orientation="horizontal">
 
                 <TextView
-                    style="@style/AppTheme.SecondaryTextKey"
-                    android:text="@string/lot_size_key" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@string/font_normal"
+                    android:paddingBottom="@dimen/text_divider_gap"
+                    android:paddingTop="@dimen/text_divider_gap"
+                    android:text="@string/lot_key"
+                    android:textColor="@color/secondary_text" />
 
                 <TextView
                     android:id="@+id/lot_size"
-                    style="@style/AppTheme.ImportantTextValue" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:fontFamily="@string/font_normal"
+                    android:paddingBottom="@dimen/text_divider_gap"
+                    android:paddingTop="@dimen/text_divider_gap"
+                    android:textColor="@color/primary_text"
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/card_margin_horizontal"
                 android:orientation="horizontal">
 
                 <TextView
-                    style="@style/AppTheme.SecondaryTextKey"
-                    android:text="@string/lot_description_key" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@string/font_normal"
+                    android:paddingBottom="@dimen/text_divider_gap"
+                    android:paddingTop="@dimen/text_divider_gap"
+                    android:text="@string/lot_description_key"
+                    android:textColor="@color/secondary_text" />
 
                 <TextView
                     android:id="@+id/lot_description"
-                    style="@style/AppTheme.ImportantTextValue" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:fontFamily="@string/font_normal"
+                    android:paddingBottom="@dimen/text_divider_gap"
+                    android:paddingTop="@dimen/text_divider_gap"
+                    android:textColor="@color/primary_text"
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <View
-                style="@style/AppTheme.Divider"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="0.5dp"
+                android:layout_marginBottom="@dimen/text_divider_gap"
+                android:layout_marginTop="@dimen/text_divider_gap"
                 android:background="@color/divider" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/card_margin_horizontal"
                 android:orientation="horizontal">
 
                 <TextView
-                    style="@style/AppTheme.SecondaryTextKey"
-                    android:drawableLeft="@drawable/nonselected_dot_6dp"
-                    android:drawableStart="@drawable/nonselected_dot_6dp"
-                    android:text="@string/fabric_key" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@string/font_normal"
+                    android:paddingBottom="@dimen/text_divider_gap"
+                    android:paddingTop="@dimen/text_divider_gap"
+                    android:text="@string/fabric_key"
+                    android:textColor="@color/secondary_text" />
 
                 <TextView
                     android:id="@+id/fabric"
-                    style="@style/AppTheme.ImportantTextValue" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:fontFamily="@string/font_normal"
+                    android:paddingBottom="@dimen/text_divider_gap"
+                    android:paddingTop="@dimen/text_divider_gap"
+                    android:textColor="@color/primary_text"
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/card_margin_horizontal"
                 android:orientation="horizontal">
 
                 <TextView
-                    style="@style/AppTheme.SecondaryTextKey"
-                    android:drawableLeft="@drawable/nonselected_dot_6dp"
-                    android:drawableStart="@drawable/nonselected_dot_6dp"
-                    android:text="@string/size_key" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@string/font_normal"
+                    android:paddingBottom="@dimen/text_divider_gap"
+                    android:paddingTop="@dimen/text_divider_gap"
+                    android:text="@string/size_key"
+                    android:textColor="@color/secondary_text" />
 
                 <TextView
                     android:id="@+id/sizes"
-                    style="@style/AppTheme.ImportantTextValue" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:fontFamily="@string/font_normal"
+                    android:paddingBottom="@dimen/text_divider_gap"
+                    android:paddingTop="@dimen/text_divider_gap"
+                    android:textColor="@color/primary_text"
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/card_margin_horizontal"
                 android:orientation="horizontal">
 
                 <TextView
-                    style="@style/AppTheme.SecondaryTextKey"
-                    android:drawableLeft="@drawable/nonselected_dot_6dp"
-                    android:drawableStart="@drawable/nonselected_dot_6dp"
-                    android:text="@string/color_key" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@string/font_normal"
+                    android:paddingBottom="@dimen/text_divider_gap"
+                    android:paddingTop="@dimen/text_divider_gap"
+                    android:text="@string/color_key"
+                    android:textColor="@color/secondary_text" />
 
                 <TextView
                     android:id="@+id/colors"
-                    style="@style/AppTheme.ImportantTextValue" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:fontFamily="@string/font_normal"
+                    android:paddingBottom="@dimen/text_divider_gap"
+                    android:paddingTop="@dimen/text_divider_gap"
+                    android:textColor="@color/primary_text"
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/card_margin_horizontal"
                 android:orientation="horizontal"
                 android:paddingBottom="@dimen/card_margin_horizontal">
 
                 <TextView
-                    style="@style/AppTheme.SecondaryTextKey"
-                    android:drawableLeft="@drawable/nonselected_dot_6dp"
-                    android:drawableStart="@drawable/nonselected_dot_6dp"
-                    android:text="@string/brand_key" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@string/font_normal"
+                    android:paddingTop="@dimen/text_divider_gap"
+                    android:text="@string/brand_key"
+                    android:textColor="@color/secondary_text" />
 
                 <TextView
                     android:id="@+id/brand"
-                    style="@style/AppTheme.ImportantTextValue" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:fontFamily="@string/font_normal"
+                    android:paddingTop="@dimen/text_divider_gap"
+                    android:textColor="@color/primary_text"
+                    android:textStyle="normal" />
             </LinearLayout>
         </LinearLayout>
-
     </android.support.v7.widget.CardView>
 </merge>

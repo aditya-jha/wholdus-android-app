@@ -32,6 +32,7 @@ import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.CartActivity;
+import com.wholdus.www.wholdusbuyerapp.activities.CategoryProductActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.ProductDetailActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.StoreActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductsGridAdapter;
@@ -230,8 +231,13 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
             case R.id.action_bar_checkout:
                 startActivity(new Intent(getContext(), CartActivity.class));
                 break;
-            case R.id.action_bar_store_home:
-                startActivity(new Intent(getContext(), StoreActivity.class));
+            case R.id.action_bar_shortlist:
+                if (mResponseCodes.size() != 1) {
+                    Intent shortlistIntent = new Intent(getContext(), CategoryProductActivity.class);
+                    shortlistIntent.putExtra(Constants.TYPE, Constants.FAV_PRODUCTS);
+                    shortlistIntent.getIntExtra(getString(R.string.selected_category_id), 1);
+                    getContext().startActivity(shortlistIntent);
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);

@@ -141,6 +141,7 @@
     <string name="brand_key">Brand</string>
     <string name="add_to_cart">Add To Cart</string>
     <string name="mrp_key">MRP</string>
+    <string name="lot_key">Lot Size</string>
     <string name="lot_description_key">Lot Description</string>
 
     <string name="delivery_options">Delivery Options</string>
@@ -157,7 +158,7 @@
 
     <string name="seller_details_title">Seller Details</string>
     <string name="location_key">Location</string>
-    <string name="speciality_key">Speciality</string>
+    <string name="speciality_key">Description</string>
     <string name="view_store_key">View Store</string>
     <string name="seller_name_key">Name</string>
 
@@ -201,6 +202,8 @@
     <string name="price_format">Rs. %1$s</string>
 
     <string name="share_description">Share</string>
+    <string name="shortlist_summary">Go to your shortlisted products</string>
+    <string name="shortlist_text">Shortlist</string>
 
     <string name="product_share_text">%1$s. More Details at %2$s</string>
     <string name="store_share_text">Hey! Check out %1$s online store %2$s at: %3$s</string>

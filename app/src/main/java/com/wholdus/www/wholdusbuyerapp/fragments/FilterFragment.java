@@ -65,11 +65,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            mListener = (CategoryProductListenerInterface) context;
-        } catch (ClassCastException cee){
-            Log.e(this.getClass().getSimpleName(), " must implement" + CategoryProductListenerInterface.class.getSimpleName());
-        }
+        mListener = (CategoryProductListenerInterface) context;
     }
 
     @Override
@@ -173,7 +169,6 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
         switch (adapterView.getId()) {
             case R.id.filter_keys_list_view:
                 String filterKeySelected = (String) mFilterKeysAdapter.getItem(position);
-                Toast.makeText(getContext(), filterKeySelected, Toast.LENGTH_SHORT).show();
 
                 /* TODO: handle state of list view when click and presses */
                 int childCount = adapterView.getChildCount();
