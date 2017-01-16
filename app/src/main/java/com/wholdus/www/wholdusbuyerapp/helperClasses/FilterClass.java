@@ -185,6 +185,9 @@ public final class FilterClass {
         if (mColors.size() != 0) {
             params.put("color", TextUtils.join(",", mColors));
         }
+        if (mSizes.size() != 0) {
+            params.put("sizes", TextUtils.join(",", mSizes));
+        }
         if (mMaxPrice != 5000) {
             params.put("max_price_per_unit", String.valueOf(mMaxPrice));
         }
