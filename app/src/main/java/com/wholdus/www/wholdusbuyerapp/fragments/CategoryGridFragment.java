@@ -10,12 +10,11 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +24,7 @@ import android.widget.TextView;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.CategoriesGridAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
+import com.wholdus.www.wholdusbuyerapp.decorators.GridDividerItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.decorators.GridItemDecorator;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
@@ -56,9 +56,7 @@ public class CategoryGridFragment extends Fragment implements
     private List<Category> mCategoriesData;
     private ProgressBar mPageLoader;
     private boolean mFetchedDataFromServer, mLoaderDataLoaded;
-    private ViewGroup mRootView;
     private Snackbar mSnackbar;
-    private CategoriesGridLoader mLoader;
 
     public CategoryGridFragment() {
     }
@@ -80,20 +78,34 @@ public class CategoryGridFragment extends Fragment implements
         };
         mFetchedDataFromServer = false;
         mLoaderDataLoaded = false;
+        mCategoriesData = new ArrayList<>();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_categories_grid, container, false);
-        initReferences(mRootView);
-        return mRootView;
+        return inflater.inflate(R.layout.fragment_categories_grid, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mPageLoader = (ProgressBar) view.findViewById(R.id.page_loader);
+
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.categories_recycler_view);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
+        mRecyclerView.addItemDecoration(new GridDividerItemDecoration(
+                ContextCompat.getDrawable(getContext(), R.drawable.divider),
+                ContextCompat.getDrawable(getContext(), R.drawable.divider),
+                2));
+
+        mCategoriesGridAdapter = new CategoriesGridAdapter(getContext(), mCategoriesData, this);
+        mRecyclerView.setAdapter(mCategoriesGridAdapter);
+
         getActivity().getSupportLoaderManager().initLoader(CATEGORIES_LOADER, null, this);
+        fetchDataFromServer();
     }
 
     @Override
@@ -105,9 +117,13 @@ public class CategoryGridFragment extends Fragment implements
     public void onResume() {
         super.onResume();
         mListener.fragmentCreated("All Categories", true);
+
         IntentFilter intentFilter = new IntentFilter(IntentFilters.CATEGORY_DATA);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
-        fetchDataFromServer();
+
+        if (mLoaderDataLoaded && mCategoriesData.size() == 0) {
+            getActivity().getSupportLoaderManager().restartLoader(CATEGORIES_LOADER, null, this);
+        }
     }
 
     @Override
@@ -122,9 +138,6 @@ public class CategoryGridFragment extends Fragment implements
         if (mSnackbar != null && mSnackbar.isShownOrQueued()) {
             mSnackbar.dismiss();
         }
-        if (mLoader != null) {
-            mLoader.deleteData();
-        }
     }
 
     @Override
@@ -136,8 +149,7 @@ public class CategoryGridFragment extends Fragment implements
     @Override
     public Loader<ArrayList<Category>> onCreateLoader(int id, Bundle args) {
         mLoaderDataLoaded = false;
-        mLoader = new CategoriesGridLoader(getContext(), false);
-        return mLoader;
+        return new CategoriesGridLoader(getContext(), false);
     }
 
     @Override
@@ -175,20 +187,13 @@ public class CategoryGridFragment extends Fragment implements
     }
 
     private void initReferences(ViewGroup rootView) {
-        mPageLoader = (ProgressBar) rootView.findViewById(R.id.page_loader);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.categories_recycler_view);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
-        mRecyclerView.setLayoutManager(gridLayoutManager);
-        mRecyclerView.addItemDecoration(new GridItemDecorator(2, getResources().getDimensionPixelSize(R.dimen.card_margin_horizontal), true, 0));
-        mCategoriesData = new ArrayList<>();
-        mCategoriesGridAdapter = new CategoriesGridAdapter(getContext(), mCategoriesData, this);
-        mRecyclerView.setAdapter(mCategoriesGridAdapter);
+
     }
 
     private void fetchDataFromServer() {
         if (!mFetchedDataFromServer) {
             Intent intent = new Intent(getContext(), CatalogService.class);
-            intent.putExtra("TODO", R.integer.fetch_categories);
+            intent.putExtra("TODO", TODO.FETCH_CATEGORIES);
             intent.putExtra(getString(R.string.seller_category_details), true);
             getActivity().startService(intent);
         }
@@ -235,14 +240,17 @@ public class CategoryGridFragment extends Fragment implements
     }
 
     private void showErrorMessage() {
+        final View view = getView();
+        if (view == null) return;
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 if (HelperFunctions.isNetworkAvailable(getContext())) {
-                    mSnackbar = Snackbar.make(mRootView, getString(R.string.api_error_message), Snackbar.LENGTH_INDEFINITE);
+                    mSnackbar = Snackbar.make(view, getString(R.string.api_error_message), Snackbar.LENGTH_INDEFINITE);
                     mSnackbar.getView();
                 } else {
-                    mSnackbar = Snackbar.make(mRootView, getString(R.string.no_internet_access), Snackbar.LENGTH_INDEFINITE);
+                    mSnackbar = Snackbar.make(view, getString(R.string.no_internet_access), Snackbar.LENGTH_INDEFINITE);
                 }
                 mSnackbar.setAction(R.string.retry_text, new View.OnClickListener() {
                     @Override

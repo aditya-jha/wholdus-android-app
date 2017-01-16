@@ -25,4 +25,6 @@ public final class TODO {
     public static final int UPDATE_CART_PAYMENT_METHOD = 14;
 
     public static final int FETCH_BUYER_PRODUCTS_RESPONSE = 15;
+
+    public static final int FETCH_CATEGORIES = 16;
 }
