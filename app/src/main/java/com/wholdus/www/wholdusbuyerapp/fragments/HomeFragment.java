@@ -1,16 +1,11 @@
 package com.wholdus.www.wholdusbuyerapp.fragments;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,22 +14,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.crash.FirebaseCrash;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.activities.CategoryProductActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
-import com.wholdus.www.wholdusbuyerapp.activities.HelpSupportActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.NotificationActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.CategoryHomePageAdapter;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductHomePageAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.ContactsHelperClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.CategoriesGridLoader;
@@ -45,8 +36,6 @@ import com.wholdus.www.wholdusbuyerapp.models.Product;
 import java.util.ArrayList;
 
 import static com.wholdus.www.wholdusbuyerapp.R.id.help;
-import static com.wholdus.www.wholdusbuyerapp.R.id.media_actions;
-import static com.wholdus.www.wholdusbuyerapp.R.id.transition_current_scene;
 
 /**
  * Created by aditya on 16/11/16.
@@ -97,7 +86,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Button categoriesButton = (Button) view.findViewById(R.id.categories);
+        Button categoriesButton = (Button) view.findViewById(R.id.shortlist);
         categoriesButton.setOnClickListener(this);
 
         Button helpButton = (Button) view.findViewById(help);
@@ -119,7 +108,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
         mCategories = new ArrayList<>();
         mCategoryHomePageAdapter = new CategoryHomePageAdapter(getContext(), mCategories, this);
         mCategoriesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        mCategoriesRecyclerView.addItemDecoration(new RecyclerViewSpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.card_margin_vertical),0));
+        mCategoriesRecyclerView.addItemDecoration(new RecyclerViewSpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.card_margin_vertical), 0));
         mCategoriesRecyclerView.setAdapter(mCategoryHomePageAdapter);
         //mProductsRecyclerView.setVerticalScrollBarEnabled(false);
         mCategoriesRecyclerView.setNestedScrollingEnabled(false);
@@ -159,8 +148,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
     public void onClick(View view) {
         final int ID = view.getId();
         switch (ID) {
-            case R.id.categories:
-                mListener.openCategory(-1);
+            case R.id.shortlist:
+                Intent shortlistIntent = new Intent(getContext(), CategoryProductActivity.class);
+                shortlistIntent.putExtra(Constants.TYPE, Constants.FAV_PRODUCTS);
+                shortlistIntent.getIntExtra(getString(R.string.selected_category_id), 1);
+                startActivity(shortlistIntent);
                 break;
             case help:
                 mListener.helpButtonClicked();
@@ -172,15 +164,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
         }
     }
 
-    public void setViewForProducts(ArrayList<Product> products){
+    public void setViewForProducts(ArrayList<Product> products) {
         mProducts.clear();
         mProducts.addAll(products);
         mProductHomePageAdapter.notifyDataSetChanged();
     }
-    public void setViewForCategories(ArrayList<Category> categories){
+
+    public void setViewForCategories(ArrayList<Category> categories) {
         ArrayList<Category> categoriesToRemove = new ArrayList<>();
-        for (Category category:categories){
-            if (category.getProducts().size() < 10){
+        for (Category category : categories) {
+            if (category.getProducts().size() < 10) {
                 categoriesToRemove.add(category);
             }
         }

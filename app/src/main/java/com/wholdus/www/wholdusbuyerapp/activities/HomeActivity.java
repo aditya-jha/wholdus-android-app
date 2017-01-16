@@ -41,6 +41,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static java.security.AccessController.getContext;
+
 public class HomeActivity extends AppCompatActivity implements HomeListenerInterface {
 
     private DrawerLayout mDrawerLayout;
@@ -117,8 +119,11 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
             case R.id.action_bar_checkout:
                 startActivity(new Intent(this, CartActivity.class));
                 break;
-            case R.id.action_bar_store_home:
-                startActivity(new Intent(this, StoreActivity.class));
+            case R.id.action_bar_shortlist:
+                Intent shortlistIntent = new Intent(this, CategoryProductActivity.class);
+                shortlistIntent.putExtra(Constants.TYPE, Constants.FAV_PRODUCTS);
+                shortlistIntent.getIntExtra(getString(R.string.selected_category_id), 1);
+                startActivity(shortlistIntent);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -217,6 +222,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
             bundle.putString(Constants.OPEN_ACTIVITY_KEY, this.getClass().getSimpleName());
             bundle.putString(Constants.OPEN_FRAGMENT_KEY, getFragmentToOpenName(null));
         }
+        bundle.putString(Constants.OPEN_ACTIVITY_KEY, HomeActivity.class.getSimpleName());
 
         Fragment navDrawerFragment = new NavigationDrawerFragment();
         navDrawerFragment.setArguments(bundle);

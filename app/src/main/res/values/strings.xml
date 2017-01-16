@@ -197,6 +197,8 @@
     <string name="price_format">Rs. %1$s</string>
 
     <string name="share_description">Share</string>
+    <string name="shortlist_summary">Go to your shortlisted products</string>
+    <string name="shortlist_text">Shortlist</string>
 
     <string name="product_share_text">%1$s. More Details at %2$s</string>
     <string name="store_share_text">Hey! Check out %1$s online store %2$s at: %3$s</string>
