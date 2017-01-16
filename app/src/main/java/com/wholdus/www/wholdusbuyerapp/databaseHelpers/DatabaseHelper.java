@@ -168,6 +168,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     ProductsTable.COLUMN_CATEGORY_ID + INT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_SELLER_ID + INT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_PRODUCT_DETAILS_ID + INT_TYPE + COMMA_SEP +
+                    ProductsTable.COLUMN_PRODUCT_SCORE + REAL_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_DISPLAY_NAME + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_NAME + TEXT_TYPE + COMMA_SEP +
                     ProductsTable.COLUMN_LOT_SIZE + INT_TYPE + COMMA_SEP +

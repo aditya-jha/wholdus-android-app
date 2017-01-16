@@ -18,6 +18,8 @@ public class CatalogContract {
         public static final String COLUMN_SELLER_ID = "sellerID";
         public static final String COLUMN_PRODUCT_DETAILS_ID = "detailsID";
 
+        public static final String COLUMN_PRODUCT_SCORE = "product_score";
+
         public static final String COLUMN_PRICE_PER_UNIT = "price_per_unit";
         public static final String COLUMN_LOT_SIZE = "lot_size";
         public static final String COLUMN_PRICE_PER_LOT = "price_per_lot";
