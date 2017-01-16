@@ -50,7 +50,7 @@
             android:layout_marginRight="0dp"
             android:layout_weight="1"
             android:drawableTop="@drawable/ic_favorite_black_24dp"
-            android:fontFamily="@string/font_light"
+            android:fontFamily="@string/font_condensed"
             android:text="@string/shortlist_text"
             android:textColor="@color/primary_text"
             android:textStyle="normal" />
