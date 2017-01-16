@@ -43,7 +43,6 @@ public class NotificationFragment extends Fragment
     private NotificationListenerInterface mListener;
     private RecyclerView mNotificationsListView;
     private final int NOTIFICATIONS_DB_LOADER = 101;
-    RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<Notification> mNotificationArrayList;
     private NotificationAdapter mNotificationAdapter;
     private CardView mNoNotifications;
