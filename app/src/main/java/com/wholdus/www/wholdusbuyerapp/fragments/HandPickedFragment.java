@@ -14,6 +14,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -23,6 +26,8 @@ import android.widget.TextView;
 
 import com.daprlabs.aaron.swipedeck.SwipeDeck;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.activities.CartActivity;
+import com.wholdus.www.wholdusbuyerapp.activities.CategoryProductActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductSwipeDeckAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
@@ -99,6 +104,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_handpicked, container, false);
         initReferences(rootView);
         mBuyerProductServiceResponseReceiver = new BroadcastReceiver() {
@@ -179,6 +185,29 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             }
             mSpecificProductServiceResponseReceiver = null;
         }
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.default_action_buttons, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_bar_checkout:
+                startActivity(new Intent(getContext(), CartActivity.class));
+                break;
+            case R.id.action_bar_shortlist:
+                Intent shortlistIntent = new Intent(getContext(), CategoryProductActivity.class);
+                shortlistIntent.putExtra(Constants.TYPE, Constants.FAV_PRODUCTS);
+                shortlistIntent.getIntExtra(getString(R.string.selected_category_id), 1);
+                getContext().startActivity(shortlistIntent);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void handleBuyerProductAPIResponse() {
