@@ -30,8 +30,10 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.LoginHelper;
+import com.wholdus.www.wholdusbuyerapp.models.NavDrawerData;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -50,8 +52,6 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
-
         mBundle = getArguments();
         if (mBundle == null) {
             mBundle = new Bundle();
@@ -59,7 +59,7 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
         if (mBundle.getString(Constants.OPEN_FRAGMENT_KEY, "none").equals("none")) {
             mBundle.putString(Constants.OPEN_FRAGMENT_KEY, HomeFragment.class.getSimpleName());
         }
-        return rootView;
+        return inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
     }
 
     @Override
@@ -68,10 +68,8 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
         mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
         ExpandableListView expandableListView = (ExpandableListView) view.findViewById(R.id.expandable_list_view);
 
-        LinkedHashMap<String, List<String>> mNavigationDrawerData = NavigationDrawerData.getData();
-        NavigationDrawerAdapter mNavigationDrawerAdapter = new NavigationDrawerAdapter(getContext(),
-                new ArrayList<>(mNavigationDrawerData.keySet()), mNavigationDrawerData,
-                R.layout.navigation_drawer_list_group, R.layout.navigation_drawer_list_item);
+        List<NavDrawerData> mNavigationDrawerData = NavigationDrawerData.getData();
+        NavigationDrawerAdapter mNavigationDrawerAdapter = new NavigationDrawerAdapter(getContext(), mNavigationDrawerData);
         expandableListView.setAdapter(mNavigationDrawerAdapter);
 
         expandableListView.setOnGroupClickListener(this);
@@ -100,16 +98,26 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
                 startActivity(new Intent(getContext(), HandPickedActivity.class));
                 break;
             case 2:
-                // open rejected products
+                Intent categories = new Intent(getContext(), HomeActivity.class);
+                categories.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
+                if (!mBundle.getString(Constants.OPEN_FRAGMENT_KEY, "none").equals(CategoryGridFragment.class.getSimpleName())){
+                    mBundle.putString(Constants.OPEN_ACTIVITY_KEY, HomeActivity.class.getSimpleName());
+                    mBundle.putString(Constants.OPEN_FRAGMENT_KEY, CategoryGridFragment.class.getSimpleName());
+                    categories.putExtra(Constants.OPEN_FRAGMENT_KEY, CategoryGridFragment.class.getSimpleName());
+                    getContext().startActivity(categories);
+                }
+                break;
+            case 3:
+                // open fav products
                 Intent shortlistIntent = new Intent(getContext(), CategoryProductActivity.class);
                 shortlistIntent.putExtra(Constants.TYPE, Constants.FAV_PRODUCTS);
                 shortlistIntent.getIntExtra(getString(R.string.selected_category_id), 1);
                 startActivity(shortlistIntent);
                 break;
-            case 5:
+            case 4:
                 getContext().startActivity(new Intent(getContext(), NotificationActivity.class));
                 break;
-            case 6:
+            case 7:
                 logout();
                 break;
             default:
@@ -122,10 +130,10 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
     @Override
     public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
         switch (groupPosition) {
-            case 3:
+            case 5:
                 handleAccountCase(childPosition);
                 break;
-            case 4:
+            case 6:
                 handleHelpSupportCase(childPosition);
                 break;
             default:

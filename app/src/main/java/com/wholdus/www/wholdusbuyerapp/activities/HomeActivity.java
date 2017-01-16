@@ -64,7 +64,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         initToolbar();
 
         // initialize the navigation drawer
-        initNavigationDrawer();
+        initNavigationDrawer(getIntent().getExtras());
 
         openToFragment(getFragmentToOpenName(savedInstanceState), null);
     }
@@ -79,6 +79,13 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
 
     @Override
     public void onBackPressed() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (fragment instanceof CategoryGridFragment) {
+            getSupportFragmentManager().popBackStack();
+            openToFragment(HomeFragment.class.getSimpleName(), new Bundle());
+            return;
+        }
+
         if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
             if (!mDoublePressToExit) {
                 mDoublePressToExit = true;
@@ -204,12 +211,15 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         setSupportActionBar(mToolbar);
     }
 
-    private void initNavigationDrawer() {
-        Fragment navDrawerFragment = new NavigationDrawerFragment();
+    private void initNavigationDrawer(Bundle bundle) {
+        if (bundle == null) {
+            bundle = new Bundle();
+            bundle.putString(Constants.OPEN_ACTIVITY_KEY, this.getClass().getSimpleName());
+            bundle.putString(Constants.OPEN_FRAGMENT_KEY, getFragmentToOpenName(null));
+        }
 
-        Bundle args = new Bundle();
-        args.putString(getString(R.string.open_activity_key), this.getClass().getSimpleName());
-        navDrawerFragment.setArguments(args);
+        Fragment navDrawerFragment = new NavigationDrawerFragment();
+        navDrawerFragment.setArguments(bundle);
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.navigation_drawer_fragment, navDrawerFragment).commit();

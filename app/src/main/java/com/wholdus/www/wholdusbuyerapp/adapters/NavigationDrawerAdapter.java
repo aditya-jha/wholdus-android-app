@@ -10,13 +10,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.models.NavDrawerData;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import static android.R.attr.data;
+import static android.media.CamcorderProfile.get;
 import static com.wholdus.www.wholdusbuyerapp.R.drawable.ic_expand_more_black_24dp;
 import static com.wholdus.www.wholdusbuyerapp.R.id.imageView;
+import static com.wholdus.www.wholdusbuyerapp.R.id.textView;
 
 /**
  * Created by aditya on 16/11/16.
@@ -24,18 +29,11 @@ import static com.wholdus.www.wholdusbuyerapp.R.id.imageView;
 
 public class NavigationDrawerAdapter extends BaseExpandableListAdapter {
 
-    private int mGroupView;
-    private int mListView;
-    private ArrayList<String> mListTitles;
-    private LinkedHashMap<String, List<String>> mListData;
+    private List<NavDrawerData> mListData;
     private Context mContext;
 
-    public NavigationDrawerAdapter(Context context, ArrayList<String> titles,
-                                   LinkedHashMap<String, List<String>> data, int groupView, int listView) {
+    public NavigationDrawerAdapter(Context context, List<NavDrawerData> data) {
         mContext = context;
-        mListView = listView;
-        mGroupView = groupView;
-        mListTitles = titles;
         mListData = data;
     }
 
@@ -48,35 +46,38 @@ public class NavigationDrawerAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(mListView, null);
+            convertView = inflater.inflate(R.layout.navigation_drawer_list_item, parent, false);
         }
 
+        NavDrawerData data = (NavDrawerData) getChild(groupPosition, childPosition);
         TextView textView = (TextView) convertView.findViewById(R.id.textView);
-        textView.setText((String) getChild(groupPosition, childPosition));
+        textView.setText(data.getName());
+
+        textView.setCompoundDrawablesWithIntrinsicBounds(data.getIcon(), 0, 0, 0);
 
         return convertView;
     }
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-        final String listTitle = (String) getGroup(groupPosition);
+        NavDrawerData data = (NavDrawerData) getGroup(groupPosition);
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(mGroupView, null);
+            convertView = inflater.inflate(R.layout.navigation_drawer_list_group, parent, false);
         }
 
         TextView textView = (TextView) convertView.findViewById(R.id.textView);
-        textView.setTypeface(null, Typeface.BOLD);
-        textView.setText(listTitle);
+        textView.setTypeface(null, Typeface.NORMAL);
+        textView.setText(data.getName());
 
         if (getChildrenCount(groupPosition) > 0) {
             if (isExpanded) {
-                textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_expand_less_black_24dp, 0);
+                textView.setCompoundDrawablesWithIntrinsicBounds(data.getIcon(), 0, R.drawable.ic_expand_less_black_24dp, 0);
             } else {
-                textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, ic_expand_more_black_24dp, 0);
+                textView.setCompoundDrawablesWithIntrinsicBounds(data.getIcon(), 0, ic_expand_more_black_24dp, 0);
             }
         } else {
-            textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            textView.setCompoundDrawablesWithIntrinsicBounds(data.getIcon(), 0, 0, 0);
         }
 
         return convertView;
@@ -99,17 +100,17 @@ public class NavigationDrawerAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return mListData.get(mListTitles.get(groupPosition)).get(childPosition);
+        return mListData.get(groupPosition).getChilds().get(childPosition);
     }
 
     @Override
     public Object getGroup(int groupPosition) {
-        return mListTitles.get(groupPosition);
+        return mListData.get(groupPosition);
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return mListData.get(mListTitles.get(groupPosition)).size();
+        return mListData.get(groupPosition).getChilds().size();
     }
 
     @Override
