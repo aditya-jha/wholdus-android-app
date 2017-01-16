@@ -31,8 +31,8 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private ArrayList<GridProductModel> mData;
     private ItemClickListener mListener;
 
-    private static final int PRODUCT_VIEW = 0;
-    private static final int LOADER_VIEW = 1;
+    public static final int PRODUCT_VIEW = 0;
+    public static final int LOADER_VIEW = 1;
 
     public ProductsGridAdapter(Context context, ArrayList<GridProductModel> products, final ItemClickListener listener) {
         mContext = context;
@@ -100,7 +100,7 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Glide.with(mContext)
                 .load(product.getImageUrl(Constants.SMALL_IMAGE, "1"))
                 .asBitmap()
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(new BitmapImageViewTarget(holder.mProductImage));
         holder.mListener = mListener;
     }
