@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/default_toolbar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/card_margin_vertical"
+        android:paddingLeft="@dimen/card_margin_horizontal"
+        android:paddingRight="@dimen/card_margin_horizontal"
+        android:paddingTop="@dimen/card_margin_vertical">
+
+        <TextView
+            android:id="@+id/onboarding_statement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:textColor="@color/primary_text"
+            tools:text="How would you describe yourself?"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"/>
+
+        <ProgressBar
+            android:id="@+id/loading_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary_dark"
+        android:orientation="vertical"
+        android:paddingBottom="2dp"
+        android:paddingLeft="@dimen/card_margin_horizontal"
+        android:paddingRight="@dimen/card_margin_horizontal"
+        android:paddingTop="@dimen/card_margin_vertical"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/onboarding_step_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:textColor="@color/icons"
+            tools:text="Step 1 of 3"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/onboarding_submit_button"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/onboarding_submit_button"
+            android:textColor="@color/icons" />
+
+    </LinearLayout>
+
+</LinearLayout>

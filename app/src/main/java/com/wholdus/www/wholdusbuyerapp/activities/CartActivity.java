@@ -304,7 +304,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
 
         if (!fragmentPopped) {
             // fragment not in backstack create it
-            if (fragment.getClass().getSimpleName() == EditAddressFragment.class.getSimpleName()){
+            if (fragment.getClass().getSimpleName().equals(EditAddressFragment.class.getSimpleName())){
                 FragmentTransaction ft = fm.beginTransaction();
                 ft.replace(R.id.cart_fragment_container, fragment, fragment.getClass().getSimpleName());
                 ft.commit();
