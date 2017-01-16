@@ -52,7 +52,7 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
                 null,
                 null,
                 null,
-                FilterClass.getSelectedItems("Brand"),
+                FilterClass.getSelectedItems("Brands"),
                 categoryID,
                 FilterClass.getMinPriceFilter(),
                 FilterClass.getMaxPriceFilter(),
