@@ -52,7 +52,7 @@ public class CatalogService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         int todo = intent.getIntExtra("TODO", -1);
         switch (todo) {
-            case R.integer.fetch_categories:
+            case TODO.FETCH_CATEGORIES:
                 fetchCategories(todo, intent.getBooleanExtra(getString(R.string.seller_category_details), false));
                 break;
             case R.integer.fetch_products:
@@ -117,7 +117,7 @@ public class CatalogService extends IntentService {
                         try {
                             JSONObject data = new JSONObject(response);
                             switch (todo) {
-                                case R.integer.fetch_categories:
+                                case TODO.FETCH_CATEGORIES:
                                     updateCategories(data);
                                     break;
                                 case R.integer.fetch_products:
@@ -140,7 +140,7 @@ public class CatalogService extends IntentService {
                 Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
                 try {
                     switch (todo) {
-                        case R.integer.fetch_categories:
+                        case TODO.FETCH_CATEGORIES:
                             updateCategories(null);
                             break;
                         case R.integer.fetch_products:
