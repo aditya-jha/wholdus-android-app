@@ -185,10 +185,6 @@ public class CategoryGridFragment extends Fragment implements
         }
     }
 
-    private void initReferences(ViewGroup rootView) {
-
-    }
-
     private void fetchDataFromServer() {
         if (!mFetchedDataFromServer) {
             Intent intent = new Intent(getContext(), CatalogService.class);
