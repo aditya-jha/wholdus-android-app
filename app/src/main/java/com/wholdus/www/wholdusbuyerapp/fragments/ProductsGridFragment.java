@@ -6,11 +6,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -36,7 +36,7 @@ import com.wholdus.www.wholdusbuyerapp.activities.ProductDetailActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.StoreActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductsGridAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
-import com.wholdus.www.wholdusbuyerapp.decorators.GridItemDecorator;
+import com.wholdus.www.wholdusbuyerapp.decorators.GridDividerItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
@@ -162,7 +162,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         mPageLoader = (ProgressBar) view.findViewById(R.id.page_loader);
@@ -181,21 +181,12 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.products_recycler_view);
-        mRecyclerView.addItemDecoration(new GridItemDecorator(2,
-                getResources().getDimensionPixelSize(R.dimen.card_margin_horizontal), true, 0));
         mGridLayoutManager = new GridLayoutManager(getContext(), 2);
-        mGridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                switch (mAdapter.getItemViewType(position)) {
-                    case 1:
-                        return 2;
-                    default:
-                        return 1;
-                }
-            }
-        });
         mRecyclerView.setLayoutManager(mGridLayoutManager);
+        mRecyclerView.addItemDecoration(new GridDividerItemDecoration(
+                ContextCompat.getDrawable(getContext(), R.drawable.divider),
+                ContextCompat.getDrawable(getContext(), R.drawable.divider), 2));
+        mRecyclerView.setHasFixedSize(true);
 
         mNoProducts = (LinearLayout) view.findViewById(R.id.no_products);
     }
@@ -415,30 +406,32 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     }
 
     public void resetVariables() {
-        mTotalPages = -1;
-        mRecyclerViewPosition = 0;
-        mLoadMoreData = false;
-        mActivePageCall = 0;
-        mTotalProductsOnServer = -1;
-        mLoaderLoading = false;
+        try {
+            mTotalPages = -1;
+            mRecyclerViewPosition = 0;
+            mLoadMoreData = false;
+            mActivePageCall = 0;
+            mTotalProductsOnServer = -1;
+            mLoaderLoading = false;
 
-        if (mRequestQueue == null) {
-            mRequestQueue = new LinkedList<>();
-        } else {
-            mRequestQueue.clear();
-        }
+            if (mRequestQueue == null) {
+                mRequestQueue = new LinkedList<>();
+            } else {
+                mRequestQueue.clear();
+            }
 
-        if (mPagesLoaded == null) {
-            mPagesLoaded = new HashSet<>();
-        } else {
-            mPagesLoaded.clear();
-        }
+            if (mPagesLoaded == null) {
+                mPagesLoaded = new HashSet<>();
+            } else {
+                mPagesLoaded.clear();
+            }
 
-        if (mProducts == null) {
-            mProducts = new ArrayList<>();
-        } else {
-            mAdapter.clear();
-        }
+            if (mProducts == null) {
+                mProducts = new ArrayList<>();
+            } else {
+                mAdapter.clear();
+            }
+        } catch (Exception e) {}
     }
 
     private void fetchProductsFromServer() {
