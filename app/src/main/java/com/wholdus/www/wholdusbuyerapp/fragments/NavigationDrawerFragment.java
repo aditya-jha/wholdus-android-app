@@ -82,10 +82,8 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
             case 0:
                 Intent intent = new Intent(getContext(), HomeActivity.class);
                 intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
-                if (!mBundle.getString(Constants.OPEN_ACTIVITY_KEY, "none").equals(HomeActivity.class.getSimpleName())) {
-                    mBundle.putString(Constants.OPEN_ACTIVITY_KEY, HomeActivity.class.getSimpleName());
-                    startActivity(intent);
-                } else if (!mBundle.getString(Constants.OPEN_FRAGMENT_KEY, "none").equals(HomeFragment.class.getSimpleName())){
+                if (!mBundle.getString(Constants.OPEN_ACTIVITY_KEY, "none").equals(HomeActivity.class.getSimpleName()) ||
+                        !mBundle.getString(Constants.OPEN_FRAGMENT_KEY, "none").equals(HomeFragment.class.getSimpleName())) {
                     mBundle.putString(Constants.OPEN_ACTIVITY_KEY, HomeActivity.class.getSimpleName());
                     mBundle.putString(Constants.OPEN_FRAGMENT_KEY, HomeFragment.class.getSimpleName());
                     intent.putExtra(Constants.OPEN_FRAGMENT_KEY, HomeFragment.class.getSimpleName());

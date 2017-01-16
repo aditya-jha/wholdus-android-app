@@ -119,7 +119,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
         mCategories = new ArrayList<>();
         mCategoryHomePageAdapter = new CategoryHomePageAdapter(getContext(), mCategories, this);
         mCategoriesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        mCategoriesRecyclerView.addItemDecoration(new RecyclerViewSpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.card_margin_vertical),0));
+        mCategoriesRecyclerView.addItemDecoration(new RecyclerViewSpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.card_margin_vertical), 0));
         mCategoriesRecyclerView.setAdapter(mCategoryHomePageAdapter);
         //mProductsRecyclerView.setVerticalScrollBarEnabled(false);
         mCategoriesRecyclerView.setNestedScrollingEnabled(false);
@@ -172,15 +172,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
         }
     }
 
-    public void setViewForProducts(ArrayList<Product> products){
+    public void setViewForProducts(ArrayList<Product> products) {
         mProducts.clear();
         mProducts.addAll(products);
         mProductHomePageAdapter.notifyDataSetChanged();
     }
-    public void setViewForCategories(ArrayList<Category> categories){
+
+    public void setViewForCategories(ArrayList<Category> categories) {
         ArrayList<Category> categoriesToRemove = new ArrayList<>();
-        for (Category category:categories){
-            if (category.getProducts().size() < 10){
+        for (Category category : categories) {
+            if (category.getProducts().size() < 10) {
                 categoriesToRemove.add(category);
             }
         }
