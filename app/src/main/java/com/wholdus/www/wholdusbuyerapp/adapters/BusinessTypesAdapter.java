@@ -52,6 +52,7 @@ public class BusinessTypesAdapter extends BaseAdapter implements SpinnerAdapter 
         if (view == null) {
             view = LayoutInflater.from(mContext).inflate(android.R.layout.simple_spinner_dropdown_item, viewGroup, false);
         }
+
         BusinessTypes businessType = mData.get(i);
 
         TextView dataTextView = (TextView) view.findViewById(android.R.id.text1);

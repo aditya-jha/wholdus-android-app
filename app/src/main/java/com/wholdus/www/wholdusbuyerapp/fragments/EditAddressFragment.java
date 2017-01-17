@@ -75,11 +75,7 @@ public class EditAddressFragment extends Fragment implements LoaderManager.Loade
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            mListener = (UserAddressInterface) context;
-        } catch (ClassCastException cee) {
-            cee.printStackTrace();
-        }
+        mListener = (UserAddressInterface) context;
     }
 
     @Override

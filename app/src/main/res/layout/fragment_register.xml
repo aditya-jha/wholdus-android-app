@@ -27,19 +27,7 @@
             android:textColor="@android:color/black"
             android:textSize="20sp" />
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/name_wrapper"
-            style="@style/TextLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/name_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/hint_name"
-                android:inputType="text" />
-        </android.support.design.widget.TextInputLayout>
+        <include layout="@layout/layout_name_input" />
 
         <include layout="@layout/layout_mobile_number_input" />
 

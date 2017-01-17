@@ -29,7 +29,7 @@ public class NavigationDrawerData {
         myAccount.add(new NavDrawerData("My Profile", R.drawable.ic_person_black_24dp, null));
         myAccount.add(new NavDrawerData("My Address", R.drawable.ic_place_black_24dp, null));
         myAccount.add(new NavDrawerData("My Orders", R.drawable.ic_assignment_black_24dp, null));
-        myAccount.add(new NavDrawerData("My Preferences", R.drawable.ic_thumb_up_black_24dp, null));
+        //myAccount.add(new NavDrawerData("My Preferences", R.drawable.ic_thumb_up_black_24dp, null));
         myAccount.add(new NavDrawerData("Rejected Products", R.drawable.ic_thumb_down_black_24dp, null));
         data.add(new NavDrawerData("My Account", R.drawable.ic_account_circle_black_24dp, myAccount));
 
