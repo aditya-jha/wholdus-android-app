@@ -197,13 +197,13 @@ public class OTPFragment extends Fragment implements View.OnClickListener {
                                     @Override
                                     public void run() {
                                         mProgressBar.setVisibility(View.INVISIBLE);
-                                        mListener.loginSuccess();
+                                        mListener.loginSuccess(true);
                                     }
                                 });
                             } else {
                                 mProgressBar.setVisibility(View.INVISIBLE);
                                 getActivity().startService(new Intent(getActivity().getApplicationContext(), FirebaseNotificationService.class));
-                                mListener.loginSuccess();
+                                mListener.loginSuccess(true);
                             }
                         }
                     }).start();

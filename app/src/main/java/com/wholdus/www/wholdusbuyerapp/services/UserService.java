@@ -81,6 +81,12 @@ public class UserService extends IntentService {
                     JSONObject address = new JSONObject(intent.getStringExtra(UserAddressTable.TABLE_NAME));
                     updateUserAddress(todo, address);
                     break;
+                case R.string.update_buyer_type:
+                    updateBuyerType(todo, intent);
+                    break;
+                case R.string.update_buyer_whatsapp_number:
+                    updateWhatsappNumber(todo, intent);
+                    break;
             }
 
         } catch (JSONException e) {
@@ -97,11 +103,7 @@ public class UserService extends IntentService {
     }
 
     private void fetchUserProfile(int todo) {
-        HashMap<String,String> params = new HashMap<>();
-        params.put("buyer_address_details", "1");
-        params.put("buyer_interest_details", "1");
-        params.put("buyer_details_details", "1");
-        params.put("category_details", "1");
+        HashMap<String,String> params = getUserResponseParams();
         String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_details_url), params);
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }
@@ -118,11 +120,7 @@ public class UserService extends IntentService {
 
         sendUserDataUpdatedBroadCast(getString(R.string.user_data_modified));
 
-        HashMap<String,String> params = new HashMap<>();
-        params.put("buyer_address_details", "1");
-        params.put("buyer_interest_details", "1");
-        params.put("buyer_details_details", "1");
-        params.put("category_details", "1");
+        HashMap<String,String> params = getUserResponseParams();
         // send to server
         String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_details_url), params);
         volleyStringRequest(todo, Request.Method.PUT, url, data.toString());
@@ -274,5 +272,40 @@ public class UserService extends IntentService {
         UserDBHelper userDBHelper = new UserDBHelper(getApplicationContext());
         userDBHelper.updateUserAddressDataFromJSONObject(data.getJSONObject("address"), false);
         sendUserDataUpdatedBroadCast(null);
+    }
+
+    public void updateBuyerType(int todo, Intent intent){
+        HashMap<String,String> params = getUserResponseParams();
+        JSONObject data = new JSONObject();
+        JSONObject details = new JSONObject();
+        try {
+            details.put("buyertypeID", intent.getStringExtra(getString(R.string.business_type_key)));
+            data.put("details", details);
+        } catch (JSONException e){
+            return;
+        }
+        String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_details_url), params);
+        volleyStringRequest(R.string.update_user_profile, Request.Method.PUT, url, data.toString());
+    }
+
+    public void updateWhatsappNumber(int todo, Intent intent){
+        HashMap<String,String> params = getUserResponseParams();
+        JSONObject data = new JSONObject();
+        try {
+            data.put(UserTable.COLUMN_WHATSAPP_NUMBER, intent.getStringExtra(getString(R.string.whatsapp_number_key)));
+        } catch (JSONException e){
+            return;
+        }
+        String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_details_url), params);
+        volleyStringRequest(R.string.update_user_profile, Request.Method.PUT, url, data.toString());
+    }
+
+    private HashMap<String, String> getUserResponseParams(){
+        HashMap<String,String> params = new HashMap<>();
+        params.put("buyer_address_details", "1");
+        params.put("buyer_interest_details", "1");
+        params.put("buyer_details_details", "1");
+        params.put("category_details", "1");
+        return params;
     }
 }

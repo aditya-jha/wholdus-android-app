@@ -20,7 +20,7 @@ public interface LoginSignupListenerInterface {
 
     void openOTPFragment(@NonNull Bundle bundle);
 
-    void loginSuccess();
+    void loginSuccess(boolean registered);
 
     void hideSoftKeyboard(View view);
 }

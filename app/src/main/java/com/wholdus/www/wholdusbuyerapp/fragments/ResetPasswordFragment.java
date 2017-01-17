@@ -186,7 +186,7 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
                                     public void run() {
                                         mProgressBar.setVisibility(View.INVISIBLE);
                                         Toast.makeText(getContext(), getString(R.string.password_reset_success), Toast.LENGTH_SHORT).show();
-                                        mListener.loginSuccess();
+                                        mListener.loginSuccess(false);
                                     }
                                 });
                             }

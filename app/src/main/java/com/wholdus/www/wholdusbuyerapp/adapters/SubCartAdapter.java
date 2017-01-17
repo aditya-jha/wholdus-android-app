@@ -68,7 +68,7 @@ public class SubCartAdapter extends BaseAdapter {
 
         holder.sellerName.setText(subCart.getSeller().getCompanyName());
         holder.summary.setText( String.valueOf(subCart.getPieces()) + " pieces - Rs. " +
-                String.format("%.0f",subCart.getFinalPrice()));
+                String.format("%.0f",subCart.getFinalPrice()- subCart.getShippingCharge()));
 
         CartItemsAdapter cartItemsAdapter = new CartItemsAdapter(mContext, subCart.getCartItems(), mListener);
         holder.cartItems.setAdapter(cartItemsAdapter);
