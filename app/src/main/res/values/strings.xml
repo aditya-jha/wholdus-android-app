@@ -144,6 +144,8 @@
     <string name="lot_key">Lot Size</string>
     <string name="lot_description_key">Lot Description</string>
 
+    <string name="value_not_provided">Not Provided</string>
+
     <string name="delivery_options">Delivery Options</string>
     <string name="check">Check</string>
     <string name="delivery_text">Surface delivery in 8&#8211;10 days</string>
