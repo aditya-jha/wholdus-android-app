@@ -209,13 +209,15 @@ public class EditAddressFragment extends Fragment implements
             public void onConnected(@Nullable Bundle bundle) {
                 if (ContextCompat.checkSelfPermission(getContext(),
                         Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    startLocationRequest();
+                    /**
                     Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                     if (location != null) {
 
                         getAddressFromLocation(location);
                     } else {
                         startLocationRequest();
-                    }
+                    }**/
                 }
             }
 
@@ -301,7 +303,6 @@ public class EditAddressFragment extends Fragment implements
                 mLocationListener = new LocationListener() {
                     @Override
                     public void onLocationChanged(Location location) {
-
                         getAddressFromLocation(location);
                         if (mGoogleApiClient != null && mLocationListener != null && mGoogleApiClient.isConnected()) {
                             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, mLocationListener);
