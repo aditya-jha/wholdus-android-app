@@ -11,6 +11,7 @@
     <string name="action_bar_store_home">Go to your Store</string>
     <string name="action_bar_checkout">Proceed to Checkout</string>
     <string name="action_bar_clear">CLEAR</string>
+    <string name="action_bar_skip">SKIP</string>
 
     <string name="logo_content_description">@string/intro_page_1</string>
 
@@ -51,6 +52,9 @@
         <item>rejectedProducts</item>
         <item>editPersonalDetails</item>
     </string-array>
+
+    <!-- Onboarding Activity -->
+    <string name="onboarding_submit_button">Submit</string>
 
     <!-- Profile Fragment -->
     <string name="personal_details">Personal Details</string>

@@ -224,7 +224,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
                                     public void run() {
                                         mProgressBar.setVisibility(View.INVISIBLE);
                                         getContext().startService(new Intent(getActivity().getApplicationContext(), FirebaseNotificationService.class));
-                                        mListener.loginSuccess();
+                                        mListener.loginSuccess(false);
                                     }
                                 });
                             }

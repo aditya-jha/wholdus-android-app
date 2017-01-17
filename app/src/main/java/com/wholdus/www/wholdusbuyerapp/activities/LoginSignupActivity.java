@@ -143,11 +143,27 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
     }
 
     @Override
-    public void loginSuccess() {
+    public void loginSuccess(boolean registered) {
         try {
-            // start HomeActivity and finish this activity
-            Intent intent = new Intent(this, HomeActivity.class);
-            intent.putExtra(Constants.OPEN_FRAGMENT_KEY, HomeFragment.class.getSimpleName());
+            // Fetch user data
+            Intent userDataIntent = new Intent(this, UserService.class);
+            userDataIntent.putExtra("TODO", TODO.FETCH_USER_PROFILE);
+            startService(userDataIntent);
+
+
+
+            Intent intent = new Intent();
+            if (!registered) {
+                intent.setClass(this, HomeActivity.class);
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, HomeFragment.class.getSimpleName());
+            } else {
+
+                Intent businessTypesIntent = new Intent(this, UserService.class);
+                businessTypesIntent.putExtra("TODO", R.string.fetch_business_types);
+                startService(businessTypesIntent);
+
+                intent.setClass(this, OnBoardingActivity.class);
+            }
             startActivity(intent);
             finish();
         } catch (Exception e) {
