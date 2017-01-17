@@ -33,9 +33,11 @@
             android:id="@+id/value_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@string/font_black"
-            android:padding="@dimen/card_padding_vertical"
+            android:fontFamily="@string/font_normal"
+            android:paddingBottom="@dimen/card_padding_vertical"
+            android:paddingLeft="@dimen/card_padding_vertical"
             android:textColor="@color/primary_text"
+            android:textSize="16sp"
             tools:text="Aditya Jha" />
     </LinearLayout>
 </LinearLayout>

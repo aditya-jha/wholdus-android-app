@@ -162,10 +162,10 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
                 // open orders fragment
                 intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "orders");
                 break;
+//            case 3:
+//                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "buyerInterests");
+//                break;
             case 3:
-                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "buyerInterests");
-                break;
-            case 4:
                 // open rejected products
                 Intent rejectedProductsIntent = new Intent(getContext(), CategoryProductActivity.class);
                 rejectedProductsIntent.putExtra(Constants.TYPE, Constants.REJECTED_PRODUCTS);
