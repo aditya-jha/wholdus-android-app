@@ -30,7 +30,7 @@ public class NotificationActivity extends AppCompatActivity implements Notificat
         initToolbar();
         Intent intent = getIntent();
         Bundle extras;
-        if (intent != null){
+        if (intent != null) {
             extras = intent.getExtras();
         } else {
             extras = null;
@@ -38,7 +38,8 @@ public class NotificationActivity extends AppCompatActivity implements Notificat
 
         openToFragment(getFragmentToOpenName(savedInstanceState), extras);
     }
-    private void initToolbar(){
+
+    private void initToolbar() {
         mToolbar = (Toolbar) findViewById(R.id.default_toolbar);
         setSupportActionBar(mToolbar);
     }
@@ -91,15 +92,13 @@ public class NotificationActivity extends AppCompatActivity implements Notificat
         fragment.setArguments(bundle);
         String backStateName = fragment.getClass().getSimpleName();
         FragmentManager fm = getSupportFragmentManager();
-        boolean fragmentPopped =  fm.popBackStackImmediate(backStateName, 0);
+        boolean fragmentPopped = fm.popBackStackImmediate(backStateName, 0);
 
-        if(!fragmentPopped) {
+        if (!fragmentPopped) {
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
             ft.addToBackStack(backStateName);
             ft.commit();
         }
-
     }
-
 }

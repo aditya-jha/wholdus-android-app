@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,36 +43,39 @@ public class NotificationFragment extends Fragment
     private NotificationListenerInterface mListener;
     private RecyclerView mNotificationsListView;
     private final int NOTIFICATIONS_DB_LOADER = 101;
-    RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<Notification> mNotificationArrayList;
     private NotificationAdapter mNotificationAdapter;
+    private CardView mNoNotifications;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            mListener = (NotificationListenerInterface) context;
-        } catch (ClassCastException cee) {
-            cee.printStackTrace();
-        }
+        mListener = (NotificationListenerInterface) context;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mNotificationArrayList = new ArrayList<>();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_notifications, container, false);
-        initReferences(rootView);
-
-        return rootView;
+        return inflater.inflate(R.layout.fragment_notifications, container, false);
     }
 
-    private void initReferences(ViewGroup rootView){
-        mNotificationsListView = (RecyclerView) rootView.findViewById(R.id.notifications_recycler_view);
-        mLayoutManager = new LinearLayoutManager(getContext());
-        mNotificationsListView.setLayoutManager(mLayoutManager);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mNoNotifications = (CardView) view.findViewById(R.id.no_notification);
+        mNoNotifications.setVisibility(View.INVISIBLE);
+
+        mNotificationsListView = (RecyclerView) view.findViewById(R.id.notifications_recycler_view);
+        mNotificationsListView.setLayoutManager(new LinearLayoutManager(getContext()));
         mNotificationsListView.setItemAnimator(new DefaultItemAnimator());
         mNotificationsListView.addItemDecoration(new RecyclerViewSpaceItemDecoration(40, 0));
-        mNotificationArrayList = new ArrayList<>();
         mNotificationAdapter = new NotificationAdapter(getContext(), mNotificationArrayList, this);
         mNotificationsListView.setAdapter(mNotificationAdapter);
     }
@@ -80,13 +84,18 @@ public class NotificationFragment extends Fragment
     public void onResume() {
         super.onResume();
         getActivity().getSupportLoaderManager().restartLoader(NOTIFICATIONS_DB_LOADER, null, this);
-        mListener.fragmentCreated("Notifications");
+        mListener.fragmentCreated(getString(R.string.notification_key));
     }
 
-    private void setViewForNotifications(ArrayList<Notification> notifications){
-        mNotificationArrayList.clear();
-        mNotificationArrayList.addAll(notifications);
-        mNotificationAdapter.notifyDataSetChanged();
+    private void setViewForNotifications(ArrayList<Notification> notifications) {
+        if (notifications.size() > 0) {
+            mNotificationArrayList.clear();
+            mNotificationArrayList.addAll(notifications);
+            mNotificationAdapter.notifyDataSetChanged();
+        } else {
+            mNoNotifications.setVisibility(View.VISIBLE);
+            mNotificationsListView.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -98,12 +107,12 @@ public class NotificationFragment extends Fragment
             Bundle bundle = new Bundle();
             JSONObject jsonObject = new JSONObject(notification.getNotificationJSON());
             Iterator<String> keys = jsonObject.keys();
-            while (keys.hasNext()){
+            while (keys.hasNext()) {
                 String key = keys.next();
                 bundle.putString(key, jsonObject.getString(key));
             }
             intent.putExtra("router", bundle);
-        } catch (JSONException e){
+        } catch (JSONException e) {
 
         }
         getContext().startActivity(intent);
