@@ -10,7 +10,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/ic_person_black_24dp" />
+        android:padding="@dimen/card_padding_vertical"
+        tools:src="@drawable/ic_person_black_24dp" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -23,12 +24,18 @@
             android:id="@+id/key_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@string/font_normal"
+            android:padding="@dimen/card_padding_vertical"
+            android:textColor="@color/secondary_text"
             tools:text="Name" />
 
         <TextView
             android:id="@+id/value_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@string/font_black"
+            android:padding="@dimen/card_padding_vertical"
+            android:textColor="@color/primary_text"
             tools:text="Aditya Jha" />
     </LinearLayout>
 </LinearLayout>
