@@ -37,13 +37,15 @@ import java.util.ArrayList;
 public class EditProfileDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<EditProfileData> {
 
     private ProfileListenerInterface mListener;
+
     private TextInputLayout mNameWrapper, mWhatsappNumberWrapper;
     private TextInputEditText mNameEditText, mCompanyNameEditText, mWhatsappNumberEditText;
     private Spinner mBusinessTypeSpinner;
     private BusinessTypesAdapter mBusinessTypeAdapter;
     private BroadcastReceiver mUserServiceResponseReceiver;
-    private static final int EDIT_PROFILE_FRAGMENT_LOADER = 0;
     private String mSelectedBusinessType;
+
+    private static final int EDIT_PROFILE_FRAGMENT_LOADER = 0;
 
     public EditProfileDetailsFragment() {
     }
@@ -51,11 +53,7 @@ public class EditProfileDetailsFragment extends Fragment implements LoaderManage
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            mListener = (ProfileListenerInterface) context;
-        } catch (ClassCastException cee) {
-            cee.printStackTrace();
-        }
+        mListener = (ProfileListenerInterface) context;
     }
 
     @Override
@@ -67,18 +65,37 @@ public class EditProfileDetailsFragment extends Fragment implements LoaderManage
                 handleReceiverResponse(intent);
             }
         };
-        fetchBusinessTypesDataFromServer();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_edit_profile_details, container, false);
+        return inflater.inflate(R.layout.fragment_edit_profile_details, container, false);
+    }
 
-        initReferences(rootView);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mNameWrapper = (TextInputLayout) view.findViewById(R.id.name_wrapper);
+        mWhatsappNumberWrapper = (TextInputLayout) view.findViewById(R.id.whatsapp_number_wrapper);
+
+        mNameEditText = (TextInputEditText) view.findViewById(R.id.name_edit_text);
+        mCompanyNameEditText = (TextInputEditText) view.findViewById(R.id.company_name_edit_text);
+        mWhatsappNumberEditText = (TextInputEditText) view.findViewById(R.id.whatsapp_number_edit_text);
+
+        mBusinessTypeSpinner = (Spinner) view.findViewById(R.id.business_type_spinner);
+
+        Button mSaveButton = (Button) view.findViewById(R.id.submit_button);
+        mSaveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveDetails();
+            }
+        });
+
+        fetchBusinessTypesDataFromServer();
         getActivity().getSupportLoaderManager().restartLoader(EDIT_PROFILE_FRAGMENT_LOADER, null, this);
-
-        return rootView;
     }
 
     @Override
@@ -126,25 +143,6 @@ public class EditProfileDetailsFragment extends Fragment implements LoaderManage
     @Override
     public void onLoaderReset(Loader<EditProfileData> loader) {
 
-    }
-
-    private void initReferences(ViewGroup rootView) {
-        mNameWrapper = (TextInputLayout) rootView.findViewById(R.id.name_wrapper);
-        mWhatsappNumberWrapper = (TextInputLayout) rootView.findViewById(R.id.whatsapp_number_wrapper);
-
-        mNameEditText = (TextInputEditText) rootView.findViewById(R.id.name_edit_text);
-        mCompanyNameEditText = (TextInputEditText) rootView.findViewById(R.id.company_name_edit_text);
-        mWhatsappNumberEditText = (TextInputEditText) rootView.findViewById(R.id.whatsapp_number_edit_text);
-
-        mBusinessTypeSpinner = (Spinner) rootView.findViewById(R.id.business_type_spinner);
-
-        Button mSaveButton = (Button) rootView.findViewById(R.id.submit_button);
-        mSaveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                saveDetails();
-            }
-        });
     }
 
     private void saveDetails() {
