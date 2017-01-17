@@ -12,7 +12,6 @@
 
     <ExpandableListView
         android:id="@+id/expandable_list_view"
-        style="@style/AppTheme.DefaultCard"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:childDivider="@android:color/white"
