@@ -23,6 +23,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -56,29 +57,23 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
 
     private HandPickedListenerInterface mListener;
     private final int PRODUCTS_DB_LOADER = 30;
-    private BroadcastReceiver mBuyerProductServiceResponseReceiver;
-    private BroadcastReceiver mProductServiceResponseReceiver;
-    private BroadcastReceiver mSpecificProductServiceResponseReceiver;
+    private BroadcastReceiver mBuyerProductServiceResponseReceiver, mProductServiceResponseReceiver, mSpecificProductServiceResponseReceiver;
     private ProductsLoaderManager mProductsLoader;
     ArrayList<Product> mProductsArrayList;
-    ArrayList<Integer> mExcludeProductIDs;
-    ArrayList<Integer> mProductIDs;
+    ArrayList<Integer> mExcludeProductIDs, mProductIDs;
     SwipeDeck mSwipeDeck;
-    ImageButton mLikeButton;
-    ImageButton mDislikeButton;
-    ImageButton mAddToCartButton;
-    ImageButton mFilterButton;
+    ImageButton mLikeButton, mDislikeButton, mAddToCartButton, mFilterButton;
+    ImageView mLeftImage;
+    ImageView mRightImage;
     ProductSwipeDeckAdapter mProductSwipeDeckAdapter;
     LinearLayout mNoProductsLeft;
     TextView mNoProductsLeftTextView;
     ProgressBar mNoProductsLeftProgressBar;
-    private int mPosition = 0;
-    private int mProductsLeft = 0;
-    private int mProductBuffer = 8;
-    private boolean mHasSwiped = true;
-    private boolean mFirstLoad = true;
-    private int mProductsPageNumber, mTotalProductPages;
+    private int mPosition = 0, mProductsLeft = 0, mProductBuffer = 8, mProductsPageNumber, mTotalProductPages;
+    private boolean mHasSwiped = true, mFirstLoad = true, mButtonEnabled = true;
     private final int mProductsLimit = 20;
+
+    private static final int ANIMATION_DURATION = 300;
 
     public HandPickedFragment() {
     }
@@ -220,8 +215,10 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     }
 
     private void initReferences(ViewGroup rootView) {
-
+        SwipeDeck.ANIMATION_DURATION = ANIMATION_DURATION;
         mSwipeDeck = (SwipeDeck) rootView.findViewById(R.id.product_swipe_deck);
+        mLeftImage = (ImageView) rootView.findViewById(R.id.left_image);
+
         mSwipeDeck.setLeftImage(R.id.left_image);
         mSwipeDeck.setRightImage(R.id.right_image);
         mSwipeDeck.setCallback(new SwipeDeck.SwipeDeckCallback() {
@@ -236,6 +233,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
                 actionAfterSwipe(true);
             }
         });
+
         final Animation animButtonScale = AnimationUtils.loadAnimation(getContext(), R.anim.button_scale_down_up);
         final FrameLayout likeButtonLayout = (FrameLayout) rootView.findViewById(R.id.hand_picked_like_button_layout);
         mLikeButton = (ImageButton) rootView.findViewById(R.id.hand_picked_like_button);
@@ -243,8 +241,12 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             @Override
             public void onClick(View view) {
                 likeButtonLayout.startAnimation(animButtonScale);
-                mHasSwiped = false;
-                mSwipeDeck.swipeTopCardRight(2000);
+                if (mProductsLeft > 0 && mButtonEnabled) {
+                    mProductsLeft -= 1;
+                    mHasSwiped = false;
+                    mButtonEnabled = false;
+                    mSwipeDeck.swipeTopCardRight(ANIMATION_DURATION);
+                }
             }
         });
         final FrameLayout dislikeButtonLayout = (FrameLayout) rootView.findViewById(R.id.hand_picked_dislike_button_layout);
@@ -253,8 +255,12 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             @Override
             public void onClick(View view) {
                 dislikeButtonLayout.startAnimation(animButtonScale);
-                mHasSwiped = false;
-                mSwipeDeck.swipeTopCardLeft(2000);
+                if (mProductsLeft > 0 && mButtonEnabled) {
+                    mProductsLeft -= 1;
+                    mHasSwiped = false;
+                    mButtonEnabled = false;
+                    mSwipeDeck.swipeTopCardLeft(ANIMATION_DURATION);
+                }
             }
         });
         final FrameLayout addToCartButtonLayout = (FrameLayout) rootView.findViewById(R.id.hand_picked_cart_button_layout);
@@ -312,8 +318,8 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         getContext().startService(intent);
 
         mHasSwiped = true;
+        mButtonEnabled = true;
 
-        mProductsLeft -= 1;
         if (mProductsLeft == 0) {
             setNoProductsLeftView();
             return;

@@ -103,10 +103,10 @@ public class ProductSwipeDeckAdapter extends BaseAdapter {
         return convertView;
     }
 
-    static class ViewHolder {
-        ImageView productImageView;
-        TextView productFabric;
-        TextView productPrice;
-        ProgressBar progressBar;
+    public static class ViewHolder {
+        public ImageView productImageView;
+        public TextView productFabric;
+        public TextView productPrice;
+        public ProgressBar progressBar;
     }
 }
