@@ -91,6 +91,20 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == EditAddressFragment.REQUEST_CHECK_SETTINGS){
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.cart_fragment_container);
+            if (fragment instanceof EditAddressFragment) {
+                EditAddressFragment activeFragment = (EditAddressFragment) fragment;
+                activeFragment.onActivityResult(requestCode, resultCode, data);
+            }
+        }
+        else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (mOrderServiceResponseReceiver != null) {
@@ -157,10 +171,8 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
             builder.setMessage("Transaction will be cancelled. Are you sure?").setPositiveButton("Yes", dialogClickListener)
                     .setNegativeButton("No", dialogClickListener).show();
         } else if (mStatus == 0 && mCheckoutID != null && mCheckoutID > 0){
-            FragmentManager fm = getSupportFragmentManager();
-            String openFragment = fm.getBackStackEntryAt(fm.getBackStackEntryCount()-1).getName();
-            if (openFragment.equals(BuyerAddressFragment.class.getCanonicalName())
-                    || openFragment.equals(CheckoutAddressConfirmFragment.class.getCanonicalName())){
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.cart_fragment_container);
+            if (fragment instanceof EditAddressFragment || fragment instanceof BuyerAddressFragment){
                 openToFragment("cart_summary", null);
             } else {
                 super.onBackPressed();
@@ -242,11 +254,17 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
             mProceedButton.setEnabled(false);
             mProceedButtonLayout.setVisibility(View.GONE);
         } else {
-            mProceedButtonLayout.setVisibility(View.VISIBLE);
-            mTotalTextView.setText("Total: Rs. " + String.format("%.0f",mCart.getFinalPrice()));
-            mProductsPiecesTextView.setText(String.valueOf(mCart.getProductCount()) + " products - "
-                    + String.valueOf(mCart.getPieces()) + " pieces");
-            mProceedButton.setEnabled(true);
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.cart_fragment_container);
+            if (fragment instanceof EditAddressFragment || fragment instanceof BuyerAddressFragment) {
+                mProceedButton.setEnabled(false);
+                mProceedButtonLayout.setVisibility(View.GONE);
+            } else {
+                mProceedButtonLayout.setVisibility(View.VISIBLE);
+                mTotalTextView.setText("Total: Rs. " + String.format("%.0f", mCart.getFinalPrice()));
+                mProductsPiecesTextView.setText(String.valueOf(mCart.getProductCount()) + " products - "
+                        + String.valueOf(mCart.getPieces()) + " pieces");
+                mProceedButton.setEnabled(true);
+            }
         }
     }
 
@@ -304,16 +322,12 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
 
         if (!fragmentPopped) {
             // fragment not in backstack create it
-            if (fragment.getClass().getSimpleName().equals(EditAddressFragment.class.getSimpleName())){
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.cart_fragment_container, fragment, fragment.getClass().getSimpleName());
-                ft.commit();
-            }else {
+
                 FragmentTransaction ft = fm.beginTransaction();
                 ft.replace(R.id.cart_fragment_container, fragment, fragment.getClass().getSimpleName());
                 ft.addToBackStack(backStateName);
                 ft.commit();
-            }
+
         }
 
     }

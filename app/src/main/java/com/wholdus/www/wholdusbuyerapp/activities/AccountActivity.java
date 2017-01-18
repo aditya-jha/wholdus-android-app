@@ -84,6 +84,20 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == EditAddressFragment.REQUEST_CHECK_SETTINGS){
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            if (fragment instanceof EditAddressFragment) {
+                EditAddressFragment activeFragment = (EditAddressFragment) fragment;
+                activeFragment.onActivityResult(requestCode, resultCode, data);
+            }
+        }
+        else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
     public void editPersonalDetails() {
         // load edit profile details fragment
         // don't add it to backstack
