@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -242,10 +243,16 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             public void onClick(View view) {
                 likeButtonLayout.startAnimation(animButtonScale);
                 if (mProductsLeft > 0 && mButtonEnabled) {
+                    bringFeedbackImageToFront(true);
                     mProductsLeft -= 1;
                     mHasSwiped = false;
                     mButtonEnabled = false;
-                    mSwipeDeck.swipeTopCardRight(ANIMATION_DURATION);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mSwipeDeck.swipeTopCardRight(ANIMATION_DURATION);
+                        }
+                    }, 200);
                 }
             }
         });
@@ -256,10 +263,16 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             public void onClick(View view) {
                 dislikeButtonLayout.startAnimation(animButtonScale);
                 if (mProductsLeft > 0 && mButtonEnabled) {
+                    bringFeedbackImageToFront(false);
                     mProductsLeft -= 1;
                     mHasSwiped = false;
                     mButtonEnabled = false;
-                    mSwipeDeck.swipeTopCardLeft(ANIMATION_DURATION);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mSwipeDeck.swipeTopCardLeft(ANIMATION_DURATION);
+                        }
+                    }, 200);
                 }
             }
         });
@@ -308,6 +321,54 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         getContext().startService(intent);
     }
 
+    private void bringFeedbackImageToFront(boolean liked){
+        try {
+            int adapterIndex;
+            if (mProductsLeft > 2) {
+                adapterIndex = 2;
+            } else if (mProductsLeft == 2) {
+                adapterIndex = 1;
+            } else if (mProductsLeft == 1) {
+                adapterIndex = 0;
+            } else {
+                return;
+            }
+            int resourceID;
+            if (liked){
+                resourceID = R.id.right_image;
+            } else {
+                resourceID = R.id.left_image;
+            }
+            View convertView = mSwipeDeck.getChildAt(adapterIndex);
+            if (convertView == null){
+                return;
+            }
+            final Animation animFeedbackImage = AnimationUtils.loadAnimation(getContext(), R.anim.feedback_image_fade_in);
+            final ImageView imageView = (ImageView) convertView.findViewById(resourceID);
+            imageView.setVisibility(View.INVISIBLE);
+            imageView.setAlpha((float) 1);
+            animFeedbackImage.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    imageView.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            imageView.startAnimation(animFeedbackImage);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     private void actionAfterSwipe(boolean liked) {
         Intent intent = new Intent(getContext(), BuyerProductService.class);
         intent.putExtra("TODO", TODO.UPDATE_PRODUCT_RESPONSE);
@@ -326,7 +387,12 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         }
 
         mPosition += 1;
-        mListener.fragmentCreated(mProductsArrayList.get(mPosition).getName());
+        try {
+            mListener.fragmentCreated(mProductsArrayList.get(mPosition).getName());
+        } catch (Exception e){
+            setNoProductsLeftView();
+        }
+
 
         if (mProductsLeft < mProductBuffer) {
             getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, mProductsLoader);

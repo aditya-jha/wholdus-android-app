@@ -205,15 +205,13 @@ public class EditAddressFragment extends Fragment implements
             public void onConnected(@Nullable Bundle bundle) {
                 if (ContextCompat.checkSelfPermission(getContext(),
                         Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    startLocationRequest();
-                    /**
                      Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                      if (location != null) {
 
                      getAddressFromLocation(location);
                      } else {
                      startLocationRequest();
-                     }**/
+                     }
                 }
             }
 

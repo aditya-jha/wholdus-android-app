@@ -83,15 +83,6 @@ public class ProductSwipeDeckAdapter extends BaseAdapter {
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .into(new BitmapImageViewTarget(holder.productImageView));
 
-        holder.productImageView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-                if(holder.productImageView.getDrawable() != null) {
-                    holder.progressBar.setVisibility(View.GONE);
-                }
-            }
-        });
-
         mListener.cardCreated();
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
