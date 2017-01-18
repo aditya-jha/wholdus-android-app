@@ -182,7 +182,7 @@ public class EditAddressFragment extends Fragment implements
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     connectGoogleAPIClient();
                 } else {
-                    mProgressBar.setVisibility(View.GONE);
+                    mProgressBar.setVisibility(View.INVISIBLE);
                     Toast.makeText(getContext(), "Need your permission for location!", Toast.LENGTH_SHORT).show();
                 }
         }
@@ -224,7 +224,7 @@ public class EditAddressFragment extends Fragment implements
         }, new GoogleApiClient.OnConnectionFailedListener() {
             @Override
             public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                mProgressBar.setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.INVISIBLE);
                 Toast.makeText(getContext(), "Error google", Toast.LENGTH_SHORT).show();
             }
         }).addApi(LocationServices.API).build();
@@ -256,12 +256,12 @@ public class EditAddressFragment extends Fragment implements
                                     getActivity(),
                                     REQUEST_CHECK_SETTINGS);
                         } catch (IntentSender.SendIntentException e) {
-                            mProgressBar.setVisibility(View.GONE);
+                            mProgressBar.setVisibility(View.INVISIBLE);
                             Toast.makeText(getContext(), "Could not fetch location", Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        mProgressBar.setVisibility(View.GONE);
+                        mProgressBar.setVisibility(View.INVISIBLE);
                         Toast.makeText(getContext(), "Could not fetch location", Toast.LENGTH_SHORT).show();
                         break;
                 }
@@ -280,11 +280,11 @@ public class EditAddressFragment extends Fragment implements
                         fetchLocation();
                         break;
                     case Activity.RESULT_CANCELED:
-                        mProgressBar.setVisibility(View.GONE);
+                        mProgressBar.setVisibility(View.INVISIBLE);
                         Toast.makeText(getContext(), "Need your permission for location!", Toast.LENGTH_SHORT).show();
                         break;
                     default:
-                        mProgressBar.setVisibility(View.GONE);
+                        mProgressBar.setVisibility(View.INVISIBLE);
                         Toast.makeText(getContext(), "Could not fetch location", Toast.LENGTH_SHORT).show();
                         break;
                 }
@@ -322,7 +322,7 @@ public class EditAddressFragment extends Fragment implements
                 try {
                     List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
                     if (addresses == null || addresses.size() == 0) {
-                        mProgressBar.setVisibility(View.GONE);
+                        mProgressBar.setVisibility(View.INVISIBLE);
                         Toast.makeText(getContext(), "Could not fetch location", Toast.LENGTH_SHORT).show();
                     } else {
                         final Address address = addresses.get(0);
@@ -330,12 +330,12 @@ public class EditAddressFragment extends Fragment implements
                             @Override
                             public void run() {
                                 setDataFromLocation(address);
-                                mProgressBar.setVisibility(View.GONE);
+                                mProgressBar.setVisibility(View.INVISIBLE);
                             }
                         });
                     }
                 } catch (Exception e) {
-                    mProgressBar.setVisibility(View.GONE);
+                    mProgressBar.setVisibility(View.INVISIBLE);
                     Toast.makeText(getContext(), "Could not fetch location", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
@@ -497,6 +497,7 @@ public class EditAddressFragment extends Fragment implements
     @Override
     public void onLoadFinished(Loader<ArrayList<BuyerAddress>> loader, ArrayList<BuyerAddress> data) {
         if (data.size() > 0) {
+            mProgressBar.setVisibility(View.INVISIBLE);
             mBuyerAddress = data.get(0);
             setViewFromData(mBuyerAddress);
             mSaveButton.setEnabled(true);
