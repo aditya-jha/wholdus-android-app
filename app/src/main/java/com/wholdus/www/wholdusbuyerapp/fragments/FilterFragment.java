@@ -146,8 +146,10 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void onLoadFinished(Loader<ArrayList<CategorySeller>> loader, ArrayList<CategorySeller> data) {
-        mBrandFilterValuesAdapter.resetData(data);
-        mBrandFilterValuesAdapter.notifyDataSetChanged();
+        if (data != null) {
+            mBrandFilterValuesAdapter.resetData(data);
+            mBrandFilterValuesAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -281,8 +283,10 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
 
         @Override
         public void onLoadFinished(Loader<ArrayList<Category>> loader, ArrayList<Category> data) {
-            mCategoryFilterValuesAdapter.resetData(data);
-            mCategoryFilterValuesAdapter.notifyDataSetChanged();
+            if (data != null) {
+                mCategoryFilterValuesAdapter.resetData(data);
+                mCategoryFilterValuesAdapter.notifyDataSetChanged();
+            }
         }
 
 

@@ -499,7 +499,7 @@ public class EditAddressFragment extends Fragment implements
 
     @Override
     public void onLoadFinished(Loader<ArrayList<BuyerAddress>> loader, ArrayList<BuyerAddress> data) {
-        if (data.size() > 0){
+        if (data != null && data.size() > 0){
             mBuyerAddress = data.get(0);
             setViewFromData(mBuyerAddress);
             mSaveButton.setEnabled(true);

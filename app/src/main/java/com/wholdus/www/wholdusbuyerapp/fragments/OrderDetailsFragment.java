@@ -145,7 +145,7 @@ public class OrderDetailsFragment extends Fragment {
 
         @Override
         public void onLoadFinished(Loader<ArrayList<Order>> loader, ArrayList<Order> data) {
-            if (data.size() == 1) {
+            if (data != null && data.size() == 1) {
                 mOrder= data.get(0);
                 setViewForOrders();
             }

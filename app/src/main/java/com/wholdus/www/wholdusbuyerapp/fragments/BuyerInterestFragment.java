@@ -131,7 +131,7 @@ public class BuyerInterestFragment extends Fragment implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<Buyer> loader, Buyer data) {
-        if (data.getBuyerInterest().size() > 0) {
+        if (data != null && data.getBuyerInterest().size() > 0) {
             mPageLoader.setVisibility(View.INVISIBLE);
             mPageLayout.setVisibility(View.VISIBLE);
             BuyerInterestsAdapter adapter = new BuyerInterestsAdapter(getContext(), data.getBuyerInterest());

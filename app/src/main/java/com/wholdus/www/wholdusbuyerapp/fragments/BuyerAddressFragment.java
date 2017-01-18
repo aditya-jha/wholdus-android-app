@@ -154,7 +154,9 @@ public class BuyerAddressFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<ArrayList<BuyerAddress>> loader, ArrayList<BuyerAddress> data) {
-        setViewForAddressListView(data);
+        if (data != null) {
+            setViewForAddressListView(data);
+        }
     }
 
     @Override

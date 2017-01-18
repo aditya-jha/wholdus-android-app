@@ -125,7 +125,7 @@ public class CheckoutAddressConfirmFragment extends Fragment implements LoaderMa
 
     @Override
     public void onLoadFinished(Loader<ArrayList<BuyerAddress>> loader, ArrayList<BuyerAddress> data) {
-        if (data.size() == 1) {
+        if (data != null && data.size() == 1) {
             mAddress = data.get(0);
             setViewForAddress();
         }

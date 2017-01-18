@@ -19,6 +19,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -233,27 +236,33 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
                 actionAfterSwipe(true);
             }
         });
+        final Animation animButtonScale = AnimationUtils.loadAnimation(getContext(), R.anim.button_scale_down_up);
+        final FrameLayout likeButtonLayout = (FrameLayout) rootView.findViewById(R.id.hand_picked_like_button_layout);
         mLikeButton = (ImageButton) rootView.findViewById(R.id.hand_picked_like_button);
         mLikeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                likeButtonLayout.startAnimation(animButtonScale);
                 mHasSwiped = false;
                 mSwipeDeck.swipeTopCardRight(2000);
             }
         });
+        final FrameLayout dislikeButtonLayout = (FrameLayout) rootView.findViewById(R.id.hand_picked_dislike_button_layout);
         mDislikeButton = (ImageButton) rootView.findViewById(R.id.hand_picked_dislike_button);
         mDislikeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                dislikeButtonLayout.startAnimation(animButtonScale);
                 mHasSwiped = false;
                 mSwipeDeck.swipeTopCardLeft(2000);
             }
         });
-
+        final FrameLayout addToCartButtonLayout = (FrameLayout) rootView.findViewById(R.id.hand_picked_cart_button_layout);
         mAddToCartButton = (ImageButton) rootView.findViewById(R.id.hand_picked_cart_button);
         mAddToCartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                addToCartButtonLayout.startAnimation(animButtonScale);
                 FragmentManager fragmentManager = getFragmentManager();
                 CartDialogFragment dialogFragment = new CartDialogFragment();
                 Bundle args = new Bundle();
@@ -262,11 +271,12 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
                 dialogFragment.show(fragmentManager, dialogFragment.getClass().getSimpleName());
             }
         });
-
+        final FrameLayout filterButtonLayout = (FrameLayout) rootView.findViewById(R.id.hand_picked_filter_button_layout);
         mFilterButton = (ImageButton) rootView.findViewById(R.id.hand_picked_filter_button);
         mFilterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                filterButtonLayout.startAnimation(animButtonScale);
                 //resetProducts();
                 //FilterClass.setCategoryID(-1);
                 mListener.openFilter(true);
@@ -391,7 +401,9 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
 
         @Override
         public void onLoadFinished(Loader<ArrayList<Product>> loader, ArrayList<Product> data) {
-            setViewForProducts(data);
+            if (data != null) {
+                setViewForProducts(data);
+            }
         }
 
 
