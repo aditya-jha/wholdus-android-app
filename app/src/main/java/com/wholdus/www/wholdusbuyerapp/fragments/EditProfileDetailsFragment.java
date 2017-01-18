@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.BusinessTypesAdapter;
@@ -86,7 +87,7 @@ public class EditProfileDetailsFragment extends Fragment implements LoaderManage
 
         mBusinessTypeSpinner = (Spinner) view.findViewById(R.id.business_type_spinner);
 
-        Button mSaveButton = (Button) view.findViewById(R.id.submit_button);
+        TextView mSaveButton = (TextView) view.findViewById(R.id.submit_button);
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -201,16 +202,14 @@ public class EditProfileDetailsFragment extends Fragment implements LoaderManage
     }
 
     private void handleReceiverResponse(Intent intent) {
-        String extra = intent.getStringExtra("extra");
-        if (extra != null) {
-            if (extra.equals(getString(R.string.business_types_data_updated))) {
-                getActivity().getSupportLoaderManager().restartLoader(EDIT_PROFILE_FRAGMENT_LOADER, null, this);
-            } else if (extra.equals(getString(R.string.user_data_modified))) {
-                // close fragment
+        int todo = intent.getIntExtra("TODO", -1);
+        switch (todo) {
+            case R.string.user_data_updated:
                 mListener.openProfileFragment();
-            }
-        } else {
-            mListener.openProfileFragment();
+                break;
+            case R.string.fetch_business_types:
+                getActivity().getSupportLoaderManager().restartLoader(EDIT_PROFILE_FRAGMENT_LOADER, null, this);
+                break;
         }
     }
 

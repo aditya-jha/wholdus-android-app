@@ -67,7 +67,7 @@
     <string name="save_text">SAVE</string>
 
     <!-- Edit Address Fragment -->
-    <string name="save_current_address_text">Use My Current Location</string>
+    <string name="save_current_address_text">My Location</string>
     <string name="cancel_text">Cancel</string>
     <string name="address_alias_key">Address Nickname</string>
 

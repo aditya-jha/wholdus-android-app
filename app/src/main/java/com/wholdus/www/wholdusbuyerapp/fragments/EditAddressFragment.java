@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -58,8 +59,7 @@ public class EditAddressFragment extends Fragment implements LoaderManager.Loade
     private TextInputEditText mPincodeEditText, mMobileNumberEditText,
             mAddressEditText, mCityEditText, mStateEditText, mLandmarkEditText, mAliasEditText;
 
-    private Button mSaveButton;
-    private Button mCurrentLocationButton;
+    private TextView  mSaveButton, mCurrentLocationButton;
     private GoogleApiClient mGoogleApiClient;
     private BuyerAddress mBuyerAddress;
 
@@ -269,7 +269,7 @@ public class EditAddressFragment extends Fragment implements LoaderManager.Loade
         mLandmarkEditText = (TextInputEditText) rootView.findViewById(R.id.landmark_edit_text);
         mAliasEditText = (TextInputEditText) rootView.findViewById(R.id.alias_edit_text);
 
-        mSaveButton = (Button) rootView.findViewById(R.id.save_button);
+        mSaveButton = (TextView) rootView.findViewById(R.id.save_button);
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -281,7 +281,7 @@ public class EditAddressFragment extends Fragment implements LoaderManager.Loade
             mSaveButton.setEnabled(false);
         }
 
-        mCurrentLocationButton = (Button) rootView.findViewById(R.id.current_location_button);
+        mCurrentLocationButton = (TextView) rootView.findViewById(R.id.current_location_button);
         mCurrentLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

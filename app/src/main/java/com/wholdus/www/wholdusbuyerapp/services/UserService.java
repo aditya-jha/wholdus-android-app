@@ -103,7 +103,7 @@ public class UserService extends IntentService {
     }
 
     private void fetchUserProfile(int todo) {
-        HashMap<String,String> params = getUserResponseParams();
+        HashMap<String, String> params = getUserResponseParams();
         String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_details_url), params);
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }
@@ -118,9 +118,11 @@ public class UserService extends IntentService {
         UserDBHelper userDBHelper = new UserDBHelper(this);
         userDBHelper.updateUserData(GlobalAccessHelper.getBuyerID(getApplication()), cv);
 
-        sendUserDataUpdatedBroadCast(getString(R.string.user_data_modified));
+        Intent intent = new Intent(getString(R.string.user_data_updated));
+        intent.putExtra("TODO", R.string.user_data_updated);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
-        HashMap<String,String> params = getUserResponseParams();
+        HashMap<String, String> params = getUserResponseParams();
         // send to server
         String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_details_url), params);
         volleyStringRequest(todo, Request.Method.PUT, url, data.toString());
@@ -167,7 +169,11 @@ public class UserService extends IntentService {
         boolean savedUserAddress = userDBHelper.updateUserAddressData(response) > 0;
         catalogDBHelper.updateBuyerInterestsDataFromJSONArray(response.getJSONArray("buyer_interests"));
 
-        sendUserDataUpdatedBroadCast(null);
+        if (savedUserData) {
+            Intent intent = new Intent(getString(R.string.user_data_updated));
+            intent.putExtra("TODO", R.string.user_data_updated);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        }
     }
 
     private void handleBusinessTypesResponse(JSONObject data) throws JSONException {
@@ -175,7 +181,9 @@ public class UserService extends IntentService {
 
         boolean savedBusinessTypesData = userDBHelper.updateBusinessTypesData(data) > 0;
         if (savedBusinessTypesData) {
-            sendUserDataUpdatedBroadCast(getString(R.string.business_types_data_updated));
+            Intent intent = new Intent(getString(R.string.user_data_updated));
+            intent.putExtra("TODO", R.string.fetch_business_types);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         }
     }
 
@@ -228,16 +236,16 @@ public class UserService extends IntentService {
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest, REQUEST_TAG);
     }
 
-    private void updateAllUnSyncedAddresses(){
+    private void updateAllUnSyncedAddresses() {
         UserDBHelper userDBHelper = new UserDBHelper(getApplicationContext());
-        ArrayList<BuyerAddress> buyerAddresses = BuyerAddress.getBuyerAddressesFromCursor(userDBHelper.getUserAddress(-1,-1,0,0,null));
-        for (BuyerAddress buyerAddress: buyerAddresses){
+        ArrayList<BuyerAddress> buyerAddresses = BuyerAddress.getBuyerAddressesFromCursor(userDBHelper.getUserAddress(-1, -1, 0, 0, null));
+        for (BuyerAddress buyerAddress : buyerAddresses) {
             sendBuyerAddressToServer(buyerAddress);
         }
 
     }
 
-    private void sendBuyerAddressToServer(BuyerAddress buyerAddress){
+    private void sendBuyerAddressToServer(BuyerAddress buyerAddress) {
         HashMap<String, String> params = new HashMap<>();
         String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_address_url), params);
         JSONObject requestBody = new JSONObject();
@@ -252,7 +260,7 @@ public class UserService extends IntentService {
             requestBody.put(UserAddressTable.COLUMN_CONTACT_NUMBER, buyerAddress.getContactNumber());
             requestBody.put(UserAddressTable.COLUMN_ADDRESS_ALIAS, buyerAddress.getAlias());
 
-            if (buyerAddress.getAddressID() > 0){
+            if (buyerAddress.getAddressID() > 0) {
                 requestBody.put(UserAddressTable.COLUMN_ADDRESS_ID, buyerAddress.getAddressID());
                 requestMethod = Request.Method.PUT;
             } else {
@@ -260,7 +268,7 @@ public class UserService extends IntentService {
                 requestMethod = Request.Method.POST;
             }
 
-        } catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
             return;
         }
@@ -268,40 +276,40 @@ public class UserService extends IntentService {
         volleyStringRequest(R.string.update_user_address, requestMethod, url, requestBody.toString());
     }
 
-    public void saveBuyerAddressUpdateResponseToDb(JSONObject data) throws JSONException{
+    public void saveBuyerAddressUpdateResponseToDb(JSONObject data) throws JSONException {
         UserDBHelper userDBHelper = new UserDBHelper(getApplicationContext());
         userDBHelper.updateUserAddressDataFromJSONObject(data.getJSONObject("address"), false);
         sendUserDataUpdatedBroadCast(null);
     }
 
-    public void updateBuyerType(int todo, Intent intent){
-        HashMap<String,String> params = getUserResponseParams();
+    public void updateBuyerType(int todo, Intent intent) {
+        HashMap<String, String> params = getUserResponseParams();
         JSONObject data = new JSONObject();
         JSONObject details = new JSONObject();
         try {
             details.put("buyertypeID", intent.getStringExtra(getString(R.string.business_type_key)));
             data.put("details", details);
-        } catch (JSONException e){
+        } catch (JSONException e) {
             return;
         }
         String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_details_url), params);
         volleyStringRequest(R.string.update_user_profile, Request.Method.PUT, url, data.toString());
     }
 
-    public void updateWhatsappNumber(int todo, Intent intent){
-        HashMap<String,String> params = getUserResponseParams();
+    public void updateWhatsappNumber(int todo, Intent intent) {
+        HashMap<String, String> params = getUserResponseParams();
         JSONObject data = new JSONObject();
         try {
             data.put(UserTable.COLUMN_WHATSAPP_NUMBER, intent.getStringExtra(getString(R.string.whatsapp_number_key)));
-        } catch (JSONException e){
+        } catch (JSONException e) {
             return;
         }
         String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_details_url), params);
         volleyStringRequest(R.string.update_user_profile, Request.Method.PUT, url, data.toString());
     }
 
-    private HashMap<String, String> getUserResponseParams(){
-        HashMap<String,String> params = new HashMap<>();
+    private HashMap<String, String> getUserResponseParams() {
+        HashMap<String, String> params = new HashMap<>();
         params.put("buyer_address_details", "1");
         params.put("buyer_interest_details", "1");
         params.put("buyer_details_details", "1");
