@@ -15,7 +15,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
@@ -23,8 +22,8 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -72,10 +71,8 @@ public class EditAddressFragment extends Fragment implements
     private TextInputEditText mPincodeEditText, mMobileNumberEditText,
             mAddressEditText, mCityEditText, mStateEditText, mLandmarkEditText, mAliasEditText;
 
+    private TextView mSaveButton, mCurrentLocationButton;
     private ProgressBar mProgressBar;
-
-    private Button mSaveButton;
-    private Button mCurrentLocationButton;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private LocationListener mLocationListener;
@@ -129,9 +126,9 @@ public class EditAddressFragment extends Fragment implements
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (mAddressID == -1 && m_ID == -1) {
-            SharedPreferences shippingPreferences = getActivity().getSharedPreferences(SHIPPING_SHARED_PREFERENCES,MODE_PRIVATE);
+            SharedPreferences shippingPreferences = getActivity().getSharedPreferences(SHIPPING_SHARED_PREFERENCES, MODE_PRIVATE);
             String pincode = shippingPreferences.getString(PINCODE_KEY, null);
-            if (pincode != null){
+            if (pincode != null) {
                 mPincodeEditText.setText(pincode);
             }
             mAliasEditText.setText("Store");
@@ -185,17 +182,16 @@ public class EditAddressFragment extends Fragment implements
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     connectGoogleAPIClient();
                 } else {
-                    mProgressBar.setVisibility(View.GONE);
+                    mProgressBar.setVisibility(View.INVISIBLE);
                     Toast.makeText(getContext(), "Need your permission for location!", Toast.LENGTH_SHORT).show();
                 }
         }
     }
 
-    private void connectGoogleAPIClient(){
+    private void connectGoogleAPIClient() {
         if (mGoogleApiClient != null) {
             mGoogleApiClient.reconnect();
-        }
-        else {
+        } else {
             startLocationListener();
             if (mGoogleApiClient != null) {
                 mGoogleApiClient.reconnect();
@@ -203,7 +199,7 @@ public class EditAddressFragment extends Fragment implements
         }
     }
 
-    private void startLocationListener(){
+    private void startLocationListener() {
         mGoogleApiClient = new GoogleApiClient.Builder(getContext(), new GoogleApiClient.ConnectionCallbacks() {
             @Override
             public void onConnected(@Nullable Bundle bundle) {
@@ -211,13 +207,13 @@ public class EditAddressFragment extends Fragment implements
                         Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     startLocationRequest();
                     /**
-                    Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                    if (location != null) {
+                     Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                     if (location != null) {
 
-                        getAddressFromLocation(location);
-                    } else {
-                        startLocationRequest();
-                    }**/
+                     getAddressFromLocation(location);
+                     } else {
+                     startLocationRequest();
+                     }**/
                 }
             }
 
@@ -228,13 +224,13 @@ public class EditAddressFragment extends Fragment implements
         }, new GoogleApiClient.OnConnectionFailedListener() {
             @Override
             public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                mProgressBar.setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.INVISIBLE);
                 Toast.makeText(getContext(), "Error google", Toast.LENGTH_SHORT).show();
             }
         }).addApi(LocationServices.API).build();
     }
 
-    private void startLocationRequest(){
+    private void startLocationRequest() {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
@@ -260,12 +256,12 @@ public class EditAddressFragment extends Fragment implements
                                     getActivity(),
                                     REQUEST_CHECK_SETTINGS);
                         } catch (IntentSender.SendIntentException e) {
-                            mProgressBar.setVisibility(View.GONE);
+                            mProgressBar.setVisibility(View.INVISIBLE);
                             Toast.makeText(getContext(), "Could not fetch location", Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        mProgressBar.setVisibility(View.GONE);
+                        mProgressBar.setVisibility(View.INVISIBLE);
                         Toast.makeText(getContext(), "Could not fetch location", Toast.LENGTH_SHORT).show();
                         break;
                 }
@@ -284,11 +280,11 @@ public class EditAddressFragment extends Fragment implements
                         fetchLocation();
                         break;
                     case Activity.RESULT_CANCELED:
-                        mProgressBar.setVisibility(View.GONE);
+                        mProgressBar.setVisibility(View.INVISIBLE);
                         Toast.makeText(getContext(), "Need your permission for location!", Toast.LENGTH_SHORT).show();
                         break;
                     default:
-                        mProgressBar.setVisibility(View.GONE);
+                        mProgressBar.setVisibility(View.INVISIBLE);
                         Toast.makeText(getContext(), "Could not fetch location", Toast.LENGTH_SHORT).show();
                         break;
                 }
@@ -296,7 +292,7 @@ public class EditAddressFragment extends Fragment implements
         }
     }
 
-    private void fetchLocation(){
+    private void fetchLocation() {
         if (ContextCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             if (mLocationListener == null) {
@@ -318,28 +314,28 @@ public class EditAddressFragment extends Fragment implements
 
     }
 
-    private void getAddressFromLocation(final Location location){
+    private void getAddressFromLocation(final Location location) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
                 try {
                     List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                    if (addresses == null || addresses.size()  == 0){
-                        mProgressBar.setVisibility(View.GONE);
+                    if (addresses == null || addresses.size() == 0) {
+                        mProgressBar.setVisibility(View.INVISIBLE);
                         Toast.makeText(getContext(), "Could not fetch location", Toast.LENGTH_SHORT).show();
-                    }else {
+                    } else {
                         final Address address = addresses.get(0);
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 setDataFromLocation(address);
-                                mProgressBar.setVisibility(View.GONE);
+                                mProgressBar.setVisibility(View.INVISIBLE);
                             }
                         });
                     }
-                } catch (Exception e){
-                    mProgressBar.setVisibility(View.GONE);
+                } catch (Exception e) {
+                    mProgressBar.setVisibility(View.INVISIBLE);
                     Toast.makeText(getContext(), "Could not fetch location", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
@@ -347,31 +343,31 @@ public class EditAddressFragment extends Fragment implements
         }).start();
     }
 
-    private void setDataFromLocation(Address address){
+    private void setDataFromLocation(Address address) {
         //TODO : set buyer mobile number in mobile number
-        if (address.getPostalCode() != null){
+        if (address.getPostalCode() != null) {
             mPincodeEditText.setText(address.getPostalCode());
         }
-        if (address.getLocality() != null){
+        if (address.getLocality() != null) {
             mCityEditText.setText(address.getLocality());
-        } else if (address.getSubAdminArea() != null){
+        } else if (address.getSubAdminArea() != null) {
             mCityEditText.setText(address.getSubAdminArea());
         }
-        if (address.getAdminArea() != null){
+        if (address.getAdminArea() != null) {
             mStateEditText.setText(address.getAdminArea());
         }
         String addressText = "";
 
-        if (address.getSubThoroughfare() != null){
+        if (address.getSubThoroughfare() != null) {
             addressText += address.getSubThoroughfare() + ", ";
         }
-        if (address.getThoroughfare() != null){
+        if (address.getThoroughfare() != null) {
             addressText += address.getThoroughfare() + ", ";
         }
-        if (address.getSubLocality() != null){
+        if (address.getSubLocality() != null) {
             addressText += address.getSubLocality() + ", ";
         }
-        if (address.getLocality() != null){
+        if (address.getLocality() != null) {
             addressText += address.getLocality();
         }
 
@@ -393,7 +389,7 @@ public class EditAddressFragment extends Fragment implements
         mLandmarkEditText = (TextInputEditText) rootView.findViewById(R.id.landmark_edit_text);
         mAliasEditText = (TextInputEditText) rootView.findViewById(R.id.alias_edit_text);
 
-        mSaveButton = (Button) rootView.findViewById(R.id.save_button);
+        mSaveButton = (TextView) rootView.findViewById(R.id.save_button);
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -405,7 +401,7 @@ public class EditAddressFragment extends Fragment implements
             mSaveButton.setEnabled(false);
         }
 
-        mCurrentLocationButton = (Button) rootView.findViewById(R.id.current_location_button);
+        mCurrentLocationButton = (TextView) rootView.findViewById(R.id.current_location_button);
         mCurrentLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -483,7 +479,7 @@ public class EditAddressFragment extends Fragment implements
         }
     }
 
-    private void setViewFromData(BuyerAddress address){
+    private void setViewFromData(BuyerAddress address) {
         mAliasEditText.setText(address.getAlias());
         mMobileNumberEditText.setText(address.getContactNumber());
         mLandmarkEditText.setText(address.getLandmark());
@@ -492,6 +488,7 @@ public class EditAddressFragment extends Fragment implements
         mPincodeEditText.setText(address.getPincode());
         mAddressEditText.setText(address.getAddress());
     }
+
     @Override
     public void onLoaderReset(Loader<ArrayList<BuyerAddress>> loader) {
 
@@ -499,7 +496,8 @@ public class EditAddressFragment extends Fragment implements
 
     @Override
     public void onLoadFinished(Loader<ArrayList<BuyerAddress>> loader, ArrayList<BuyerAddress> data) {
-        if (data.size() > 0){
+        if (data.size() > 0) {
+            mProgressBar.setVisibility(View.INVISIBLE);
             mBuyerAddress = data.get(0);
             setViewFromData(mBuyerAddress);
             mSaveButton.setEnabled(true);
@@ -511,7 +509,7 @@ public class EditAddressFragment extends Fragment implements
         return new BuyerAddressLoader(getContext(), mAddressID, m_ID);
     }
 
-    private class BuyerLoaderManager  implements LoaderManager.LoaderCallbacks<Buyer>{
+    private class BuyerLoaderManager implements LoaderManager.LoaderCallbacks<Buyer> {
         @Override
         public void onLoaderReset(Loader<Buyer> loader) {
 
@@ -519,7 +517,7 @@ public class EditAddressFragment extends Fragment implements
 
         @Override
         public void onLoadFinished(Loader<Buyer> loader, Buyer data) {
-            if (data != null && mMobileNumberEditText.getText().toString().equals("")){
+            if (data != null && mMobileNumberEditText.getText().toString().equals("")) {
                 mMobileNumberEditText.setText(data.getMobileNumber());
             }
         }
