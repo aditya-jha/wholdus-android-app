@@ -48,7 +48,6 @@ public class BuyerAddressFragment extends Fragment implements LoaderManager.Load
     AddressDisplayListViewAdapter mAddressDisplayListViewAdapter;
     //TODO Define all loaders at one place
 
-
     public BuyerAddressFragment(){
 
     }
@@ -92,7 +91,7 @@ public class BuyerAddressFragment extends Fragment implements LoaderManager.Load
         IntentFilter intentFilter = new IntentFilter(getString(R.string.user_data_updated));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mUserServiceResponseReceiver, intentFilter);
         Bundle args = getArguments();
-        mListener.fragmentCreated(args.getString("fragment_title", "My Addresses"), false);
+        mListener.fragmentCreated(args.getString("fragment_title", "My Address"), true);
     }
 
     private void initReferences(ViewGroup rootView) {

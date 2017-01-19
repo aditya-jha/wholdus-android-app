@@ -103,7 +103,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         IntentFilter intentFilter = new IntentFilter(getString(R.string.user_data_updated));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mUserServiceResponseReceiver, intentFilter);
 
-        mListener.fragmentCreated("My Profile", false);
+        mListener.fragmentCreated("My Profile", true);
     }
 
     @Override

@@ -51,11 +51,7 @@ public class SortBottomSheetFragment extends BottomSheetDialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            mListener = (CategoryProductListenerInterface) context;
-        } catch (ClassCastException cee) {
-            Log.e(this.getClass().getSimpleName(), " must implement " + CategoryProductListenerInterface.class.getSimpleName());
-        }
+        mListener = (CategoryProductListenerInterface) context;
     }
 
     @Override

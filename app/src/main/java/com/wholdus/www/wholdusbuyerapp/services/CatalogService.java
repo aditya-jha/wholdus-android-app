@@ -80,7 +80,6 @@ public class CatalogService extends IntentService {
         params.put("seller_details", "1");
         params.put("seller_address_details", "1");
         String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.product_url), params);
-        Log.d(ProductsGridFragment.class.getSimpleName(), "making call for page: " + pageNumber);
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }
 
