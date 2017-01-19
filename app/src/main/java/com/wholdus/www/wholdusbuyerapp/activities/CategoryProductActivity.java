@@ -15,6 +15,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
@@ -150,6 +152,15 @@ public class CategoryProductActivity extends AppCompatActivity
     @Override
     public void filterFragmentActive(boolean isActive) {
         mFilterFragmentActive = isActive;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (mType == Constants.FAV_PRODUCTS) {
+            MenuItem menuItem = menu.findItem(R.id.action_bar_shortlist);
+            menuItem.setVisible(false);
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     private void initToolbar() {
