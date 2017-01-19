@@ -134,10 +134,7 @@ public class GetBusinessTypeFragment extends Fragment implements LoaderManager.L
 
     private void handleAPIResponse(Intent intent){
         if (mBusinessTypes.isEmpty()){
-            String extra = intent.getStringExtra("extra");
-            if (extra != null && extra.equals(getString(R.string.business_types_data_updated))){
                 getActivity().getSupportLoaderManager().restartLoader(BUSINESS_TYPE_DB_LOADER, null, this);
-            }
         }
     }
 
