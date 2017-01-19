@@ -19,6 +19,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,7 +68,8 @@ public class EditAddressFragment extends Fragment implements
     private int mAddressID;
     private int m_ID;
 
-    private TextInputLayout mPincodeWrapper, mMobileNumberWrapper, mAddressWrapper;
+    private TextInputLayout mPincodeWrapper, mMobileNumberWrapper, mAddressWrapper,
+            mCityWrapper, mStateWrapper, mAliasWrapper;
     private TextInputEditText mPincodeEditText, mMobileNumberEditText,
             mAddressEditText, mCityEditText, mStateEditText, mLandmarkEditText, mAliasEditText;
 
@@ -84,7 +86,10 @@ public class EditAddressFragment extends Fragment implements
 
     private static final String SHIPPING_SHARED_PREFERENCES = "ShippingSharedPreference";
     private static final String PINCODE_KEY = "PincodeKey";
+    private static final int MINIMUM_LOCATION_ACCURACY = 30;
     public static final int REQUEST_CHECK_SETTINGS = 0x1;
+
+    private int mLocationCount = 0;
 
     public EditAddressFragment() {
     }
@@ -205,13 +210,13 @@ public class EditAddressFragment extends Fragment implements
             public void onConnected(@Nullable Bundle bundle) {
                 if (ContextCompat.checkSelfPermission(getContext(),
                         Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                     Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                     if (location != null) {
+                    Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                    if (location != null && location.getAccuracy() < MINIMUM_LOCATION_ACCURACY) {
 
-                     getAddressFromLocation(location);
-                     } else {
-                     startLocationRequest();
-                     }
+                        getAddressFromLocation(location);
+                    } else {
+                        startLocationRequest();
+                    }
                 }
             }
 
@@ -231,6 +236,7 @@ public class EditAddressFragment extends Fragment implements
     private void startLocationRequest() {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(0);
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(mLocationRequest);
         PendingResult<LocationSettingsResult> result =
@@ -297,9 +303,12 @@ public class EditAddressFragment extends Fragment implements
                 mLocationListener = new LocationListener() {
                     @Override
                     public void onLocationChanged(Location location) {
-                        getAddressFromLocation(location);
-                        if (mGoogleApiClient != null && mLocationListener != null && mGoogleApiClient.isConnected()) {
-                            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, mLocationListener);
+                        mLocationCount += 1;
+                        if (location.getAccuracy() < MINIMUM_LOCATION_ACCURACY || mLocationCount > 3) {
+                            getAddressFromLocation(location);
+                            if (mGoogleApiClient != null && mLocationListener != null && mGoogleApiClient.isConnected()) {
+                                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, mLocationListener);
+                            }
                         }
                     }
                 };
@@ -375,9 +384,13 @@ public class EditAddressFragment extends Fragment implements
 
     private void initReferences(ViewGroup rootView) {
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.loading_indicator);
+
         mPincodeWrapper = (TextInputLayout) rootView.findViewById(R.id.pincode_wrapper);
         mMobileNumberWrapper = (TextInputLayout) rootView.findViewById(R.id.mobile_number_wrapper);
         mAddressWrapper = (TextInputLayout) rootView.findViewById(R.id.address_wrapper);
+        mCityWrapper = (TextInputLayout) rootView.findViewById(R.id.city_wrapper);
+        mStateWrapper = (TextInputLayout) rootView.findViewById(R.id.state_wrapper);
+        mAliasWrapper = (TextInputLayout) rootView.findViewById(R.id.alias_wrapper);
 
         mPincodeEditText = (TextInputEditText) rootView.findViewById(R.id.pincode_edit_text);
         mMobileNumberEditText = (TextInputEditText) rootView.findViewById(R.id.mobile_number_edit_text);
@@ -388,11 +401,13 @@ public class EditAddressFragment extends Fragment implements
         mAliasEditText = (TextInputEditText) rootView.findViewById(R.id.alias_edit_text);
 
         mSaveButton = (TextView) rootView.findViewById(R.id.save_button);
+        if (!(mAddressID == -1 && m_ID == -1)){
+            mSaveButton.setText("UPDATE");
+        }
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 saveAddress();
-                mListener.addressSaved();
             }
         });
         if (!(mAddressID == -1 && m_ID == -1)) {
@@ -403,6 +418,7 @@ public class EditAddressFragment extends Fragment implements
         mCurrentLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mLocationCount = 0;
                 mProgressBar.setVisibility(View.VISIBLE);
                 if (ContextCompat.checkSelfPermission(getContext(),
                         Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -418,13 +434,13 @@ public class EditAddressFragment extends Fragment implements
     private void saveAddress() {
         try {
             JSONObject address = new JSONObject();
-            address.put(UserAddressTable.COLUMN_ADDRESS, getDataFromView(UserAddressTable.COLUMN_ADDRESS));
             address.put(UserAddressTable.COLUMN_ADDRESS_ALIAS, getDataFromView(UserAddressTable.COLUMN_ADDRESS_ALIAS));
-            address.put(UserAddressTable.COLUMN_STATE, getDataFromView(UserAddressTable.COLUMN_STATE));
             address.put(UserAddressTable.COLUMN_PINCODE, getDataFromView(UserAddressTable.COLUMN_PINCODE));
-            address.put(UserAddressTable.COLUMN_CITY, getDataFromView(UserAddressTable.COLUMN_CITY));
-            address.put(UserAddressTable.COLUMN_LANDMARK, getDataFromView(UserAddressTable.COLUMN_LANDMARK));
             address.put(UserAddressTable.COLUMN_CONTACT_NUMBER, getDataFromView(UserAddressTable.COLUMN_CONTACT_NUMBER));
+            address.put(UserAddressTable.COLUMN_ADDRESS, getDataFromView(UserAddressTable.COLUMN_ADDRESS));
+            address.put(UserAddressTable.COLUMN_LANDMARK, getDataFromView(UserAddressTable.COLUMN_LANDMARK));
+            address.put(UserAddressTable.COLUMN_CITY, getDataFromView(UserAddressTable.COLUMN_CITY));
+            address.put(UserAddressTable.COLUMN_STATE, getDataFromView(UserAddressTable.COLUMN_STATE));
             address.put(UserAddressTable.COLUMN_SYNCED, 0);
             address.put(UserAddressTable.COLUMN_CLIENT_ID, mBuyerAddress.getClientID());
 
@@ -442,6 +458,8 @@ public class EditAddressFragment extends Fragment implements
             intent.putExtra("TODO", R.string.update_user_address);
 
             getContext().startService(intent);
+
+            mListener.addressSaved();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -461,17 +479,26 @@ public class EditAddressFragment extends Fragment implements
                 } else throw new Exception();
             case UserAddressTable.COLUMN_ADDRESS:
                 String address = mAddressEditText.getText().toString();
-                if (InputValidationHelper.isNameValid(mAddressWrapper, address)) {
+                if (InputValidationHelper.isNotEmpty(mAddressWrapper, address, "Please enter address")) {
                     return address;
                 } else throw new Exception();
             case UserAddressTable.COLUMN_LANDMARK:
                 return mLandmarkEditText.getText().toString();
             case UserAddressTable.COLUMN_ADDRESS_ALIAS:
-                return mAliasEditText.getText().toString();
+                String alias = mAliasEditText.getText().toString();
+                if (InputValidationHelper.isNotEmpty(mAliasWrapper, alias, "Please enter nickname for address")) {
+                    return alias;
+                } else throw new Exception();
             case UserAddressTable.COLUMN_CITY:
-                return mCityEditText.getText().toString();
+                String city = mCityEditText.getText().toString();
+                if (InputValidationHelper.isNotEmpty(mCityWrapper, city, "Please enter city")) {
+                    return city;
+                } else throw new Exception();
             case UserAddressTable.COLUMN_STATE:
-                return mStateEditText.getText().toString();
+                String state = mStateEditText.getText().toString();
+                if (InputValidationHelper.isNotEmpty(mStateWrapper, state, "Please enter state")) {
+                    return state;
+                } else throw new Exception();
             default:
                 return "";
         }

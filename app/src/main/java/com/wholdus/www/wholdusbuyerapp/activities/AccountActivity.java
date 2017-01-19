@@ -133,7 +133,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
 
     @Override
     public void addressClicked(int addressID, int _ID) {
-        //editAddress(addressID, _ID);
+        editAddress(addressID, _ID);
     }
 
     @Override
