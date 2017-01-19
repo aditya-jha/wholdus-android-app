@@ -127,7 +127,9 @@ public class GetBusinessTypeFragment extends Fragment implements LoaderManager.L
 
     @Override
     public void onLoadFinished(Loader<ArrayList<BusinessTypes>> loader, ArrayList<BusinessTypes> data) {
-        setViewForData(data);
+        if (data != null) {
+            setViewForData(data);
+        }
     }
 
     private void handleAPIResponse(Intent intent){

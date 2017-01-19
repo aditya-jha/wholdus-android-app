@@ -191,7 +191,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
 
         @Override
         public void onLoadFinished(Loader<ArrayList<Product>> loader, ArrayList<Product> data) {
-            setViewForProducts(data);
+            if (data != null) {
+                setViewForProducts(data);
+            }
         }
 
 
@@ -212,7 +214,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
 
         @Override
         public void onLoadFinished(Loader<ArrayList<Category>> loader, ArrayList<Category> data) {
-            setViewForCategories(data);
+            if (data != null) {
+                setViewForCategories(data);
+            }
         }
 
 

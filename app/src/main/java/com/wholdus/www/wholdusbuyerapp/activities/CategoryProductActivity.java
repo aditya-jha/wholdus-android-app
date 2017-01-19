@@ -134,7 +134,9 @@ public class CategoryProductActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Category>> loader, ArrayList<Category> data) {
-        updateToolbarSpinner(data);
+        if (data != null && !data.isEmpty()) {
+            updateToolbarSpinner(data);
+        }
     }
 
     @Override

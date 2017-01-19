@@ -58,6 +58,8 @@ public class CartItemLoader extends AbstractLoader<ArrayList<CartItem>> {
                 if (productCursor.getCount() > 0) {
                     productCursor.moveToNext();
                     cartItem.setProduct(new Product(productCursor));
+                } else {
+                    return null;
                 }
             }
         }

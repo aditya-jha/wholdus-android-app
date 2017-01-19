@@ -125,7 +125,9 @@ public class NotificationFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Notification>> loader, ArrayList<Notification> data) {
-        setViewForNotifications(data);
+        if (data != null) {
+            setViewForNotifications(data);
+        }
     }
 
     @Override

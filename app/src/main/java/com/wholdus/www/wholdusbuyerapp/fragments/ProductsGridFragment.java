@@ -257,7 +257,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
             firstVisible = mGridLayoutManager.findFirstVisibleItemPosition();
         }
 
-        if (data.size() > 0) {
+        if (data != null && data.size() > 0) {
             int diff = 0, runCount = mProducts.size();
             if (runCount > 0 && mProducts.get(runCount - 1) == null) runCount--;
 

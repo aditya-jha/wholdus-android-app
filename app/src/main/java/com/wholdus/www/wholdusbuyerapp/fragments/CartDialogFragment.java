@@ -188,7 +188,7 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
 
         @Override
         public void onLoadFinished(Loader<ArrayList<CartItem>> loader, ArrayList<CartItem> data) {
-            if (!data.isEmpty()) {
+            if (data != null && !data.isEmpty()) {
                 mLots = data.get(0).getLots();
                 mOldLots = data.get(0).getLots();
                 if (mProduct != null && mPiecesAdapter != null) {
