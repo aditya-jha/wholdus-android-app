@@ -2,10 +2,14 @@ package com.wholdus.www.wholdusbuyerapp.fragments;
 
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -30,6 +34,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.LoginHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.NavDrawerHelper;
 import com.wholdus.www.wholdusbuyerapp.models.NavDrawerData;
 
 import java.util.ArrayList;
@@ -44,22 +49,24 @@ import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
  */
 public class NavigationDrawerFragment extends Fragment implements ExpandableListView.OnGroupClickListener, ExpandableListView.OnChildClickListener {
 
-    private Bundle mBundle;
     private DrawerLayout mDrawerLayout;
 
     public NavigationDrawerFragment() {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mBundle = getArguments();
-        if (mBundle == null) {
-            mBundle = new Bundle();
-        }
-        if (mBundle.getString(Constants.OPEN_FRAGMENT_KEY, "none").equals("none")) {
-            mBundle.putString(Constants.OPEN_FRAGMENT_KEY, HomeFragment.class.getSimpleName());
-        }
         return inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -82,10 +89,8 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
             case 0:
                 Intent intent = new Intent(getContext(), HomeActivity.class);
                 intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
-                if (!mBundle.getString(Constants.OPEN_ACTIVITY_KEY, "none").equals(HomeActivity.class.getSimpleName()) ||
-                        !mBundle.getString(Constants.OPEN_FRAGMENT_KEY, "none").equals(HomeFragment.class.getSimpleName())) {
-                    mBundle.putString(Constants.OPEN_ACTIVITY_KEY, HomeActivity.class.getSimpleName());
-                    mBundle.putString(Constants.OPEN_FRAGMENT_KEY, HomeFragment.class.getSimpleName());
+                if (!NavDrawerHelper.getInstance().getOpenActivity().equals(HomeActivity.class.getSimpleName()) ||
+                        !NavDrawerHelper.getInstance().getOpenFragment().equals(HomeFragment.class.getSimpleName())) {
                     intent.putExtra(Constants.OPEN_FRAGMENT_KEY, HomeFragment.class.getSimpleName());
                     startActivity(intent);
                 }
@@ -96,21 +101,19 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
                 startActivity(new Intent(getContext(), HandPickedActivity.class));
                 break;
             case 2:
-                Intent categories = new Intent(getContext(), HomeActivity.class);
-                categories.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
-                if (!mBundle.getString(Constants.OPEN_FRAGMENT_KEY, "none").equals(CategoryGridFragment.class.getSimpleName())){
-                    mBundle.putString(Constants.OPEN_ACTIVITY_KEY, HomeActivity.class.getSimpleName());
-                    mBundle.putString(Constants.OPEN_FRAGMENT_KEY, CategoryGridFragment.class.getSimpleName());
+                if (!NavDrawerHelper.getInstance().getOpenFragment().equals(CategoryGridFragment.class.getSimpleName())){
+                    Intent categories = new Intent(getContext(), HomeActivity.class);
                     categories.putExtra(Constants.OPEN_FRAGMENT_KEY, CategoryGridFragment.class.getSimpleName());
                     getContext().startActivity(categories);
                 }
                 break;
             case 3:
-                // open fav products
-                Intent shortlistIntent = new Intent(getContext(), CategoryProductActivity.class);
-                shortlistIntent.putExtra(Constants.TYPE, Constants.FAV_PRODUCTS);
-                shortlistIntent.getIntExtra(getString(R.string.selected_category_id), 1);
-                startActivity(shortlistIntent);
+                if (NavDrawerHelper.getInstance().getType() != Constants.FAV_PRODUCTS) {
+                    Intent shortlistIntent = new Intent(getContext(), CategoryProductActivity.class);
+                    shortlistIntent.putExtra(Constants.TYPE, Constants.FAV_PRODUCTS);
+                    shortlistIntent.getIntExtra(getString(R.string.selected_category_id), 1);
+                    startActivity(shortlistIntent);
+                }
                 break;
             case 4:
                 getContext().startActivity(new Intent(getContext(), NotificationActivity.class));
@@ -144,38 +147,35 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
     private boolean handleAccountCase(int childPosition) {
         Intent intent = new Intent(getContext(), AccountActivity.class);
 
-        String openFragmentName = "";
-        if (mBundle != null) {
-            openFragmentName = mBundle.getString(Constants.OPEN_FRAGMENT_KEY, "none");
-        }
-
         switch (childPosition) {
             case 0:
                 // open profile fragment
-                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "profile");
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, ProfileFragment.class.getSimpleName());
                 break;
             case 1:
                 // open profile fragment
-                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "buyerAddresses");
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, BuyerAddressFragment.class.getSimpleName());
                 break;
             case 2:
                 // open orders fragment
-                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "orders");
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, OrdersFragment.class.getSimpleName());
                 break;
 //            case 3:
 //                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "buyerInterests");
 //                break;
             case 3:
                 // open rejected products
-                Intent rejectedProductsIntent = new Intent(getContext(), CategoryProductActivity.class);
-                rejectedProductsIntent.putExtra(Constants.TYPE, Constants.REJECTED_PRODUCTS);
-                startActivity(rejectedProductsIntent);
+                if (NavDrawerHelper.getInstance().getType() != Constants.REJECTED_PRODUCTS) {
+                    Intent rejectedProductsIntent = new Intent(getContext(), CategoryProductActivity.class);
+                    rejectedProductsIntent.putExtra(Constants.TYPE, Constants.REJECTED_PRODUCTS);
+                    startActivity(rejectedProductsIntent);
+                }
                 return true;
             default:
                 return false;
         }
 
-        if (intent.getExtras().getString(Constants.OPEN_FRAGMENT_KEY, "none").equals(openFragmentName)) {
+        if (intent.getExtras().getString(Constants.OPEN_FRAGMENT_KEY, "none").equals(NavDrawerHelper.getInstance().getOpenFragment())) {
             return false;
         }
 
@@ -187,10 +187,6 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
     private boolean handleHelpSupportCase(int childPosition) {
         Intent intent = new Intent(getContext(), HelpSupportActivity.class);
 
-        String openFragmentName = "";
-        if (mBundle != null) {
-            openFragmentName = mBundle.getString(Constants.OPEN_FRAGMENT_KEY, "none");
-        }
         switch (childPosition) {
             case 0: // contact us
                 intent.putExtra(Constants.OPEN_FRAGMENT_KEY, ContactUsFragment.class.getSimpleName());
@@ -215,7 +211,7 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
                 break;
         }
 
-        if (intent.getExtras().getString(Constants.OPEN_FRAGMENT_KEY, "none").equals(openFragmentName)) {
+        if (intent.getExtras().getString(Constants.OPEN_FRAGMENT_KEY, "none").equals(NavDrawerHelper.getInstance().getOpenFragment())) {
             return false;
         }
 
@@ -250,4 +246,5 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
             }
         }).start();
     }
+
 }

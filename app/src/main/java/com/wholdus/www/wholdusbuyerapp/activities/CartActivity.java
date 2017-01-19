@@ -158,7 +158,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which) {
                         case DialogInterface.BUTTON_POSITIVE:
-                            openToFragment("cart_summary", null);
+                            openToFragment(CartSummaryFragment.class.getSimpleName(), null);
                             break;
 
                         case DialogInterface.BUTTON_NEGATIVE:
@@ -173,7 +173,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         } else if (mStatus == 0 && mCheckoutID != null && mCheckoutID > 0){
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.cart_fragment_container);
             if (fragment instanceof EditAddressFragment || fragment instanceof BuyerAddressFragment){
-                openToFragment("cart_summary", null);
+                openToFragment(CartSummaryFragment.class.getSimpleName(), null);
             } else {
                 super.onBackPressed();
             }
@@ -189,12 +189,12 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         Bundle bundle = new Bundle();
         bundle.putInt("addressID", addressID);
         bundle.putInt("_ID", _ID);
-        openToFragment("editAddress", bundle);
+        openToFragment(EditAddressFragment.class.getSimpleName(), bundle);
     }
 
     @Override
     public void addressSaved() {
-        openToFragment("select_address",null);
+        openToFragment(BuyerAddressFragment.class.getSimpleName(),null);
     }
 
     @Override
@@ -206,7 +206,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     public void openSelectAddress() {
         Bundle args = new Bundle();
         args.putString("fragment_title", "Select Address");
-        openToFragment("select_address", args);
+        openToFragment(BuyerAddressFragment.class.getSimpleName(), args);
         mProgressBar.setVisibility(View.GONE);
         mProceedButtonLayout.setVisibility(View.GONE);
     }
@@ -215,7 +215,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     public void addressClicked(int addressID, int _ID) {
         Bundle args = new Bundle();
         args.putInt(UserProfileContract.UserAddressTable.COLUMN_ADDRESS_ID, addressID);
-        openToFragment("confirm_address", args);
+        openToFragment(CheckoutAddressConfirmFragment.class.getSimpleName(), args);
         mProgressBar.setVisibility(View.VISIBLE);
         mProceedButtonLayout.setVisibility(View.VISIBLE);
 
@@ -284,34 +284,27 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     private void openToFragment(String fragmentName, @Nullable Bundle bundle) {
         Fragment fragment;
 
-        switch (fragmentName) {
-            case "cart_summary":
-                mProgressBar.setVisibility(View.VISIBLE);
-                resetAllIDs();
-                mProceedButtonLayout.setVisibility(View.VISIBLE);
-                fragment = new CartSummaryFragment();
-                break;
-            case "select_address":
-                fragment = new BuyerAddressFragment();
-                break;
-            case "confirm_address":
-                fragment = new CheckoutAddressConfirmFragment();
-                break;
-            case "editAddress":
-                fragment = new EditAddressFragment();
-                break;
-            case "paymentMethod":
-                fragment = new CheckoutPaymentMethodFragment();
-                break;
-            case "orderDetails":
-                mProgressBar.setVisibility(View.GONE);
-                fragment = new OrderDetailsFragment();
-                break;
-            default:
-                resetAllIDs();
-                mProgressBar.setVisibility(View.VISIBLE);
-                mProceedButtonLayout.setVisibility(View.VISIBLE);
-                fragment = new CartSummaryFragment();
+        if (fragmentName.equals(CartSummaryFragment.class.getSimpleName())){
+            mProgressBar.setVisibility(View.VISIBLE);
+            resetAllIDs();
+            mProceedButtonLayout.setVisibility(View.VISIBLE);
+            fragment = new CartSummaryFragment();
+        } else if (fragmentName.equals(BuyerAddressFragment.class.getSimpleName())){
+            fragment = new BuyerAddressFragment();
+        } else if (fragmentName.equals(CheckoutAddressConfirmFragment.class.getSimpleName())){
+            fragment = new CheckoutAddressConfirmFragment();
+        } else if (fragmentName.equals(EditAddressFragment.class.getSimpleName())){
+            fragment = new EditAddressFragment();
+        } else if (fragmentName.equals(CheckoutPaymentMethodFragment.class.getSimpleName())){
+            fragment = new CheckoutPaymentMethodFragment();
+        } else if (fragmentName.equals(OrderDetailsFragment.class.getSimpleName())){
+            mProgressBar.setVisibility(View.GONE);
+            fragment = new OrderDetailsFragment();
+        } else {
+            resetAllIDs();
+            mProgressBar.setVisibility(View.VISIBLE);
+            mProceedButtonLayout.setVisibility(View.VISIBLE);
+            fragment = new CartSummaryFragment();
         }
 
         fragment.setArguments(bundle);
@@ -396,7 +389,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
                     Bundle args = new Bundle();
                     args.putFloat("orderValue", mCart.getCalculatedPrice());
                     args.putFloat("finalValue", mCart.getFinalPrice());
-                    openToFragment("paymentMethod", args);
+                    openToFragment(CheckoutPaymentMethodFragment.class.getSimpleName(), args);
                     break;
                 case TODO.UPDATE_CART_PAYMENT_METHOD:
 
@@ -467,7 +460,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         mProceedButtonLayout.setVisibility(View.GONE);
         Bundle bundle = new Bundle();
         bundle.putInt("orderID", mOrderID);
-        openToFragment("orderDetails", bundle);
+        openToFragment(OrderDetailsFragment.class.getSimpleName(), bundle);
     }
 
 }

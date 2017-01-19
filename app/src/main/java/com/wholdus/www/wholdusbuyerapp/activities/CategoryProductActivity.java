@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +26,7 @@ import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProductsGridFragment;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.NavDrawerHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.CategoriesGridLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Category;
@@ -49,6 +51,7 @@ public class CategoryProductActivity extends AppCompatActivity
         Intent intent = getIntent();
         FilterClass.setCategoryID(intent.getIntExtra(getString(R.string.selected_category_id), 1));
         mType = intent.getIntExtra(Constants.TYPE, Constants.ALL_PRODUCTS);
+        sendFragmentOpenBroadcast(ProductsGridFragment.class.getSimpleName());
 
         mFilterFragmentActive = false;
 
@@ -90,27 +93,6 @@ public class CategoryProductActivity extends AppCompatActivity
         updateProducts();
     }
 
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -121,6 +103,7 @@ public class CategoryProductActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+            NavDrawerHelper.getInstance().setType(Constants.ALL_PRODUCTS);
             finish();
         } else {
             super.onBackPressed();
@@ -237,6 +220,8 @@ public class CategoryProductActivity extends AppCompatActivity
         String backStateName = fragment.getClass().getName();
         FragmentManager fm = getSupportFragmentManager();
 
+        sendFragmentOpenBroadcast(fragmentName);
+
         boolean fragmentPopped = fm.popBackStackImmediate(backStateName, 0);
 
         if (!fragmentPopped) { // fragment not in backstack create it
@@ -245,6 +230,12 @@ public class CategoryProductActivity extends AppCompatActivity
             ft.addToBackStack(backStateName);
             ft.commit();
         }
+    }
+
+    public void sendFragmentOpenBroadcast(String fragmentName){
+        NavDrawerHelper.getInstance().setOpenActivity(this.getClass().getSimpleName());
+        NavDrawerHelper.getInstance().setOpenFragment(fragmentName);
+        NavDrawerHelper.getInstance().setType(mType);
     }
 
     private void updateToolbarSpinner(ArrayList<Category> data) {

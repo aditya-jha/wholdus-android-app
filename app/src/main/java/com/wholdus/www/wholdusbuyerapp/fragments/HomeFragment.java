@@ -19,6 +19,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.CategoryProductActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
+import com.wholdus.www.wholdusbuyerapp.activities.HomeActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.NotificationActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.CategoryHomePageAdapter;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductHomePageAdapter;
@@ -26,6 +27,7 @@ import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.NavDrawerHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.CategoriesGridLoader;
@@ -142,6 +144,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
 
         mCategoriesLoader = new CategoryLoaderManager();
         getActivity().getSupportLoaderManager().restartLoader(CATEGORIES_DB_LOADER, null, mCategoriesLoader);
+
+        NavDrawerHelper.getInstance().setOpenActivity(getActivity().getClass().getSimpleName());
+        NavDrawerHelper.getInstance().setOpenFragment(this.getClass().getSimpleName());
     }
 
     @Override

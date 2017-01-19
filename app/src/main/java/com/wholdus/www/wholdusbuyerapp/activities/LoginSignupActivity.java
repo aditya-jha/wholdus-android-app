@@ -150,8 +150,6 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
             userDataIntent.putExtra("TODO", TODO.FETCH_USER_PROFILE);
             startService(userDataIntent);
 
-
-
             Intent intent = new Intent();
             if (!registered) {
                 intent.setClass(this, HomeActivity.class);

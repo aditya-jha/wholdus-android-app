@@ -15,11 +15,10 @@
             android:id="@+id/product_swipe_deck"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/card_margin_vertical"
             android:paddingBottom="@dimen/card_margin_vertical"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            swipedeck:card_spacing="5dp"
+            swipedeck:card_spacing="3dp"
             swipedeck:max_visible="3"
             swipedeck:swipe_enabled="true" />
 

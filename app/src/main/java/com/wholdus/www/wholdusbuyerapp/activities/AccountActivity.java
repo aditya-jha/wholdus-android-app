@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,7 @@ import com.wholdus.www.wholdusbuyerapp.fragments.OrdersFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProductGridCategoryTabFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProfileFragment;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.NavDrawerHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.OrderDetailsListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.UserAddressInterface;
@@ -101,14 +103,14 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
     public void editPersonalDetails() {
         // load edit profile details fragment
         // don't add it to backstack
-        openToFragment("editPersonalDetails", null);
+        openToFragment(EditProfileDetailsFragment.class.getSimpleName(), null);
     }
 
     @Override
     public void openOrderDetails(int orderID) {
         Bundle bundle = new Bundle();
         bundle.putInt("orderID", orderID);
-        openToFragment("orderDetails", bundle);
+        openToFragment(OrderDetailsFragment.class.getSimpleName(), bundle);
     }
 
     @Override
@@ -126,7 +128,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
         Bundle bundle = new Bundle();
         bundle.putInt("addressID", addressID);
         bundle.putInt("_ID", _ID);
-        openToFragment("editAddress", bundle);
+        openToFragment(EditAddressFragment.class.getSimpleName(), bundle);
     }
 
     @Override
@@ -136,7 +138,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
 
     @Override
     public void addressSaved() {
-        openToFragment("buyerAddresses",null);
+        openToFragment(BuyerAddressFragment.class.getSimpleName(),null);
     }
 
     private void initToolbar() {
@@ -176,7 +178,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
         Bundle args = new Bundle();
         //TODO : Check method for getting current fragment name, this has bugs
         args.putSerializable(Constants.OPEN_FRAGMENT_KEY, getFragmentToOpenName(savedInstanceState));
-        args.putSerializable(getString(R.string.open_activity_key), this.getClass().getSimpleName());
+        args.putSerializable(Constants.OPEN_ACTIVITY_KEY, this.getClass().getSimpleName());
         navDrawerFragment.setArguments(args);
 
         getSupportFragmentManager().beginTransaction()
@@ -189,7 +191,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
             Bundle extras = getIntent().getExtras();
             openFragment = extras.getString(Constants.OPEN_FRAGMENT_KEY);
             if (TextUtils.isEmpty(openFragment)) {
-                openFragment = "profile";
+                openFragment = ProfileFragment.class.getSimpleName();
             }
         } else {
             openFragment = (String) savedInstanceState.getSerializable(Constants.OPEN_FRAGMENT_KEY);
@@ -200,33 +202,25 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
     private void openToFragment(String fragmentName, @Nullable Bundle bundle) {
         Fragment fragment;
 
-        switch (fragmentName) {
-            case "profile":
-                fragment = new ProfileFragment();
-                break;
-            case "orders":
-                fragment = new OrdersFragment();
-                break;
-            case "rejectedProducts":
-                fragment = new ProductGridCategoryTabFragment();
-                break;
-            case "editPersonalDetails":
-                fragment = new EditProfileDetailsFragment();
-                break;
-            case "buyerAddresses":
-                fragment = new BuyerAddressFragment();
-                break;
-            case "editAddress":
-                fragment = new EditAddressFragment();
-                break;
-            case "buyerInterests":
-                fragment = new BuyerInterestFragment();
-                break;
-            case "orderDetails":
-                fragment = new OrderDetailsFragment();
-                break;
-            default:
-                fragment = new ProfileFragment();
+        if (fragmentName.equals(ProfileFragment.class.getSimpleName())){
+            fragment = new ProfileFragment();
+        } else if (fragmentName.equals(OrdersFragment.class.getSimpleName())){
+            fragment = new OrdersFragment();
+        }
+        else if (fragmentName.equals(EditProfileDetailsFragment.class.getSimpleName())){
+            fragment = new EditProfileDetailsFragment();
+        }
+        else if (fragmentName.equals(BuyerAddressFragment.class.getSimpleName())){
+            fragment = new BuyerAddressFragment();
+        }
+        else if (fragmentName.equals(EditAddressFragment.class.getSimpleName())){
+            fragment = new EditAddressFragment();
+        }
+        else if (fragmentName.equals(OrderDetailsFragment.class.getSimpleName())){
+            fragment = new OrderDetailsFragment();
+        }
+        else {
+            fragment = new ProfileFragment();
         }
 
         fragment.setArguments(bundle);
@@ -235,6 +229,8 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
 
         boolean fragmentPopped = fm.popBackStackImmediate(backStateName, 0);
 
+        sendFragmentOpenBroadcast(fragmentName);
+
         if (!fragmentPopped) { // fragment not in backstack create it
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
@@ -242,5 +238,10 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
             ft.commit();
         }
 
+    }
+
+    public void sendFragmentOpenBroadcast(String fragmentName){
+        NavDrawerHelper.getInstance().setOpenActivity(this.getClass().getSimpleName());
+        NavDrawerHelper.getInstance().setOpenFragment(fragmentName);
     }
 }

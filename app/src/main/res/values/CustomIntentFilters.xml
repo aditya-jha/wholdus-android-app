@@ -12,4 +12,6 @@
 
     <string name="cart_data_updated">intentFilter.CART_DATA_UPDATED</string>
     <string name="cart_item_written">intentFilter.CART_ITEM_WRITTEN</string>
+
+    <string name="fragment_created">intentFilter.FRAGMENT_CREATED</string>
 </resources>
