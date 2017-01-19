@@ -191,7 +191,6 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
                 } else {
                     mFilterValuesAdapter.itemClicked(view, position);
                 }
-                Log.d(this.getClass().getSimpleName(), FilterClass.getSelectedItems(mSelectedFilter).toString());
                 break;
         }
     }

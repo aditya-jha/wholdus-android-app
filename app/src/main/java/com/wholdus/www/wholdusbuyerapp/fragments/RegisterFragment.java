@@ -52,11 +52,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            mListener = (LoginSignupListenerInterface) context;
-        } catch (ClassCastException cee) {
-            Log.e(this.getClass().getSimpleName(), " must implement " + LoginSignupListenerInterface.class.getSimpleName());
-        }
+        mListener = (LoginSignupListenerInterface) context;
     }
 
     @Override

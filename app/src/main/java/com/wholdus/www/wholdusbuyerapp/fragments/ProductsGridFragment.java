@@ -158,8 +158,6 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
             setVisibility(View.INVISIBLE, View.VISIBLE, View.INVISIBLE);
         }
         loadData();
-
-        Log.d(this.getClass().getSimpleName(), "onactivitycreated");
     }
 
     @Override
@@ -273,8 +271,6 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
             if (diffIndex >= firstVisible || (mProducts.size() >= lastVisible && lastVisible >= 0 && mProducts.get(lastVisible) == null)) {
                 mAdapter.clear();
                 mAdapter.add(data);
-
-                Log.d("total products", mProducts.size() + "");
 
                 if (mTotalProductsOnServer == -1 || mProducts.size() < mTotalProductsOnServer) {
                     mProducts.add(null);
@@ -497,8 +493,6 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         final int updatedInserted = intent.getIntExtra(Constants.INSERTED_UPDATED, 0);
 
         mTotalPages = totalPages;
-        Log.d(this.getClass().getSimpleName(), "page number from api: " + pageNumber);
-        Log.d(this.getClass().getSimpleName(), "total pages: " + totalPages);
         if (updatedInserted > 0) {
             if (!mLoaderLoading) {
                 if (getActivity()!= null) {
@@ -532,7 +526,6 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
         final View view = getView();
         if (view == null) {
-            Log.d(ProductsGridFragment.class.getSimpleName(), "get view was null");
             return;
         }
 
@@ -574,7 +567,6 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
         final View view = getView();
         if (view == null) {
-            Log.d(ProductsGridFragment.class.getSimpleName(), "get view was null");
             return;
         }
 

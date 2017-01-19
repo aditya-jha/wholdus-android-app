@@ -39,7 +39,6 @@ public class OrderService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.w("ORDERSERVICE", "STARTED");
         switch (intent.getIntExtra("TODO", 0)) {
             case R.string.fetch_orders:
                 fetchOrders(R.string.fetch_orders, 1);
