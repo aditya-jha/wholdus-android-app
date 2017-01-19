@@ -50,11 +50,7 @@ public class BuyerInterestFragment extends Fragment implements LoaderManager.Loa
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            mListener = (ProfileListenerInterface) context;
-        } catch (ClassCastException cee) {
-            Log.e(this.getClass().getSimpleName(), " must implement Listener");
-        }
+        mListener = (ProfileListenerInterface) context;
     }
 
     @Override

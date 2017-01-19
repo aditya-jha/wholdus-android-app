@@ -127,7 +127,6 @@ public class ProductGalleryActivity extends AppCompatActivity
         mActiveImagePosition = bundle.getInt(Constants.ACTIVE_POSITION, 0);
 
         if (mProductID == 0) {
-            Log.d(this.getClass().getSimpleName(), mProductID + " - this is not a valid product ID");
             onBackPressed();
         }
     }

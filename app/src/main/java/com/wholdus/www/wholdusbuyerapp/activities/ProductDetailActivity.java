@@ -362,7 +362,6 @@ public class ProductDetailActivity extends AppCompatActivity
     private void setProductID() {
         mProductID = getIntent().getIntExtra(CatalogContract.ProductsTable.TABLE_NAME, 0);
         if (mProductID == 0) {
-            Log.d(this.getClass().getSimpleName(), mProductID + " - this is not a valid product ID");
             onBackPressed();
         }
     }

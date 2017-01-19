@@ -566,8 +566,6 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         final int pageNumber = intent.getIntExtra(APIConstants.API_PAGE_NUMBER_KEY, -1);
         final int totalPages = intent.getIntExtra(APIConstants.API_TOTAL_PAGES_KEY, 1);
         final int updatedInserted = intent.getIntExtra(Constants.INSERTED_UPDATED, 0);
-        Log.d(this.getClass().getSimpleName(), "page number from api: " + pageNumber);
-        Log.d(this.getClass().getSimpleName(), "total pages: " + totalPages);
         if (updatedInserted > 0) {
             if (mProductsPageNumber == 1 && pageNumber == 1) {
                 handleBuyerProductAPIResponse();

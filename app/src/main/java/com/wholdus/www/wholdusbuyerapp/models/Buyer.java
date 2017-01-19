@@ -38,7 +38,6 @@ public class Buyer {
             return;
         } else if (cursor.getCount() > 1) {
             /* TODO: multiple buyer with same ID, should not exist, handle the case */
-            Log.e(this.getClass().getSimpleName(), "multiple buyer with same ID");
             return;
         }
         cursor.moveToFirst();

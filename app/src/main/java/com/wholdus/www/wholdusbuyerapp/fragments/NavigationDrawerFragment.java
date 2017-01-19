@@ -245,7 +245,6 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
                     getActivity().finish();
                 } else {
                     progressDialog.dismiss();
-                    Log.e(this.getClass().getSimpleName(), "error logging out");
                 }
             }
         }).start();
