@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -19,7 +20,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -53,29 +58,21 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
 
     private HandPickedListenerInterface mListener;
     private final int PRODUCTS_DB_LOADER = 30;
-    private BroadcastReceiver mBuyerProductServiceResponseReceiver;
-    private BroadcastReceiver mProductServiceResponseReceiver;
-    private BroadcastReceiver mSpecificProductServiceResponseReceiver;
+    private BroadcastReceiver mBuyerProductServiceResponseReceiver, mProductServiceResponseReceiver, mSpecificProductServiceResponseReceiver;
     private ProductsLoaderManager mProductsLoader;
     ArrayList<Product> mProductsArrayList;
-    ArrayList<Integer> mExcludeProductIDs;
-    ArrayList<Integer> mProductIDs;
+    ArrayList<Integer> mExcludeProductIDs, mProductIDs;
     SwipeDeck mSwipeDeck;
-    ImageButton mLikeButton;
-    ImageButton mDislikeButton;
-    ImageButton mAddToCartButton;
-    ImageButton mFilterButton;
+    ImageButton mLikeButton, mDislikeButton, mAddToCartButton, mFilterButton;
     ProductSwipeDeckAdapter mProductSwipeDeckAdapter;
     LinearLayout mNoProductsLeft;
     TextView mNoProductsLeftTextView;
     ProgressBar mNoProductsLeftProgressBar;
-    private int mPosition = 0;
-    private int mProductsLeft = 0;
-    private int mProductBuffer = 8;
-    private boolean mHasSwiped = true;
-    private boolean mFirstLoad = true;
-    private int mProductsPageNumber, mTotalProductPages;
+    private int mPosition = 0, mProductsLeft = 0, mProductBuffer = 8, mProductsPageNumber, mTotalProductPages;
+    private boolean mHasSwiped = true, mFirstLoad = true, mButtonEnabled;
     private final int mProductsLimit = 20;
+
+    private static final int ANIMATION_DURATION = 250;
 
     public HandPickedFragment() {
     }
@@ -217,14 +214,14 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     }
 
     private void initReferences(ViewGroup rootView) {
-
+        SwipeDeck.ANIMATION_DURATION = ANIMATION_DURATION;
         mSwipeDeck = (SwipeDeck) rootView.findViewById(R.id.product_swipe_deck);
+
         mSwipeDeck.setLeftImage(R.id.left_image);
         mSwipeDeck.setRightImage(R.id.right_image);
         mSwipeDeck.setCallback(new SwipeDeck.SwipeDeckCallback() {
             @Override
             public void cardSwipedLeft(long l) {
-                //TODO : Write functions to like and dislike
                 actionAfterSwipe(false);
             }
 
@@ -233,44 +230,74 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
                 actionAfterSwipe(true);
             }
         });
+
+        final Animation animButtonScale = AnimationUtils.loadAnimation(getContext(), R.anim.button_scale_down_up);
+        final FrameLayout likeButtonLayout = (FrameLayout) rootView.findViewById(R.id.hand_picked_like_button_layout);
         mLikeButton = (ImageButton) rootView.findViewById(R.id.hand_picked_like_button);
         mLikeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mHasSwiped = false;
-                mSwipeDeck.swipeTopCardRight(2000);
+                likeButtonLayout.startAnimation(animButtonScale);
+                if (mProductsLeft > 0 && mButtonEnabled) {
+                    bringFeedbackImageToFront(true);
+                    mHasSwiped = false;
+                    mButtonEnabled = false;
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mSwipeDeck.swipeTopCardRight(ANIMATION_DURATION);
+                        }
+                    }, 300);
+                }
             }
         });
+        final FrameLayout dislikeButtonLayout = (FrameLayout) rootView.findViewById(R.id.hand_picked_dislike_button_layout);
         mDislikeButton = (ImageButton) rootView.findViewById(R.id.hand_picked_dislike_button);
         mDislikeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mHasSwiped = false;
-                mSwipeDeck.swipeTopCardLeft(2000);
+                dislikeButtonLayout.startAnimation(animButtonScale);
+                if (mProductsLeft > 0 && mButtonEnabled) {
+                    bringFeedbackImageToFront(false);
+                    mHasSwiped = false;
+                    mButtonEnabled = false;
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mSwipeDeck.swipeTopCardLeft(ANIMATION_DURATION);
+                        }
+                    }, 300);
+                }
             }
         });
-
+        final FrameLayout addToCartButtonLayout = (FrameLayout) rootView.findViewById(R.id.hand_picked_cart_button_layout);
         mAddToCartButton = (ImageButton) rootView.findViewById(R.id.hand_picked_cart_button);
         mAddToCartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentManager fragmentManager = getFragmentManager();
-                CartDialogFragment dialogFragment = new CartDialogFragment();
-                Bundle args = new Bundle();
-                args.putInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, mProductsArrayList.get(mPosition).getProductID());
-                dialogFragment.setArguments(args);
-                dialogFragment.show(fragmentManager, dialogFragment.getClass().getSimpleName());
+                addToCartButtonLayout.startAnimation(animButtonScale);
+                if (mProductsLeft > 0 && mButtonEnabled) {
+                    FragmentManager fragmentManager = getFragmentManager();
+                    CartDialogFragment dialogFragment = new CartDialogFragment();
+                    Bundle args = new Bundle();
+                    args.putInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, mProductsArrayList.get(mPosition).getProductID());
+                    dialogFragment.setArguments(args);
+                    dialogFragment.show(fragmentManager, dialogFragment.getClass().getSimpleName());
+                }
             }
         });
-
+        final FrameLayout filterButtonLayout = (FrameLayout) rootView.findViewById(R.id.hand_picked_filter_button_layout);
         mFilterButton = (ImageButton) rootView.findViewById(R.id.hand_picked_filter_button);
         mFilterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                filterButtonLayout.startAnimation(animButtonScale);
                 //resetProducts();
                 //FilterClass.setCategoryID(-1);
-                mListener.openFilter(true);
-                mListener.fragmentCreated("Filter");
+                if (mButtonEnabled) {
+                    mListener.openFilter(true);
+                    mListener.fragmentCreated("Filter");
+                }
             }
         });
 
@@ -292,7 +319,55 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         getContext().startService(intent);
     }
 
-    private void actionAfterSwipe(boolean liked) {
+    private void bringFeedbackImageToFront(boolean liked){
+        try {
+            int adapterIndex;
+            if (mProductsLeft > 2) {
+                adapterIndex = 2;
+            } else if (mProductsLeft == 2) {
+                adapterIndex = 1;
+            } else if (mProductsLeft == 1) {
+                adapterIndex = 0;
+            } else {
+                return;
+            }
+            int resourceID;
+            if (liked){
+                resourceID = R.id.right_image;
+            } else {
+                resourceID = R.id.left_image;
+            }
+            View convertView = mSwipeDeck.getChildAt(adapterIndex);
+            if (convertView == null){
+                return;
+            }
+            final Animation animFeedbackImage = AnimationUtils.loadAnimation(getContext(), R.anim.feedback_image_fade_in);
+            final ImageView imageView = (ImageView) convertView.findViewById(resourceID);
+            imageView.setVisibility(View.INVISIBLE);
+            imageView.setAlpha((float) 1);
+            animFeedbackImage.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    imageView.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            imageView.startAnimation(animFeedbackImage);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void sendBuyerProductResponse(boolean liked){
         Intent intent = new Intent(getContext(), BuyerProductService.class);
         intent.putExtra("TODO", TODO.UPDATE_PRODUCT_RESPONSE);
         intent.putExtra(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, mProductsArrayList.get(mPosition).getProductID());
@@ -300,22 +375,38 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         intent.putExtra(CatalogContract.ProductsTable.COLUMN_HAS_SWIPED, mHasSwiped);
         intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONSE_CODE, liked ? 1 : 2);
         getContext().startService(intent);
+    }
 
-        mHasSwiped = true;
+    private void actionAfterSwipe(boolean liked) {
+
+        sendBuyerProductResponse(liked);
+
+        if (getActivity() == null){
+            return;
+        }
 
         mProductsLeft -= 1;
-        if (mProductsLeft == 0) {
+        if (mProductsLeft < 1) {
             setNoProductsLeftView();
             return;
         }
 
         mPosition += 1;
-        mListener.fragmentCreated(mProductsArrayList.get(mPosition).getName());
+        try {
+            mListener.fragmentCreated(mProductsArrayList.get(mPosition).getName());
+        } catch (Exception e){
+            e.printStackTrace();
+            setNoProductsLeftView();
+        }
 
         if (mProductsLeft < mProductBuffer) {
             getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, mProductsLoader);
             updateProducts();
         }
+
+        mHasSwiped = true;
+        mButtonEnabled = true;
+
     }
 
     @Override
@@ -338,8 +429,9 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
 
         if (mFirstLoad || mProductsArrayList.size() == 0) {
             mFirstLoad = false;
-            mListener.fragmentCreated(data.get(mPosition).getName());
-            setButtonsState(true);
+            mListener.fragmentCreated(data.get(0).getName());
+            mButtonEnabled = true;
+            //setButtonsState(true);
         }
         mProductsArrayList.addAll(data);
         for (Product product : data) {
@@ -363,7 +455,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     }
 
     private void setNoProductsLeftView() {
-        setButtonsState(false);
+        //setButtonsState(false);
         mListener.fragmentCreated("Hand Picked For You");
         mSwipeDeck.setVisibility(View.GONE);
         mNoProductsLeft.setVisibility(View.VISIBLE);
@@ -391,7 +483,9 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
 
         @Override
         public void onLoadFinished(Loader<ArrayList<Product>> loader, ArrayList<Product> data) {
-            setViewForProducts(data);
+            if (data != null) {
+                setViewForProducts(data);
+            }
         }
 
 
@@ -431,7 +525,8 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         mProductsLeft = 0;
         mProductsPageNumber = 1;
         mTotalProductPages = -1;
-        setButtonsState(false);
+        //setButtonsState(false);
+        mButtonEnabled = false;
     }
 
     public void updateProducts(){

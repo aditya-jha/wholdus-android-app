@@ -162,7 +162,9 @@ public class OrdersFragment extends Fragment implements ItemClickListener {
 
         @Override
         public void onLoadFinished(Loader<ArrayList<Order>> loader, ArrayList<Order> data) {
-            setViewForOrders(data);
+            if (data != null) {
+                setViewForOrders(data);
+            }
         }
 
 

@@ -434,7 +434,7 @@ public class ProductDetailActivity extends AppCompatActivity
 
         @Override
         public void onLoadFinished(Loader<ArrayList<CartItem>> loader, ArrayList<CartItem> data) {
-            if (!data.isEmpty()) {
+            if (data != null && !data.isEmpty()) {
                 setCartButtonText(data.get(0).getPieces());
             }
         }
