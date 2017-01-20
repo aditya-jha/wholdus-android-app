@@ -32,6 +32,9 @@ import com.wholdus.www.wholdusbuyerapp.services.UserService;
 
 import java.util.ArrayList;
 
+import static android.R.attr.data;
+import static com.wholdus.www.wholdusbuyerapp.R.string.address;
+
 /**
  * Created by kaustubh on 26/12/16.
  */
@@ -43,23 +46,20 @@ public class BuyerAddressFragment extends Fragment implements LoaderManager.Load
     private TextView mAddAddressTextView;
     private UserAddressInterface mListener;
     private BroadcastReceiver mUserServiceResponseReceiver;
-    private final int USER_ADDRESS_DB_LOADER = 50;
     private ArrayList<BuyerAddress> mBuyerAddresses;
-    AddressDisplayListViewAdapter mAddressDisplayListViewAdapter;
-    //TODO Define all loaders at one place
+    private AddressDisplayListViewAdapter mAddressDisplayListViewAdapter;
+    private boolean mAPIDataLoaded;
 
-    public BuyerAddressFragment(){
+    private final int USER_ADDRESS_DB_LOADER = 50;
+
+    public BuyerAddressFragment() {
 
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            mListener = (UserAddressInterface) context;
-        } catch (ClassCastException cee) {
-            cee.printStackTrace();
-        }
+        mListener = (UserAddressInterface) context;
     }
 
     @Override
@@ -79,8 +79,6 @@ public class BuyerAddressFragment extends Fragment implements LoaderManager.Load
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_buyer_address, container, false);
 
         initReferences(rootView);
-        getActivity().getSupportLoaderManager().restartLoader(USER_ADDRESS_DB_LOADER, null, this);
-        fetchDataFromServer();
 
         return rootView;
     }
@@ -88,10 +86,30 @@ public class BuyerAddressFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onResume() {
         super.onResume();
+
         IntentFilter intentFilter = new IntentFilter(getString(R.string.user_data_updated));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mUserServiceResponseReceiver, intentFilter);
+
         Bundle args = getArguments();
         mListener.fragmentCreated(args.getString("fragment_title", "My Address"), true);
+
+        if (mBuyerAddresses != null && mBuyerAddresses.isEmpty()) {
+            mAPIDataLoaded = false;
+            getActivity().getSupportLoaderManager().restartLoader(USER_ADDRESS_DB_LOADER, null, this);
+            fetchDataFromServer();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mUserServiceResponseReceiver);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mUserServiceResponseReceiver = null;
     }
 
     private void initReferences(ViewGroup rootView) {
@@ -105,10 +123,12 @@ public class BuyerAddressFragment extends Fragment implements LoaderManager.Load
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 BuyerAddress buyerAddress = mBuyerAddresses.get(i);
                 mListener.addressClicked(buyerAddress.getAddressID(), buyerAddress.get_ID());
-                }
-            });
+            }
+        });
 
         mNoAddressTextView = (TextView) rootView.findViewById(R.id.no_address_text_view);
+        mNoAddressTextView.setVisibility(View.INVISIBLE);
+        
         mAddAddressTextView = (TextView) rootView.findViewById(R.id.add_address_text_view);
         mAddAddressTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,30 +139,16 @@ public class BuyerAddressFragment extends Fragment implements LoaderManager.Load
 
     }
 
-
-
-    public void fetchDataFromServer(){
+    public void fetchDataFromServer() {
         Intent intent = new Intent(getContext(), UserService.class);
         intent.putExtra("TODO", TODO.FETCH_USER_PROFILE);
         getContext().startService(intent);
     }
 
     private void handleAPIResponse() {
-        if (getActivity()!= null) {
+        mAPIDataLoaded = true;
+        if (getActivity() != null) {
             getActivity().getSupportLoaderManager().restartLoader(USER_ADDRESS_DB_LOADER, null, this);
-        }
-    }
-
-
-    private void setViewForAddressListView(ArrayList<BuyerAddress> address) {
-        if (address.isEmpty()) {
-            mNoAddressTextView.setVisibility(View.VISIBLE);
-        } else {
-            mNoAddressTextView.setVisibility(View.GONE);
-            mBuyerAddresses.clear();
-            mBuyerAddresses.addAll(address);
-            mAddressDisplayListViewAdapter.notifyDataSetChanged();
-            HelperFunctions.setListViewHeightBasedOnChildren(mAddressListView);
         }
     }
 
@@ -152,9 +158,17 @@ public class BuyerAddressFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
-    public void onLoadFinished(Loader<ArrayList<BuyerAddress>> loader, ArrayList<BuyerAddress> data) {
-        if (data != null) {
-            setViewForAddressListView(data);
+    public void onLoadFinished(Loader<ArrayList<BuyerAddress>> loader, ArrayList<BuyerAddress> address) {
+        if (address != null) {
+            if (address.isEmpty() && mAPIDataLoaded) {
+                mNoAddressTextView.setVisibility(View.VISIBLE);
+            } else if (!address.isEmpty()) {
+                mNoAddressTextView.setVisibility(View.GONE);
+                mBuyerAddresses.clear();
+                mBuyerAddresses.addAll(address);
+                mAddressDisplayListViewAdapter.notifyDataSetChanged();
+                HelperFunctions.setListViewHeightBasedOnChildren(mAddressListView);
+            }
         }
     }
 
