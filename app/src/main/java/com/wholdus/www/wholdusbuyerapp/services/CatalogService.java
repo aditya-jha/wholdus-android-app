@@ -136,7 +136,6 @@ public class CatalogService extends IntentService {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
                 try {
                     switch (todo) {
                         case TODO.FETCH_CATEGORIES:
