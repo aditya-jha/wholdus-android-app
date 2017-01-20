@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,49 +14,45 @@
         android:paddingTop="@dimen/card_margin_vertical">
 
         <ImageView
-            android:layout_marginRight="@dimen/card_margin_horizontal"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_notifications_black_24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            />
+            android:layout_marginLeft="@dimen/card_padding_vertical"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:src="@drawable/ic_notifications_black_24dp" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingRight="@dimen/card_padding_vertical">
 
             <TextView
                 android:id="@+id/notification_title_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="Welcome to Wholdus"
-                android:textColor="@color/primary_text"
                 android:layout_marginBottom="5dp"
-                android:textSize="16sp" />
+                android:textColor="@color/primary_text"
+                android:textSize="16sp"
+                tools:text="Welcome to Wholdus" />
 
             <TextView
                 android:id="@+id/notification_body_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="Get 5% cashback on your first order"
-                android:textColor="@color/primary_text"
                 android:layout_marginBottom="5dp"
-                android:textSize="14sp" />
+                android:textColor="@color/primary_text"
+                android:textSize="14sp"
+                tools:text="Get 5% cashback on your first order" />
 
             <TextView
                 android:id="@+id/notification_date_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="20/01/2017"
                 android:textColor="@color/secondary_text"
-                android:textSize="12sp" />
-
+                android:textSize="12sp"
+                tools:text="20/01/2017" />
         </LinearLayout>
-
-
-
     </LinearLayout>
-
 </android.support.v7.widget.CardView>

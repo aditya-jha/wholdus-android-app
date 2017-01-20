@@ -11,6 +11,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.firebase.crash.FirebaseCrash;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserTable;
@@ -157,6 +158,7 @@ public class UserService extends IntentService {
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            FirebaseCrash.report(e);
         }
     }
 
@@ -209,6 +211,7 @@ public class UserService extends IntentService {
             public void onErrorResponse(VolleyError error) {
                 Intent intent = new Intent(getString(R.string.user_data_updated));
                 intent.putExtra(Constants.ERROR_RESPONSE, "Error");
+                intent.putExtra("TODO", todo);
                 LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
             }
         }
