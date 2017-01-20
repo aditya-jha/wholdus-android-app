@@ -39,13 +39,14 @@ import java.util.Map;
  * Created by kaustubh on 21/12/16.
  */
 
-public class CartService extends IntentService{
+public class CartService extends IntentService {
 
     public static final String REQUEST_TAG = "CART_API_REQUESTS";
 
     public CartService() {
         super("CartService");
     }
+
     protected void onHandleIntent(Intent intent) {
         switch (intent.getIntExtra("TODO", 0)) {
             case R.string.fetch_cart:
@@ -64,14 +65,15 @@ public class CartService extends IntentService{
                 break;
         }
     }
-    public void fetchCart(int todo){
-        HashMap<String,String> params = new HashMap<>();
+
+    public void fetchCart(int todo) {
+        HashMap<String, String> params = new HashMap<>();
         //TODO : Save categories and seller data separately so that it doesn't have to requested here
         params.put("sub_cart_details", "1");
         params.put("cart_item_details", "1");
         //TODO : Also try that all products don't have to be requested every time
         params.put("product_details", "1");
-        params.put("product_details_details","1");
+        params.put("product_details_details", "1");
         params.put("product_image_details", "1");
         params.put("category_details", "1");
         params.put("seller_details", "1");
@@ -80,14 +82,14 @@ public class CartService extends IntentService{
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }
 
-    public void startLoaderForSendingCartItems(){
+    public void startLoaderForSendingCartItems() {
         CartDBHelper cartDBHelper = new CartDBHelper(getApplicationContext());
         Cursor cursor = cartDBHelper.getCartItemsData(-1, null, -1, -1, 0, null);
-        ArrayList<CartItem> cartItems= CartItem.getCartItemsFromCursor(cursor);
-        if (cartItems.isEmpty()){
+        ArrayList<CartItem> cartItems = CartItem.getCartItemsFromCursor(cursor);
+        if (cartItems.isEmpty()) {
             return;
         }
-        HashMap<String,String> params = new HashMap<>();
+        HashMap<String, String> params = new HashMap<>();
         params.put("product_details", "1");
         params.put("sub_cart_details", "1");
         params.put("cart_item_details", "1");
@@ -103,7 +105,7 @@ public class CartService extends IntentService{
                 products.put(product);
             }
             jsonData.put("products", products);
-        } catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
             return;
         }
@@ -122,7 +124,6 @@ public class CartService extends IntentService{
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
             }
         }
         ) {
@@ -174,12 +175,12 @@ public class CartService extends IntentService{
         try {
             CartDBHelper cartDBHelper = new CartDBHelper(this);
             cartDBHelper.deleteCart(-1);
-        } catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private void saveCartItem(Intent intent){
+    private void saveCartItem(Intent intent) {
         CartDBHelper cartDBHelper = new CartDBHelper(getApplicationContext());
         JSONObject cartItem = new JSONObject();
         JSONObject product = new JSONObject();
@@ -187,7 +188,7 @@ public class CartService extends IntentService{
             cartItem.put(CartItemsTable.COLUMN_CART_ITEM_ID, 0);
             cartItem.put(CartItemsTable.COLUMN_SUBCART_ID, -1);
             Integer productID = intent.getIntExtra(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, -1);
-            if (productID == -1){
+            if (productID == -1) {
                 return;
             }
             product.put(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, productID);
@@ -205,10 +206,10 @@ public class CartService extends IntentService{
 
             cartDBHelper.saveCartItemDataFromJSONObject(cartItem);
             Bundle bundle = new Bundle();
-            bundle.putInt(CartItemsTable.COLUMN_PIECES,intent.getIntExtra(CartItemsTable.COLUMN_PIECES, 1));
+            bundle.putInt(CartItemsTable.COLUMN_PIECES, intent.getIntExtra(CartItemsTable.COLUMN_PIECES, 1));
             sendCartItemWriteBroadCast(bundle);
             startLoaderForSendingCartItems();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

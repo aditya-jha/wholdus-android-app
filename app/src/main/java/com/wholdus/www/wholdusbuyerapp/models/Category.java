@@ -56,11 +56,17 @@ public class Category {
         return mImageURL;
     }
 
-    public int getSynced(){return mSynced;}
+    public int getSynced() {
+        return mSynced;
+    }
 
-    public int getBuyerInterestID(){return mBuyerInterestID;}
+    public int getBuyerInterestID() {
+        return mBuyerInterestID;
+    }
 
-    public int getBuyerInterestIsActive() {return mBuyerInterestIsActive;}
+    public int getBuyerInterestIsActive() {
+        return mBuyerInterestIsActive;
+    }
 
 
     public static ArrayList<Category> getCategoryArrayList(Cursor cursor) {
@@ -72,7 +78,11 @@ public class Category {
         return categories;
     }
 
-    public ArrayList<Product> getProducts(){return mProducts;}
+    public ArrayList<Product> getProducts() {
+        return mProducts;
+    }
 
-    public void setProducts(ArrayList<Product> products){mProducts = products;}
+    public void setProducts(ArrayList<Product> products) {
+        mProducts = products;
+    }
 }

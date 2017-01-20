@@ -18,12 +18,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -66,11 +64,12 @@ public class ProductDetailActivity extends AppCompatActivity
     private Product mProduct;
     private ImageView mDisplayImage;
     private RecyclerView mThumbImagesRecyclerView;
-    private TextView mProductName, mProductPrice, mProductMrp, mLotSize, mLotDescription,
+    private TextView mProductName, mProductPrice, mLotSize, mLotDescription,
             mProductFabric, mProductColor, mProductSizes, mProductBrand,
-            mProductPattern, mProductStyle, mProductWork, mSellerName, mSellerLocation, mSellerSpeciality;
-    private ImageButton mFavButton;
-    private Button mCartButton, mCheckPincodeButton;
+            mProductPattern, mProductStyle, mProductWork, mSellerName, mSellerLocation,
+            mSellerSpeciality, mCartButton;
+    private ImageView mFavButton;
+    private Button mCheckPincodeButton;
     private TextInputEditText mPincodeEditText;
     private TextInputLayout mPincodeWrapper;
     private String mPincodeText = "";
@@ -115,13 +114,13 @@ public class ProductDetailActivity extends AppCompatActivity
         mSellerLocation = (TextView) findViewById(R.id.seller_location);
         mSellerSpeciality = (TextView) findViewById(R.id.seller_speciality);
 
-        ImageButton shareButton = (ImageButton) findViewById(R.id.share_button);
+        ImageView shareButton = (ImageView) findViewById(R.id.share_button);
         shareButton.setOnClickListener(this);
 
-        mFavButton = (ImageButton) findViewById(R.id.fav_icon);
+        mFavButton = (ImageView) findViewById(R.id.fav_icon);
         mFavButton.setOnClickListener(this);
 
-        mCartButton = (Button) findViewById(R.id.cart_button);
+        mCartButton = (TextView) findViewById(R.id.cart_button);
         mCartButton.setOnClickListener(this);
 
         mPincodeEditText = (TextInputEditText) findViewById(R.id.pincode_edit_text);
@@ -202,7 +201,6 @@ public class ProductDetailActivity extends AppCompatActivity
             mProduct = data;
             setDataToView();
         }
-        // TODO Handle case for product ID not found
     }
 
     @Override
