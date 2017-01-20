@@ -172,9 +172,9 @@
     <string name="filter_no_products">No products for filter</string>
 
     <!-- cart dialog fragment -->
-    <string name="lot_size_key">Lot Size :</string>
-    <string name="lot_details_key">Details :</string>
-    <string name="price_per_piece">Price/pc</string>
+    <string name="lot_size_key">Lot Size &#160;</string>
+    <string name="lot_details_key">Details &#160;</string>
+    <string name="price_per_piece">Price/pc &#160;</string>
     <string name="pieces_key">Pieces</string>
     <string name="total_price_key">Total</string>
     <string name="cart_dialog_shipping_condition">*Shipping charge extra = Rs.35/kg</string>
