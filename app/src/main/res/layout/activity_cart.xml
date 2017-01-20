@@ -28,6 +28,10 @@
             android:layout_centerVertical="true" />
     </RelativeLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/divider" />
 
     <LinearLayout
         android:id="@+id/proceed_button_layout"
