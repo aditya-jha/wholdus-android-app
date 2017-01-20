@@ -87,7 +87,18 @@ public class InputValidationHelper {
     private static boolean returnHelper(@Nullable TextInputLayout wrapper, String error) {
         if (wrapper != null) {
             wrapper.setError(error);
+            wrapper.requestFocus();
         }
         return (error == null);
+    }
+
+    public static boolean isNotEmpty(@Nullable TextInputLayout wrapper, String inputValue, String errorMessage){
+        String error = null;
+
+        if (inputValue.isEmpty()) {
+            error = errorMessage;
+        }
+
+        return returnHelper(wrapper, error);
     }
 }

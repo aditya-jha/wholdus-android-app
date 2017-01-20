@@ -14,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -31,10 +32,12 @@ import com.wholdus.www.wholdusbuyerapp.fragments.CategoryGridFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ContactUsFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.HomeFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
+import com.wholdus.www.wholdusbuyerapp.fragments.OrderDetailsFragment;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ContactsHelperClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.NavDrawerHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 
 import java.lang.reflect.Array;
@@ -259,6 +262,8 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         String backStateName = fragment.getClass().getName();
         FragmentManager fm = getSupportFragmentManager();
 
+        sendFragmentOpenBroadcast(fragmentName);
+
         boolean fragmentPopped = fm.popBackStackImmediate(backStateName, 0);
 
         if (!fragmentPopped) { // fragment not in backstack create it
@@ -323,7 +328,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
                 break;
             case "OrderDetails":
                 activityClass = AccountActivity.class;
-                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, "orderDetails");
+                intent.putExtra(Constants.OPEN_FRAGMENT_KEY, OrderDetailsFragment.class.getSimpleName());
                 String orderID = bundle.getString("orderID", "");
                 if (orderID.equals("")){
                     return;
@@ -345,5 +350,10 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
 
         intent.setClass(getApplicationContext(), activityClass);
         startActivity(intent);
+    }
+
+    public void sendFragmentOpenBroadcast(String fragmentName){
+        NavDrawerHelper.getInstance().setOpenActivity(this.getClass().getSimpleName());
+        NavDrawerHelper.getInstance().setOpenFragment(fragmentName);
     }
 }
