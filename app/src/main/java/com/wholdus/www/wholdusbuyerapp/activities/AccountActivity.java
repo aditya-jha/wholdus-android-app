@@ -176,7 +176,6 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
         Fragment navDrawerFragment = new NavigationDrawerFragment();
 
         Bundle args = new Bundle();
-        //TODO : Check method for getting current fragment name, this has bugs
         args.putSerializable(Constants.OPEN_FRAGMENT_KEY, getFragmentToOpenName(savedInstanceState));
         args.putSerializable(Constants.OPEN_ACTIVITY_KEY, this.getClass().getSimpleName());
         navDrawerFragment.setArguments(args);

@@ -70,6 +70,11 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
