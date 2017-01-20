@@ -21,13 +21,13 @@ import java.util.ArrayList;
  * Created by kaustubh on 8/12/16.
  */
 
-public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHolder>{
+public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHolder> {
 
     private ArrayList<Order> mListData;
     private Context mContext;
     private ItemClickListener mListener;
 
-    public OrdersAdapter(Context context, ArrayList<Order> listData,final ItemClickListener listener){
+    public OrdersAdapter(Context context, ArrayList<Order> listData, final ItemClickListener listener) {
         mContext = context;
         mListData = listData;
         mListener = listener;
@@ -39,30 +39,29 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
     }
 
     @Override
+    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new MyViewHolder(LayoutInflater.from(mContext).inflate(R.layout.list_item_layout_orders, parent, false));
+    }
+
+    @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         Order order = mListData.get(position);
         holder.orderID.setText(order.getDisplayNumber());
         holder.orderStatus.setText(order.getOrderStatusDisplay());
         holder.orderDate.setText(HelperFunctions.getDateFromString(order.getCreatedAt()));
-        holder.orderAmount.setText(String.format("%.00f", order.getFinalPrice()));
+        holder.orderAmount.setText(String.format(mContext.getString(R.string.price_format),
+                String.valueOf((int) Math.ceil(order.getFinalPrice()))));
 
         ArrayList<Suborder> suborders = order.getSuborders();
         SuborderListViewAdapter suborderAdapter = new SuborderListViewAdapter(mContext, suborders);
         holder.suborderListView.setAdapter(suborderAdapter);
+
         HelperFunctions.setListViewHeightBasedOnChildren(holder.suborderListView);
 
         holder.mListener = mListener;
-
     }
 
-    @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.list_item_layout_orders, parent, false);
-        MyViewHolder holder = new MyViewHolder(view);
-        return holder;
-    }
-
-    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView orderID;
         private TextView orderStatus;
         private TextView orderDate;
@@ -88,14 +87,12 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
 
         @Override
         public void onClick(View view) {
-
             int position = getAdapterPosition();
             if (position == RecyclerView.NO_POSITION) return;
 
             if (mListener != null) {
                 mListener.itemClicked(view, position, -1);
             }
-
         }
     }
 }

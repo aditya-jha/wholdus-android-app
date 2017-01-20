@@ -75,11 +75,11 @@
     <string name="buyer_interest_fragment_title">My Preferences</string>
 
     <!-- Order Fragment -->
-    <string name="order_card_order_number">ORD-NO :&#160;</string>
-    <string name="order_card_date">Date :&#160;</string>
-    <string name="order_card_amount">Amount : Rs. </string>
-    <string name="order_card_suborder_pieces">Pieces :&#160;</string>
-    <string name="order_card_sellers_in_order">Sellers in Order:</string>
+    <string name="order_card_order_number">ORD-NO &#160;</string>
+    <string name="order_card_date">Date &#160;</string>
+    <string name="order_card_amount">Amount &#160;</string>
+    <string name="order_card_suborder_pieces">Pieces &#160;</string>
+    <string name="order_card_sellers_in_order">Sellers in Order</string>
 
     <!-- Order Details Fragment -->
     <string name="order_details_pieces">Pieces:</string>

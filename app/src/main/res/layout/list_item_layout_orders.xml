@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -7,118 +8,112 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="@dimen/card_margin_vertical"
-        android:paddingLeft="@dimen/card_margin_horizontal"
-        android:paddingRight="@dimen/card_margin_horizontal"
-        android:paddingTop="@dimen/card_margin_vertical">
+        android:padding="@dimen/activity_vertical_margin">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/text_divider_gap"
-            android:paddingLeft="@dimen/card_margin_horizontal"
-            android:paddingRight="@dimen/card_margin_horizontal">
+            android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/order_no_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/order_card_order_number"
-                android:textColor="@color/primary_text"
-                android:textSize="20sp" />
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:fontFamily="@string/font_normal"
+                android:textColor="@color/secondary_text"
+                android:textSize="14sp"
+                android:textStyle="normal"
+                tools:text="@string/order_card_order_number" />
 
             <TextView
                 android:id="@+id/order_id_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/order_no_text"
+                android:layout_toRightOf="@+id/order_no_text"
+                android:fontFamily="@string/font_black"
                 android:textColor="@color/primary_text"
-                android:textSize="20sp" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:textSize="16sp"
+                tools:text="1000126" />
 
             <TextView
+                android:id="@+id/order_status_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/order_status_text_view"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:fontFamily="@string/font_black"
                 android:textColor="@color/primary_text"
-                android:textSize="20sp" />
+                android:textSize="16sp"
+                tools:text="Unconfirmed" />
+        </RelativeLayout>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginBottom="@dimen/card_margin_vertical"
-            android:background="@color/divider" />
+        <include layout="@layout/layout_horizontal_line" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingBottom="@dimen/text_divider_gap"
-            android:paddingLeft="@dimen/card_margin_horizontal"
-            android:paddingRight="@dimen/card_margin_horizontal">
+            android:paddingTop="@dimen/text_divider_gap">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/order_card_date"
-                android:textColor="@color/primary_text"
-                android:textSize="16sp" />
+                android:textColor="@color/secondary_text"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/order_date_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/primary_text"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:text="02 Jan 2017" />
 
             <View
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="1dp"
                 android:layout_weight="1" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/order_card_amount"
-                android:textColor="@color/primary_text"
-                android:textSize="16sp" />
+                android:textColor="@color/secondary_text"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/order_amount_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/primary_text"
-                android:textSize="16sp" />
-
+                android:textSize="16sp"
+                tools:text="@string/price_format" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider"
-            android:layout_marginBottom="@dimen/card_margin_vertical"/>
+        <include layout="@layout/layout_horizontal_line" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@string/font_normal"
+            android:padding="@dimen/text_divider_gap"
             android:text="@string/order_card_sellers_in_order"
-            android:textSize="18sp"
-            android:textColor="@color/primary_text"
-            android:paddingLeft="@dimen/card_margin_horizontal"
-            />
-
+            android:textColor="@color/secondary_text"
+            android:textSize="14sp"
+            android:textStyle="normal" />
 
         <ListView
             android:id="@+id/suborder_list_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:divider="@null"
-            />
+            android:dividerHeight="@dimen/text_divider_gap"
+            android:listSelector="@android:color/transparent" />
     </LinearLayout>
-
 </android.support.v7.widget.CardView>

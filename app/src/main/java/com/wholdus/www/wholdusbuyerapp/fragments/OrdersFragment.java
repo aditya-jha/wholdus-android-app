@@ -17,6 +17,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.OrdersAdapter;
@@ -36,13 +37,16 @@ import java.util.ArrayList;
 public class OrdersFragment extends Fragment implements ItemClickListener, LoaderManager.LoaderCallbacks<ArrayList<Order>> {
 
     private ProfileListenerInterface mListener;
-    private RecyclerView mOrdersListView;
-    private final int ORDERS_DB_LOADER = 10;
+    private RecyclerView mOrdersRecyclerView;
+
     private BroadcastReceiver mOrderServiceResponseReceiver;
     private OrdersAdapter ordersAdapter;
     private ArrayList<Order> mOrderArrayList;
     private Parcelable mOrderListViewState;
-    RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private ProgressBar mPageLoader;
+
+    private static final int ORDERS_DB_LOADER = 10;
 
     public OrdersFragment() {
     }
@@ -74,14 +78,18 @@ public class OrdersFragment extends Fragment implements ItemClickListener, Loade
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mOrdersListView = (RecyclerView) view.findViewById(R.id.orders_recycler_view);
+        mPageLoader = (ProgressBar) view.findViewById(R.id.page_loader);
+        mOrdersRecyclerView = (RecyclerView) view.findViewById(R.id.orders_recycler_view);
         mLayoutManager = new LinearLayoutManager(getContext());
-        mOrdersListView.setLayoutManager(mLayoutManager);
-        mOrdersListView.setItemAnimator(new DefaultItemAnimator());
-        mOrdersListView.addItemDecoration(new RecyclerViewSpaceItemDecoration(40, 0));
+        mOrdersRecyclerView.setLayoutManager(mLayoutManager);
+        mOrdersRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mOrdersRecyclerView.addItemDecoration(new RecyclerViewSpaceItemDecoration(40, 0));
         mOrderArrayList = new ArrayList<>();
         ordersAdapter = new OrdersAdapter(getContext(), mOrderArrayList, this);
-        mOrdersListView.setAdapter(ordersAdapter);
+        mOrdersRecyclerView.setAdapter(ordersAdapter);
+
+        mPageLoader.setVisibility(View.VISIBLE);
+        mOrdersRecyclerView.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -131,6 +139,8 @@ public class OrdersFragment extends Fragment implements ItemClickListener, Loade
     @Override
     public void onLoadFinished(Loader<ArrayList<Order>> loader, ArrayList<Order> data) {
         if (data != null && data.size() > 0) {
+            mPageLoader.setVisibility(View.INVISIBLE);
+            mOrdersRecyclerView.setVisibility(View.VISIBLE);
             setViewForOrders(data);
         }
     }
