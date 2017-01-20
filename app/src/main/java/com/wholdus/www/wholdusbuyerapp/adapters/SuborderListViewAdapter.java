@@ -22,7 +22,7 @@ public class SuborderListViewAdapter extends BaseAdapter {
     private ArrayList<Suborder> mListData;
     private Context mContext;
 
-    public SuborderListViewAdapter(Context context, ArrayList<Suborder> listData){
+    public SuborderListViewAdapter(Context context, ArrayList<Suborder> listData) {
         mContext = context;
         mListData = listData;
     }
@@ -46,7 +46,7 @@ public class SuborderListViewAdapter extends BaseAdapter {
     public View getView(int i, View convertView, ViewGroup viewGroup) {
         ViewHolder holder;
 
-        if(convertView == null){
+        if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_layout_orders_suborders, viewGroup, false);
             holder = new ViewHolder();
             holder.sellerName = (TextView) convertView.findViewById(R.id.suborder_seller_name_text_view);
@@ -55,7 +55,7 @@ public class SuborderListViewAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        final Suborder suborder = this.mListData.get(i);
+        final Suborder suborder = mListData.get(i);
 
         holder.sellerName.setText(suborder.getSeller().getCompanyName());
         holder.pieces.setText(String.valueOf(suborder.getPieces()));
@@ -63,7 +63,7 @@ public class SuborderListViewAdapter extends BaseAdapter {
         return convertView;
     }
 
-    class ViewHolder{
+    class ViewHolder {
         int id;
         TextView sellerName;
         TextView pieces;

@@ -75,24 +75,24 @@
     <string name="buyer_interest_fragment_title">My Preferences</string>
 
     <!-- Order Fragment -->
-    <string name="order_card_order_number">ORD-NO :&#160;</string>
-    <string name="order_card_date">Date :&#160;</string>
-    <string name="order_card_amount">Amount : Rs. </string>
-    <string name="order_card_suborder_pieces">Pieces :&#160;</string>
-    <string name="order_card_sellers_in_order">Sellers in Order:</string>
+    <string name="order_card_order_number">ORD-NO &#160;</string>
+    <string name="order_card_date">Date &#160;</string>
+    <string name="order_card_amount">Amount &#160;</string>
+    <string name="order_card_suborder_pieces">Pieces &#160;</string>
+    <string name="order_card_sellers_in_order">Sellers in Order</string>
 
     <!-- Order Details Fragment -->
-    <string name="order_details_pieces">Pieces:</string>
-    <string name="order_details_products">Products:</string>
-    <string name="order_details_order_value">Order Value:</string>
-    <string name="order_details_cod_charge">COD Charge:</string>
-    <string name="order_details_shipping">Shipping:</string>
-    <string name="order_details_total_amount">Total Amount:</string>
+    <string name="order_details_pieces">Pieces &#160;</string>
+    <string name="order_details_products">Products &#160;</string>
+    <string name="order_details_order_value">Order Value &#160;</string>
+    <string name="order_details_cod_charge">COD Charge &#160;</string>
+    <string name="order_details_shipping">Shipping &#160;</string>
+    <string name="order_details_total_amount">Total Amount &#160;</string>
 
-    <string name="order_item_price_per_piece">Price/pc:</string>
-    <string name="order_item_pieces">Pieces:</string>
-    <string name="order_item_total">Total:</string>
-    <string name="order_item_status">Status:</string>
+    <string name="order_item_price_per_piece">Price/pc</string>
+    <string name="order_item_pieces">Pieces</string>
+    <string name="order_item_total">Total</string>
+    <string name="order_item_status">Status</string>
     <string name="order_item_track">Track</string>
 
     <!-- keys -->
@@ -202,7 +202,7 @@
 
     <string name="price_per_pcs_format">Rs. %1$s/pc</string>
     <string name="price_format">Rs. %1$s</string>
-
+    <string name="pieces_price_format">%1$s pieces - Rs. %2$s</string>
     <string name="share_description">Share</string>
     <string name="shortlist_summary">Go to your shortlisted products</string>
     <string name="shortlist_text">Shortlist</string>
