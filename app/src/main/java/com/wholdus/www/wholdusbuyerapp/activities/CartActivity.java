@@ -253,7 +253,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
                 mProceedButtonLayout.setVisibility(View.GONE);
             } else {
                 mProceedButtonLayout.setVisibility(View.VISIBLE);
-                mTotalTextView.setText("Total: Rs. " + String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mCart.getFinalPrice()))));
+                mTotalTextView.setText("Total " + String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mCart.getFinalPrice()))));
                 mProductsPiecesTextView.setText(String.valueOf(mCart.getProductCount()) + " products - "
                         + String.valueOf(mCart.getPieces()) + " pieces");
                 mProceedButton.setEnabled(true);
