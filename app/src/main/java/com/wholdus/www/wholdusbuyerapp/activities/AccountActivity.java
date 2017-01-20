@@ -43,7 +43,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
 
-        initNavigationDrawer(savedInstanceState);
+        initNavigationDrawer();
         initToolbar();
         Bundle extras = getIntent().getExtras();
 
@@ -87,14 +87,13 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == EditAddressFragment.REQUEST_CHECK_SETTINGS){
+        if (requestCode == EditAddressFragment.REQUEST_CHECK_SETTINGS) {
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
             if (fragment instanceof EditAddressFragment) {
                 EditAddressFragment activeFragment = (EditAddressFragment) fragment;
                 activeFragment.onActivityResult(requestCode, resultCode, data);
             }
-        }
-        else {
+        } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -138,7 +137,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
 
     @Override
     public void addressSaved() {
-        openToFragment(BuyerAddressFragment.class.getSimpleName(),null);
+        openToFragment(BuyerAddressFragment.class.getSimpleName(), null);
     }
 
     private void initToolbar() {
@@ -172,14 +171,8 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
         }
     }
 
-    private void initNavigationDrawer(Bundle savedInstanceState) {
+    private void initNavigationDrawer() {
         Fragment navDrawerFragment = new NavigationDrawerFragment();
-
-        Bundle args = new Bundle();
-        args.putSerializable(Constants.OPEN_FRAGMENT_KEY, getFragmentToOpenName(savedInstanceState));
-        args.putSerializable(Constants.OPEN_ACTIVITY_KEY, this.getClass().getSimpleName());
-        navDrawerFragment.setArguments(args);
-
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.navigation_drawer_fragment, navDrawerFragment).commit();
     }
@@ -201,24 +194,19 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
     private void openToFragment(String fragmentName, @Nullable Bundle bundle) {
         Fragment fragment;
 
-        if (fragmentName.equals(ProfileFragment.class.getSimpleName())){
+        if (fragmentName.equals(ProfileFragment.class.getSimpleName())) {
             fragment = new ProfileFragment();
-        } else if (fragmentName.equals(OrdersFragment.class.getSimpleName())){
+        } else if (fragmentName.equals(OrdersFragment.class.getSimpleName())) {
             fragment = new OrdersFragment();
-        }
-        else if (fragmentName.equals(EditProfileDetailsFragment.class.getSimpleName())){
+        } else if (fragmentName.equals(EditProfileDetailsFragment.class.getSimpleName())) {
             fragment = new EditProfileDetailsFragment();
-        }
-        else if (fragmentName.equals(BuyerAddressFragment.class.getSimpleName())){
+        } else if (fragmentName.equals(BuyerAddressFragment.class.getSimpleName())) {
             fragment = new BuyerAddressFragment();
-        }
-        else if (fragmentName.equals(EditAddressFragment.class.getSimpleName())){
+        } else if (fragmentName.equals(EditAddressFragment.class.getSimpleName())) {
             fragment = new EditAddressFragment();
-        }
-        else if (fragmentName.equals(OrderDetailsFragment.class.getSimpleName())){
+        } else if (fragmentName.equals(OrderDetailsFragment.class.getSimpleName())) {
             fragment = new OrderDetailsFragment();
-        }
-        else {
+        } else {
             fragment = new ProfileFragment();
         }
 
@@ -239,7 +227,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
 
     }
 
-    public void sendFragmentOpenBroadcast(String fragmentName){
+    public void sendFragmentOpenBroadcast(String fragmentName) {
         NavDrawerHelper.getInstance().setOpenActivity(this.getClass().getSimpleName());
         NavDrawerHelper.getInstance().setOpenFragment(fragmentName);
     }
