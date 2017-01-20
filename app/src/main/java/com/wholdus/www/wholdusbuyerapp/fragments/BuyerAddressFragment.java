@@ -128,7 +128,7 @@ public class BuyerAddressFragment extends Fragment implements LoaderManager.Load
 
         mNoAddressTextView = (TextView) rootView.findViewById(R.id.no_address_text_view);
         mNoAddressTextView.setVisibility(View.INVISIBLE);
-        
+
         mAddAddressTextView = (TextView) rootView.findViewById(R.id.add_address_text_view);
         mAddAddressTextView.setOnClickListener(new View.OnClickListener() {
             @Override
