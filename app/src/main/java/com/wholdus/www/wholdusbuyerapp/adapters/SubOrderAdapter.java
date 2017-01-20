@@ -54,16 +54,16 @@ public class SubOrderAdapter extends BaseAdapter {
             holder.summary = (TextView) view.findViewById(R.id.subcart_summary_text_view);
             holder.orderItems = (ListView) view.findViewById(R.id.sub_cart_items_list_view);
             view.setTag(holder);
-        }
-        else {
+        } else {
             holder = (ViewHolder) view.getTag();
         }
 
         Suborder subOrder = mData.get(i);
 
         holder.sellerName.setText(subOrder.getSeller().getCompanyName());
-        holder.summary.setText( String.valueOf(subOrder.getPieces()) + " pieces - Rs. " +
-                String.format("%.0f",subOrder.getFinalPrice()));
+        holder.summary.setText(String.format(mContext.getString(R.string.pieces_price_format),
+                String.valueOf((int) Math.ceil(subOrder.getPieces())),
+                String.valueOf((int) Math.ceil(subOrder.getFinalPrice()))));
 
         OrderItemsAdapter orderItemsAdapter = new OrderItemsAdapter(mContext, subOrder.getOrderItems());
         holder.orderItems.setAdapter(orderItemsAdapter);
@@ -72,7 +72,7 @@ public class SubOrderAdapter extends BaseAdapter {
         return view;
     }
 
-    private class ViewHolder{
+    private class ViewHolder {
         int id;
         TextView sellerName;
         TextView summary;

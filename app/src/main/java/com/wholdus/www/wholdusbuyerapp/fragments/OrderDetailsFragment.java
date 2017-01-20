@@ -128,7 +128,6 @@ public class OrderDetailsFragment extends Fragment implements LoaderManager.Load
             mOrder = data.get(0);
             setViewForOrders();
         }
-        //TODO Handle case for no order ID
     }
 
     @Override
@@ -143,10 +142,10 @@ public class OrderDetailsFragment extends Fragment implements LoaderManager.Load
         mOrderStatus.setText(mOrder.getOrderStatusDisplay());
         mOrderProducts.setText(String.valueOf(mOrder.getProductCount()));
         mOrderPieces.setText(String.valueOf(mOrder.getPieces()));
-        mOrderValue.setText("Rs. " + String.format("%.0f", mOrder.getCalculatedPrice()));
-        mCODCharge.setText("Rs. " + String.format("%.0f", mOrder.getCODCharge()));
-        mShippingCharge.setText("Rs. " + String.format("%.0f", mOrder.getShippingCharge()));
-        mFinalPrice.setText("Rs. " + String.format("%.0f", mOrder.getFinalPrice()));
+        mOrderValue.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mOrder.getCalculatedPrice()))));
+        mCODCharge.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mOrder.getCODCharge()))));
+        mShippingCharge.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mOrder.getShippingCharge()))));
+        mFinalPrice.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mOrder.getFinalPrice()))));
 
         mSuborders.clear();
         mSuborders.addAll(mOrder.getSuborders());

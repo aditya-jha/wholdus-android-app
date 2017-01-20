@@ -57,9 +57,7 @@ public class OrderItemsAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup viewGroup) {
         final ViewHolder holder;
 
-        //TODO Listview set height problems - Look into it :IMP
-
-        if(convertView == null){
+        if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_layout_order_items, viewGroup, false);
             holder = new ViewHolder();
             holder.productName = (TextView) convertView.findViewById(R.id.order_item_product_name_text_view);
@@ -80,8 +78,8 @@ public class OrderItemsAdapter extends BaseAdapter {
 
         holder.productName.setText(product.getName());
         holder.pieces.setText(String.valueOf(orderItem.getPieces()));
-        holder.pricePerPiece.setText("Rs. " + String.format("%.0f", product.getMinPricePerUnit()));
-        holder.total.setText("Rs. " + String.format("%.0f", orderItem.getFinalPrice()));
+        holder.pricePerPiece.setText(String.format(mContext.getString(R.string.price_format), String.valueOf((int) Math.ceil(product.getMinPricePerUnit()))));
+        holder.total.setText(String.format(mContext.getString(R.string.price_format), String.valueOf((int) Math.ceil(orderItem.getFinalPrice()))));
         holder.status.setText(orderItem.getOrderItemStatusDisplay());
 
         Glide.with(mContext)
@@ -99,7 +97,7 @@ public class OrderItemsAdapter extends BaseAdapter {
             }
         });
 
-        if (orderItem.getTrackingUrl() != null && URLUtil.isValidUrl(orderItem.getTrackingUrl())){
+        if (orderItem.getTrackingUrl() != null && URLUtil.isValidUrl(orderItem.getTrackingUrl())) {
             //holder.tracking.setVisibility(View.VISIBLE);
             holder.tracking.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -107,7 +105,7 @@ public class OrderItemsAdapter extends BaseAdapter {
                     try {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(orderItem.getTrackingUrl()));
                         mContext.startActivity(intent);
-                    } catch (Exception e){
+                    } catch (Exception e) {
 
                     }
                 }
@@ -120,7 +118,7 @@ public class OrderItemsAdapter extends BaseAdapter {
     }
 
 
-    class ViewHolder{
+    class ViewHolder {
         int id;
         TextView productName;
         TextView pricePerPiece;
