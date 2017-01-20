@@ -18,7 +18,7 @@
             android:id="@+id/cart_fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="start"/>
+            android:layout_gravity="start" />
 
         <ProgressBar
             android:id="@+id/loading_indicator"
@@ -26,58 +26,66 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true" />
-
     </RelativeLayout>
 
 
     <LinearLayout
         android:id="@+id/proceed_button_layout"
+        style="@style/Theme.AppCompat.Light.DarkActionBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary_dark"
+        android:minHeight="?attr/actionBarSize"
+        android:layout_marginBottom="0dp"
+        android:background="@color/primary"
+        android:baselineAligned="true"
         android:orientation="horizontal"
-        android:paddingBottom="2dp"
-        android:paddingLeft="@dimen/card_margin_horizontal"
-        android:paddingRight="@dimen/card_margin_horizontal"
-        android:paddingTop="2dp">
+        android:paddingBottom="0dp">
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
             android:gravity="center"
-            android:orientation="vertical"
-            android:paddingTop="6dp">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/cart_summary_total_products_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
+                android:fontFamily="@string/font_condensed"
                 android:gravity="center_horizontal"
-                android:textColor="@color/icons"
-                android:textSize="16sp" />
+                android:paddingBottom="@dimen/text_divider_gap"
+                android:paddingTop="@dimen/text_divider_gap"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="7 products 10 pieces" />
 
             <TextView
                 android:id="@+id/cart_summary_total_price_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
+                android:fontFamily="@string/font_condensed"
                 android:gravity="center_horizontal"
-                android:textColor="@color/icons"
-                android:textSize="18sp" />
-
+                android:paddingBottom="@dimen/text_divider_gap"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="Total Rs. 1600" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/cart_summary_proceed_button"
-            style="@style/Widget.AppCompat.Button.Colored"
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/cart_summary_proceed"
-            android:textColor="@color/icons" />
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:background="@color/accent">
 
+            <TextView
+                android:id="@+id/cart_summary_proceed_button"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:text="@string/cart_summary_proceed"
+                android:textColor="@color/primary" />
+        </LinearLayout>
     </LinearLayout>
-
 </LinearLayout>

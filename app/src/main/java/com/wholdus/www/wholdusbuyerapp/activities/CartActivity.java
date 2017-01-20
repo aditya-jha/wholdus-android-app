@@ -54,7 +54,6 @@ import java.util.Map;
 
 public class CartActivity extends AppCompatActivity implements CartListenerInterface, UserAddressInterface, OrderDetailsListenerInterface {
 
-
     private int mStatus = 0;
     private int mBuyerAddressID = 0;
     private int mPaymentMethod = -1;
@@ -63,9 +62,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     private int mOrderID = -1;
 
     private Toolbar mToolbar;
-    private TextView mTotalTextView;
-    private TextView mProductsPiecesTextView;
-    private Button mProceedButton;
+    private TextView mTotalTextView, mProductsPiecesTextView, mProceedButton;
     private LinearLayout mProceedButtonLayout;
     private ProgressBar mProgressBar;
 
@@ -87,7 +84,6 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     protected void onResume() {
         super.onResume();
         setViewForProceedButtonLayout();
-
     }
 
     @Override
@@ -126,7 +122,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         mProductsPiecesTextView = (TextView) findViewById(R.id.cart_summary_total_products_text_view);
         mTotalTextView = (TextView) findViewById(R.id.cart_summary_total_price_text_view);
         mProceedButtonLayout = (LinearLayout) findViewById(R.id.proceed_button_layout);
-        mProceedButton = (Button) findViewById(R.id.cart_summary_proceed_button);
+        mProceedButton = (TextView) findViewById(R.id.cart_summary_proceed_button);
         mProceedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -179,7 +175,6 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         } else {
             finish();
         }
-
     }
 
     @Override
@@ -258,7 +253,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
                 mProceedButtonLayout.setVisibility(View.GONE);
             } else {
                 mProceedButtonLayout.setVisibility(View.VISIBLE);
-                mTotalTextView.setText("Total: Rs. " + String.format("%.0f", mCart.getFinalPrice()));
+                mTotalTextView.setText("Total: Rs. " + String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mCart.getFinalPrice()))));
                 mProductsPiecesTextView.setText(String.valueOf(mCart.getProductCount()) + " products - "
                         + String.valueOf(mCart.getPieces()) + " pieces");
                 mProceedButton.setEnabled(true);
@@ -313,14 +308,11 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
 
         if (!fragmentPopped) {
             // fragment not in backstack create it
-
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.cart_fragment_container, fragment, fragment.getClass().getSimpleName());
             ft.addToBackStack(backStateName);
             ft.commit();
-
         }
-
     }
 
     private void resetAllIDs() {
@@ -397,8 +389,6 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
                     startService(cartIntent);
                     mOrderID = data.getJSONObject("order").getInt("orderID");
                     runOrderService();
-
-
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -417,7 +407,6 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         Intent intent = new Intent(this, OrderService.class);
         intent.putExtra("TODO", R.string.fetch_orders);
         startService(intent);
-
     }
 
     private void proceedButtonClicked() {
@@ -450,7 +439,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.api_error_message), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -460,5 +449,4 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         bundle.putInt("orderID", mOrderID);
         openToFragment(OrderDetailsFragment.class.getSimpleName(), bundle);
     }
-
 }
