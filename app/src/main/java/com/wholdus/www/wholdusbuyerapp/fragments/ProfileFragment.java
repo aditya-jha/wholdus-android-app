@@ -17,9 +17,11 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.BuyerPersonalDetailsAdapter;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
@@ -61,7 +63,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         mUserServiceResponseReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                handleAPIResponse();
+                handleAPIResponse(intent);
             }
         };
     }
@@ -136,7 +138,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public void onLoadFinished(Loader<Buyer> loader, Buyer buyer) {
-        if (buyer == null) return;
+        if (buyer == null || buyer.getMobileNumber() == null) return;
 
         mPageLoader.setVisibility(View.INVISIBLE);
         mProfileCard.setVisibility(View.VISIBLE);
@@ -163,8 +165,13 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     }
 
-    private void handleAPIResponse() {
-        getActivity().getSupportLoaderManager().restartLoader(USER_DB_LOADER, null, this);
+    private void handleAPIResponse(final Intent intent) {
+        Bundle extras = intent.getExtras();
+        if (extras.getString(Constants.ERROR_RESPONSE) != null) {
+            Toast.makeText(getContext(), getString(R.string.no_internet_access), Toast.LENGTH_SHORT).show();
+        } else {
+            getActivity().getSupportLoaderManager().restartLoader(USER_DB_LOADER, null, this);
+        }
     }
 
     private void fetchDataFromServer() {
