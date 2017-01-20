@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.firebase.firebase-crash'
 
 android {
     signingConfigs {
@@ -15,7 +16,7 @@ android {
         applicationId "com.wholdus.www.wholdusbuyerapp"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 2
+        versionCode 3
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true

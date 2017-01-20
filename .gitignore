@@ -187,7 +187,8 @@ dkms.conf
 .mtj.tmp/
 
 # Package Files #
-*.jar
+app/*.jar
+build/*.jar
 *.war
 *.ear
 

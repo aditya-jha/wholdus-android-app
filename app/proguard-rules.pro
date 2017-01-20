@@ -18,3 +18,4 @@
 -dontwarn okhttp3.**
 -dontwarn sun.misc.Unsafe
 -dontwarn okio.**
+-printmapping build/outputs/mapping/release/mapping.txt
