@@ -83,7 +83,7 @@ public class CatalogService extends IntentService {
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }
 
-    private void fetchSpecificProducts(int todo, Intent intent){
+    private void fetchSpecificProducts(int todo, Intent intent) {
         HashMap<String, String> params = new HashMap<>();
         params.put(ProductsTable.COLUMN_PRODUCT_ID, intent.getStringExtra("productIDs"));
         params.put("items_per_page", intent.getStringExtra("items_per_page"));
@@ -222,7 +222,7 @@ public class CatalogService extends IntentService {
 
     }
 
-    private void updateBuyerInterest(int todo, Intent intent){
+    private void updateBuyerInterest(int todo, Intent intent) {
         try {
             JSONObject buyerInterest = new JSONObject();
             int categoryID = intent.getIntExtra(CategoriesTable.COLUMN_CATEGORY_ID, -1);
@@ -231,7 +231,7 @@ public class CatalogService extends IntentService {
                 return;
             }
             buyerInterest.put(CategoriesTable.COLUMN_CATEGORY_ID, categoryID);
-            buyerInterest.put(CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE, isActive==1);
+            buyerInterest.put(CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE, isActive == 1);
             buyerInterest.put(CategoriesTable.COLUMN_CREATED_AT, "");
             buyerInterest.put(CategoriesTable.COLUMN_UPDATED_AT, "");
             buyerInterest.put(CategoriesTable.COLUMN_SYNCED, 0);
@@ -243,28 +243,28 @@ public class CatalogService extends IntentService {
             broadcastIntent.putExtra(Constants.INSERTED_UPDATED, 1);
             LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
             updateAllUnsyncedBuyerInterests();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void updateBuyerInterestFromJSON(JSONObject data){
+    private void updateBuyerInterestFromJSON(JSONObject data) {
         try {
             CatalogDBHelper catalogDBHelper = new CatalogDBHelper(this);
             catalogDBHelper.updateBuyerInterestData(data.getJSONObject("buyer_interest"));
             //Intent intent = new Intent(IntentFilters.CATEGORY_DATA);
             //intent.putExtra(Constants.INSERTED_UPDATED, 1);
             //LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-        }catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private void updateAllUnsyncedBuyerInterests(){
+    private void updateAllUnsyncedBuyerInterests() {
         CatalogDBHelper catalogDBHelper = new CatalogDBHelper(this);
         String[] columns = {CategoriesTable.COLUMN_CATEGORY_ID, CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE};
-        Cursor cursor = catalogDBHelper.getCategoryData(-1,-1,null,-1,-1,0,columns);
-        while (cursor.moveToNext()){
+        Cursor cursor = catalogDBHelper.getCategoryData(-1, -1, null, -1, -1, 0, columns);
+        while (cursor.moveToNext()) {
             try {
                 JSONObject requestBody = new JSONObject();
                 requestBody.put(CategoriesTable.COLUMN_CATEGORY_ID,
@@ -272,13 +272,13 @@ public class CatalogService extends IntentService {
                 requestBody.put(CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE,
                         cursor.getInt(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE)));
                 sendBuyerInterestDataToServer(requestBody);
-            }catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void sendBuyerInterestDataToServer(JSONObject requestBody){
+    private void sendBuyerInterestDataToServer(JSONObject requestBody) {
         HashMap<String, String> params = new HashMap<>();
         String url = GlobalAccessHelper.generateUrl(APIConstants.BUYER_INTEREST_URL, params);
         volleyStringRequest(TODO.UPDATE_BUYER_INTEREST, Request.Method.POST, url, requestBody.toString());
