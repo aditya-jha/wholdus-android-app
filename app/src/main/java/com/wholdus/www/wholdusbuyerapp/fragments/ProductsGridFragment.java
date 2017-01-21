@@ -497,10 +497,6 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         final int updatedInserted = intent.getIntExtra(Constants.INSERTED_UPDATED, 0);
 
         mTotalPages = totalPages;
-        if (mTotalPages == pageNumber) {
-            removeDummyObject();
-        }
-
         if (updatedInserted > 0) {
             if (!mLoaderLoading) {
                 if (getActivity()!= null) {
@@ -516,6 +512,8 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         } else if ((mPageLoader.getVisibility() == View.VISIBLE && mTotalProductsOnServer > 0) ||
                 mNoProducts.getVisibility() == View.VISIBLE) {
             getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
+        } else if (mTotalPages == pageNumber) {
+            removeDummyObject();
         }
 
         if (mRequestQueue.size() > 0) {

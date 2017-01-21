@@ -81,8 +81,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
         Bundle args = getArguments();
         try {
             mCategoryDisplayed = args.getBoolean("CategoryDisplayed");
-        }
-        catch (Exception e){
+        } catch (Exception e) {
 
         }
         initReferences(rootView);
@@ -132,7 +131,9 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
         switch (item.getItemId()) {
             case R.id.action_bar_clear:
                 FilterClass.resetFilter();
-                if (mCategoryDisplayed){FilterClass.resetCategoryFilter();}
+                if (mCategoryDisplayed) {
+                    FilterClass.resetCategoryFilter();
+                }
                 populateValuesListView(mSelectedFilter);
                 break;
         }
@@ -174,7 +175,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
 
                 /* TODO: handle state of list view when click and presses */
                 int childCount = adapterView.getChildCount();
-                for (int i=0; i<childCount; i++) {
+                for (int i = 0; i < childCount; i++) {
                     if (i == position) {
                         adapterView.getChildAt(i).setBackgroundColor(Color.YELLOW);
                     } else {
@@ -227,7 +228,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
         priceRangeSeekBar.setOnRangeSeekbarFinalValueListener(new OnRangeSeekbarFinalValueListener() {
             @Override
             public void finalValue(Number minValue, Number maxValue) {
-                FilterClass.setPriceFilter(minValue.intValue(),maxValue.intValue());
+                FilterClass.setPriceFilter(minValue.intValue(), maxValue.intValue());
             }
         });
 
@@ -263,10 +264,10 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
         if (filterKey.equals("Brand")) {
             /* TODO: implement Brand case filter loading */
             mFilterValues.setAdapter(mBrandFilterValuesAdapter);
-            getActivity().getSupportLoaderManager().initLoader(1, null, this);
-        } else if (filterKey.equals("Category")){
+            getActivity().getSupportLoaderManager().restartLoader(1, null, this);
+        } else if (filterKey.equals("Category")) {
             mFilterValues.setAdapter(mCategoryFilterValuesAdapter);
-            getActivity().getSupportLoaderManager().initLoader(2, null, new CategoryLoaderManager());
+            getActivity().getSupportLoaderManager().restartLoader(2, null, new CategoryLoaderManager());
         } else {
             mFilterValues.setAdapter(mFilterValuesAdapter);
             mFilterValuesAdapter.resetData(mFilterData.get(mSelectedFilter), mSelectedFilter);
@@ -287,7 +288,6 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
                 mCategoryFilterValuesAdapter.notifyDataSetChanged();
             }
         }
-
 
         @Override
         public Loader<ArrayList<Category>> onCreateLoader(final int id, Bundle args) {
