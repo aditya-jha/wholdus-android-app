@@ -14,6 +14,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -67,7 +68,8 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     private ProductsGridAdapter mAdapter;
     private BroadcastReceiver mReceiver;
     private ProgressBar mPageLoader;
-    private LinearLayout mPageLayout, mNoProducts;
+    private LinearLayout mPageLayout;
+    private CardView mNoProducts;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private GridLayoutManager mGridLayoutManager;
@@ -185,7 +187,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 ContextCompat.getDrawable(getContext(), R.drawable.divider), 2));
         mRecyclerView.setHasFixedSize(true);
 
-        mNoProducts = (LinearLayout) view.findViewById(R.id.no_products);
+        mNoProducts = (CardView) view.findViewById(R.id.no_products);
     }
 
     @Override
@@ -275,7 +277,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                     mAdapter.notifyDataSetChanged();
                 }
 
-                if (mPageLoader.getVisibility() == View.VISIBLE) {
+                if (mPageLoader.getVisibility() == View.VISIBLE || mNoProducts.getVisibility() == View.VISIBLE) {
                     setVisibility(View.INVISIBLE, View.VISIBLE, View.INVISIBLE);
                 }
 
@@ -486,6 +488,11 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         }
 
         mTotalProductsOnServer = intent.getIntExtra(APIConstants.TOTAL_ITEMS_KEY, -1);
+        if (mProducts.size() != 0 && mProducts.size() >= mTotalProductsOnServer && mProducts.get(mProducts.size()-1) == null) {
+            mProducts.remove(mProducts.size() -1);
+            mAdapter.notifyItemRemoved(mProducts.size());
+        }
+
         final int pageNumber = intent.getIntExtra(APIConstants.API_PAGE_NUMBER_KEY, -1);
         final int totalPages = intent.getIntExtra(APIConstants.API_TOTAL_PAGES_KEY, 1);
         final int updatedInserted = intent.getIntExtra(Constants.INSERTED_UPDATED, 0);
@@ -503,13 +510,9 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
             if (mNoProducts.getVisibility() == View.INVISIBLE) {
                 setVisibility(View.INVISIBLE, View.INVISIBLE, View.VISIBLE);
             }
-        } else if (mPageLoader.getVisibility() == View.VISIBLE && mTotalProductsOnServer > 0) {
+        } else if ((mPageLoader.getVisibility() == View.VISIBLE && mTotalProductsOnServer > 0) ||
+                mNoProducts.getVisibility() == View.VISIBLE) {
             getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
-        }
-
-        if (mProducts.size() > 0 && mProducts.get(mProducts.size() - 1) == null && mProducts.size() - 1 == mTotalProductsOnServer) {
-            mProducts.remove(mProducts.size() - 1);
-            mAdapter.notifyDataSetChanged();
         }
 
         if (mRequestQueue.size() > 0) {
