@@ -84,7 +84,7 @@ public class CatalogDBHelper extends BaseDBHelper {
             query += whereClauseHelper(whereApplied) + CategoriesTable.COLUMN_BUYER_INTEREST_ID + " = " + buyerInterestID;
             whereApplied = true;
         }
-        if(excludeBuyerInterestIDs != null && !excludeBuyerInterestIDs.isEmpty()){
+        if (excludeBuyerInterestIDs != null && !excludeBuyerInterestIDs.isEmpty()) {
             query += whereClauseHelper(whereApplied) + CategoriesTable.COLUMN_BUYER_INTEREST_ID + " NOT IN (" + TextUtils.join(",", excludeBuyerInterestIDs) + " )";
             whereApplied = true;
         }
@@ -332,17 +332,17 @@ public class CatalogDBHelper extends BaseDBHelper {
         return buyerProductResponseIDs;
     }
 
-    private SparseArray<String> getPresentBuyerInterestIDs(){
-        if (mPresentBuyerInterestIDs != null){
+    private SparseArray<String> getPresentBuyerInterestIDs() {
+        if (mPresentBuyerInterestIDs != null) {
             return mPresentBuyerInterestIDs;
         }
         String[] columns = {CategoriesTable.COLUMN_BUYER_INTEREST_ID, CategoriesTable.COLUMN_BUYER_INTEREST_UPDATED_AT};
         ArrayList<Integer> excludeBuyerInterestIDs = new ArrayList<>();
         excludeBuyerInterestIDs.add(0);
         excludeBuyerInterestIDs.add(-1);
-        Cursor cursor = getCategoryData(-1,-1,excludeBuyerInterestIDs,-1,-1,-1,columns);
+        Cursor cursor = getCategoryData(-1, -1, excludeBuyerInterestIDs, -1, -1, -1, columns);
         SparseArray<String> buyerInterestIDs = new SparseArray<>();
-        while (cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             buyerInterestIDs.put(cursor.getInt(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_BUYER_INTEREST_ID)),
                     cursor.getString(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_BUYER_INTEREST_UPDATED_AT)));
         }
@@ -355,7 +355,7 @@ public class CatalogDBHelper extends BaseDBHelper {
             return mPresentCategoryIDs;
         }
         String[] columns = {CategoriesTable.COLUMN_CATEGORY_ID, CategoriesTable.COLUMN_UPDATED_AT};
-        Cursor cursor = getCategoryData(-1, -1, null,-1, -1,-1,columns);
+        Cursor cursor = getCategoryData(-1, -1, null, -1, -1, -1, columns);
         SparseArray<String> categories = new SparseArray<>();
         while (cursor.moveToNext()) {
             categories.put(cursor.getInt(cursor.getColumnIndexOrThrow(CategoriesTable.COLUMN_CATEGORY_ID))
@@ -489,40 +489,40 @@ public class CatalogDBHelper extends BaseDBHelper {
         if (category.has(CategorySellersTable.TABLE_NAME)) {
             updateCategorySellers(category.getJSONArray(CategorySellersTable.TABLE_NAME), categoryID);
         }
-        if (category.has("buyer_interest")){
+        if (category.has("buyer_interest")) {
             updateBuyerInterestData(category.getJSONObject("buyer_interest"));
         }
         mDatabaseHelper.closeDatabase();
         return insertUpdated;
     }
 
-    public void updateBuyerInterestsDataFromJSONArray(JSONArray buyerInterests) throws JSONException{
+    public void updateBuyerInterestsDataFromJSONArray(JSONArray buyerInterests) throws JSONException {
         for (int i = 0; i < buyerInterests.length(); i++) {
             updateBuyerInterestData(buyerInterests.getJSONObject(i));
         }
     }
 
-    public void updateBuyerInterestData(JSONObject buyerInterest) throws JSONException{
+    public void updateBuyerInterestData(JSONObject buyerInterest) throws JSONException {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
         int buyerInterestID = buyerInterest.getInt(CategoriesTable.COLUMN_BUYER_INTEREST_ID);
         int categoryID = buyerInterest.getInt(CategoriesTable.COLUMN_CATEGORY_ID);
-        if (buyerInterest.has("category")){
+        if (buyerInterest.has("category")) {
             saveCategoryData(buyerInterest.getJSONObject("category"));
         }
-        if(buyerInterestID == -1){
+        if (buyerInterestID == -1) {
             ContentValues contentValues = getBuyerInterestContentValuesFromJSON(buyerInterest);
             String selection = CategoriesTable.COLUMN_CATEGORY_ID + " = " + categoryID;
             db.update(CategoriesTable.TABLE_NAME, contentValues, selection, null);
         } else {
             String buyerInterestUpdatedAtLocal = getPresentBuyerInterestIDs().get(buyerInterestID);
             String buyerInterestUpdatedAtServer = buyerInterest.getString(CategoriesTable.COLUMN_UPDATED_AT);
-            if (buyerInterestUpdatedAtLocal == null || !buyerInterestUpdatedAtLocal.equals(buyerInterestUpdatedAtServer)){
+            if (buyerInterestUpdatedAtLocal == null || !buyerInterestUpdatedAtLocal.equals(buyerInterestUpdatedAtServer)) {
                 ContentValues values = getBuyerInterestContentValuesFromJSON(buyerInterest);
                 String selection = CategoriesTable.COLUMN_CATEGORY_ID + " = " + categoryID + " AND (( " +
                         CategoriesTable.COLUMN_SYNCED + " = 1) OR ( " +
                         CategoriesTable.COLUMN_SYNCED + " = 0 AND " +
                         CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE + " = " + values.getAsInteger(CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE) + ")) ";
-                if (db.update(CategoriesTable.TABLE_NAME, values, selection, null) > 0){
+                if (db.update(CategoriesTable.TABLE_NAME, values, selection, null) > 0) {
                     mPresentBuyerInterestIDs.put(buyerInterestID, buyerInterestUpdatedAtServer);
                 }
             }
@@ -620,7 +620,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         try {
             db.beginTransaction();
 
-            for (int i=0; i<buyerProducts.length(); i++) {
+            for (int i = 0; i < buyerProducts.length(); i++) {
                 insertedUpdated += saveBuyerProductResponseData(buyerProducts.getJSONObject(i));
             }
             db.setTransactionSuccessful();
@@ -778,7 +778,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         if (product.has("response")) {
             JSONObject response = product.getJSONObject("response");
             values.put(ProductsTable.COLUMN_RESPONSE_CODE, response.getInt(ProductsTable.COLUMN_RESPONSE_CODE));
-        }else {
+        } else {
             values.put(ProductsTable.COLUMN_RESPONSE_CODE, 0);
         }
         return values;
@@ -817,7 +817,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         cv.put(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID, data.getInt(ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_ID));
         if (data.has(ProductsTable.COLUMN_STORE_MARGIN) && !data.isNull(ProductsTable.COLUMN_STORE_MARGIN)) {
             cv.put(ProductsTable.COLUMN_STORE_MARGIN, data.getDouble(ProductsTable.COLUMN_STORE_MARGIN));
-        }else {
+        } else {
             cv.put(ProductsTable.COLUMN_STORE_MARGIN, -1.0);
         }
         cv.put(ProductsTable.COLUMN_HAS_SWIPED, data.getInt(ProductsTable.COLUMN_HAS_SWIPED));
@@ -884,10 +884,10 @@ public class CatalogDBHelper extends BaseDBHelper {
         return cv;
     }
 
-    private ContentValues getBuyerInterestContentValuesFromJSON(JSONObject buyerInterest) throws JSONException{
+    private ContentValues getBuyerInterestContentValuesFromJSON(JSONObject buyerInterest) throws JSONException {
         ContentValues values = new ContentValues();
         values.put(CategoriesTable.COLUMN_BUYER_INTEREST_ID, buyerInterest.getInt(CategoriesTable.COLUMN_BUYER_INTEREST_ID));
-        values.put(CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE, buyerInterest.getBoolean(CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE)?1:0);
+        values.put(CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE, buyerInterest.getBoolean(CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE) ? 1 : 0);
         values.put(CategoriesTable.COLUMN_BUYER_INTEREST_CREATED_AT, buyerInterest.getString(CategoriesTable.COLUMN_CREATED_AT));
         values.put(CategoriesTable.COLUMN_BUYER_INTEREST_UPDATED_AT, buyerInterest.getString(CategoriesTable.COLUMN_UPDATED_AT));
         if (buyerInterest.has(CategoriesTable.COLUMN_SYNCED)) {
@@ -898,7 +898,7 @@ public class CatalogDBHelper extends BaseDBHelper {
         return values;
     }
 
-    private ContentValues getEmptyBuyerInterestContentValues() throws JSONException{
+    private ContentValues getEmptyBuyerInterestContentValues() throws JSONException {
         ContentValues values = new ContentValues();
         values.put(CategoriesTable.COLUMN_BUYER_INTEREST_ID, 0);
         values.put(CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE, 0);

@@ -15,11 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.CategoryProductActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
-import com.wholdus.www.wholdusbuyerapp.activities.HomeActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.NotificationActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.CategoryHomePageAdapter;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductHomePageAdapter;
@@ -47,8 +45,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
 
     private HomeListenerInterface mListener;
 
-    private FirebaseAnalytics mFirebaseAnalytics;
-
     private RecyclerView mProductsRecyclerView;
     private ArrayList<Product> mProducts;
     private ProductHomePageAdapter mProductHomePageAdapter;
@@ -75,7 +71,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
     }
 
     @Nullable
