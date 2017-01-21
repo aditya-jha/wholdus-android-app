@@ -38,6 +38,7 @@ import com.wholdus.www.wholdusbuyerapp.fragments.ContactUsFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.HomeFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.OrderDetailsFragment;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.CartMenuItemHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ContactsHelperClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
@@ -58,11 +59,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     private FirebaseAnalytics mFirebaseAnalytics;
     private static final int CONTACTS_PERMISSION = 0;
 
-    private MenuItem mCartMenuItem;
-    private int mCartProducts = -1;
-    private static final int CART_DB_LOADER = 1500;
-    private RelativeLayout mCartItemCountLayout;
-    private TextView mCartItemCountTextView;
+    private CartMenuItemHelper mCartMenuItemHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,8 +87,9 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         mDoublePressToExit = false;
         FilterClass.resetFilter();
         FilterClass.resetCategoryFilter();
-        CartLoaderManager cartLoaderManager = new CartLoaderManager(this);
-        getSupportLoaderManager().restartLoader(CART_DB_LOADER, null, cartLoaderManager);
+        if (mCartMenuItemHelper != null) {
+            mCartMenuItemHelper.restartLoader();
+        }
     }
 
     @Override
@@ -125,29 +123,16 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.default_action_buttons, menu);
-        mCartMenuItem = menu.findItem(R.id.action_bar_checkout);
-        MenuItemCompat.setActionView(mCartMenuItem, R.layout.cart_icon_item_count);
-        mCartItemCountLayout = (RelativeLayout) MenuItemCompat.getActionView(mCartMenuItem);
-        mCartItemCountLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startCartActivity();
-            }
-        });
-        mCartItemCountTextView = (TextView) mCartItemCountLayout.findViewById(R.id.actionbar_cart_item_count_text_view);
-        setCartItemCount();
+        mCartMenuItemHelper = new CartMenuItemHelper(this, menu.findItem(R.id.action_bar_checkout), getSupportLoaderManager());
+        mCartMenuItemHelper.restartLoader();
         return super.onCreateOptionsMenu(menu);
-    }
-
-    private void startCartActivity(){
-        startActivity(new Intent(this, CartActivity.class));
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_bar_checkout:
-                startCartActivity();
+                startActivity(new Intent(this, CartActivity.class));
                 break;
             case R.id.action_bar_shortlist:
                 Intent shortlistIntent = new Intent(this, CategoryProductActivity.class);
@@ -384,41 +369,5 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         NavDrawerHelper.getInstance().setOpenFragment(fragmentName);
     }
 
-    private class CartLoaderManager implements LoaderManager.LoaderCallbacks<Cart>{
 
-        private Context mContext;
-
-        CartLoaderManager(Context context){
-            mContext = context;
-        }
-        @Override
-        public void onLoaderReset(Loader<Cart> loader) {
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Cart> loader, Cart data) {
-            if (data != null) {
-                mCartProducts = data.getProductCount();
-            } else {
-                mCartProducts = 0;
-            }
-            setCartItemCount();
-        }
-
-        @Override
-        public Loader<Cart> onCreateLoader(int id, Bundle args) {
-            return new CartLoader(mContext, -1, false, false, false, false);
-        }
-    }
-
-    private void setCartItemCount(){
-        if (mCartItemCountTextView != null) {
-            if (mCartProducts > 0) {
-                mCartItemCountTextView.setVisibility(View.VISIBLE);
-                mCartItemCountTextView.setText(String.valueOf(mCartProducts));
-            } else {
-                mCartItemCountTextView.setVisibility(View.GONE);
-            }
-        }
-    }
 }
