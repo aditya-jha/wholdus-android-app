@@ -59,6 +59,7 @@ public class FilterCategoryValuesDisplayAdapter extends BaseAdapter {
 
         TextView textView = (TextView) view.findViewById(R.id.textView);
         textView.setText(category.getCategoryName());
+        view.setId(category.getCategoryID());
 
         return view;
     }

@@ -177,7 +177,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
                 int childCount = adapterView.getChildCount();
                 for (int i = 0; i < childCount; i++) {
                     if (i == position) {
-                        adapterView.getChildAt(i).setBackgroundColor(Color.YELLOW);
+                        adapterView.getChildAt(i).setBackgroundColor(Color.LTGRAY);
                     } else {
                         adapterView.getChildAt(i).setBackgroundColor(Color.WHITE);
                     }
@@ -262,7 +262,6 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
     private void populateValuesListView(String filterKey) {
         mSelectedFilter = filterKey;
         if (filterKey.equals("Brand")) {
-            /* TODO: implement Brand case filter loading */
             mFilterValues.setAdapter(mBrandFilterValuesAdapter);
             getActivity().getSupportLoaderManager().restartLoader(1, null, this);
         } else if (filterKey.equals("Category")) {
