@@ -239,4 +239,6 @@
 
     <string name="neft_payment">"Please transfer the order amount <b>Rs. %1$s</b> to Acc. No. <b>017105008405</b> with IFSC Code <b>ICIC0000171</b> in the name of PROBZIP BUSINESS SOLUTIONS PVT LTD"</string>
     <string name="cod_charge"><b>2 %</b> COD charges at <b>Rs. %1$s</b></string>
+    <string name="hand_picked">Hand Picked For You</string>
+    <string name="view_all">View All</string>
 </resources>
