@@ -59,16 +59,15 @@ public class SubCartAdapter extends BaseAdapter {
             holder.summary = (TextView) view.findViewById(R.id.subcart_summary_text_view);
             holder.cartItems = (ListView) view.findViewById(R.id.sub_cart_items_list_view);
             view.setTag(holder);
-        }
-        else {
+        } else {
             holder = (ViewHolder) view.getTag();
         }
 
         SubCart subCart = mData.get(i);
 
         holder.sellerName.setText(subCart.getSeller().getCompanyName());
-        holder.summary.setText( String.valueOf(subCart.getPieces()) + " pieces - Rs. " +
-                String.format("%.0f",subCart.getFinalPrice()- subCart.getShippingCharge()));
+        holder.summary.setText(String.valueOf(subCart.getPieces()) + " pieces - Rs. " +
+                String.format("%.0f", subCart.getFinalPrice() - subCart.getShippingCharge()));
 
         CartItemsAdapter cartItemsAdapter = new CartItemsAdapter(mContext, subCart.getCartItems(), mListener);
         holder.cartItems.setAdapter(cartItemsAdapter);
@@ -77,7 +76,7 @@ public class SubCartAdapter extends BaseAdapter {
         return view;
     }
 
-    private class ViewHolder{
+    private class ViewHolder {
         int id;
         TextView sellerName;
         TextView summary;

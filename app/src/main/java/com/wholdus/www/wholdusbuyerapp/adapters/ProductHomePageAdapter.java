@@ -5,10 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -87,14 +84,12 @@ public class ProductHomePageAdapter extends RecyclerView.Adapter<ProductHomePage
 
         @Override
         public void onClick(View view) {
-
             int position = getAdapterPosition();
             if (position == RecyclerView.NO_POSITION) return;
 
             if (mListener != null) {
                 mListener.itemClicked(view, position, -1);
             }
-
         }
     }
 }

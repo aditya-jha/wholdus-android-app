@@ -19,3 +19,8 @@
 -dontwarn sun.misc.Unsafe
 -dontwarn okio.**
 -printmapping build/outputs/mapping/release/mapping.txt
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {
+  **[] $VALUES;
+  public *;
+}

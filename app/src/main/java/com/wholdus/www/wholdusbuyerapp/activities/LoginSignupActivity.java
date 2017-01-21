@@ -155,7 +155,6 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
                 intent.setClass(this, HomeActivity.class);
                 intent.putExtra(Constants.OPEN_FRAGMENT_KEY, HomeFragment.class.getSimpleName());
             } else {
-
                 Intent businessTypesIntent = new Intent(this, UserService.class);
                 businessTypesIntent.putExtra("TODO", R.string.fetch_business_types);
                 startService(businessTypesIntent);
@@ -174,7 +173,7 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
     public void hideSoftKeyboard(View view) {
         try {
             if (view != null) {
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         } catch (Exception e) {

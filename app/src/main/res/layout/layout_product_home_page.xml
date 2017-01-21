@@ -1,60 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="180dp"
     android:id="@+id/layout_product_home_page"
-    android:layout_height="wrap_content">
+    android:layout_width="150dp"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/card_padding_vertical"
+    android:background="@color/primary"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
+
+        <ProgressBar
+            android:id="@+id/loading_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
+
+        <ImageView
+            android:id="@+id/product_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/product_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:ellipsize="end"
+        android:fontFamily="@string/font_condensed"
+        android:maxLines="1"
+        android:paddingBottom="2dp"
+        android:paddingLeft="@dimen/card_padding_vertical"
+        android:paddingRight="@dimen/card_padding_vertical"
+        android:textSize="12sp"
+        android:textStyle="normal"
+        tools:text="Black Cotton Kurti" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_gravity="center_horizontal"
-            >
+    <TextView
+        android:id="@+id/product_fabric"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@string/font_black"
+        android:paddingBottom="2dp"
+        android:paddingLeft="@dimen/card_padding_vertical"
+        android:paddingRight="@dimen/card_padding_vertical"
+        android:paddingTop="2dp"
+        android:textColor="@color/accent"
+        android:textSize="12sp"
+        android:textStyle="normal"
+        tools:text="cotton" />
 
-            <ProgressBar
-                android:id="@+id/loading_indicator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true" />
-
-            <ImageView
-                android:id="@+id/product_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"/>
-        </RelativeLayout>
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/black" />
-
-        <TextView
-            android:id="@+id/product_name"
-            style="@style/AppTheme.TitleText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="2"
-            tools:text="Black Cotton Kurti" />
-
-        <TextView
-            android:id="@+id/product_fabric"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/title_text_padding" />
-
-        <TextView
-            android:id="@+id/product_price"
-            style="@style/AppTheme.TitleText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-</android.support.v7.widget.CardView>
+    <TextView
+        android:id="@+id/product_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@string/font_black"
+        android:paddingBottom="@dimen/card_padding_vertical"
+        android:paddingLeft="@dimen/card_padding_vertical"
+        android:paddingRight="@dimen/card_padding_vertical"
+        android:paddingTop="2dp"
+        android:textColor="@color/primary_text"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        tools:text="Rs. 150/pc" />
+</LinearLayout>

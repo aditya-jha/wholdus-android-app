@@ -11,6 +11,7 @@
     <dimen name="card_padding_horizontal">8dp</dimen>
 
     <dimen name="text_divider_gap">4dp</dimen>
+    <dimen name="text_divider_gap_small">2dp</dimen>
 
     <dimen name="scroll_item_bottom_margin">150dp</dimen>
 

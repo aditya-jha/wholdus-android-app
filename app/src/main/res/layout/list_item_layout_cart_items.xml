@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center_horizontal"
+    android:layout_height="wrap_content"
+    android:baselineAligned="false"
+    android:orientation="horizontal"
+    android:background="@color/primary"
     android:padding="@dimen/card_margin_vertical">
 
     <RelativeLayout
@@ -34,122 +35,119 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:textColor="@color/primary_text"
                 android:id="@+id/cart_item_product_name_text_view"
-                android:textSize="18sp"
-                tools:text="Black Cotton Kurti Black Cotton Kurti Black Cotton Kurti"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFamily="@string/font_condensed"
                 android:maxLines="2"
-                android:layout_marginLeft="10dp"/>
+                android:paddingLeft="@dimen/card_margin_horizontal"
+                android:textColor="@color/primary_text"
+                android:textSize="14sp"
+                tools:text="Black Cotton Kurti Black Cotton Kurti Black Cotton Kurti" />
 
             <ImageButton
-                android:layout_width="24dp"
                 android:id="@+id/cart_item_remove_button"
-                android:layout_height="24dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_delete_black_24dp"/>
-
+                android:paddingLeft="@dimen/card_margin_horizontal"
+                android:paddingRight="@dimen/card_margin_horizontal"
+                android:src="@drawable/ic_delete_black_24dp" />
         </LinearLayout>
 
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider"
-            android:layout_marginBottom="@dimen/card_margin_vertical"/>
+        <include layout="@layout/layout_horizontal_line" />
 
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            >
+            android:padding="@dimen/card_margin_horizontal">
 
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal">
+                android:paddingBottom="@dimen/card_margin_horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/secondary_text"
-                    android:textSize="16sp"
-                    android:text="@string/cart_item_price_per_piece"
+                    android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:layout_marginLeft="10dp"/>
+                    android:text="@string/cart_item_price_per_piece"
+                    android:textColor="@color/secondary_text"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/cart_item_product_price_per_piece_text_view"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
                     android:textColor="@color/primary_text"
                     android:textSize="16sp"
-                    tools:text="Rs. 220"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="10dp"/>
-
+                    tools:text="Rs. 220" />
             </TableRow>
 
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:layout_marginTop="@dimen/card_margin_vertical">
+                android:paddingBottom="@dimen/card_margin_horizontal"
+                android:paddingTop="@dimen/text_divider_gap">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/secondary_text"
-                    android:textSize="16sp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
                     android:text="@string/cart_item_pieces"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="10dp"/>
+                    android:textColor="@color/secondary_text"
+                    android:textSize="14sp" />
 
-                <Spinner
-                    android:id="@+id/cart_item_pieces_spinner"
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="10dp"/>
+                    android:layout_weight="1">
 
+                    <Spinner
+                        android:id="@+id/cart_item_pieces_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical" />
+                </RelativeLayout>
             </TableRow>
 
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:layout_marginTop="@dimen/card_margin_vertical">
+                android:paddingBottom="@dimen/card_margin_horizontal"
+                android:paddingTop="@dimen/text_divider_gap">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/secondary_text"
-                    android:textSize="16sp"
-                    android:text="@string/cart_item_total"
+                    android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:layout_marginLeft="10dp"/>
+                    android:text="@string/cart_item_total"
+                    android:textColor="@color/secondary_text"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/cart_item_final_price_text_view"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/primary_text"
-                    android:textSize="18sp"
-                    tools:text="Rs. 2200"
+                    android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:layout_marginLeft="10dp"/>
-
+                    android:fontFamily="@string/font_black"
+                    android:textColor="@color/primary_text"
+                    android:textSize="16sp"
+                    tools:text="Rs. 2200" />
             </TableRow>
-
         </TableLayout>
-
     </LinearLayout>
-
 </LinearLayout>

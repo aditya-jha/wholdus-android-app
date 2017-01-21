@@ -70,17 +70,32 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
-        ExpandableListView expandableListView = (ExpandableListView) view.findViewById(R.id.expandable_list_view);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<NavDrawerData> mNavigationDrawerData = NavigationDrawerData.getData();
+                final NavigationDrawerAdapter mNavigationDrawerAdapter = new NavigationDrawerAdapter(getContext(), mNavigationDrawerData);
 
-        List<NavDrawerData> mNavigationDrawerData = NavigationDrawerData.getData();
-        NavigationDrawerAdapter mNavigationDrawerAdapter = new NavigationDrawerAdapter(getContext(), mNavigationDrawerData);
-        expandableListView.setAdapter(mNavigationDrawerAdapter);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
+                        ExpandableListView expandableListView = (ExpandableListView) view.findViewById(R.id.expandable_list_view);
+                        expandableListView.setAdapter(mNavigationDrawerAdapter);
 
-        expandableListView.setOnGroupClickListener(this);
-        expandableListView.setOnChildClickListener(this);
+                        expandableListView.setOnGroupClickListener(NavigationDrawerFragment.this);
+                        expandableListView.setOnChildClickListener(NavigationDrawerFragment.this);
+                    }
+                });
+            }
+        }).start();
     }
 
     @Override

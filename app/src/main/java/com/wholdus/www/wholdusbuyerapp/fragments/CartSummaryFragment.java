@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,33 +39,26 @@ import java.util.ArrayList;
 public class CartSummaryFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cart>, CartSummaryListenerInterface {
 
     private CartListenerInterface mListener;
-    private final int CART_DB_LOADER = 90;
     private BroadcastReceiver mCartServiceResponseReceiver;
     private Cart mCart;
 
     private TextView mOrderValueTextView;
     private TextView mShippingChargeTextView;
-    private LinearLayout mTopSummary;
-    private LinearLayout mNoProducts;
-    private Button mContinueShopping;
+    private CardView mTopSummary, mNoProducts;
     private ListView mSubCartListView;
 
     private SubCartAdapter mSubCartAdapter;
     private ArrayList<SubCart> mSubCarts;
 
+    private static final int CART_DB_LOADER = 90;
 
-    public CartSummaryFragment(){
-
+    public CartSummaryFragment() {
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            mListener = (CartListenerInterface) context;
-        } catch (ClassCastException cee) {
-            cee.printStackTrace();
-        }
+        mListener = (CartListenerInterface) context;
     }
 
     @Nullable
@@ -88,23 +82,22 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         mListener.fragmentCreated("Cart Summary", true);
         getActivity().getSupportLoaderManager().restartLoader(CART_DB_LOADER, null, this);
 
         IntentFilter intentFilter = new IntentFilter(getString(R.string.cart_data_updated));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mCartServiceResponseReceiver, intentFilter);
-
     }
 
-    public void initReferences(ViewGroup view){
+    public void initReferences(ViewGroup view) {
         mOrderValueTextView = (TextView) view.findViewById(R.id.cart_summary_order_value_text_view);
         mShippingChargeTextView = (TextView) view.findViewById(R.id.cart_summary_shipping_charge_text_view);
-        mTopSummary = (LinearLayout) view.findViewById(R.id.top_summary);
+        mTopSummary = (CardView) view.findViewById(R.id.top_summary);
 
-        mContinueShopping = (Button) view.findViewById(R.id.continue_shopping_button);
-        mContinueShopping.setOnClickListener(new View.OnClickListener() {
+        Button continueShopping = (Button) view.findViewById(R.id.continue_shopping_button);
+        continueShopping.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), HomeActivity.class);
@@ -112,7 +105,8 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
                 startActivity(intent);
             }
         });
-        mNoProducts = (LinearLayout) view.findViewById(R.id.no_products);
+
+        mNoProducts = (CardView) view.findViewById(R.id.no_products);
 
         mSubCartListView = (ListView) view.findViewById(R.id.cart_summary_suborder_list_view);
         mSubCarts = new ArrayList<>();
@@ -121,23 +115,23 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
-    public void enableProgressBar(){
+    public void enableProgressBar() {
         mListener.enableProgressBar();
     }
 
-    private void fetchDataFromServer(){
+    private void fetchDataFromServer() {
         Intent cartServiceIntent = new Intent(getContext(), CartService.class);
         cartServiceIntent.putExtra("TODO", R.string.fetch_cart);
         getContext().startService(cartServiceIntent);
     }
 
     private void handleAPIResponse() {
-        if (getActivity()!= null) {
+        if (getActivity() != null) {
             getActivity().getSupportLoaderManager().restartLoader(CART_DB_LOADER, null, this);
         }
     }
 
-    private void setViewForCart(){
+    private void setViewForCart() {
         mNoProducts.setVisibility(View.GONE);
         mTopSummary.setVisibility(View.VISIBLE);
 
@@ -148,13 +142,13 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
 
         mListener.setCart(mCart);
 
-        mShippingChargeTextView.setText("Rs. " +String.format("%.0f",mCart.getShippingCharge()));
-        mOrderValueTextView.setText("Rs. " +String.format("%.0f",mCart.getCalculatedPrice()));
+        mShippingChargeTextView.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mCart.getShippingCharge()))));
+        mOrderValueTextView.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mCart.getCalculatedPrice()))));
 
         mListener.disableProgressBar();
     }
 
-    private void setViewForEmptyCart(){
+    private void setViewForEmptyCart() {
         mTopSummary.setVisibility(View.GONE);
         mNoProducts.setVisibility(View.VISIBLE);
         mListener.disableProgressBar();
@@ -173,16 +167,14 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onLoaderReset(Loader<Cart> loader) {
-
     }
 
     @Override
     public void onLoadFinished(Loader<Cart> loader, Cart data) {
-        if (data!= null && data.getPieces() > 0){
+        if (data != null && data.getPieces() > 0) {
             mCart = data;
             setViewForCart();
-        }
-        else {
+        } else {
             mCart = null;
             setViewForEmptyCart();
         }
@@ -190,6 +182,6 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public Loader<Cart> onCreateLoader(int id, Bundle args) {
-        return new  CartLoader(getContext(), -1, true, true,true,true);
+        return new CartLoader(getContext(), -1, true, true, true, true);
     }
 }

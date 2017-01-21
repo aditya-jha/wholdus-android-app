@@ -43,33 +43,60 @@
     <LinearLayout
         style="@style/ThemeOverlay.AppCompat.Light"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:background="@color/primary"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <ImageButton
+        <ImageView
             android:id="@+id/fav_icon"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/like_key"
+            android:paddingBottom="@dimen/card_margin_horizontal"
+            android:paddingEnd="@dimen/card_margin_horizontal"
+            android:paddingLeft="@dimen/activity_vertical_margin"
+            android:paddingRight="@dimen/card_margin_horizontal"
+            android:paddingStart="@dimen/activity_vertical_margin"
+            android:paddingTop="@dimen/card_margin_horizontal"
             android:src="@drawable/ic_favorite_border_black_28dp" />
 
-        <Button
-            android:id="@+id/cart_button"
-            style="@style/AppTheme.ColoredButton"
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/card_margin_horizontal"
+            android:layout_marginRight="@dimen/card_margin_horizontal"
             android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_add_shopping_cart_white_28dp"
-            android:drawableStart="@drawable/ic_add_shopping_cart_white_28dp"
-            android:text="@string/add_to_cart" />
+            android:background="@color/accent">
 
-        <ImageButton
+            <TextView
+                android:id="@+id/cart_button"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:text="@string/add_to_cart"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <ImageView
             android:id="@+id/share_button"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/share_description"
+            android:paddingBottom="@dimen/card_margin_horizontal"
+            android:paddingEnd="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/card_margin_horizontal"
+            android:paddingRight="@dimen/activity_vertical_margin"
+            android:paddingStart="@dimen/card_margin_horizontal"
+            android:paddingTop="@dimen/card_margin_horizontal"
             android:src="@drawable/ic_share_black_24dp" />
     </LinearLayout>
 </LinearLayout>

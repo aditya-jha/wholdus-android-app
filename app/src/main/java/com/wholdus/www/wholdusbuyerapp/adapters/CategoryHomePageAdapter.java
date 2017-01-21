@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
@@ -43,9 +44,7 @@ public class CategoryHomePageAdapter extends RecyclerView.Adapter<CategoryHomePa
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.layout_categories_home_page, parent, false);
-        MyViewHolder holder = new MyViewHolder(view);
-        return holder;
+        return new MyViewHolder(LayoutInflater.from(mContext).inflate(R.layout.layout_categories_home_page, parent, false));
     }
 
     @Override
@@ -60,8 +59,9 @@ public class CategoryHomePageAdapter extends RecyclerView.Adapter<CategoryHomePa
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, ItemClickListener{
-        TextView mCategoryName;
-        RecyclerView mProductsRecyclerView;
+        private TextView mCategoryName;
+        private Button mViewAllButton;
+        private RecyclerView mProductsRecyclerView;
         private ProductHomePageAdapter mProductHomePageAdapter;
         private ArrayList<Product> mProducts;
         private ItemClickListener mListener;
@@ -72,12 +72,15 @@ public class CategoryHomePageAdapter extends RecyclerView.Adapter<CategoryHomePa
             mCategoryName = (TextView) itemView.findViewById(R.id.category_name);
             mCategoryName.setOnClickListener(this);
 
+            mViewAllButton = (Button) itemView.findViewById(R.id.view_all_button);
+            mViewAllButton.setOnClickListener(this);
+
             mProductsRecyclerView = (RecyclerView) itemView.findViewById(R.id.products_recycler_view);
             mProductsRecyclerView.setItemAnimator(new DefaultItemAnimator());
             mProducts = new ArrayList<>();
             mProductHomePageAdapter = new ProductHomePageAdapter(mContext, mProducts, this);
             mProductsRecyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
-            mProductsRecyclerView.addItemDecoration(new RecyclerViewSpaceItemDecoration(0, mContext.getResources().getDimensionPixelSize(R.dimen.card_margin_horizontal)));
+            mProductsRecyclerView.addItemDecoration(new RecyclerViewSpaceItemDecoration(0, mContext.getResources().getDimensionPixelSize(R.dimen.text_divider_gap_small)));
             mProductsRecyclerView.setAdapter(mProductHomePageAdapter);
 
             itemView.setOnClickListener(this);
@@ -92,7 +95,6 @@ public class CategoryHomePageAdapter extends RecyclerView.Adapter<CategoryHomePa
             if (mListener != null) {
                 mListener.itemClicked(view, position, -1);
             }
-
         }
 
         @Override

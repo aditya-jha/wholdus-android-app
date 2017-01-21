@@ -50,9 +50,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.list_item_layout_notification, parent, false);
-        MyViewHolder holder = new MyViewHolder(view);
-        return holder;
+        return new MyViewHolder(LayoutInflater.from(mContext).inflate(R.layout.list_item_layout_notification, parent, false));
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{

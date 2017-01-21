@@ -40,7 +40,6 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
 
     private TextView mLotSize;
     private TextView mProductName;
-    private TextView mLotDescription;
     private TextView mPricePerPiece;
     private Spinner mPiecesSpinner;
     private TextView mTotalPrice;
@@ -60,16 +59,20 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
     @Override
     public void onStart() {
         super.onStart();
-        Window window = getDialog().getWindow();
-        Point size = new Point();
+        try {
+            Window window = getDialog().getWindow();
+            Point size = new Point();
 
-        Display display = window.getWindowManager().getDefaultDisplay();
-        display.getSize(size);
+            Display display = window.getWindowManager().getDefaultDisplay();
+            display.getSize(size);
 
-        int width = size.x;
+            int width = size.x;
 
-        window.setLayout((int) (width * 1), WindowManager.LayoutParams.WRAP_CONTENT);
-        window.setGravity(Gravity.CENTER);
+            window.setLayout((int) (width), WindowManager.LayoutParams.WRAP_CONTENT);
+            window.setGravity(Gravity.CENTER);
+        } catch (Exception e) {
+        }
+
     }
 
     @Nullable
@@ -109,7 +112,6 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
     public void initReferences(ViewGroup rootView) {
         mLotSize = (TextView) rootView.findViewById(R.id.cart_dialog_lot_size_text_view);
         mProductName = (TextView) rootView.findViewById(R.id.cart_dialog_product_name_text_view);
-        mLotDescription = (TextView) rootView.findViewById(R.id.cart_dialog_lot_description_text_view);
         mPricePerPiece = (TextView) rootView.findViewById(R.id.cart_dialog_price_per_piece_text_view);
         mTotalPrice = (TextView) rootView.findViewById(R.id.cart_dialog_total_price_text_view);
         mPiecesSpinner = (Spinner) rootView.findViewById(R.id.cart_dialog_pieces_spinner);
@@ -134,22 +136,15 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
         }
 
         mLotSize.setText(String.valueOf(mProduct.getLotSize()));
-//        getDialog().setTitle(mProduct.getName());
         mProductName.setText(mProduct.getName());
-        String lotDetails = mProduct.getProductDetails().getLotDescription();
-        if (lotDetails.equals("")) {
-            lotDetails = mProduct.getLotSize() + " pieces per lot";
-        }
-        mLotDescription.setText(lotDetails);
-        mPricePerPiece.setText("Rs. " + String.format("%.0f", mProduct.getMinPricePerUnit()));
+        mPricePerPiece.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mProduct.getMinPricePerUnit()))));
 
         mPiecesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                int newLots = (((int) (adapterView.getItemAtPosition(i))) / mProduct.getLotSize());
-                mLots = newLots;
+                mLots = (((int) (adapterView.getItemAtPosition(i))) / mProduct.getLotSize());
                 float finalPrice = ((int) adapterView.getItemAtPosition(i)) * mProduct.getMinPricePerUnit();
-                mTotalPrice.setText("Rs. " + String.format("%.0f", finalPrice));
+                mTotalPrice.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(finalPrice))));
                 mPiecesSpinner.setSelection(i);
             }
 

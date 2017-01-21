@@ -75,24 +75,24 @@
     <string name="buyer_interest_fragment_title">My Preferences</string>
 
     <!-- Order Fragment -->
-    <string name="order_card_order_number">ORD-NO :&#160;</string>
-    <string name="order_card_date">Date :&#160;</string>
-    <string name="order_card_amount">Amount : Rs. </string>
-    <string name="order_card_suborder_pieces">Pieces :&#160;</string>
-    <string name="order_card_sellers_in_order">Sellers in Order:</string>
+    <string name="order_card_order_number">ORD-NO &#160;</string>
+    <string name="order_card_date">Date &#160;</string>
+    <string name="order_card_amount">Amount &#160;</string>
+    <string name="order_card_suborder_pieces">Pieces &#160;</string>
+    <string name="order_card_sellers_in_order">Sellers in Order</string>
 
     <!-- Order Details Fragment -->
-    <string name="order_details_pieces">Pieces:</string>
-    <string name="order_details_products">Products:</string>
-    <string name="order_details_order_value">Order Value:</string>
-    <string name="order_details_cod_charge">COD Charge:</string>
-    <string name="order_details_shipping">Shipping:</string>
-    <string name="order_details_total_amount">Total Amount:</string>
+    <string name="order_details_pieces">Pieces &#160;</string>
+    <string name="order_details_products">Products &#160;</string>
+    <string name="order_details_order_value">Order Value &#160;</string>
+    <string name="order_details_cod_charge">COD Charge &#160;</string>
+    <string name="order_details_shipping">Shipping &#160;</string>
+    <string name="order_details_total_amount">Total Amount &#160;</string>
 
-    <string name="order_item_price_per_piece">Price/pc:</string>
-    <string name="order_item_pieces">Pieces:</string>
-    <string name="order_item_total">Total:</string>
-    <string name="order_item_status">Status:</string>
+    <string name="order_item_price_per_piece">Price/pc</string>
+    <string name="order_item_pieces">Pieces</string>
+    <string name="order_item_total">Total</string>
+    <string name="order_item_status">Status</string>
     <string name="order_item_track">Track</string>
 
     <!-- keys -->
@@ -172,9 +172,9 @@
     <string name="filter_no_products">No products for filter</string>
 
     <!-- cart dialog fragment -->
-    <string name="lot_size_key">Lot Size :</string>
-    <string name="lot_details_key">Details :</string>
-    <string name="price_per_piece">Price/pc</string>
+    <string name="lot_size_key">Lot Size &#160;</string>
+    <string name="lot_details_key">Details &#160;</string>
+    <string name="price_per_piece">Price/pc &#160;</string>
     <string name="pieces_key">Pieces</string>
     <string name="total_price_key">Total</string>
     <string name="cart_dialog_shipping_condition">*Shipping charge extra = Rs.35/kg</string>
@@ -182,14 +182,14 @@
 
     <!-- cart summary fragment -->
     <string name="cart_summary_proceed">PROCEED</string>
-    <string name="cart_summary_order_value">Order Value :&#160;</string>
-    <string name="cart_summary_shipping">Shipping :&#160;</string>
-    <string name="cart_summary_no_products">Your cart looks empty.\nWant to add products to your cart?</string>
+    <string name="cart_summary_order_value">Order Value &#160;</string>
+    <string name="cart_summary_shipping">Shipping &#160;</string>
+    <string name="cart_summary_no_products">Your cart looks empty.\n\nWant to add products to your cart?</string>
     <string name="cart_summary_continue_shopping">CONTINUE SHOPPING</string>
 
-    <string name="cart_item_price_per_piece">Price/pc:</string>
-    <string name="cart_item_pieces">Pieces:</string>
-    <string name="cart_item_total">Total:</string>
+    <string name="cart_item_price_per_piece">Price/pc</string>
+    <string name="cart_item_pieces">Pieces</string>
+    <string name="cart_item_total">Total</string>
 
     <string name="checkout_confirm_address_delivery_address">Delivery Address</string>
     <string name="checkout_confirm_address_select_another">SELECT ANOTHER</string>
@@ -202,7 +202,7 @@
 
     <string name="price_per_pcs_format">Rs. %1$s/pc</string>
     <string name="price_format">Rs. %1$s</string>
-
+    <string name="pieces_price_format">%1$s pieces - Rs. %2$s</string>
     <string name="share_description">Share</string>
     <string name="shortlist_summary">Go to your shortlisted products</string>
     <string name="shortlist_text">Shortlist</string>
@@ -236,4 +236,9 @@
     <string name="your_message">Whats on your mind?</string>
     <string name="contact_us_message">Have something to say?</string>
     <string name="contact_us_sucess">We will get back to you soon</string>
+
+    <string name="neft_payment">"Please transfer the order amount <b>Rs. %1$s</b> to Acc. No. <b>017105008405</b> with IFSC Code <b>ICIC0000171</b> in the name of PROBZIP BUSINESS SOLUTIONS PVT LTD"</string>
+    <string name="cod_charge"><b>2 %</b> COD charges at <b>Rs. %1$s</b></string>
+    <string name="hand_picked">Hand Picked For You</string>
+    <string name="view_all">View All</string>
 </resources>

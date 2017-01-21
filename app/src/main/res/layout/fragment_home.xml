@@ -5,38 +5,61 @@
     android:orientation="vertical">
 
     <android.support.v4.widget.NestedScrollView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="vertical"
-            android:paddingBottom="@dimen/card_margin_vertical"
-            android:paddingLeft="@dimen/card_margin_horizontal"
-            android:paddingRight="@dimen/card_margin_horizontal"
-            android:paddingTop="@dimen/card_margin_vertical">
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/primary"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="2"
+                    android:fontFamily="@string/font_condensed"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:text="@string/hand_picked"
+                    android:textSize="16sp" />
+
+                <Button
+                    android:id="@+id/hand_picked_view_all"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/view_all"
+                    android:textColor="@color/accent" />
+            </LinearLayout>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/products_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/card_margin_vertical" />
+                android:background="@color/primary"
+                android:scrollbars="horizontal" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/categories_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:background="@color/primary" />
         </LinearLayout>
-
     </android.support.v4.widget.NestedScrollView>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_marginTop="@dimen/text_divider_gap_small"
         android:background="@drawable/toolbar_drop_shadow" />
 
     <LinearLayout style="@style/AppTheme.BottomBar">
@@ -53,6 +76,7 @@
             android:fontFamily="@string/font_condensed"
             android:text="@string/shortlist_text"
             android:textColor="@color/primary_text"
+            android:textSize="12sp"
             android:textStyle="normal" />
 
         <Button
@@ -68,6 +92,7 @@
             android:paddingRight="0dp"
             android:text="@string/help_key"
             android:textColor="@color/primary_text"
+            android:textSize="12sp"
             android:textStyle="normal" />
 
         <Button
@@ -82,6 +107,7 @@
             android:fontFamily="@string/font_condensed"
             android:text="@string/notification_key"
             android:textColor="@color/primary_text"
+            android:textSize="12sp"
             android:textStyle="normal" />
     </LinearLayout>
 </LinearLayout>

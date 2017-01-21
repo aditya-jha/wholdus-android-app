@@ -3,4 +3,8 @@
     android:id="@+id/thumb_image"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:adjustViewBounds="true"/>
+    android:adjustViewBounds="true"
+    android:paddingEnd="@dimen/text_divider_gap"
+    android:paddingLeft="@dimen/text_divider_gap"
+    android:paddingRight="@dimen/text_divider_gap"
+    android:paddingStart="@dimen/text_divider_gap" />

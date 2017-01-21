@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,15 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.CategoryProductActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
-import com.wholdus.www.wholdusbuyerapp.activities.HomeActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.NotificationActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.CategoryHomePageAdapter;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductHomePageAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
+import com.wholdus.www.wholdusbuyerapp.decorators.GridDividerItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
@@ -46,8 +46,6 @@ import static com.wholdus.www.wholdusbuyerapp.R.id.help;
 public class HomeFragment extends Fragment implements View.OnClickListener, ItemClickListener {
 
     private HomeListenerInterface mListener;
-
-    private FirebaseAnalytics mFirebaseAnalytics;
 
     private RecyclerView mProductsRecyclerView;
     private ArrayList<Product> mProducts;
@@ -75,7 +73,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
     }
 
     @Nullable
@@ -97,12 +94,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
         Button notificationButton = (Button) view.findViewById(R.id.notification);
         notificationButton.setOnClickListener(this);
 
+        Button handPickedViewAll = (Button) view.findViewById(R.id.hand_picked_view_all);
+        handPickedViewAll.setOnClickListener(this);
+
         mProductsRecyclerView = (RecyclerView) view.findViewById(R.id.products_recycler_view);
         mProductsRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mProducts = new ArrayList<>();
         mProductHomePageAdapter = new ProductHomePageAdapter(getContext(), mProducts, this);
         mProductsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        mProductsRecyclerView.addItemDecoration(new RecyclerViewSpaceItemDecoration(0, getResources().getDimensionPixelSize(R.dimen.card_margin_horizontal)));
+        mProductsRecyclerView.addItemDecoration(new RecyclerViewSpaceItemDecoration(0, getResources().getDimensionPixelSize(R.dimen.text_divider_gap_small)));
         mProductsRecyclerView.setAdapter(mProductHomePageAdapter);
 
         mCategoriesRecyclerView = (RecyclerView) view.findViewById(R.id.categories_recycler_view);
@@ -110,7 +110,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
         mCategories = new ArrayList<>();
         mCategoryHomePageAdapter = new CategoryHomePageAdapter(getContext(), mCategories, this);
         mCategoriesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        mCategoriesRecyclerView.addItemDecoration(new RecyclerViewSpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.card_margin_vertical), 0));
+        mCategoriesRecyclerView.addItemDecoration(new GridDividerItemDecoration(
+                ContextCompat.getDrawable(getContext(), R.drawable.divider),
+                ContextCompat.getDrawable(getContext(), R.drawable.divider), 1));
         mCategoriesRecyclerView.setAdapter(mCategoryHomePageAdapter);
         //mProductsRecyclerView.setVerticalScrollBarEnabled(false);
         mCategoriesRecyclerView.setNestedScrollingEnabled(false);
@@ -128,11 +130,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
                 startActivity(intent);
                 break;
             case R.id.category_name:
+            case R.id.view_all_button:
                 FilterClass.setCategoryID(mCategories.get(position).getCategoryID());
                 startActivity(intent);
                 break;
         }
-
     }
 
     @Override
@@ -165,6 +167,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
             case R.id.notification:
                 Intent intent = new Intent(getContext(), NotificationActivity.class);
                 getContext().startActivity(intent);
+                break;
+            case R.id.hand_picked_view_all:
+                FilterClass.resetFilter();
+                FilterClass.resetCategoryFilter();
+                startActivity(new Intent(getContext(), HandPickedActivity.class));
                 break;
         }
     }
