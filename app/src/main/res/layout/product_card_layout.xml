@@ -12,15 +12,13 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/card_margin_horizontal"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:layout_alignParentTop="true"
-            >
+            android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -36,58 +34,45 @@
 
                 <ImageView
                     android:id="@+id/product_card_image_view"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true" />
+                    android:layout_centerVertical="true"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter" />
 
             </RelativeLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="@dimen/card_margin_vertical"
-                android:background="@color/divider" />
+            <include layout="@layout/layout_horizontal_line" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingTop="@dimen/card_margin_vertical"
                 android:paddingLeft="@dimen/card_margin_horizontal"
                 android:paddingRight="@dimen/card_margin_horizontal"
-                >
+                android:paddingTop="@dimen/card_margin_horizontal">
 
                 <TextView
                     android:id="@+id/product_card_price_text_view"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:textColor="@color/primary_text"
-                    android:textSize="24sp"
-                     />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
+                    android:textSize="20sp" />
 
                 <TextView
-                    android:layout_marginStart="@dimen/card_margin_horizontal"
-                    android:layout_marginLeft="@dimen/card_margin_horizontal"
                     android:id="@+id/product_card_fabric_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/primary_text"
-                    android:textSize="18sp"
-                    android:scrollHorizontally="true"
+                    android:layout_gravity="end"
+                    android:layout_marginLeft="@dimen/card_margin_horizontal"
+                    android:layout_marginStart="@dimen/card_margin_horizontal"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    />
-
+                    android:scrollHorizontally="true"
+                    android:textColor="@color/accent"
+                    android:textSize="18sp" />
             </LinearLayout>
 
         </LinearLayout>
@@ -95,11 +80,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:orientation="horizontal"
             android:layout_alignParentTop="true"
             android:layout_marginTop="100dp"
             android:gravity="center_vertical"
-            >
+            android:orientation="horizontal">
 
             <View
                 android:layout_width="0dp"
@@ -110,23 +94,22 @@
                 android:id="@+id/right_image"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:padding="10dp"
-                android:src="@drawable/ic_favorite_red_48dp"
                 android:background="@drawable/circular_button_shape"
-                />
+                android:padding="10dp"
+                android:src="@drawable/ic_favorite_red_48dp" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2" />
+
             <ImageView
                 android:id="@+id/left_image"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:src="@drawable/ic_clear_black_48dp"
-                android:padding="10dp"
                 android:background="@drawable/circular_button_shape"
-                />
+                android:padding="10dp"
+                android:src="@drawable/ic_clear_black_48dp" />
 
             <View
                 android:layout_width="0dp"
