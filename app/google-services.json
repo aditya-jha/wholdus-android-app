@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "615979808108",
+    "firebase_url": "https://wholdus-buyers-app.firebaseio.com",
+    "project_id": "wholdus-buyers-app",
+    "storage_bucket": "wholdus-buyers-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:615979808108:android:bb72911a69abbbf9",
+        "android_client_info": {
+          "package_name": "com.wholdus.www.wholdusbuyerapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "615979808108-o985fmc65vp2nag985c2pudvgup8aqdl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wholdus.www.wholdusbuyerapp",
+            "certificate_hash": "5DA5B1FDBDEC9D68EE6DA97FFAD1F3E13B0DF3C6"
+          }
+        },
+        {
+          "client_id": "615979808108-ai2k5cmd66kttkprl5c9ff03udtou8kn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoVawzMkHcJx4B7DCtYIwG20IJJQ78qUE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "615979808108-ai2k5cmd66kttkprl5c9ff03udtou8kn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

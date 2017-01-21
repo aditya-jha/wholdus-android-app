@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/icon_iamge_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:padding="@dimen/card_padding_vertical"
+        tools:src="@drawable/ic_person_black_24dp" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/key_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@string/font_normal"
+            android:padding="@dimen/card_padding_vertical"
+            android:textColor="@color/secondary_text"
+            tools:text="Name" />
+
+        <TextView
+            android:id="@+id/value_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@string/font_normal"
+            android:paddingBottom="@dimen/card_padding_vertical"
+            android:paddingLeft="@dimen/card_padding_vertical"
+            android:textColor="@color/primary_text"
+            android:textSize="16sp"
+            tools:text="Aditya Jha" />
+    </LinearLayout>
+</LinearLayout>

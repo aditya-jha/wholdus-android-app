@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="user_api_request_tag">USER_API_REQUESTS</string>
+    <string name="login_api_request_tag">LOGIN_API_REQUESTS</string>
+
+    <string name="api_response_data_key">API_RESPONSE_DATA</string>
+
+    <string name="login_helper_shared_preference">LoginHelperSharedPreference</string>
+
+    <string name="update_user_profile">updateUserProfile</string>
+    <string name="fetch_business_types">fetchBusinessTypes</string>
+    <string name="update_user_address">updateUserAddress</string>
+    <string name="update_buyer_type">updateBuyerType</string>
+    <string name="update_buyer_whatsapp_number">updateBuyerWhatsappNumber</string>
+    <string name="fetch_sellers">fetchSellers</string>
+    <string name="seller_category_details">seller_category_details</string>
+
+    <!-- orders -->
+    <string name="fetch_orders">fetchOrders</string>
+
+    <!-- cart -->
+    <string name="fetch_cart">fetchCart</string>
+    <string name="post_cart_item">postCartItem</string>
+    <string name="write_cart_item">writeCartItem</string>
+    <string name="delete_cart">deleteCart</string>
+</resources>
