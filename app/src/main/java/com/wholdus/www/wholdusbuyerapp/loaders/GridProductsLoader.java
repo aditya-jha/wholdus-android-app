@@ -42,7 +42,10 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
         CatalogDBHelper catalogDBHelper = new CatalogDBHelper(getContext());
 
         ArrayList<Integer> categoryID = new ArrayList<>();
-        categoryID.add(FilterClass.getCategoryID());
+        int selectedCategory = FilterClass.getCategoryID();
+        if (selectedCategory != -1) {
+            categoryID.add(FilterClass.getCategoryID());
+        }
 
         Cursor cursor = catalogDBHelper.getProductData(null,
                 null,

@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,7 +19,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarFinalValueListener;
@@ -81,8 +79,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
         Bundle args = getArguments();
         try {
             mCategoryDisplayed = args.getBoolean("CategoryDisplayed");
-        }
-        catch (Exception e){
+        } catch (Exception e) {
 
         }
         initReferences(rootView);
@@ -132,7 +129,9 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
         switch (item.getItemId()) {
             case R.id.action_bar_clear:
                 FilterClass.resetFilter();
-                if (mCategoryDisplayed){FilterClass.resetCategoryFilter();}
+                if (mCategoryDisplayed) {
+                    FilterClass.resetCategoryFilter();
+                }
                 populateValuesListView(mSelectedFilter);
                 break;
         }
@@ -174,9 +173,9 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
 
                 /* TODO: handle state of list view when click and presses */
                 int childCount = adapterView.getChildCount();
-                for (int i=0; i<childCount; i++) {
+                for (int i = 0; i < childCount; i++) {
                     if (i == position) {
-                        adapterView.getChildAt(i).setBackgroundColor(Color.YELLOW);
+                        adapterView.getChildAt(i).setBackgroundColor(Color.LTGRAY);
                     } else {
                         adapterView.getChildAt(i).setBackgroundColor(Color.WHITE);
                     }
@@ -227,7 +226,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
         priceRangeSeekBar.setOnRangeSeekbarFinalValueListener(new OnRangeSeekbarFinalValueListener() {
             @Override
             public void finalValue(Number minValue, Number maxValue) {
-                FilterClass.setPriceFilter(minValue.intValue(),maxValue.intValue());
+                FilterClass.setPriceFilter(minValue.intValue(), maxValue.intValue());
             }
         });
 
@@ -260,17 +259,19 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
 
     private void populateValuesListView(String filterKey) {
         mSelectedFilter = filterKey;
-        if (filterKey.equals("Brand")) {
-            /* TODO: implement Brand case filter loading */
-            mFilterValues.setAdapter(mBrandFilterValuesAdapter);
-            getActivity().getSupportLoaderManager().initLoader(1, null, this);
-        } else if (filterKey.equals("Category")){
-            mFilterValues.setAdapter(mCategoryFilterValuesAdapter);
-            getActivity().getSupportLoaderManager().initLoader(2, null, new CategoryLoaderManager());
-        } else {
-            mFilterValues.setAdapter(mFilterValuesAdapter);
-            mFilterValuesAdapter.resetData(mFilterData.get(mSelectedFilter), mSelectedFilter);
-            mFilterValuesAdapter.notifyDataSetChanged();
+        switch (filterKey) {
+            case "Brand":
+                mFilterValues.setAdapter(mBrandFilterValuesAdapter);
+                getActivity().getSupportLoaderManager().restartLoader(1, null, this);
+                break;
+            case "Category":
+                mFilterValues.setAdapter(mCategoryFilterValuesAdapter);
+                getActivity().getSupportLoaderManager().restartLoader(2, null, new CategoryLoaderManager());
+                break;
+            default:
+                mFilterValues.setAdapter(mFilterValuesAdapter);
+                mFilterValuesAdapter.resetData(mFilterData.get(mSelectedFilter), mSelectedFilter);
+                mFilterValuesAdapter.notifyDataSetChanged();
         }
     }
 
@@ -287,7 +288,6 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
                 mCategoryFilterValuesAdapter.notifyDataSetChanged();
             }
         }
-
 
         @Override
         public Loader<ArrayList<Category>> onCreateLoader(final int id, Bundle args) {

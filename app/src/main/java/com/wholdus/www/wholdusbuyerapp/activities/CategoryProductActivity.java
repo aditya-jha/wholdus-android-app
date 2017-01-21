@@ -54,7 +54,7 @@ public class CategoryProductActivity extends AppCompatActivity
         setContentView(R.layout.activity_category_product);
 
         Intent intent = getIntent();
-        FilterClass.setCategoryID(intent.getIntExtra(getString(R.string.selected_category_id), 1));
+        FilterClass.setCategoryID(intent.getIntExtra(getString(R.string.selected_category_id), -1));
         mType = intent.getIntExtra(Constants.TYPE, Constants.ALL_PRODUCTS);
         sendFragmentOpenBroadcast(ProductsGridFragment.class.getSimpleName());
 
@@ -67,33 +67,35 @@ public class CategoryProductActivity extends AppCompatActivity
         initNavigationDrawer();
 
         mCategorySpinner = (Spinner) findViewById(R.id.category_spinner);
-        mCategorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                /* TODO: Implement what happens when category is changed from toolbar dropdown */
-                int oldCategoryID = FilterClass.getCategoryID();
-                FilterClass.setCategoryID((int) mCategorySpinner.getSelectedItemId());
-                if (!mFilterFragmentActive) {
-                    if (oldCategoryID != FilterClass.getCategoryID()) {
-                        FilterClass.resetFilter();
-                        updateProducts();
+
+        if (mType == Constants.ALL_PRODUCTS) {
+            mCategorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    int oldCategoryID = FilterClass.getCategoryID();
+                    FilterClass.setCategoryID((int) mCategorySpinner.getSelectedItemId());
+                    if (!mFilterFragmentActive) {
+                        if (oldCategoryID != FilterClass.getCategoryID()) {
+                            FilterClass.resetFilter();
+                            updateProducts();
+                        }
+                    } else {
+                        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                        if (fragment instanceof FilterFragment) {
+                            ((FilterFragment) fragment).categoryIDChanged(oldCategoryID);
+                        }
                     }
                 }
-                else {
-                    Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-                    if (fragment instanceof FilterFragment) {
-                        ((FilterFragment)fragment).categoryIDChanged(oldCategoryID);
-                    }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
                 }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        getSupportLoaderManager().initLoader(CATEGORY_LOADER, null, this);
+            });
+            getSupportLoaderManager().initLoader(CATEGORY_LOADER, null, this);
+        } else {
+            mCategorySpinner.setVisibility(View.INVISIBLE);
+        }
 
         updateProducts();
     }
@@ -193,7 +195,9 @@ public class CategoryProductActivity extends AppCompatActivity
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (mType == Constants.FAV_PRODUCTS) {
             MenuItem menuItem = menu.findItem(R.id.action_bar_shortlist);
-            menuItem.setVisible(false);
+            if (menuItem != null) {
+                menuItem.setVisible(false);
+            }
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -205,7 +209,13 @@ public class CategoryProductActivity extends AppCompatActivity
         mToolbar = (Toolbar) findViewById(R.id.spinner_toolbar);
         setSupportActionBar(mToolbar);
         try {
-            getSupportActionBar().setTitle(null);
+            if (mType == Constants.FAV_PRODUCTS) {
+                getSupportActionBar().setTitle(getString(R.string.shortlist_title));
+            } else if (mType == Constants.REJECTED_PRODUCTS) {
+                getSupportActionBar().setTitle(getString(R.string.rejected_title));
+            } else {
+                getSupportActionBar().setTitle(null);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -254,6 +264,9 @@ public class CategoryProductActivity extends AppCompatActivity
         if (fragmentName.equals(FilterFragment.class.getSimpleName())) {
             mFilterFragmentActive = true;
             showBackButtonInToolbar();
+            if (mType != Constants.ALL_PRODUCTS) {
+                bundle.putBoolean("CategoryDisplayed", true);
+            }
             fragment = new FilterFragment();
         } else {
             mFilterFragmentActive = false;
