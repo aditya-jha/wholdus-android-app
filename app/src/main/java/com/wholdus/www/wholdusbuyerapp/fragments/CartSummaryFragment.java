@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,8 +44,7 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
 
     private TextView mOrderValueTextView;
     private TextView mShippingChargeTextView;
-    private LinearLayout mTopSummary;
-    private LinearLayout mNoProducts;
+    private CardView mTopSummary, mNoProducts;
     private ListView mSubCartListView;
 
     private SubCartAdapter mSubCartAdapter;
@@ -94,7 +94,7 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
     public void initReferences(ViewGroup view) {
         mOrderValueTextView = (TextView) view.findViewById(R.id.cart_summary_order_value_text_view);
         mShippingChargeTextView = (TextView) view.findViewById(R.id.cart_summary_shipping_charge_text_view);
-        mTopSummary = (LinearLayout) view.findViewById(R.id.top_summary);
+        mTopSummary = (CardView) view.findViewById(R.id.top_summary);
 
         Button continueShopping = (Button) view.findViewById(R.id.continue_shopping_button);
         continueShopping.setOnClickListener(new View.OnClickListener() {
@@ -106,7 +106,7 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
             }
         });
 
-        mNoProducts = (LinearLayout) view.findViewById(R.id.no_products);
+        mNoProducts = (CardView) view.findViewById(R.id.no_products);
 
         mSubCartListView = (ListView) view.findViewById(R.id.cart_summary_suborder_list_view);
         mSubCarts = new ArrayList<>();
