@@ -187,9 +187,9 @@
     <string name="cart_summary_no_products">Your cart looks empty.\n\nWant to add products to your cart?</string>
     <string name="cart_summary_continue_shopping">CONTINUE SHOPPING</string>
 
-    <string name="cart_item_price_per_piece">Price/pc:</string>
-    <string name="cart_item_pieces">Pieces:</string>
-    <string name="cart_item_total">Total:</string>
+    <string name="cart_item_price_per_piece">Price/pc</string>
+    <string name="cart_item_pieces">Pieces</string>
+    <string name="cart_item_total">Total</string>
 
     <string name="checkout_confirm_address_delivery_address">Delivery Address</string>
     <string name="checkout_confirm_address_select_another">SELECT ANOTHER</string>

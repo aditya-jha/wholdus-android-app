@@ -143,7 +143,7 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
         mListener.setCart(mCart);
 
         mShippingChargeTextView.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mCart.getShippingCharge()))));
-        mOrderValueTextView.setText(String.format(getString(R.string.price_per_pcs_format), String.valueOf((int) Math.ceil(mCart.getCalculatedPrice()))));
+        mOrderValueTextView.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mCart.getCalculatedPrice()))));
 
         mListener.disableProgressBar();
     }

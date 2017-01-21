@@ -10,17 +10,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.ProductDetailActivity;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract;
@@ -68,7 +65,7 @@ public class CartItemsAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup viewGroup) {
         final ViewHolder holder;
 
-        if(convertView == null){
+        if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_layout_cart_items, viewGroup, false);
             holder = new ViewHolder();
             holder.productName = (TextView) convertView.findViewById(R.id.cart_item_product_name_text_view);
@@ -87,8 +84,8 @@ public class CartItemsAdapter extends BaseAdapter {
         final Product product = cartItem.getProduct();
 
         holder.productName.setText(product.getName());
-        holder.pricePerPiece.setText("Rs. " + String.format("%.0f", product.getMinPricePerUnit()));
-        holder.total.setText("Rs. " + String.format("%.0f", cartItem.getFinalPrice()));
+        holder.pricePerPiece.setText(String.format(mContext.getString(R.string.price_per_pcs_format), String.valueOf((int) Math.ceil(product.getMinPricePerUnit()))));
+        holder.total.setText(String.format(mContext.getString(R.string.price_per_pcs_format), String.valueOf((int) Math.ceil(cartItem.getFinalPrice()))));
 
         ArrayAdapter<Integer> piecesAdapter = new ArrayAdapter<>(mContext, R.layout.cart_dialog_spinner_text_view);
         for (int j = 1; j < 11; j++) {
@@ -155,7 +152,7 @@ public class CartItemsAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public void addProductToCart(int lots, Product product) {
+    private void addProductToCart(int lots, Product product) {
         mListener.enableProgressBar();
         Intent intent = new Intent(mContext, CartService.class);
         intent.putExtra("TODO", R.string.write_cart_item);
@@ -169,7 +166,7 @@ public class CartItemsAdapter extends BaseAdapter {
         mContext.startService(intent);
     }
 
-    class ViewHolder{
+    class ViewHolder {
         int id;
         TextView productName;
         TextView pricePerPiece;
