@@ -85,7 +85,7 @@ public class CartItemsAdapter extends BaseAdapter {
 
         holder.productName.setText(product.getName());
         holder.pricePerPiece.setText(String.format(mContext.getString(R.string.price_per_pcs_format), String.valueOf((int) Math.ceil(product.getMinPricePerUnit()))));
-        holder.total.setText(String.format(mContext.getString(R.string.price_per_pcs_format), String.valueOf((int) Math.ceil(cartItem.getFinalPrice()))));
+        holder.total.setText(String.format(mContext.getString(R.string.price_format), String.valueOf((int) Math.ceil(cartItem.getFinalPrice()))));
 
         ArrayAdapter<Integer> piecesAdapter = new ArrayAdapter<>(mContext, R.layout.cart_dialog_spinner_text_view);
         for (int j = 1; j < 11; j++) {
