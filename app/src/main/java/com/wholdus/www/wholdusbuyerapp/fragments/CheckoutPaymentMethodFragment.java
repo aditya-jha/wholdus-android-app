@@ -29,17 +29,13 @@ public class CheckoutPaymentMethodFragment extends Fragment {
     private float mCODValue;
     private float mOrderValue;
 
-    public CheckoutPaymentMethodFragment(){
+    public CheckoutPaymentMethodFragment() {
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            mListener = (CartListenerInterface) context;
-        } catch (ClassCastException cee) {
-            cee.printStackTrace();
-        }
+        mListener = (CartListenerInterface) context;
     }
 
     @Nullable
@@ -49,7 +45,6 @@ public class CheckoutPaymentMethodFragment extends Fragment {
 
         initReferences(rootView);
         mListener.disableProgressBar();
-        mListener.fragmentCreated("Payment Method", true);
         return rootView;
     }
 
@@ -57,13 +52,14 @@ public class CheckoutPaymentMethodFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Bundle args = getArguments();
+        mListener.fragmentCreated("Payment Method", true);
         if (args != null) {
             mCODValue = args.getFloat("orderValue", 5000) / 50;
             mOrderValue = args.getFloat("finalValue", 5000);
         }
     }
 
-    private void initReferences(ViewGroup rootView){
+    private void initReferences(ViewGroup rootView) {
         mCODRadioButton = (RadioButton) rootView.findViewById(R.id.cod_radio_button);
         mNEFTRadioButton = (RadioButton) rootView.findViewById(R.id.neft_radio_button);
         mCreditRadioButton = (RadioButton) rootView.findViewById(R.id.credit_radio_button);
@@ -91,25 +87,24 @@ public class CheckoutPaymentMethodFragment extends Fragment {
         });
     }
 
-    private void radioButtonClicked(int option, boolean checked){
-
-        switch (option){
+    private void radioButtonClicked(int option, boolean checked) {
+        switch (option) {
             case 1:
-                if(checked){
+                if (checked) {
                     mNEFTRadioButton.setChecked(false);
                     mListener.setPaymentMethod(0);
-                    mDescription.setText("2 % COD charges at Rs. " + String.format("%.0f", mCODValue));
+                    String descriptionText = "2 % COD charges at Rs. " + String.valueOf((int) Math.ceil(mCODValue));
+                    mDescription.setText(descriptionText);
                 } else {
                     mListener.setPaymentMethod(-1);
                     mDescription.setText("");
                 }
                 break;
             case 2:
-                if(checked){
+                if (checked) {
                     mCODRadioButton.setChecked(false);
                     mListener.setPaymentMethod(1);
-                    mDescription.setText("Please transfer the order amount Rs. " + String.format("%.0f", mOrderValue)
-                            + " to Acc. No. 017105008405 with IFSC Code ICIC0000171 in the name of PROBZIP BUSINESS SOLUTIONS PVT LTD");
+                    mDescription.setText(String.format(getString(R.string.neft_payment), String.valueOf((int) Math.ceil(mOrderValue))));
                 } else {
                     mListener.setPaymentMethod(-1);
                     mDescription.setText("");
@@ -127,6 +122,5 @@ public class CheckoutPaymentMethodFragment extends Fragment {
                 mListener.setPaymentMethod(-1);
                 break;
         }
-
     }
 }

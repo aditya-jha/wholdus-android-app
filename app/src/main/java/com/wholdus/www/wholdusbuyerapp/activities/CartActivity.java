@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,10 +13,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -54,7 +53,6 @@ import java.util.Map;
 
 public class CartActivity extends AppCompatActivity implements CartListenerInterface, UserAddressInterface, OrderDetailsListenerInterface {
 
-
     private int mStatus = 0;
     private int mBuyerAddressID = 0;
     private int mPaymentMethod = -1;
@@ -63,9 +61,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     private int mOrderID = -1;
 
     private Toolbar mToolbar;
-    private TextView mTotalTextView;
-    private TextView mProductsPiecesTextView;
-    private Button mProceedButton;
+    private TextView mTotalTextView, mProductsPiecesTextView, mProceedButton;
     private LinearLayout mProceedButtonLayout;
     private ProgressBar mProgressBar;
 
@@ -87,19 +83,17 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     protected void onResume() {
         super.onResume();
         setViewForProceedButtonLayout();
-
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == EditAddressFragment.REQUEST_CHECK_SETTINGS){
+        if (requestCode == EditAddressFragment.REQUEST_CHECK_SETTINGS) {
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.cart_fragment_container);
             if (fragment instanceof EditAddressFragment) {
                 EditAddressFragment activeFragment = (EditAddressFragment) fragment;
                 activeFragment.onActivityResult(requestCode, resultCode, data);
             }
-        }
-        else {
+        } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -110,24 +104,24 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         if (mOrderServiceResponseReceiver != null) {
             try {
                 LocalBroadcastManager.getInstance(this).unregisterReceiver(mOrderServiceResponseReceiver);
-            } catch (Exception e){
+            } catch (Exception e) {
 
             }
             mOrderServiceResponseReceiver = null;
         }
     }
 
-    private void initToolbar(){
+    private void initToolbar() {
         mToolbar = (Toolbar) findViewById(R.id.default_toolbar);
         setSupportActionBar(mToolbar);
     }
 
-    private void initReferences(){
+    private void initReferences() {
         mTotalTextView = (TextView) findViewById(R.id.cart_summary_total_price_text_view);
         mProductsPiecesTextView = (TextView) findViewById(R.id.cart_summary_total_products_text_view);
         mTotalTextView = (TextView) findViewById(R.id.cart_summary_total_price_text_view);
         mProceedButtonLayout = (LinearLayout) findViewById(R.id.proceed_button_layout);
-        mProceedButton = (Button) findViewById(R.id.cart_summary_proceed_button);
+        mProceedButton = (TextView) findViewById(R.id.cart_summary_proceed_button);
         mProceedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -170,18 +164,16 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Transaction will be cancelled. Are you sure?").setPositiveButton("Yes", dialogClickListener)
                     .setNegativeButton("No", dialogClickListener).show();
-        } else if (mStatus == 0 && mCheckoutID != null && mCheckoutID > 0){
+        } else if (mStatus == 0 && mCheckoutID != null && mCheckoutID > 0) {
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.cart_fragment_container);
-            if (fragment instanceof EditAddressFragment || fragment instanceof BuyerAddressFragment){
+            if (fragment instanceof EditAddressFragment || fragment instanceof BuyerAddressFragment) {
                 openToFragment(CartSummaryFragment.class.getSimpleName(), null);
             } else {
                 super.onBackPressed();
             }
-        }
-        else {
+        } else {
             finish();
         }
-
     }
 
     @Override
@@ -194,7 +186,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
 
     @Override
     public void addressSaved() {
-        openToFragment(BuyerAddressFragment.class.getSimpleName(),null);
+        openToFragment(BuyerAddressFragment.class.getSimpleName(), null);
     }
 
     @Override
@@ -222,7 +214,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     }
 
 
-    public void updateCart(JSONObject requestBody, int requestMethod, int todo, HashMap<String,String> params){
+    public void updateCart(JSONObject requestBody, int requestMethod, int todo, HashMap<String, String> params) {
         String url = GlobalAccessHelper.generateUrl(getString(R.string.checkout_url), params);
         volleyStringRequest(todo, requestMethod, url, requestBody.toString());
         mProgressBar.setVisibility(View.VISIBLE);
@@ -249,8 +241,8 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         mPaymentMethod = paymentMethod;
     }
 
-    private void setViewForProceedButtonLayout(){
-        if (mCart == null || mCart.getPieces() == 0){
+    private void setViewForProceedButtonLayout() {
+        if (mCart == null || mCart.getPieces() == 0) {
             mProceedButton.setEnabled(false);
             mProceedButtonLayout.setVisibility(View.GONE);
         } else {
@@ -260,7 +252,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
                 mProceedButtonLayout.setVisibility(View.GONE);
             } else {
                 mProceedButtonLayout.setVisibility(View.VISIBLE);
-                mTotalTextView.setText("Total: Rs. " + String.format("%.0f", mCart.getFinalPrice()));
+                mTotalTextView.setText("Total " + String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mCart.getFinalPrice()))));
                 mProductsPiecesTextView.setText(String.valueOf(mCart.getProductCount()) + " products - "
                         + String.valueOf(mCart.getPieces()) + " pieces");
                 mProceedButton.setEnabled(true);
@@ -284,20 +276,20 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     private void openToFragment(String fragmentName, @Nullable Bundle bundle) {
         Fragment fragment;
 
-        if (fragmentName.equals(CartSummaryFragment.class.getSimpleName())){
+        if (fragmentName.equals(CartSummaryFragment.class.getSimpleName())) {
             mProgressBar.setVisibility(View.VISIBLE);
             resetAllIDs();
             mProceedButtonLayout.setVisibility(View.VISIBLE);
             fragment = new CartSummaryFragment();
-        } else if (fragmentName.equals(BuyerAddressFragment.class.getSimpleName())){
+        } else if (fragmentName.equals(BuyerAddressFragment.class.getSimpleName())) {
             fragment = new BuyerAddressFragment();
-        } else if (fragmentName.equals(CheckoutAddressConfirmFragment.class.getSimpleName())){
+        } else if (fragmentName.equals(CheckoutAddressConfirmFragment.class.getSimpleName())) {
             fragment = new CheckoutAddressConfirmFragment();
-        } else if (fragmentName.equals(EditAddressFragment.class.getSimpleName())){
+        } else if (fragmentName.equals(EditAddressFragment.class.getSimpleName())) {
             fragment = new EditAddressFragment();
-        } else if (fragmentName.equals(CheckoutPaymentMethodFragment.class.getSimpleName())){
+        } else if (fragmentName.equals(CheckoutPaymentMethodFragment.class.getSimpleName())) {
             fragment = new CheckoutPaymentMethodFragment();
-        } else if (fragmentName.equals(OrderDetailsFragment.class.getSimpleName())){
+        } else if (fragmentName.equals(OrderDetailsFragment.class.getSimpleName())) {
             mProgressBar.setVisibility(View.GONE);
             fragment = new OrderDetailsFragment();
         } else {
@@ -315,17 +307,14 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
 
         if (!fragmentPopped) {
             // fragment not in backstack create it
-
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.cart_fragment_container, fragment, fragment.getClass().getSimpleName());
-                ft.addToBackStack(backStateName);
-                ft.commit();
-
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.cart_fragment_container, fragment, fragment.getClass().getSimpleName());
+            ft.addToBackStack(backStateName);
+            ft.commit();
         }
-
     }
 
-    private void resetAllIDs(){
+    private void resetAllIDs() {
         mCheckoutID = null;
         mStatus = 0;
         mBuyerAddressID = 0;
@@ -399,15 +388,13 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
                     startService(cartIntent);
                     mOrderID = data.getJSONObject("order").getInt("orderID");
                     runOrderService();
-
-
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private void runOrderService(){
+    private void runOrderService() {
         mOrderServiceResponseReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -419,25 +406,24 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         Intent intent = new Intent(this, OrderService.class);
         intent.putExtra("TODO", R.string.fetch_orders);
         startService(intent);
-
     }
 
-    private void proceedButtonClicked(){
+    private void proceedButtonClicked() {
         try {
             JSONObject requestBody = new JSONObject();
-            HashMap<String,String> params = new HashMap<>();
-            if (mStatus == 0 && mCheckoutID == null && mCart.getSynced() == 1){
+            HashMap<String, String> params = new HashMap<>();
+            if (mStatus == 0 && mCheckoutID == null && mCart.getSynced() == 1) {
                 updateCart(requestBody, Request.Method.POST, TODO.CREATE_CART, params);
-            } else if (mStatus == 0 && mCheckoutID != null && mCheckoutID > 0 && mBuyerAddressID > 0){
+            } else if (mStatus == 0 && mCheckoutID != null && mCheckoutID > 0 && mBuyerAddressID > 0) {
                 requestBody.put("checkoutID", mCheckoutID);
                 requestBody.put("status", mStatus + 1);
                 requestBody.put("addressID", mBuyerAddressID);
                 updateCart(requestBody, Request.Method.PUT, TODO.UPDATE_CART_ADDRESS, params);
-            } else if (mStatus == 1 && mCheckoutID != null && mCheckoutID > 0){
+            } else if (mStatus == 1 && mCheckoutID != null && mCheckoutID > 0) {
                 requestBody.put("checkoutID", mCheckoutID);
                 requestBody.put("status", mStatus + 1);
                 updateCart(requestBody, Request.Method.PUT, TODO.UPDATE_CART_SUMMARY_CONFIRM, params);
-            } else if (mStatus == 2 && mCheckoutID != null && mCheckoutID > 0){
+            } else if (mStatus == 2 && mCheckoutID != null && mCheckoutID > 0) {
                 if (mPaymentMethod == 0 || mPaymentMethod == 1) {
                     requestBody.put("checkoutID", mCheckoutID);
                     requestBody.put("status", mStatus + 1);
@@ -450,17 +436,16 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
                     Toast.makeText(this, "Select payment method", Toast.LENGTH_SHORT).show();
                 }
             }
-        } catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.api_error_message), Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void startOrderDetailsActivity(){
+    public void startOrderDetailsActivity() {
         mProceedButtonLayout.setVisibility(View.GONE);
         Bundle bundle = new Bundle();
         bundle.putInt("orderID", mOrderID);
         openToFragment(OrderDetailsFragment.class.getSimpleName(), bundle);
     }
-
 }

@@ -24,12 +24,11 @@ import java.util.ArrayList;
  * Created by kaustubh on 28/12/16.
  */
 
-public class CheckoutAddressConfirmFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<BuyerAddress>>{
+public class CheckoutAddressConfirmFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<BuyerAddress>> {
 
     private int mAddressID;
     private BuyerAddress mAddress;
     private CartListenerInterface mListener;
-    private final int USER_ADDRESS_DB_LOADER = 51;
 
     private TextView mAliasTextView;
     private TextView mContactNumberTextView;
@@ -37,27 +36,22 @@ public class CheckoutAddressConfirmFragment extends Fragment implements LoaderMa
     private TextView mCityStatePincodeTextView;
     private TextView mSelectAnother;
 
-    public CheckoutAddressConfirmFragment(){
+    private static final int USER_ADDRESS_DB_LOADER = 51;
 
+    public CheckoutAddressConfirmFragment() {
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            mListener = (CartListenerInterface) context;
-        } catch (ClassCastException cee) {
-            cee.printStackTrace();
-        }
+        mListener = (CartListenerInterface) context;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_checkout_confirm_address, container, false);
-
         initReferences(rootView);
-
         return rootView;
     }
 
@@ -70,15 +64,21 @@ public class CheckoutAddressConfirmFragment extends Fragment implements LoaderMa
         mListener.fragmentCreated("Confirm Address", true);
     }
 
-    private void initReferences(ViewGroup rootView){
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    private void initReferences(ViewGroup rootView) {
         mAliasTextView = (TextView) rootView.findViewById(R.id.alias_text_view);
         mContactNumberTextView = (TextView) rootView.findViewById(R.id.contact_number_text_view);
         mAddressTextView = (TextView) rootView.findViewById(R.id.address_text_view);
         mCityStatePincodeTextView = (TextView) rootView.findViewById(R.id.city_state_pincode_text_view);
-        mSelectAnother  = (TextView) rootView.findViewById(R.id.checkout_confirm_address_select_another_text_view);
+        mSelectAnother = (TextView) rootView.findViewById(R.id.checkout_confirm_address_select_another_text_view);
     }
 
-    private void setViewForAddress(){
+    private void setViewForAddress() {
         mListener.disableProgressBar();
         mListener.addressSelected(mAddressID);
         mAliasTextView.setText(mAddress.getAlias());
@@ -135,5 +135,4 @@ public class CheckoutAddressConfirmFragment extends Fragment implements LoaderMa
     public Loader<ArrayList<BuyerAddress>> onCreateLoader(int id, Bundle args) {
         return new BuyerAddressLoader(getContext(), mAddressID, -1);
     }
-
 }
