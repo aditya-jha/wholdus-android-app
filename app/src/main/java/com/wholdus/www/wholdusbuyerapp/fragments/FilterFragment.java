@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,7 +19,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarFinalValueListener;
@@ -261,16 +259,19 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
 
     private void populateValuesListView(String filterKey) {
         mSelectedFilter = filterKey;
-        if (filterKey.equals("Brand")) {
-            mFilterValues.setAdapter(mBrandFilterValuesAdapter);
-            getActivity().getSupportLoaderManager().restartLoader(1, null, this);
-        } else if (filterKey.equals("Category")) {
-            mFilterValues.setAdapter(mCategoryFilterValuesAdapter);
-            getActivity().getSupportLoaderManager().restartLoader(2, null, new CategoryLoaderManager());
-        } else {
-            mFilterValues.setAdapter(mFilterValuesAdapter);
-            mFilterValuesAdapter.resetData(mFilterData.get(mSelectedFilter), mSelectedFilter);
-            mFilterValuesAdapter.notifyDataSetChanged();
+        switch (filterKey) {
+            case "Brand":
+                mFilterValues.setAdapter(mBrandFilterValuesAdapter);
+                getActivity().getSupportLoaderManager().restartLoader(1, null, this);
+                break;
+            case "Category":
+                mFilterValues.setAdapter(mCategoryFilterValuesAdapter);
+                getActivity().getSupportLoaderManager().restartLoader(2, null, new CategoryLoaderManager());
+                break;
+            default:
+                mFilterValues.setAdapter(mFilterValuesAdapter);
+                mFilterValuesAdapter.resetData(mFilterData.get(mSelectedFilter), mSelectedFilter);
+                mFilterValuesAdapter.notifyDataSetChanged();
         }
     }
 
