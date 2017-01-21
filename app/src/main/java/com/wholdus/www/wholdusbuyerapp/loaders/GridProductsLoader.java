@@ -9,7 +9,6 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.models.GridProductModel;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 /**
  * Created by aditya on 15/12/16.
@@ -30,7 +29,6 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
             CatalogContract.ProductsTable.COLUMN_RESPONSE_CODE,
     };
 
-    private int mOffset, mLimit;
     private ArrayList<Integer> mResponseCodes;
 
     public GridProductsLoader(Context context, ArrayList<Integer> responseCodes) {
