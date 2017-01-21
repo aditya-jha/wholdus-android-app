@@ -1,6 +1,7 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,9 +14,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -23,6 +26,8 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -39,12 +44,11 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.NavDrawerHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
+import com.wholdus.www.wholdusbuyerapp.loaders.CartLoader;
+import com.wholdus.www.wholdusbuyerapp.models.Cart;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import static java.security.AccessController.getContext;
 
 public class HomeActivity extends AppCompatActivity implements HomeListenerInterface {
 
@@ -53,6 +57,12 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     private Toolbar mToolbar;
     private FirebaseAnalytics mFirebaseAnalytics;
     private static final int CONTACTS_PERMISSION = 0;
+
+    private MenuItem mCartMenuItem;
+    private int mCartProducts = -1;
+    private static final int CART_DB_LOADER = 1500;
+    private RelativeLayout mCartItemCountLayout;
+    private TextView mCartItemCountTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +90,8 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         mDoublePressToExit = false;
         FilterClass.resetFilter();
         FilterClass.resetCategoryFilter();
+        CartLoaderManager cartLoaderManager = new CartLoaderManager(this);
+        getSupportLoaderManager().restartLoader(CART_DB_LOADER, null, cartLoaderManager);
     }
 
     @Override
@@ -113,14 +125,29 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.default_action_buttons, menu);
+        mCartMenuItem = menu.findItem(R.id.action_bar_checkout);
+        MenuItemCompat.setActionView(mCartMenuItem, R.layout.cart_icon_item_count);
+        mCartItemCountLayout = (RelativeLayout) MenuItemCompat.getActionView(mCartMenuItem);
+        mCartItemCountLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startCartActivity();
+            }
+        });
+        mCartItemCountTextView = (TextView) mCartItemCountLayout.findViewById(R.id.actionbar_cart_item_count_text_view);
+        setCartItemCount();
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private void startCartActivity(){
+        startActivity(new Intent(this, CartActivity.class));
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_bar_checkout:
-                startActivity(new Intent(this, CartActivity.class));
+                startCartActivity();
                 break;
             case R.id.action_bar_shortlist:
                 Intent shortlistIntent = new Intent(this, CategoryProductActivity.class);
@@ -355,5 +382,43 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     public void sendFragmentOpenBroadcast(String fragmentName){
         NavDrawerHelper.getInstance().setOpenActivity(this.getClass().getSimpleName());
         NavDrawerHelper.getInstance().setOpenFragment(fragmentName);
+    }
+
+    private class CartLoaderManager implements LoaderManager.LoaderCallbacks<Cart>{
+
+        private Context mContext;
+
+        CartLoaderManager(Context context){
+            mContext = context;
+        }
+        @Override
+        public void onLoaderReset(Loader<Cart> loader) {
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cart> loader, Cart data) {
+            if (data != null) {
+                mCartProducts = data.getProductCount();
+            } else {
+                mCartProducts = 0;
+            }
+            setCartItemCount();
+        }
+
+        @Override
+        public Loader<Cart> onCreateLoader(int id, Bundle args) {
+            return new CartLoader(mContext, -1, false, false, false, false);
+        }
+    }
+
+    private void setCartItemCount(){
+        if (mCartItemCountTextView != null) {
+            if (mCartProducts > 0) {
+                mCartItemCountTextView.setVisibility(View.VISIBLE);
+                mCartItemCountTextView.setText(String.valueOf(mCartProducts));
+            } else {
+                mCartItemCountTextView.setVisibility(View.GONE);
+            }
+        }
     }
 }

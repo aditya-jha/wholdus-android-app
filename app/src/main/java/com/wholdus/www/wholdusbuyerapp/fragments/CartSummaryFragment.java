@@ -120,6 +120,9 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
     }
 
     private void fetchDataFromServer() {
+        Intent intent = new Intent(getContext(), CartService.class);
+        intent.putExtra("TODO", R.string.post_cart_item);
+        getContext().startService(intent);
         Intent cartServiceIntent = new Intent(getContext(), CartService.class);
         cartServiceIntent.putExtra("TODO", R.string.fetch_cart);
         getContext().startService(cartServiceIntent);

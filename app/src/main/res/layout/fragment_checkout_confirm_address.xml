@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="@dimen/activity_horizontal_margin">
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,14 +18,9 @@
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_height="1dp"
                 android:layout_weight="1"
-                android:fontFamily="@string/font_normal"
-                android:text="@string/checkout_confirm_address_delivery_address"
-                android:textColor="@color/primary_text"
-                android:textSize="16sp"
-                android:textStyle="normal" />
+                />
 
             <TextView
                 android:id="@+id/checkout_confirm_address_select_another_text_view"
