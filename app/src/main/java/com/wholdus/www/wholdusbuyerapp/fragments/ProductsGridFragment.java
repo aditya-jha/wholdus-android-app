@@ -488,9 +488,8 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         }
 
         mTotalProductsOnServer = intent.getIntExtra(APIConstants.TOTAL_ITEMS_KEY, -1);
-        if (mProducts.size() != 0 && mProducts.size() >= mTotalProductsOnServer && mProducts.get(mProducts.size()-1) == null) {
-            mProducts.remove(mProducts.size() -1);
-            mAdapter.notifyItemRemoved(mProducts.size());
+        if (mProducts.size() >= mTotalProductsOnServer) {
+            removeDummyObject();
         }
 
         final int pageNumber = intent.getIntExtra(APIConstants.API_PAGE_NUMBER_KEY, -1);
@@ -498,6 +497,10 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         final int updatedInserted = intent.getIntExtra(Constants.INSERTED_UPDATED, 0);
 
         mTotalPages = totalPages;
+        if (mTotalPages == pageNumber) {
+            removeDummyObject();
+        }
+
         if (updatedInserted > 0) {
             if (!mLoaderLoading) {
                 if (getActivity()!= null) {
@@ -583,5 +586,12 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
         ((TextView) mSnackbar.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(Color.WHITE);
         mSnackbar.show();
+    }
+
+    private void removeDummyObject() {
+        if (mProducts.size() > 0 && mProducts.get(mProducts.size() - 1) == null) {
+            mProducts.remove(mProducts.size() - 1);
+            mAdapter.notifyItemRemoved(mProducts.size());
+        }
     }
 }
