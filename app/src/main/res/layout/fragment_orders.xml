@@ -10,6 +10,33 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true" />
 
+    <android.support.v7.widget.CardView
+        android:id="@+id/no_orders"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/activity_horizontal_margin">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/no_orders_text"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/discover_products"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="cart_summary_continue_shopping" />
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/orders_recycler_view"
         android:layout_width="match_parent"

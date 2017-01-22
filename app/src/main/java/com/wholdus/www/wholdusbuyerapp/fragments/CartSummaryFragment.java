@@ -20,8 +20,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HomeActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.SubCartAdapter;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartSummaryListenerInterface;
@@ -100,9 +102,11 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
         continueShopping.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), HomeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                Intent intent = new Intent(getContext(), HandPickedActivity.class);
+                FilterClass.resetFilter();
+                FilterClass.resetCategoryFilter();
                 startActivity(intent);
+                getActivity().finish();
             }
         });
 
