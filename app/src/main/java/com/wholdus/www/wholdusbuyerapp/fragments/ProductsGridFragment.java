@@ -241,7 +241,6 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 if (mResponseCodes.size() != 1) {
                     Intent shortlistIntent = new Intent(getContext(), CategoryProductActivity.class);
                     shortlistIntent.putExtra(Constants.TYPE, Constants.FAV_PRODUCTS);
-                    shortlistIntent.getIntExtra(getString(R.string.selected_category_id), 1);
                     getContext().startActivity(shortlistIntent);
                 }
                 break;

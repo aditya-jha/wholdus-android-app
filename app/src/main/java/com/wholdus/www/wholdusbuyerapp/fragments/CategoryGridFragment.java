@@ -22,6 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.activities.OnBoardingActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.CategoriesGridAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.decorators.GridDividerItemDecoration;
@@ -171,18 +172,25 @@ public class CategoryGridFragment extends Fragment implements
         final int ID = view.getId();
         switch (ID) {
             case R.id.fav_icon_image_view:
-                mPageLoader.setVisibility(View.GONE);
-                Category category = mCategoriesData.get(position);
-                Intent intent = new Intent(getContext(), CatalogService.class);
-                intent.putExtra("TODO", TODO.UPDATE_BUYER_INTEREST);
-                intent.putExtra(CatalogContract.CategoriesTable.COLUMN_CATEGORY_ID, category.getCategoryID());
-                intent.putExtra(CatalogContract.CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE, (category.getBuyerInterestIsActive()==1)?0:1);
-                getContext().startService(intent);
+                updateCategoryLikeStatus(position);
                 break;
             default:
                 // open category clicked
+                if (getActivity() != null && getActivity() instanceof OnBoardingActivity){
+                    updateCategoryLikeStatus(position);
+                }
                 mListener.openCategory(mCategoriesData.get(position).getCategoryID());
         }
+    }
+
+    private void updateCategoryLikeStatus(int position){
+        mPageLoader.setVisibility(View.GONE);
+        Category category = mCategoriesData.get(position);
+        Intent intent = new Intent(getContext(), CatalogService.class);
+        intent.putExtra("TODO", TODO.UPDATE_BUYER_INTEREST);
+        intent.putExtra(CatalogContract.CategoriesTable.COLUMN_CATEGORY_ID, category.getCategoryID());
+        intent.putExtra(CatalogContract.CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE, (category.getBuyerInterestIsActive()==1)?0:1);
+        getContext().startService(intent);
     }
 
     private void fetchDataFromServer() {

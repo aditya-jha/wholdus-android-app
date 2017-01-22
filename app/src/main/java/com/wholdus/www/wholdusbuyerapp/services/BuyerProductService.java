@@ -62,7 +62,7 @@ public class BuyerProductService extends IntentService {
     }
 
     private void fetchBuyerProducts(int todo, int pageNumber) {
-        HashMap<String, String> params = new HashMap<>();
+        HashMap<String, String> params = FilterClass.getFilterHashMap();
         //TODO : Save categories and seller data separately so that it doesn't have to requested here
         //TODO : Also try that all products don't have to be requested every time
         params.put("product_details", "1");
