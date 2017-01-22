@@ -230,9 +230,10 @@
                 <ListView
                     android:id="@+id/suborder_list_view"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:descendantFocusability="afterDescendants"
                     android:divider="@null"
+                    android:dividerHeight="@dimen/text_divider_gap"
                     android:listSelector="@android:color/transparent"
                     android:scrollbars="none" />
             </LinearLayout>

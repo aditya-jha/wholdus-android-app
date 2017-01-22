@@ -33,7 +33,7 @@ public class CartItemLoader extends AbstractLoader<ArrayList<CartItem>> {
                           int productID,
                           int synced,
                           boolean initialiseProduct,
-                          @Nullable String[] columns){
+                          @Nullable String[] columns) {
         super(context);
         mContext = context;
         mCartItemID = cartItemID;

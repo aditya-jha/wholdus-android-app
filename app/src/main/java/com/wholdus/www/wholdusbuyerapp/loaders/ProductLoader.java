@@ -52,7 +52,7 @@ public class ProductLoader extends AbstractLoader<Product> {
                 -1,
                 -1,
                 null
-                );
+        );
 
         if (cursor.getCount() == 0) {
             return null;
@@ -64,7 +64,7 @@ public class ProductLoader extends AbstractLoader<Product> {
         product.setProductDetails(cursor);
 
         cursor = catalogDBHelper.getSellerData(product.getSellerID(), null);
-        if (cursor.getCount() > 0){
+        if (cursor.getCount() > 0) {
             cursor.moveToFirst();
             product.setSeller(cursor);
 
@@ -75,7 +75,7 @@ public class ProductLoader extends AbstractLoader<Product> {
             }
         }
 
-        cursor = catalogDBHelper.getCategoryData(product.getCategoryID(), -1, null,1,-1,-1, null);
+        cursor = catalogDBHelper.getCategoryData(product.getCategoryID(), -1, null, 1, -1, -1, null);
         if (cursor.getCount() > 0) {
             cursor.moveToFirst();
             product.setCategory(cursor);

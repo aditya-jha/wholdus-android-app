@@ -43,12 +43,11 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
     private TextView mPricePerPiece;
     private Spinner mPiecesSpinner;
     private TextView mTotalPrice;
-    private Button mAddtoCart;
     private int mProductID;
     private Product mProduct;
     private int mLots;
     private int mOldLots = -1;
-    ArrayAdapter<Integer> mPiecesAdapter;
+    private ArrayAdapter<Integer> mPiecesAdapter;
 
     private static final int PRODUCTS_DB_LOADER = 50;
     private static final int CART_DB_LOADER = 51;
@@ -116,8 +115,8 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
         mTotalPrice = (TextView) rootView.findViewById(R.id.cart_dialog_total_price_text_view);
         mPiecesSpinner = (Spinner) rootView.findViewById(R.id.cart_dialog_pieces_spinner);
 
-        mAddtoCart = (Button) rootView.findViewById(R.id.cart_dialog_add_to_cart_button);
-        mAddtoCart.setOnClickListener(this);
+        Button addToCart = (Button) rootView.findViewById(R.id.cart_dialog_add_to_cart_button);
+        addToCart.setOnClickListener(this);
     }
 
     public void setViewOnLoad() {
@@ -178,7 +177,6 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
     private class CartItemLoaderManager implements LoaderManager.LoaderCallbacks<ArrayList<CartItem>> {
         @Override
         public void onLoaderReset(Loader<ArrayList<CartItem>> loader) {
-
         }
 
         @Override
@@ -220,7 +218,6 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
 
         @Override
         public void onLoaderReset(Loader<Product> loader) {
-
         }
     }
 }
