@@ -457,8 +457,6 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         if (mProductsLeft < mProductBuffer) {
             updateProducts();
         }
-
-
     }
 
     private void setNoProductsLeftView() {
