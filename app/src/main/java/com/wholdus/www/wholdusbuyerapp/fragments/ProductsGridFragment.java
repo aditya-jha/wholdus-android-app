@@ -373,9 +373,9 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     }
 
     public void loadData() {
-        //onActivityCreated(null);
         String filter = FilterClass.getFilterString();
         if (mFilters == null || !FilterClass.getFilterString().equals(mFilters)) {
+            setVisibility(View.VISIBLE, View.INVISIBLE, View.INVISIBLE);
             mFilters = filter;
             resetVariables();
             getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, ProductsGridFragment.this);
