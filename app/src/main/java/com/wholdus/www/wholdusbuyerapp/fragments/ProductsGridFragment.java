@@ -45,6 +45,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ShareIntentClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
+import com.wholdus.www.wholdusbuyerapp.interfaces.CartDialogListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.GridProductsLoader;
@@ -200,9 +201,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         // restore recycler view position
         mGridLayoutManager.scrollToPosition(mRecyclerViewPosition);
 
-        if (mCartMenuItemHelper != null) {
-            mCartMenuItemHelper.restartLoader();
-        }
+        dismissDialog();
     }
 
     @Override
@@ -379,6 +378,12 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
         mRequestQueue.add(1);
         mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    public void dismissDialog() {
+        if (mCartMenuItemHelper != null) {
+            mCartMenuItemHelper.restartLoader();
+        }
     }
 
     public void loadData() {

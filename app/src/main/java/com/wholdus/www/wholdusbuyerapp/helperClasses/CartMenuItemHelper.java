@@ -94,7 +94,7 @@ public class CartMenuItemHelper {
                 mCartItemCountTextView.setVisibility(View.VISIBLE);
                 mCartItemCountTextView.setText(String.valueOf(mCartProducts));
             } else {
-                mCartItemCountTextView.setVisibility(View.GONE);
+                mCartItemCountTextView.setVisibility(View.INVISIBLE);
             }
         }
     }

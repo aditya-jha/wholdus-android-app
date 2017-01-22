@@ -2,6 +2,7 @@ package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -40,6 +41,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.OkHttpHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ShareIntentClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
+import com.wholdus.www.wholdusbuyerapp.interfaces.CartDialogListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.CartItemLoader;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProductLoader;
@@ -58,7 +60,7 @@ import static com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants.API_TOT
 
 public class ProductDetailActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Product>, ItemClickListener,
-        View.OnClickListener {
+        View.OnClickListener, CartDialogListener {
 
     private int mProductID;
     private Toolbar mToolbar;
@@ -75,6 +77,7 @@ public class ProductDetailActivity extends AppCompatActivity
     private TextInputLayout mPincodeWrapper;
     private String mPincodeText = "";
     private BroadcastReceiver mCartServiceResponseReceiver;
+    private CartItemLoaderManager mCartItemLoaderManager;
 
     private static final int PRODUCT_LOADER = 10;
     private static final int CART_ITEM_LOADER = 11;
@@ -139,8 +142,8 @@ public class ProductDetailActivity extends AppCompatActivity
         }
 
         getSupportLoaderManager().initLoader(PRODUCT_LOADER, null, this);
+        mCartItemLoaderManager = new CartItemLoaderManager(this);
 
-        getSupportLoaderManager().initLoader(CART_ITEM_LOADER, null, new CartItemLoaderManager(this));
 
         mCartServiceResponseReceiver = new BroadcastReceiver() {
             @Override
@@ -180,9 +183,12 @@ public class ProductDetailActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if (mCartMenuItemHelper != null) {
-            mCartMenuItemHelper.restartLoader();
-        }
+        loadCartCount();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     @Override
@@ -274,6 +280,18 @@ public class ProductDetailActivity extends AppCompatActivity
                     clearPincodeCheck();
                 }
         }
+    }
+
+    @Override
+    public void dismissDialog() {
+        loadCartCount();
+    }
+
+    private void loadCartCount() {
+        if (mCartMenuItemHelper != null) {
+            mCartMenuItemHelper.restartLoader();
+        }
+        getSupportLoaderManager().restartLoader(CART_ITEM_LOADER, null, mCartItemLoaderManager);
     }
 
     private void clearPincodeCheck() {
@@ -446,6 +464,8 @@ public class ProductDetailActivity extends AppCompatActivity
         public void onLoadFinished(Loader<ArrayList<CartItem>> loader, ArrayList<CartItem> data) {
             if (data != null && !data.isEmpty()) {
                 setCartButtonText(data.get(0).getPieces());
+            } else {
+                setCartButtonText(0);
             }
         }
 
@@ -456,6 +476,11 @@ public class ProductDetailActivity extends AppCompatActivity
     }
 
     private void setCartButtonText(int pieces) {
+        if (pieces == 0) {
+            mCartButton.setText(getString(R.string.add_to_cart));
+            return;
+        }
+
         String buttonText = String.valueOf(pieces);
         if (pieces == 1) {
             buttonText += " pc in cart";

@@ -1,5 +1,7 @@
 package com.wholdus.www.wholdusbuyerapp.fragments;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -24,6 +26,7 @@ import android.widget.Toast;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
+import com.wholdus.www.wholdusbuyerapp.interfaces.CartDialogListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.CartItemLoader;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProductLoader;
 import com.wholdus.www.wholdusbuyerapp.models.CartItem;
@@ -37,6 +40,8 @@ import java.util.ArrayList;
  */
 
 public class CartDialogFragment extends DialogFragment implements View.OnClickListener {
+
+    private CartDialogListener mListener;
 
     private TextView mLotSize;
     private TextView mProductName;
@@ -53,6 +58,12 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
     private static final int CART_DB_LOADER = 51;
 
     public CartDialogFragment() {
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mListener = (CartDialogListener) context;
     }
 
     @Override
@@ -96,6 +107,12 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
         super.onActivityCreated(savedInstanceState);
         getLoaderManager().restartLoader(CART_DB_LOADER, null, new CartItemLoaderManager());
         getLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, new ProductLoaderManager());
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        mListener.dismissDialog();
     }
 
     @Override

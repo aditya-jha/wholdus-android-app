@@ -41,6 +41,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
+import com.wholdus.www.wholdusbuyerapp.interfaces.CartDialogListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HandPickedListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProductCardListenerInterface;
@@ -156,9 +157,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             updateProducts();
         }
 
-        if (mCartMenuItemHelper != null) {
-            mCartMenuItemHelper.restartLoader();
-        }
+        dismissDialog();
     }
 
     @Override
@@ -212,6 +211,12 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void dismissDialog() {
+        if (mCartMenuItemHelper != null) {
+            mCartMenuItemHelper.restartLoader();
+        }
     }
 
     private void handleBuyerProductAPIResponse() {
@@ -413,7 +418,6 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
 
         mHasSwiped = true;
         mButtonEnabled = true;
-
     }
 
     @Override

@@ -19,12 +19,14 @@ import com.wholdus.www.wholdusbuyerapp.fragments.HandPickedFragment;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.CartMenuItemHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
+import com.wholdus.www.wholdusbuyerapp.interfaces.CartDialogListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HandPickedListenerInterface;
 
 import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 
-public class HandPickedActivity extends AppCompatActivity implements HandPickedListenerInterface, CategoryProductListenerInterface {
+public class HandPickedActivity extends AppCompatActivity implements HandPickedListenerInterface,
+        CategoryProductListenerInterface, CartDialogListener {
 
     private Toolbar mToolbar;
 
@@ -94,6 +96,14 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
     @Override
     public void filterFragmentActive(boolean isActive) {
 
+    }
+
+    @Override
+    public void dismissDialog() {
+        HandPickedFragment fragment = (HandPickedFragment) getSupportFragmentManager().findFragmentById(R.id.handpicked_fragment_container);
+        if (fragment != null) {
+            fragment.dismissDialog();
+        }
     }
 
     private String getFragmentToOpenName(Bundle savedInstanceState) {
