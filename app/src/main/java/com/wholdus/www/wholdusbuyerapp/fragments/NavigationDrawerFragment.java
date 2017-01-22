@@ -103,7 +103,7 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
         switch (groupPosition) {
             case 0:
                 Intent intent = new Intent(getContext(), HomeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);;
                 if (!NavDrawerHelper.getInstance().getOpenActivity().equals(HomeActivity.class.getSimpleName()) ||
                         !NavDrawerHelper.getInstance().getOpenFragment().equals(HomeFragment.class.getSimpleName())) {
                     intent.putExtra(Constants.OPEN_FRAGMENT_KEY, HomeFragment.class.getSimpleName());
