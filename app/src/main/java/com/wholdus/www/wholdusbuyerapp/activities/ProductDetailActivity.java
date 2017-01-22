@@ -371,7 +371,6 @@ public class ProductDetailActivity extends AppCompatActivity
                 .asBitmap()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .skipMemoryCache(true)
-                .thumbnail(0.05f)
                 .into(mDisplayImage);
     }
 
