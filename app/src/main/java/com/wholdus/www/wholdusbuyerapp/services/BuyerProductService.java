@@ -29,9 +29,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Created by aditya on 9/12/16.
@@ -57,6 +61,9 @@ public class BuyerProductService extends IntentService {
                 break;
             case TODO.FETCH_BUYER_PRODUCTS_RESPONSE:
                 fetchBuyerProductResponse(TODO.FETCH_BUYER_PRODUCTS_RESPONSE, intent);
+                break;
+            case TODO.UPDATE_UNSYNCED_BUYER_RESPONSES:
+                updateAllUnsyncedBuyerProductResponses(null);
                 break;
         }
     }
@@ -199,8 +206,11 @@ public class BuyerProductService extends IntentService {
 
             buyerProductResponse.put(ProductsTable.COLUMN_HAS_SWIPED, intent.getBooleanExtra(ProductsTable.COLUMN_HAS_SWIPED, true) ? 1 : 0);
             buyerProductResponse.put(ProductsTable.COLUMN_RESPONDED_FROM, intent.getIntExtra(ProductsTable.COLUMN_RESPONDED_FROM, 0));
-            buyerProductResponse.put(ProductsTable.COLUMN_PRODUCT_CREATED_AT, "");
-            buyerProductResponse.put(ProductsTable.COLUMN_PRODUCT_UPDATED_AT, "");
+            SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+            String currentTime = dateFormatGmt.format(new Date());
+            buyerProductResponse.put(ProductsTable.COLUMN_PRODUCT_CREATED_AT, currentTime);
+            buyerProductResponse.put(ProductsTable.COLUMN_PRODUCT_UPDATED_AT, currentTime);
             buyerProductResponse.put(ProductsTable.COLUMN_SYNCED, 0);
 
             CatalogDBHelper dbHelper = new CatalogDBHelper(this);
@@ -271,6 +281,8 @@ public class BuyerProductService extends IntentService {
                 ProductsTable.COLUMN_HAS_SWIPED,
                 ProductsTable.COLUMN_STORE_MARGIN
         };
+        String[] sortString = new String[] {ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_UPDATED_AT + " ASC "};
+
         Cursor cursor = catalogDBHelper.getProductData(
                 null,
                 null,
@@ -290,7 +302,7 @@ public class BuyerProductService extends IntentService {
                 -1,
                 -1,
                 0,
-                null,
+                sortString,
                 -1,
                 -1,
                 columns);

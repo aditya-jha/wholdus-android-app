@@ -29,7 +29,7 @@ public final class FilterClass {
     private static ArrayList<Integer> mCategoryIDs= new ArrayList<>();
     private static int mMinPrice = MIN_PRICE_DEFAULT;
     private static int mMaxPrice = MAX_PRICE_DEFAULT;
-    private static int mSelectedSort = 0;
+    private static int mSelectedSort = -1;
     private static HashSet<String> mFabrics = new HashSet<>();
     private static HashSet<String> mColors = new HashSet<>();
     private static HashSet<String> mSizes = new HashSet<>();
@@ -58,7 +58,7 @@ public final class FilterClass {
         mColors.clear();
         mSizes.clear();
         mBrands.clear();
-        mSelectedSort = 0;
+        mSelectedSort = -1;
         mMinPrice = MIN_PRICE_DEFAULT;
         mMaxPrice = MAX_PRICE_DEFAULT;
         mFilterApplied = false;
@@ -159,12 +159,20 @@ public final class FilterClass {
         mSelectedSort = sort;
     }
 
-    public static String getSortString() {
-        return mSortString[mSelectedSort];
+    public static String[] getSortString() {
+        if (mSelectedSort == -1){
+            return null;
+        } else {
+            return new String[]{mSortString[mSelectedSort]};
+        }
     }
 
     public static String getSortServerString() {
-        return mSortServerString[mSelectedSort];
+        if (mSelectedSort == -1){
+            return "none";
+        } else {
+            return mSortServerString[mSelectedSort];
+        }
     }
 
     public static String getFilterString() {

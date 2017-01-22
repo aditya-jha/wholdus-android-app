@@ -134,6 +134,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mListener.fragmentCreated("Wholdus");
+        updateUnsyncedResponses();
     }
 
     @Override
@@ -328,6 +329,12 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     private void fetchBuyerProducts() {
         Intent intent = new Intent(getContext(), BuyerProductService.class);
         intent.putExtra("TODO", TODO.FETCH_BUYER_PRODUCTS);
+        getContext().startService(intent);
+    }
+
+    private void updateUnsyncedResponses(){
+        Intent intent = new Intent(getContext(), BuyerProductService.class);
+        intent.putExtra("TODO", TODO.UPDATE_UNSYNCED_BUYER_RESPONSES);
         getContext().startService(intent);
     }
 

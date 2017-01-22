@@ -46,7 +46,10 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
         if (selectedCategory != -1) {
             categoryID.add(FilterClass.getCategoryID());
         }
-
+        String[] sortString = FilterClass.getSortString();
+        if (mResponseCodes.size() == 1 && sortString == null){
+            sortString = new String[] {CatalogContract.ProductsTable.COLUMN_BUYER_PRODUCT_RESPONSE_UPDATED_AT + " DESC "};
+        }
         Cursor cursor = catalogDBHelper.getProductData(null,
                 null,
                 null,
@@ -63,9 +66,9 @@ public class GridProductsLoader extends AbstractLoader<ArrayList<GridProductMode
                 mResponseCodes,
                 0,
                 1,
-                1,
-                1,
-                new String[] {FilterClass.getSortString()}, // ORDER BY
+                -1,
+                -1,
+                sortString, // ORDER BY
                 -1,
                 -1,
                 columns);
