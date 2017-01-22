@@ -266,7 +266,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
             int diff = 0, runCount = mProducts.size();
             if (runCount > 0 && mProducts.get(runCount - 1) == null) runCount--;
 
-            while (diff < runCount) {
+            while (diff < runCount && diff < data.size()) {
                 if (mProducts.get(diff).getProductID() != data.get(diff).getProductID()) {
                     break;
                 }
@@ -529,6 +529,9 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
             removeDummyObject();
         }
 
+        if (mTotalProductsOnServer == 0) {
+            setVisibility(View.INVISIBLE, View.INVISIBLE, View.VISIBLE);
+        }
         if (mRequestQueue.size() > 0) {
             fetchProductsFromServer();
         }
