@@ -57,6 +57,9 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
     private CategoryProductListenerInterface mListener;
     private boolean mCategoryDisplayed = false;
 
+    private static final int CATEGORY_SELLERS_DB_LOADER =2001;
+    private static final int CATEGORY_DB_LOADER =2002;
+
     public FilterFragment() {
     }
 
@@ -197,7 +200,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
     public void categoryIDChanged(int oldCategoryID) {
         if (FilterClass.getCategoryID() != oldCategoryID) {
             FilterClass.resetFilter("Brands");
-            getActivity().getSupportLoaderManager().restartLoader(1, null, this);
+            getActivity().getSupportLoaderManager().restartLoader(CATEGORY_SELLERS_DB_LOADER, null, this);
         }
     }
 
@@ -262,11 +265,11 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
         switch (filterKey) {
             case "Brand":
                 mFilterValues.setAdapter(mBrandFilterValuesAdapter);
-                getActivity().getSupportLoaderManager().restartLoader(1, null, this);
+                getActivity().getSupportLoaderManager().restartLoader(CATEGORY_SELLERS_DB_LOADER, null, this);
                 break;
             case "Category":
                 mFilterValues.setAdapter(mCategoryFilterValuesAdapter);
-                getActivity().getSupportLoaderManager().restartLoader(2, null, new CategoryLoaderManager());
+                getActivity().getSupportLoaderManager().restartLoader(CATEGORY_DB_LOADER, null, new CategoryLoaderManager());
                 break;
             default:
                 mFilterValues.setAdapter(mFilterValuesAdapter);
