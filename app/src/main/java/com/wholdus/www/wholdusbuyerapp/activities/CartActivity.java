@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -381,8 +382,9 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
                     openToFragment(CheckoutPaymentMethodFragment.class.getSimpleName(), args);
                     break;
                 case TODO.UPDATE_CART_PAYMENT_METHOD:
-
-                    Toast.makeText(this, "Order successfully placed", Toast.LENGTH_SHORT).show();
+                    View parentLayout = findViewById(R.id.activity_cart);
+                    Snackbar.make(parentLayout, "Order successfully placed", Snackbar.LENGTH_INDEFINITE).show();
+                    //Toast.makeText(this, "Order successfully placed", Toast.LENGTH_SHORT).show();
                     Intent cartIntent = new Intent(this, CartService.class);
                     cartIntent.putExtra("TODO", R.string.delete_cart);
                     startService(cartIntent);

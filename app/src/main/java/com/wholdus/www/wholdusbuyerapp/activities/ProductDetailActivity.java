@@ -33,6 +33,7 @@ import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.fragments.CartDialogFragment;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.CartMenuItemHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
@@ -81,6 +82,8 @@ public class ProductDetailActivity extends AppCompatActivity
     private static final String SHIPPING_SHARED_PREFERENCES = "ShippingSharedPreference";
     private static final String PINCODE_KEY = "PincodeKey";
     private static final String SHIPPING_AVAILABLE_KEY = "ShippingAvailableKey";
+
+    private CartMenuItemHelper mCartMenuItemHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,20 +156,9 @@ public class ProductDetailActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.default_action_buttons, menu);
+        mCartMenuItemHelper = new CartMenuItemHelper(this, menu.findItem(R.id.action_bar_checkout), getSupportLoaderManager());
+        mCartMenuItemHelper.restartLoader();
         return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mCartServiceResponseReceiver != null) {
-            try {
-                LocalBroadcastManager.getInstance(this).unregisterReceiver(mCartServiceResponseReceiver);
-            } catch (Exception e) {
-
-            }
-            mCartServiceResponseReceiver = null;
-        }
     }
 
     @Override
@@ -183,6 +175,27 @@ public class ProductDetailActivity extends AppCompatActivity
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mCartMenuItemHelper != null) {
+            mCartMenuItemHelper.restartLoader();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mCartServiceResponseReceiver != null) {
+            try {
+                LocalBroadcastManager.getInstance(this).unregisterReceiver(mCartServiceResponseReceiver);
+            } catch (Exception e) {
+
+            }
+            mCartServiceResponseReceiver = null;
+        }
     }
 
     @Override

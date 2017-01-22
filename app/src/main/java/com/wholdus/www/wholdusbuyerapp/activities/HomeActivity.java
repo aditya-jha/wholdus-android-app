@@ -1,6 +1,7 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,9 +14,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -23,6 +26,8 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -33,18 +38,18 @@ import com.wholdus.www.wholdusbuyerapp.fragments.ContactUsFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.HomeFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.OrderDetailsFragment;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.CartMenuItemHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ContactsHelperClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.NavDrawerHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
+import com.wholdus.www.wholdusbuyerapp.loaders.CartLoader;
+import com.wholdus.www.wholdusbuyerapp.models.Cart;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import static java.security.AccessController.getContext;
 
 public class HomeActivity extends AppCompatActivity implements HomeListenerInterface {
 
@@ -53,6 +58,8 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     private Toolbar mToolbar;
     private FirebaseAnalytics mFirebaseAnalytics;
     private static final int CONTACTS_PERMISSION = 0;
+
+    private CartMenuItemHelper mCartMenuItemHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +87,9 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         mDoublePressToExit = false;
         FilterClass.resetFilter();
         FilterClass.resetCategoryFilter();
+        if (mCartMenuItemHelper != null) {
+            mCartMenuItemHelper.restartLoader();
+        }
     }
 
     @Override
@@ -113,6 +123,8 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.default_action_buttons, menu);
+        mCartMenuItemHelper = new CartMenuItemHelper(this, menu.findItem(R.id.action_bar_checkout), getSupportLoaderManager());
+        mCartMenuItemHelper.restartLoader();
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -356,4 +368,6 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         NavDrawerHelper.getInstance().setOpenActivity(this.getClass().getSimpleName());
         NavDrawerHelper.getInstance().setOpenFragment(fragmentName);
     }
+
+
 }

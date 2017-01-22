@@ -1,12 +1,13 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.firebase.firebase-crash'
 
 android {
     signingConfigs {
         config {
-            keyAlias 'WholdusAppKey'
-            keyPassword 'Wholesale_dus@1234'
-            storeFile file('/home/aditya/Android/signed-key.jks')
-            storePassword 'Wholesale_dus@1234'
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
+            storeFile file(RELEASE_STORE_FILE)
+            storePassword RELEASE_STORE_PASSWORD
         }
     }
     compileSdkVersion 25

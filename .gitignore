@@ -1,5 +1,6 @@
 *.iml
 .gradle
+/gradle.properties
 /local.properties
 /.idea/workspace.xml
 /.idea/statistic.xml
@@ -187,7 +188,8 @@ dkms.conf
 .mtj.tmp/
 
 # Package Files #
-*.jar
+app/*.jar
+build/*.jar
 *.war
 *.ear
 

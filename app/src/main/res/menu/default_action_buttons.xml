@@ -9,6 +9,7 @@
     <item
         android:id="@+id/action_bar_checkout"
         android:icon="@drawable/ic_local_grocery_store_black_24dp"
+        android:actionLayout="@layout/cart_icon_item_count"
         android:title="@string/action_bar_checkout"
         app:showAsAction="ifRoom" />
 </menu>
