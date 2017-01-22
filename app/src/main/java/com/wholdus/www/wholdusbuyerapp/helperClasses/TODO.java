@@ -29,5 +29,5 @@ public final class TODO {
     public static final int FETCH_CATEGORIES = 16;
 
     public static final int UPDATE_UNSYNCED_BUYER_RESPONSES = 17;
-
+    public static final int UPDATE_UNSYNCED_BUYER_INTERESTS = 18;
 }

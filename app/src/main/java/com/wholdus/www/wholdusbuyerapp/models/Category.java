@@ -68,6 +68,7 @@ public class Category {
         return mBuyerInterestIsActive;
     }
 
+    public void setBuyerInterestIsActive(int isActive){mBuyerInterestIsActive = isActive;}
 
     public static ArrayList<Category> getCategoryArrayList(Cursor cursor) {
         ArrayList<Category> categories = new ArrayList<>();
