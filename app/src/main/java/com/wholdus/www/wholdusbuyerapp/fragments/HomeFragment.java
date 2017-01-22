@@ -57,9 +57,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
     private CategoryHomePageAdapter mCategoryHomePageAdapter;
     private CategoryLoaderManager mCategoriesLoader;
 
-    private final int PRODUCTS_DB_LOADER = 901;
-    private final int CATEGORIES_DB_LOADER = 902;
-
+    private static final int PRODUCTS_DB_LOADER = 901;
+    private static final int CATEGORIES_DB_LOADER = 902;
 
     public HomeFragment() {
     }
@@ -182,17 +181,30 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
         mProductHomePageAdapter.notifyDataSetChanged();
     }
 
-    public void setViewForCategories(ArrayList<Category> categories) {
-        ArrayList<Category> categoriesToRemove = new ArrayList<>();
-        for (Category category : categories) {
-            if (category.getProducts().size() < 10) {
-                categoriesToRemove.add(category);
+    public void setViewForCategories(final ArrayList<Category> categories) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<Category> categoriesToRemove = new ArrayList<>();
+                for (Category category : categories) {
+                    if (category.getProducts().size() < 10) {
+                        categoriesToRemove.add(category);
+                    }
+                }
+                categories.removeAll(categoriesToRemove);
+                mCategories.clear();
+                mCategories.addAll(categories);
+
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mCategoryHomePageAdapter.notifyDataSetChanged();
+                        }
+                    });
+                }
             }
-        }
-        categories.removeAll(categoriesToRemove);
-        mCategories.clear();
-        mCategories.addAll(categories);
-        mCategoryHomePageAdapter.notifyDataSetChanged();
+        }).start();
     }
 
     private class ProductsLoaderManager implements LoaderManager.LoaderCallbacks<ArrayList<Product>> {
@@ -230,7 +242,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
                 setViewForCategories(data);
             }
         }
-
 
         @Override
         public Loader<ArrayList<Category>> onCreateLoader(final int id, Bundle args) {
