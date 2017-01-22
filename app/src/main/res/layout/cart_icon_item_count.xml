@@ -1,32 +1,28 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@android:style/Widget.ActionButton"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:layout_gravity="center"
-    android:clickable="true"
-    style="@android:style/Widget.ActionButton">
+    android:clickable="true">
 
     <ImageView
         android:id="@+id/cart_icon"
-        android:src="@drawable/ic_local_grocery_store_black_24dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_margin="0dp"
-        />
+        android:contentDescription="@string/action_bar_checkout"
+        android:src="@drawable/ic_local_grocery_store_black_24dp" />
 
     <TextView
         android:id="@+id/actionbar_cart_item_count_text_view"
-        android:layout_width="16dp"
-        android:textSize="12sp"
-        android:textColor="@color/icons"
-        android:layout_height="16dp"
-        android:gravity="center"
-        android:layout_marginLeft="8dp"
-        android:visibility="gone"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
         android:layout_alignParentTop="true"
         android:layout_alignTop="@id/cart_icon"
-        android:background="@drawable/circular_shape_accent"/>
-
+        android:layout_marginLeft="14dp"
+        android:background="@drawable/circular_shape_accent"
+        android:gravity="center"
+        android:textColor="@color/primary"
+        android:textSize="14sp"
+        tools:text="1" />
 </RelativeLayout>

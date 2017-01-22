@@ -38,6 +38,7 @@ import com.wholdus.www.wholdusbuyerapp.adapters.ProductsGridAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.decorators.GridDividerItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.CartMenuItemHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
@@ -76,6 +77,8 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     private Snackbar mSnackbar;
     private Queue<Integer> mRequestQueue;
     private HashSet<Integer> mPagesLoaded;
+
+    private CartMenuItemHelper mCartMenuItemHelper;
 
     private String mFilters;
     private int mTotalPages, mRecyclerViewPosition, mActivePageCall, mTotalProductsOnServer;
@@ -196,6 +199,10 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
         // restore recycler view position
         mGridLayoutManager.scrollToPosition(mRecyclerViewPosition);
+
+        if (mCartMenuItemHelper != null) {
+            mCartMenuItemHelper.restartLoader();
+        }
     }
 
     @Override
@@ -220,6 +227,8 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.default_action_buttons, menu);
+        mCartMenuItemHelper = new CartMenuItemHelper(getContext(), menu.findItem(R.id.action_bar_checkout), getActivity().getSupportLoaderManager());
+        mCartMenuItemHelper.restartLoader();
         super.onCreateOptionsMenu(menu, inflater);
     }
 

@@ -27,7 +27,6 @@ import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 public class HandPickedActivity extends AppCompatActivity implements HandPickedListenerInterface, CategoryProductListenerInterface {
 
     private Toolbar mToolbar;
-    private CartMenuItemHelper mCartMenuItemHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,36 +49,8 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //TODO Prevent menu overflow
-        getMenuInflater().inflate(R.menu.default_action_buttons, menu);
-        mCartMenuItemHelper = new CartMenuItemHelper(this, menu.findItem(R.id.action_bar_checkout), getSupportLoaderManager());
-        mCartMenuItemHelper.restartLoader();
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_bar_checkout:
-                startActivity(new Intent(this, CartActivity.class));
-                break;
-            case R.id.action_bar_shortlist:
-                Intent shortlistIntent = new Intent(this, CategoryProductActivity.class);
-                shortlistIntent.putExtra(Constants.TYPE, Constants.FAV_PRODUCTS);
-                shortlistIntent.getIntExtra(getString(R.string.selected_category_id), 1);
-                startActivity(shortlistIntent);
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
-        if (mCartMenuItemHelper != null) {
-            mCartMenuItemHelper.restartLoader();
-        }
     }
 
     @Override
