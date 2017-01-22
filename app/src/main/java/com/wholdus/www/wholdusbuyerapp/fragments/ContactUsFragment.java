@@ -233,8 +233,6 @@ public class ContactUsFragment extends Fragment implements View.OnClickListener 
                             showError();
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        FirebaseCrash.report(e);
                         showError();
                     }
                 }

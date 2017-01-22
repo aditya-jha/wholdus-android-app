@@ -127,8 +127,6 @@ public class HelpSupportFragment extends Fragment {
                         showError();
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    FirebaseCrash.report(e);
                     showError();
                 }
             }
