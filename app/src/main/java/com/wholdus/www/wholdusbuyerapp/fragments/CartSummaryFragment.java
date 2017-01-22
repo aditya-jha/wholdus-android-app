@@ -44,9 +44,9 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
     private BroadcastReceiver mCartServiceResponseReceiver;
     private Cart mCart;
 
-    private TextView mOrderValueTextView;
-    private TextView mShippingChargeTextView;
+    private TextView mOrderValueTextView, mShippingChargeTextView, mNoProductsLeftTextView;
     private CardView mTopSummary, mNoProducts;
+    private Button mContinueShopping;
     private ListView mSubCartListView;
 
     private SubCartAdapter mSubCartAdapter;
@@ -98,8 +98,8 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
         mShippingChargeTextView = (TextView) view.findViewById(R.id.cart_summary_shipping_charge_text_view);
         mTopSummary = (CardView) view.findViewById(R.id.top_summary);
 
-        Button continueShopping = (Button) view.findViewById(R.id.continue_shopping_button);
-        continueShopping.setOnClickListener(new View.OnClickListener() {
+        mContinueShopping = (Button) view.findViewById(R.id.continue_shopping_button);
+        mContinueShopping.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), HandPickedActivity.class);
@@ -111,7 +111,7 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
         });
 
         mNoProducts = (CardView) view.findViewById(R.id.no_products);
-
+        mNoProductsLeftTextView = (TextView) view.findViewById(R.id.no_products_left_text_view);
         mSubCartListView = (ListView) view.findViewById(R.id.cart_summary_suborder_list_view);
         mSubCarts = new ArrayList<>();
         mSubCartAdapter = new SubCartAdapter(getContext(), mSubCarts, this);
@@ -144,15 +144,11 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
 
         mSubCarts.clear();
         mSubCarts.addAll(mCart.getSubCarts());
-        mSubCartAdapter.notifyDataSetChanged();
-        HelperFunctions.setListViewHeightBasedOnChildren(mSubCartListView);
-
-        mListener.setCart(mCart);
+        setBasicCartView();
 
         mShippingChargeTextView.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mCart.getShippingCharge()))));
         mOrderValueTextView.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mCart.getCalculatedPrice()))));
 
-        mListener.disableProgressBar();
     }
 
     private void setViewForEmptyCart() {
@@ -161,12 +157,34 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
         mListener.disableProgressBar();
 
         mSubCarts.clear();
-        mSubCartAdapter.notifyDataSetChanged();
-        HelperFunctions.setListViewHeightBasedOnChildren(mSubCartListView);
-        mListener.setCart(mCart);
+        setBasicCartView();
 
         mShippingChargeTextView.setText("");
         mOrderValueTextView.setText("");
+
+    }
+
+    private void setViewForUnsyncedCart(){
+        fetchDataFromServer();
+
+        mTopSummary.setVisibility(View.GONE);
+        mNoProducts.setVisibility(View.VISIBLE);
+        mContinueShopping.setVisibility(View.GONE);
+        mNoProductsLeftTextView.setText("You do not seem to have an active internet connection.\nPlease connect to the internet and try again");
+
+        mSubCarts.clear();
+        setBasicCartView();
+
+        mShippingChargeTextView.setText("");
+        mOrderValueTextView.setText("");
+
+    }
+
+    private void setBasicCartView(){
+        mSubCartAdapter.notifyDataSetChanged();
+        HelperFunctions.setListViewHeightBasedOnChildren(mSubCartListView);
+
+        mListener.setCart(mCart);
 
         mListener.disableProgressBar();
     }
@@ -178,11 +196,18 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onLoadFinished(Loader<Cart> loader, Cart data) {
-        if (data != null && data.getPieces() > 0) {
-            mCart = data;
-            setViewForCart();
+        mCart = data;
+        if (data != null) {
+            if (data.getSynced() == 1){
+                if (data.getPieces() > 0){
+                    setViewForCart();
+                } else {
+                    setViewForEmptyCart();
+                }
+            } else {
+                setViewForUnsyncedCart();
+            }
         } else {
-            mCart = null;
             setViewForEmptyCart();
         }
     }
