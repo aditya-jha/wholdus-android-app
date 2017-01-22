@@ -157,7 +157,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
             case R.id.shortlist:
                 Intent shortlistIntent = new Intent(getContext(), CategoryProductActivity.class);
                 shortlistIntent.putExtra(Constants.TYPE, Constants.FAV_PRODUCTS);
-                shortlistIntent.getIntExtra(getString(R.string.selected_category_id), 1);
                 startActivity(shortlistIntent);
                 break;
             case help:

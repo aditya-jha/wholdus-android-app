@@ -126,7 +126,6 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
                 if (NavDrawerHelper.getInstance().getType() != Constants.FAV_PRODUCTS) {
                     Intent shortlistIntent = new Intent(getContext(), CategoryProductActivity.class);
                     shortlistIntent.putExtra(Constants.TYPE, Constants.FAV_PRODUCTS);
-                    shortlistIntent.getIntExtra(getString(R.string.selected_category_id), 1);
                     startActivity(shortlistIntent);
                 }
                 break;
