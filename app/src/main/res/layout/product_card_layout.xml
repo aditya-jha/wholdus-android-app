@@ -51,7 +51,8 @@
                 android:orientation="horizontal"
                 android:paddingLeft="@dimen/card_margin_horizontal"
                 android:paddingRight="@dimen/card_margin_horizontal"
-                android:paddingTop="@dimen/card_margin_horizontal">
+                android:paddingTop="@dimen/text_divider_gap"
+                android:paddingBottom="@dimen/text_divider_gap">
 
                 <TextView
                     android:id="@+id/product_card_price_text_view"

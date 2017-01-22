@@ -30,6 +30,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.CartMenuItemHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.NavDrawerHelper;
+import com.wholdus.www.wholdusbuyerapp.interfaces.CartDialogListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.CategoriesGridLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Category;
@@ -37,7 +38,8 @@ import com.wholdus.www.wholdusbuyerapp.models.Category;
 import java.util.ArrayList;
 
 public class CategoryProductActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<ArrayList<Category>>, CategoryProductListenerInterface {
+        implements LoaderManager.LoaderCallbacks<ArrayList<Category>>, CategoryProductListenerInterface,
+        CartDialogListener {
 
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolbar;
@@ -160,6 +162,14 @@ public class CategoryProductActivity extends AppCompatActivity
     @Override
     public void filterFragmentActive(boolean isActive) {
         mFilterFragmentActive = isActive;
+    }
+
+    @Override
+    public void dismissDialog() {
+        ProductsGridFragment fragment = (ProductsGridFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (fragment != null) {
+            fragment.dismissDialog();
+        }
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.wholdus.www.wholdusbuyerapp.fragments;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -24,6 +26,7 @@ import android.widget.Toast;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
+import com.wholdus.www.wholdusbuyerapp.interfaces.CartDialogListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.CartItemLoader;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProductLoader;
 import com.wholdus.www.wholdusbuyerapp.models.CartItem;
@@ -38,22 +41,29 @@ import java.util.ArrayList;
 
 public class CartDialogFragment extends DialogFragment implements View.OnClickListener {
 
+    private CartDialogListener mListener;
+
     private TextView mLotSize;
     private TextView mProductName;
     private TextView mPricePerPiece;
     private Spinner mPiecesSpinner;
     private TextView mTotalPrice;
-    private Button mAddtoCart;
     private int mProductID;
     private Product mProduct;
     private int mLots;
     private int mOldLots = -1;
-    ArrayAdapter<Integer> mPiecesAdapter;
+    private ArrayAdapter<Integer> mPiecesAdapter;
 
     private static final int PRODUCTS_DB_LOADER = 50;
     private static final int CART_DB_LOADER = 51;
 
     public CartDialogFragment() {
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mListener = (CartDialogListener) context;
     }
 
     @Override
@@ -100,6 +110,12 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
     }
 
     @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        mListener.dismissDialog();
+    }
+
+    @Override
     public void onClick(View view) {
         final int ID = view.getId();
         switch (ID) {
@@ -116,8 +132,8 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
         mTotalPrice = (TextView) rootView.findViewById(R.id.cart_dialog_total_price_text_view);
         mPiecesSpinner = (Spinner) rootView.findViewById(R.id.cart_dialog_pieces_spinner);
 
-        mAddtoCart = (Button) rootView.findViewById(R.id.cart_dialog_add_to_cart_button);
-        mAddtoCart.setOnClickListener(this);
+        Button addToCart = (Button) rootView.findViewById(R.id.cart_dialog_add_to_cart_button);
+        addToCart.setOnClickListener(this);
     }
 
     public void setViewOnLoad() {
@@ -178,7 +194,6 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
     private class CartItemLoaderManager implements LoaderManager.LoaderCallbacks<ArrayList<CartItem>> {
         @Override
         public void onLoaderReset(Loader<ArrayList<CartItem>> loader) {
-
         }
 
         @Override
@@ -220,7 +235,6 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
 
         @Override
         public void onLoaderReset(Loader<Product> loader) {
-
         }
     }
 }

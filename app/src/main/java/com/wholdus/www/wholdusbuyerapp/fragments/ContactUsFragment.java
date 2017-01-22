@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -43,6 +44,7 @@ public class ContactUsFragment extends Fragment implements View.OnClickListener 
     private TextInputLayout mMessageWrapper;
     private TextInputEditText mMessageEditText;
     private ProgressBar mSubmitLoader;
+    private ScrollView mPageLayout;
 
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -86,6 +88,8 @@ public class ContactUsFragment extends Fragment implements View.OnClickListener 
 
         Button submit = (Button) view.findViewById(R.id.submit_button);
         submit.setOnClickListener(this);
+
+        mPageLayout = (ScrollView) view.findViewById(R.id.page_layout);
 
         mSubmitLoader = (ProgressBar) view.findViewById(R.id.submit_button_loader);
         mSubmitLoader.setVisibility(View.INVISIBLE);
@@ -196,9 +200,10 @@ public class ContactUsFragment extends Fragment implements View.OnClickListener 
     private void submitButtonClicked(View view) {
         final String message = mMessageEditText.getText().toString();
         if (!message.isEmpty()) {
+            mPageLayout.setVisibility(View.INVISIBLE);
             mSubmitLoader.setVisibility(View.VISIBLE);
             mListener.hideSoftKeyboard(view);
-            final String mobileNumber = GlobalAccessHelper.getMobileNumber(getContext());
+            final String mobileNumber = GlobalAccessHelper.getMobileNumber(getActivity().getApplicationContext());
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -216,6 +221,8 @@ public class ContactUsFragment extends Fragment implements View.OnClickListener 
                                     @Override
                                     public void run() {
                                         mSubmitLoader.setVisibility(View.INVISIBLE);
+                                        mPageLayout.setVisibility(View.VISIBLE);
+                                        mMessageEditText.setText("");
                                         Toast.makeText(getContext(), getString(R.string.contact_us_sucess), Toast.LENGTH_LONG).show();
                                     }
                                 });
@@ -241,6 +248,7 @@ public class ContactUsFragment extends Fragment implements View.OnClickListener 
                 @Override
                 public void run() {
                     mSubmitLoader.setVisibility(View.INVISIBLE);
+                    mPageLayout.setVisibility(View.VISIBLE);
                     Toast.makeText(getContext(), getString(R.string.api_error_message), Toast.LENGTH_SHORT).show();
                 }
             });
