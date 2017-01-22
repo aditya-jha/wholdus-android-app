@@ -243,9 +243,10 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     }
 
     private void setViewForProceedButtonLayout() {
-        if (mCart == null || mCart.getPieces() == 0) {
+        if (mCart == null || mCart.getSynced() == 0 || mCart.getPieces() == 0){
             mProceedButton.setEnabled(false);
             mProceedButtonLayout.setVisibility(View.GONE);
+
         } else {
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.cart_fragment_container);
             if (fragment instanceof EditAddressFragment || fragment instanceof BuyerAddressFragment) {

@@ -173,7 +173,6 @@ public class ProductDetailActivity extends AppCompatActivity
             case R.id.action_bar_shortlist:
                 Intent shortlistIntent = new Intent(this, CategoryProductActivity.class);
                 shortlistIntent.putExtra(Constants.TYPE, Constants.FAV_PRODUCTS);
-                shortlistIntent.getIntExtra(getString(R.string.selected_category_id), 1);
                 startActivity(shortlistIntent);
                 break;
         }

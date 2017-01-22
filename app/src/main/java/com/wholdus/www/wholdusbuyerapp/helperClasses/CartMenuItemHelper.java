@@ -13,8 +13,13 @@ import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.CartActivity;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract;
+import com.wholdus.www.wholdusbuyerapp.loaders.CartItemLoader;
 import com.wholdus.www.wholdusbuyerapp.loaders.CartLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Cart;
+import com.wholdus.www.wholdusbuyerapp.models.CartItem;
+
+import java.util.ArrayList;
 
 /**
  * Created by kaustubh on 22/1/17.
@@ -57,7 +62,7 @@ public class CartMenuItemHelper {
         mContext.startActivity(new Intent(mContext, CartActivity.class));
     }
 
-    private class CartLoaderManager implements LoaderManager.LoaderCallbacks<Cart>{
+    private class CartLoaderManager implements LoaderManager.LoaderCallbacks<ArrayList<CartItem>>{
 
         private Context mContext;
 
@@ -65,13 +70,19 @@ public class CartMenuItemHelper {
             mContext = context;
         }
         @Override
-        public void onLoaderReset(Loader<Cart> loader) {
+        public void onLoaderReset(Loader<ArrayList<CartItem>> loader) {
         }
 
         @Override
-        public void onLoadFinished(Loader<Cart> loader, Cart data) {
+        public void onLoadFinished(Loader<ArrayList<CartItem>> loader, ArrayList<CartItem> data) {
             if (data != null) {
-                mCartProducts = data.getProductCount();
+                int productCount = 0;
+                for (CartItem cartItem:data){
+                    if (cartItem.getPieces()>0){
+                        productCount += 1;
+                    }
+                }
+                mCartProducts = productCount;
             } else {
                 mCartProducts = 0;
             }
@@ -79,9 +90,9 @@ public class CartMenuItemHelper {
         }
 
         @Override
-        public Loader<Cart> onCreateLoader(int id, Bundle args) {
+        public Loader<ArrayList<CartItem>> onCreateLoader(int id, Bundle args) {
             if (mContext != null) {
-                return new CartLoader(mContext, -1, false, false, false, false);
+                return new CartItemLoader(mContext, -1,null,-1, -1, -1, false, null);
             }else {
                 return null;
             }

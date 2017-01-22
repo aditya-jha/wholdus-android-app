@@ -921,8 +921,10 @@ public class CatalogDBHelper extends BaseDBHelper {
     }
 
     public Cursor getCategorySellers(int categoryID) {
-        String query = "SELECT * FROM " + CategorySellersTable.TABLE_NAME +
-                " WHERE " + CategorySellersTable.COLUMN_CATEGORY_ID + "=" + categoryID;
+        String query = "SELECT * FROM " + CategorySellersTable.TABLE_NAME;
+        if (categoryID != -1){
+            query += " WHERE " + CategorySellersTable.COLUMN_CATEGORY_ID + "=" + categoryID;
+        }
         return getCursor(query);
     }
 
