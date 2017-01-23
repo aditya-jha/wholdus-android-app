@@ -97,6 +97,9 @@ public class SortBottomSheetFragment extends BottomSheetDialogFragment {
     private int getIDForSelectedSort() {
         int ID;
         switch (mSelectedSort) {
+            case 0:
+                ID = R.id.newest_first;
+                break;
             case 1:
                 ID = R.id.price_low_to_high;
                 break;
@@ -104,13 +107,15 @@ public class SortBottomSheetFragment extends BottomSheetDialogFragment {
                 ID = R.id.price_high_to_low;
                 break;
             default:
-                ID = R.id.newest_first;
+                ID = R.id.popularity;
         }
         return ID;
     }
 
     private int getIndexForSelectedSort(int id) {
         switch (id) {
+            case R.id.popularity:
+                return -1;
             case R.id.newest_first:
                 return 0;
             case R.id.price_high_to_low:
@@ -118,6 +123,6 @@ public class SortBottomSheetFragment extends BottomSheetDialogFragment {
             case R.id.price_low_to_high:
                 return 1;
         }
-        return 0;
+        return -1;
     }
 }

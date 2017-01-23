@@ -114,6 +114,19 @@ public class CategoryGridFragment extends Fragment implements
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        updateUnsyncedInterests();
+    }
+
+    private void updateUnsyncedInterests(){
+        Intent intent = new Intent(getContext(), CatalogService.class);
+        intent.putExtra("TODO", TODO.UPDATE_UNSYNCED_BUYER_INTERESTS);
+        getContext().startService(intent);
+    }
+
+
+    @Override
     public void onResume() {
         super.onResume();
         mListener.fragmentCreated("All Categories", true);
@@ -186,11 +199,13 @@ public class CategoryGridFragment extends Fragment implements
     private void updateCategoryLikeStatus(int position){
         mPageLoader.setVisibility(View.GONE);
         Category category = mCategoriesData.get(position);
+        category.setBuyerInterestIsActive((category.getBuyerInterestIsActive()==1)?0:1);
         Intent intent = new Intent(getContext(), CatalogService.class);
         intent.putExtra("TODO", TODO.UPDATE_BUYER_INTEREST);
         intent.putExtra(CatalogContract.CategoriesTable.COLUMN_CATEGORY_ID, category.getCategoryID());
-        intent.putExtra(CatalogContract.CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE, (category.getBuyerInterestIsActive()==1)?0:1);
+        intent.putExtra(CatalogContract.CategoriesTable.COLUMN_BUYER_INTEREST_IS_ACTIVE, category.getBuyerInterestIsActive());
         getContext().startService(intent);
+        mCategoriesGridAdapter.notifyItemChanged(position);
     }
 
     private void fetchDataFromServer() {
