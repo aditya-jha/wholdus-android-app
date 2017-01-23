@@ -103,7 +103,7 @@
 
             <RelativeLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_weight="1">
@@ -121,24 +121,25 @@
                     android:textSize="12sp"
                     android:textStyle="normal" />
 
-                <View
-                    android:id="@+id/anchor"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_centerInParent="true" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/activity_vertical_margin"
+                    android:paddingBottom="25dp"
+                    android:layout_centerInParent="true">
 
-                <TextView
-                    android:id="@+id/notification_count_text_view"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:background="@drawable/circular_shape_accent"
-                    android:gravity="center"
-                    android:layout_marginTop="6dp"
-                    android:layout_centerHorizontal="true"
-                    android:textColor="@color/primary"
-                    android:textSize="12sp"
-                    android:visibility="invisible"
-                    tools:text="1" />
+                    <TextView
+                        android:id="@+id/notification_count_text_view"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:background="@drawable/circular_shape_accent"
+                        android:gravity="center"
+                        android:textColor="@color/primary"
+                        android:textSize="12sp"
+                        android:visibility="visible"
+                        tools:text="1" />
+
+                </LinearLayout>
 
             </RelativeLayout>
 

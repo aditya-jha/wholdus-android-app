@@ -161,10 +161,12 @@ public class OrdersFragment extends Fragment implements ItemClickListener, Loade
     @Override
     public void onLoadFinished(Loader<ArrayList<Order>> loader, ArrayList<Order> data) {
         if (data != null && data.size() > 0) {
-            mPageLoader.setVisibility(View.INVISIBLE);
-            mNoOrders.setVisibility(View.INVISIBLE);
-            mOrdersRecyclerView.setVisibility(View.VISIBLE);
-            setViewForOrders(data);
+            if (data.size() != mOrderArrayList.size()) {
+                mPageLoader.setVisibility(View.INVISIBLE);
+                mNoOrders.setVisibility(View.INVISIBLE);
+                mOrdersRecyclerView.setVisibility(View.VISIBLE);
+                setViewForOrders(data);
+            }
         } else if (mLoadedFromServer) {
             mPageLoader.setVisibility(View.INVISIBLE);
             mOrdersRecyclerView.setVisibility(View.VISIBLE);

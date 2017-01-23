@@ -53,6 +53,7 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
     private int mLots;
     private int mOldLots = -1;
     private ArrayAdapter<Integer> mPiecesAdapter;
+    private Button mAddtoCartButton;
 
     private static final int PRODUCTS_DB_LOADER = 50;
     private static final int CART_DB_LOADER = 51;
@@ -132,8 +133,8 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
         mTotalPrice = (TextView) rootView.findViewById(R.id.cart_dialog_total_price_text_view);
         mPiecesSpinner = (Spinner) rootView.findViewById(R.id.cart_dialog_pieces_spinner);
 
-        Button addToCart = (Button) rootView.findViewById(R.id.cart_dialog_add_to_cart_button);
-        addToCart.setOnClickListener(this);
+        mAddtoCartButton = (Button) rootView.findViewById(R.id.cart_dialog_add_to_cart_button);
+        mAddtoCartButton.setOnClickListener(this);
     }
 
     public void setViewOnLoad() {
@@ -199,13 +200,18 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
         @Override
         public void onLoadFinished(Loader<ArrayList<CartItem>> loader, ArrayList<CartItem> data) {
             if (data != null && !data.isEmpty()) {
+                mAddtoCartButton.setText("UPDATE CART");
                 mLots = data.get(0).getLots();
                 mOldLots = data.get(0).getLots();
                 if (mProduct != null && mPiecesAdapter != null) {
+                    float finalPrice = mLots * mProduct.getLotSize() * mProduct.getMinPricePerUnit();
+                    mTotalPrice.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(finalPrice))));
                     mPiecesSpinner.setSelection(mPiecesAdapter.getPosition(mLots * mProduct.getLotSize()));
                 }
             } else {
                 if (mProduct != null && mPiecesAdapter != null) {
+                    float finalPrice = mProduct.getLotSize() * mProduct.getMinPricePerUnit();
+                    mTotalPrice.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(finalPrice))));
                     mPiecesSpinner.setSelection(mPiecesAdapter.getPosition(mProduct.getLotSize()));
                 }
             }
