@@ -1,10 +1,12 @@
 package com.wholdus.www.wholdusbuyerapp.adapters;
 
 import android.content.Context;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -58,6 +60,7 @@ public class SubCartAdapter extends BaseAdapter {
             holder.sellerName = (TextView) view.findViewById(R.id.subcart_seller_name_text_view);
             holder.summary = (TextView) view.findViewById(R.id.subcart_summary_text_view);
             holder.cartItems = (ListView) view.findViewById(R.id.sub_cart_items_list_view);
+            holder.linearLayout = (LinearLayout) view.findViewById(R.id.linear_layout);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -71,7 +74,10 @@ public class SubCartAdapter extends BaseAdapter {
 
         CartItemsAdapter cartItemsAdapter = new CartItemsAdapter(mContext, subCart.getCartItems(), mListener);
         holder.cartItems.setAdapter(cartItemsAdapter);
-        HelperFunctions.setListViewHeightBasedOnChildren(holder.cartItems);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200 * subCart.getProductCount(), mContext.getResources().getDisplayMetrics()));
+        //HelperFunctions.setListViewHeightBasedOnChildren(holder.cartItems);
+        holder.linearLayout.setLayoutParams(layoutParams);
 
         return view;
     }
@@ -81,5 +87,6 @@ public class SubCartAdapter extends BaseAdapter {
         TextView sellerName;
         TextView summary;
         ListView cartItems;
+        LinearLayout linearLayout;
     }
 }
