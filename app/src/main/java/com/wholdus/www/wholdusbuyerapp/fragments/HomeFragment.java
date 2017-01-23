@@ -100,6 +100,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
         super.onViewCreated(view, savedInstanceState);
 
         mProgressBar = (ProgressBar) view.findViewById(R.id.loading_indicator);
+        mProgressBar.setVisibility(View.VISIBLE);
 
         Button categoriesButton = (Button) view.findViewById(R.id.shortlist);
         categoriesButton.setOnClickListener(this);
@@ -206,6 +207,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
                         @Override
                         public void run() {
                             mProductHomePageAdapter.notifyDataSetChanged();
+                            mProgressBar.setVisibility(View.GONE);
                         }
                     });
 
@@ -233,6 +235,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
                         @Override
                         public void run() {
                             mCategoryHomePageAdapter.notifyDataSetChanged();
+                            mProgressBar.setVisibility(View.GONE);
                         }
                     });
                 }
@@ -248,9 +251,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
 
         @Override
         public void onLoadFinished(Loader<ArrayList<Product>> loader, ArrayList<Product> data) {
-            if (data != null && mProducts.isEmpty()) {
+            if (data != null && data.size() > 0 && mProducts.isEmpty()) {
                 setViewForProducts(data);
-                mProgressBar.setVisibility(View.GONE);
             }
         }
 
@@ -272,7 +274,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
 
         @Override
         public void onLoadFinished(Loader<ArrayList<Category>> loader, ArrayList<Category> data) {
-            if (data != null && mCategories.isEmpty()) {
+            if (data != null && data.size() > 0 && mCategories.isEmpty()) {
                 setViewForCategories(data);
                 mProgressBar.setVisibility(View.GONE);
             }
