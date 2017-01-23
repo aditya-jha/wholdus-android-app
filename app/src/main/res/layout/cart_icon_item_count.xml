@@ -24,6 +24,6 @@
         android:gravity="center"
         android:textColor="@color/primary"
         android:textSize="12sp"
-        android:visibility="visible"
+        android:visibility="invisible"
         tools:text="1" />
 </RelativeLayout>
