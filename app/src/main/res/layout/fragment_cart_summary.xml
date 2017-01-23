@@ -99,8 +99,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/card_margin_vertical"
                 android:gravity="center_horizontal"
-                android:text="@string/cart_summary_no_products"
                 android:maxLines="10"
+                android:text="@string/cart_summary_no_products"
                 android:textColor="@color/primary_text"
                 android:textSize="16sp" />
 
@@ -120,5 +120,6 @@
         android:layout_weight="1"
         android:divider="@android:color/transparent"
         android:dividerHeight="8dp"
-        android:listSelector="@null" />
+        android:listSelector="@null"
+        android:scrollbars="none" />
 </LinearLayout>

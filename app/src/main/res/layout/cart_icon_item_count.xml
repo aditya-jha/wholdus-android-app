@@ -23,7 +23,7 @@
         android:background="@drawable/circular_shape_accent"
         android:gravity="center"
         android:textColor="@color/primary"
-        android:textSize="13sp"
-        android:visibility="invisible"
+        android:textSize="12sp"
+        android:visibility="visible"
         tools:text="1" />
 </RelativeLayout>
