@@ -392,5 +392,4 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         NavDrawerHelper.getInstance().setOpenFragment(fragmentName);
     }
 
-
 }

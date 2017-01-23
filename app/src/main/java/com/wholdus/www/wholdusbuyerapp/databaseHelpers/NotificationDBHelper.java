@@ -3,6 +3,7 @@ package com.wholdus.www.wholdusbuyerapp.databaseHelpers;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 
@@ -40,6 +41,12 @@ public class NotificationDBHelper extends BaseDBHelper {
         }
         query += " ORDER BY " + NotificationTable._ID + " DESC ";
         return getCursor(query);
+    }
+
+    public int getUnreadNotificationCount(){
+        SQLiteDatabase db = mDatabaseHelper.openDatabase();
+        String selection = NotificationTable.COLUMN_NOTIFICATION_SEEN + " = 0";
+        return (int) DatabaseUtils.queryNumEntries(db,  NotificationTable.TABLE_NAME, selection);
     }
 
     public int saveNotificationData(JSONObject notification) throws JSONException{

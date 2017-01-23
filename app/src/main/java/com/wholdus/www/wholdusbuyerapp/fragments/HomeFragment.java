@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.CategoryProductActivity;
@@ -27,6 +28,7 @@ import com.wholdus.www.wholdusbuyerapp.activities.NotificationActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.CategoryHomePageAdapter;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductHomePageAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
+import com.wholdus.www.wholdusbuyerapp.databaseHelpers.NotificationDBHelper;
 import com.wholdus.www.wholdusbuyerapp.decorators.GridDividerItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
@@ -43,6 +45,7 @@ import com.wholdus.www.wholdusbuyerapp.models.Product;
 import java.util.ArrayList;
 
 import static com.wholdus.www.wholdusbuyerapp.R.id.help;
+import static com.wholdus.www.wholdusbuyerapp.R.id.neft_radio_button;
 
 /**
  * Created by aditya on 16/11/16.
@@ -67,6 +70,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
 
     private BroadcastReceiver mCategoryServiceResponseReceiver;
     private ProgressBar mProgressBar;
+    private TextView mNotificationCount;
 
     public HomeFragment() {
     }
@@ -133,6 +137,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
         mCategoriesRecyclerView.setAdapter(mCategoryHomePageAdapter);
         //mProductsRecyclerView.setVerticalScrollBarEnabled(false);
         mCategoriesRecyclerView.setNestedScrollingEnabled(false);
+
+        mNotificationCount = (TextView) view.findViewById(R.id.notification_count_text_view);
     }
 
     @Override
@@ -170,6 +176,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
 
         NavDrawerHelper.getInstance().setOpenActivity(getActivity().getClass().getSimpleName());
         NavDrawerHelper.getInstance().setOpenFragment(this.getClass().getSimpleName());
+
+        getNotificationCount();
     }
 
     @Override
@@ -306,5 +314,33 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
                 getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, mProductsLoader);
             }
         }
+    }
+
+    private void getNotificationCount(){
+        final NotificationDBHelper notificationDBHelper = new NotificationDBHelper(getContext());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final int count = notificationDBHelper.getUnreadNotificationCount();
+                try{
+                    if (getActivity() != null){
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (count > 0) {
+                                    mNotificationCount.setText(String.valueOf(count));
+                                    mNotificationCount.setVisibility(View.VISIBLE);
+                                } else {
+                                    mNotificationCount.setVisibility(View.GONE);
+                                }
+                            }
+                        });
+                    }
+
+                } catch (Exception e){
+
+                }
+            }
+        }).start();
     }
 }
