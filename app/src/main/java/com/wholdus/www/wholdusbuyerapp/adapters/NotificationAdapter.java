@@ -1,6 +1,7 @@
 package com.wholdus.www.wholdusbuyerapp.adapters;
 
 import android.content.Context;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,7 +46,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.mNotificationBody.setText(notification.getNotificationBody());
         holder.mNotificationDate.setText(notification.getNotificationTime());
         holder.mListener = mListener;
-
+        if (notification.getNotificationSeen() == 1) {
+            int color =ResourcesCompat.getColor(mContext.getResources(), R.color.background, null);
+            holder.itemView.setBackgroundColor(color);
+        }
     }
 
     @Override
@@ -65,7 +69,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             mNotificationBody = (TextView) itemView.findViewById(R.id.notification_body_text_view);
             mNotificationDate = (TextView) itemView.findViewById(R.id.notification_date_text_view);
             itemView.setOnClickListener(this);
-
         }
 
         @Override

@@ -111,6 +111,7 @@ public class NotificationFragment extends Fragment
                 String key = keys.next();
                 bundle.putString(key, jsonObject.getString(key));
             }
+            bundle.putString("notificationID", String.valueOf(notification.getID()));
             intent.putExtra("router", bundle);
         } catch (JSONException e) {
 

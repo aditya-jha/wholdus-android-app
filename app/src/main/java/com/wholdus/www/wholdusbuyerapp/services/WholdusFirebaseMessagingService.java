@@ -53,7 +53,8 @@ public class WholdusFirebaseMessagingService extends FirebaseMessagingService {
                     JSONObject notificationJSON = new JSONObject();
                     notificationJSON.put(NotificationTable.COLUMN_NOTIFICATION_JSON, new JSONObject(data));
                     notificationJSON.put(NotificationTable.COLUMN_NOTIFICATION_TYPE, "general");
-                    notificationDBHelper.saveNotificationData(notificationJSON);
+                    int notificationID = notificationDBHelper.saveNotificationData(notificationJSON);
+                    data.put("notificationID", String.valueOf(notificationID));
                 } catch (JSONException e){
 
                 }
