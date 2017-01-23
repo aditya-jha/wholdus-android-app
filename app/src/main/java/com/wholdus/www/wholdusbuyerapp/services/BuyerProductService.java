@@ -73,11 +73,8 @@ public class BuyerProductService extends IntentService {
         //TODO : Save categories and seller data separately so that it doesn't have to requested here
         //TODO : Also try that all products don't have to be requested every time
         params.put("product_details", "1");
-        params.put("product_details_details", "1");
-        params.put("product_image_details", "1");
+        params.putAll(CatalogService.getProductDetailsParams());
         params.put("category_details", "1");
-        params.put("seller_details", "1");
-        params.put("seller_address_details", "1");
         params.put("items_per_page", "20");
         params.put("page_number", String.valueOf(pageNumber));
         String url = GlobalAccessHelper.generateUrl(APIConstants.BUYER_PRODUCT_URL, params);
@@ -95,11 +92,8 @@ public class BuyerProductService extends IntentService {
             params.put("categoryID", intent.getIntExtra(CatalogContract.CategoriesTable.COLUMN_CATEGORY_ID, -1) + "");
         }
         params.put("product_details", "1");
-        params.put("product_details_details", "1");
-        params.put("product_image_details", "1");
+        params.putAll(CatalogService.getProductDetailsParams());
         params.put("category_details", "1");
-        params.put("seller_details", "1");
-        params.put("seller_address_details", "1");
         String url = GlobalAccessHelper.generateUrl(APIConstants.BUYER_PRODUCT_RESPONSE_URL, params);
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }

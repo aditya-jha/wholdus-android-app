@@ -73,11 +73,8 @@ public class CartService extends IntentService {
         params.put("cart_item_details", "1");
         //TODO : Also try that all products don't have to be requested every time
         params.put("product_details", "1");
-        params.put("product_details_details", "1");
-        params.put("product_image_details", "1");
+        params.putAll(CatalogService.getProductDetailsParams());
         params.put("category_details", "1");
-        params.put("seller_details", "1");
-        params.put("seller_address_details", "1");
         String url = GlobalAccessHelper.generateUrl(getString(R.string.cart_url), params);
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }

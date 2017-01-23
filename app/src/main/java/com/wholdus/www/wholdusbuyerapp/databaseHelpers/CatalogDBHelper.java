@@ -492,6 +492,9 @@ public class CatalogDBHelper extends BaseDBHelper {
         if (category.has("buyer_interest")) {
             updateBuyerInterestData(category.getJSONObject("buyer_interest"));
         }
+        if (category.has("products")) {
+            saveProductsFromJSONArray(category.getJSONArray("products"));
+        }
         mDatabaseHelper.closeDatabase();
         return insertUpdated;
     }
