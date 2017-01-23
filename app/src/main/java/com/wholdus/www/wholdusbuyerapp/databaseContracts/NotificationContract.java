@@ -15,5 +15,6 @@ public class NotificationContract {
         public static final String COLUMN_NOTIFICATION_JSON = "notification_json";
         public static final String COLUMN_NOTIFICATION_TYPE = "notification_type";
         public static final String COLUMN_NOTIFICATION_TIME = "notification_time";
+        public static final String COLUMN_NOTIFICATION_SEEN = "notification_seen";
     }
 }

@@ -82,8 +82,8 @@ public class LoginHelper {
 
         try {
             DatabaseHelper databaseHelper = DatabaseHelper.getInstance(mContext);
-            SQLiteDatabase db = databaseHelper.openDatabase();
-            databaseHelper.onUpgrade(db, 1, 1);
+            //TODO Put this in a service
+            databaseHelper.clearDatabase();
             databaseHelper.closeDatabase();
 
             editor.remove(ACCESS_TOKEN_KEY);

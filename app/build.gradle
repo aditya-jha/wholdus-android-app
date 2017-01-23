@@ -16,7 +16,7 @@ android {
         applicationId "com.wholdus.www.wholdusbuyerapp"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 4
+        versionCode 5
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
@@ -58,6 +58,7 @@ dependencies {
     // library to debug network requests in chrome, http://facebook.github.io/stetho/
     // compile 'com.facebook.stetho:stetho-okhttp3:1.3.0'
     compile 'com.squareup.okhttp3:okhttp:3.5.0'
+    compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
