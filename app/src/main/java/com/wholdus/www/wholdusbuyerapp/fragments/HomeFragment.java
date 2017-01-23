@@ -174,10 +174,23 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
         }
     }
 
-    public void setViewForProducts(ArrayList<Product> products) {
-        mProducts.clear();
-        mProducts.addAll(products);
-        mProductHomePageAdapter.notifyDataSetChanged();
+    public void setViewForProducts(final ArrayList<Product> products) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mProducts.clear();
+                mProducts.addAll(products);
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProductHomePageAdapter.notifyDataSetChanged();
+                        }
+                    });
+
+                }
+            }
+        }).start();
     }
 
     public void setViewForCategories(final ArrayList<Category> categories) {

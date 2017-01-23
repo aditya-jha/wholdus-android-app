@@ -182,7 +182,7 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
 
     private void setBasicCartView(){
         mSubCartAdapter.notifyDataSetChanged();
-        HelperFunctions.setListViewHeightBasedOnChildren(mSubCartListView);
+        //HelperFunctions.setListViewHeightBasedOnChildren(mSubCartListView);
 
         mListener.setCart(mCart);
 

@@ -1,10 +1,12 @@
 package com.wholdus.www.wholdusbuyerapp.adapters;
 
 import android.content.Context;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -53,6 +55,7 @@ public class SubOrderAdapter extends BaseAdapter {
             holder.sellerName = (TextView) view.findViewById(R.id.subcart_seller_name_text_view);
             holder.summary = (TextView) view.findViewById(R.id.subcart_summary_text_view);
             holder.orderItems = (ListView) view.findViewById(R.id.sub_cart_items_list_view);
+            holder.linearLayout = (LinearLayout) view.findViewById(R.id.linear_layout);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -67,7 +70,11 @@ public class SubOrderAdapter extends BaseAdapter {
 
         OrderItemsAdapter orderItemsAdapter = new OrderItemsAdapter(mContext, subOrder.getOrderItems());
         holder.orderItems.setAdapter(orderItemsAdapter);
-        HelperFunctions.setListViewHeightBasedOnChildren(holder.orderItems);
+        //HelperFunctions.setListViewHeightBasedOnChildren(holder.orderItems);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 210 * subOrder.getProductCount(), mContext.getResources().getDisplayMetrics()));
+        //HelperFunctions.setListViewHeightBasedOnChildren(holder.cartItems);
+        holder.linearLayout.setLayoutParams(layoutParams);
 
         return view;
     }
@@ -77,5 +84,6 @@ public class SubOrderAdapter extends BaseAdapter {
         TextView sellerName;
         TextView summary;
         ListView orderItems;
+        LinearLayout linearLayout;
     }
 }
