@@ -561,6 +561,11 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         }
 
         mTotalProductsOnServer = intent.getIntExtra(APIConstants.TOTAL_ITEMS_KEY, -1);
+        if (mTotalProductsOnServer == 0) {
+            setVisibility(View.INVISIBLE, View.INVISIBLE, View.VISIBLE);
+            return;
+        }
+
         if (mProducts.size() >= mTotalProductsOnServer) {
             removeDummyObject();
         }
@@ -589,9 +594,6 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
             removeDummyObject();
         }
 
-        if (mTotalProductsOnServer == 0) {
-            setVisibility(View.INVISIBLE, View.INVISIBLE, View.VISIBLE);
-        }
         if (mRequestQueue.size() > 0) {
             fetchProductsFromServer();
         }
