@@ -163,8 +163,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                     mRequestQueue.add(activePage);
                     fetchProductsFromServer();
                 }
-                Log.w("GRID", "dy " + dy);
-                if (dy > 0){
+                if (dy > 0) {
                     hideSortFilterLayout();
                     mScrollingCounter1 += 1;
                     new Handler().postDelayed(new Runnable() {
@@ -176,12 +175,9 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                             mScrollingCounter2 += 1;
                         }
                     }, 700);
-
                 } else {
                     showSortFilterLayout();
                 }
-
-
             }
         });
 
@@ -192,7 +188,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         loadData();
     }
 
-    private void hideSortFilterLayout(){
+    private void hideSortFilterLayout() {
         if (mSortFilterVisible) {
             mSortFilterLayout.startAnimation(mSlideOutBottom);
             mSortFilterLayout.setVisibility(View.GONE);
@@ -200,7 +196,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         }
     }
 
-    private void showSortFilterLayout(){
+    private void showSortFilterLayout() {
         if (!mSortFilterVisible) {
             mSortFilterLayout.startAnimation(mSlideInBottom);
             mSortFilterVisible = true;
@@ -509,7 +505,8 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
             } else {
                 mAdapter.clear();
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
     private void fetchProductsFromServer() {
@@ -575,7 +572,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         mTotalPages = totalPages;
         if (updatedInserted > 0) {
             if (!mLoaderLoading) {
-                if (getActivity()!= null) {
+                if (getActivity() != null) {
                     getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);
                 }
             } else {

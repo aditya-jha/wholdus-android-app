@@ -18,13 +18,13 @@
     <application
         android:name=".WholdusApplication"
         android:allowBackup="true"
-        android:icon="@drawable/wholdus_logo_white_bg"
+        android:icon="@drawable/wholdus_logo_128"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/wholdus_logo" />
+            android:resource="@drawable/wholdus_logo_white" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/accent" />
