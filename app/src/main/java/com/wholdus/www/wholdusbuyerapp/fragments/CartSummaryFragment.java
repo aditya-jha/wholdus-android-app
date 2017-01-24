@@ -164,7 +164,7 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
 
     }
 
-    private void setViewForUnsyncedCart(){
+    private void setViewForUnsyncedCart() {
         fetchDataFromServer();
 
         mTopSummary.setVisibility(View.GONE);
@@ -180,7 +180,7 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
 
     }
 
-    private void setBasicCartView(){
+    private void setBasicCartView() {
         mSubCartAdapter.notifyDataSetChanged();
         //HelperFunctions.setListViewHeightBasedOnChildren(mSubCartListView);
 
@@ -199,8 +199,8 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
         boolean cartChanged = (mCart == null || (mCart.getPieces() != data.getPieces()));
         mCart = data;
         if (data != null) {
-            if (data.getSynced() == 1){
-                if (data.getPieces() > 0){
+            if (data.getSynced() == 1) {
+                if (data.getPieces() > 0) {
                     if (cartChanged) {
                         setViewForCart();
                     }

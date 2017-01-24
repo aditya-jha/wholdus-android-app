@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -111,22 +111,22 @@
                 <Button
                     android:id="@+id/notification"
                     style="@style/Widget.AppCompat.Button.Borderless"
-                    android:layout_height="wrap_content"
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
                     android:drawableTop="@drawable/ic_notifications_black_24dp"
                     android:fontFamily="@string/font_condensed"
                     android:text="@string/notification_key"
                     android:textColor="@color/primary_text"
-                    android:layout_centerInParent="true"
                     android:textSize="12sp"
                     android:textStyle="normal" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/activity_vertical_margin"
+                    android:layout_centerInParent="true"
                     android:paddingBottom="25dp"
-                    android:layout_centerInParent="true">
+                    android:paddingLeft="@dimen/activity_vertical_margin">
 
                     <TextView
                         android:id="@+id/notification_count_text_view"
@@ -138,19 +138,15 @@
                         android:textSize="12sp"
                         android:visibility="visible"
                         tools:text="1" />
-
                 </LinearLayout>
-
             </RelativeLayout>
-
         </LinearLayout>
     </LinearLayout>
 
     <ProgressBar
         android:id="@+id/loading_indicator"
-        android:indeterminate="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        />
-
+        android:indeterminate="true" />
 </RelativeLayout>

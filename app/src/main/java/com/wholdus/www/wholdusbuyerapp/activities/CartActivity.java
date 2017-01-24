@@ -336,7 +336,12 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
+                String err = error.toString();
+                if (err.contains("NoConnectionError")) {
+                    Toast.makeText(getApplicationContext(), getString(R.string.no_internet_access), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), getString(R.string.api_error_message), Toast.LENGTH_LONG).show();
+                }
             }
         }) {
             @Override
