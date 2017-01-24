@@ -46,7 +46,7 @@ public class ProductsLoader extends AbstractLoader<ArrayList<Product>> {
                 null,
                 null,
                 null,
-                FilterClass.getSelectedItems("Brand"),
+                FilterClass.getSelectedItems("Brands"),
                 FilterClass.getCategoryIDs(),
                 FilterClass.getMinPriceFilter(),
                 FilterClass.getMaxPriceFilter(),
