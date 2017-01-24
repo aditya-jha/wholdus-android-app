@@ -151,10 +151,8 @@ public class ProductDetailActivity extends AppCompatActivity
                 onReceiveCartIntent(intent);
             }
         };
-
-        IntentFilter intentFilter = new IntentFilter(getString(R.string.cart_item_written));
-        LocalBroadcastManager.getInstance(this).registerReceiver(mCartServiceResponseReceiver, intentFilter);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -182,25 +180,27 @@ public class ProductDetailActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        IntentFilter intentFilter = new IntentFilter(getString(R.string.cart_item_written));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mCartServiceResponseReceiver, intentFilter);
         loadCartCount();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+
+        try {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mCartServiceResponseReceiver);
+        } catch (Exception e) {
+
+        }
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (mCartServiceResponseReceiver != null) {
-            try {
-                LocalBroadcastManager.getInstance(this).unregisterReceiver(mCartServiceResponseReceiver);
-            } catch (Exception e) {
-
-            }
-            mCartServiceResponseReceiver = null;
-        }
+        mCartServiceResponseReceiver = null;
     }
 
     @Override
@@ -368,7 +368,7 @@ public class ProductDetailActivity extends AppCompatActivity
         Glide.with(this)
                 .load(mProduct.getImageUrl(Constants.LARGE_IMAGE, mProduct.getProductImageNumbers()[position]))
                 .asBitmap()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .skipMemoryCache(true)
                 .into(mDisplayImage);
     }

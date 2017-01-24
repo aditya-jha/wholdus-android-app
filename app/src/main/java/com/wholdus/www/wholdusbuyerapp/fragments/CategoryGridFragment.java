@@ -142,7 +142,11 @@ public class CategoryGridFragment extends Fragment implements
     @Override
     public void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+        try {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+        }catch (Exception e){
+
+        }
     }
 
     @Override
@@ -151,6 +155,12 @@ public class CategoryGridFragment extends Fragment implements
         if (mSnackbar != null && mSnackbar.isShownOrQueued()) {
             mSnackbar.dismiss();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mReceiver = null;
     }
 
     @Override

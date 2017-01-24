@@ -59,6 +59,12 @@ public class CheckoutPaymentMethodFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
     private void initReferences(ViewGroup rootView) {
         mCODRadioButton = (RadioButton) rootView.findViewById(R.id.cod_radio_button);
         mNEFTRadioButton = (RadioButton) rootView.findViewById(R.id.neft_radio_button);

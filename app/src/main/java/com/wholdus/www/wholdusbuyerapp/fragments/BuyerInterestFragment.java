@@ -94,7 +94,12 @@ public class BuyerInterestFragment extends Fragment implements LoaderManager.Loa
     @Override
     public void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+        try {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+        } catch (Exception e){
+
+        }
+
     }
 
     @Override
@@ -113,11 +118,13 @@ public class BuyerInterestFragment extends Fragment implements LoaderManager.Loa
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener = null;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mReceiver = null;
     }
 
     @Override

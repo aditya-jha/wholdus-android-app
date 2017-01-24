@@ -105,7 +105,17 @@ public class ForgotPasswordFragment extends Fragment implements View.OnClickList
     @Override
     public void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+        try {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+        }catch (Exception e){
+
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mReceiver = null;
     }
 
     @Override

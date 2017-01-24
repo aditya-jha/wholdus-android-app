@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.ProductDetailActivity;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
@@ -54,8 +55,8 @@ public class OrderItemsAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup viewGroup) {
-        final ViewHolder holder;
+    public View getView(final int position, View convertView, ViewGroup viewGroup) {
+        ViewHolder holder;
 
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_layout_order_items, viewGroup, false);
@@ -73,8 +74,8 @@ public class OrderItemsAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        final OrderItem orderItem = mData.get(position);
-        final Product product = orderItem.getProduct();
+        OrderItem orderItem = mData.get(position);
+        Product product = orderItem.getProduct();
 
         holder.productName.setText(product.getName());
         holder.pieces.setText(String.valueOf(orderItem.getPieces()));
@@ -85,15 +86,20 @@ public class OrderItemsAdapter extends BaseAdapter {
         Glide.with(mContext)
                 .load(product.getImageUrl(Constants.SMALL_IMAGE, "1"))
                 .asBitmap()
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                .into(holder.productImage);
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(new BitmapImageViewTarget(holder.productImage));
 
         holder.productImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, ProductDetailActivity.class);
-                intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME, product.getProductID());
-                mContext.startActivity(intent);
+                openProductDetails(position);
+            }
+        });
+
+        holder.productName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openProductDetails(position);
             }
         });
 
@@ -102,12 +108,7 @@ public class OrderItemsAdapter extends BaseAdapter {
             holder.tracking.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    try {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(orderItem.getTrackingUrl()));
-                        mContext.startActivity(intent);
-                    } catch (Exception e) {
-
-                    }
+                    openTrackingUrl(position);
                 }
             });
         } else {
@@ -115,6 +116,21 @@ public class OrderItemsAdapter extends BaseAdapter {
         }
 
         return convertView;
+    }
+    private void openProductDetails(int position){
+        Product product = mData.get(position).getProduct();
+        Intent intent = new Intent(mContext, ProductDetailActivity.class);
+        intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME, product.getProductID());
+        mContext.startActivity(intent);
+    }
+    private void openTrackingUrl(int position){
+        OrderItem orderItem = mData.get(position);
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(orderItem.getTrackingUrl()));
+            mContext.startActivity(intent);
+        } catch (Exception e) {
+
+        }
     }
 
 

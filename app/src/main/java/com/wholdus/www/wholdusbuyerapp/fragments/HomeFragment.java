@@ -181,6 +181,27 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        try {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mCategoryServiceResponseReceiver);
+        } catch (Exception e) {
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mCategoryServiceResponseReceiver = null;
+    }
+
+    @Override
     public void onClick(View view) {
         final int ID = view.getId();
         switch (ID) {

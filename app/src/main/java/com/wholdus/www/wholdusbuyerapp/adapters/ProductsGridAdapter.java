@@ -99,7 +99,7 @@ public class ProductsGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Glide.with(mContext)
                 .load(product.getImageUrl(Constants.SMALL_IMAGE, "1"))
                 .asBitmap()
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(new BitmapImageViewTarget(holder.mProductImage));
         holder.mListener = mListener;
     }

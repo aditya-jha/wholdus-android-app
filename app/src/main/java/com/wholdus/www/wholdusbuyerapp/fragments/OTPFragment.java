@@ -123,13 +123,19 @@ public class OTPFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onPause() {
         super.onPause();
-        getActivity().unregisterReceiver(mSMSReceiver);
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+        try {
+            getActivity().unregisterReceiver(mSMSReceiver);
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+        } catch (Exception e){
+
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mReceiver = null;
+        mSMSReceiver = null;
     }
 
     @Override
