@@ -28,6 +28,7 @@ import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HomeActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.SubCartAdapter;
 import com.wholdus.www.wholdusbuyerapp.decorators.GridDividerItemDecoration;
+import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartListenerInterface;
@@ -142,9 +143,7 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
         mSubCartListView = (RecyclerView) view.findViewById(R.id.cart_summary_suborder_list_view);
         mSubCartListView.setItemAnimator(new DefaultItemAnimator());
         mSubCartListView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        mSubCartListView.addItemDecoration(new GridDividerItemDecoration(
-                ContextCompat.getDrawable(getContext(), R.drawable.divider),
-                ContextCompat.getDrawable(getContext(), R.drawable.divider), 1));
+        mSubCartListView.addItemDecoration(new RecyclerViewSpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.card_margin_vertical), 0));
         mSubCarts = new ArrayList<>();
         mSubCartAdapter = new SubCartAdapter(getContext(), mSubCarts, this);
         mSubCartListView.setAdapter(mSubCartAdapter);

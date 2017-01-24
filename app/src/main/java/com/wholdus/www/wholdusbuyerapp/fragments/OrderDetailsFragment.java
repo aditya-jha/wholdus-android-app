@@ -6,6 +6,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +18,7 @@ import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.SubOrderAdapter;
+import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.interfaces.OrderDetailsListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.OrdersLoader;
@@ -42,7 +46,7 @@ public class OrderDetailsFragment extends Fragment implements LoaderManager.Load
     private TextView mCODCharge;
     private TextView mShippingCharge;
     private TextView mFinalPrice;
-    private ListView mSubOrdersListView;
+    private RecyclerView mSubOrdersListView;
     private ArrayList<Suborder> mSuborders;
     private SubOrderAdapter mSuborderAdapter;
     private ProgressBar mPageLoader;
@@ -84,10 +88,15 @@ public class OrderDetailsFragment extends Fragment implements LoaderManager.Load
         mCODCharge = (TextView) view.findViewById(R.id.order_details_cod_charge_text_view);
         mShippingCharge = (TextView) view.findViewById(R.id.order_details_shipping_charge_text_view);
         mFinalPrice = (TextView) view.findViewById(R.id.order_details_total_amount_text_view);
-        mSubOrdersListView = (ListView) view.findViewById(R.id.suborder_list_view);
+
+        mSubOrdersListView = (RecyclerView) view.findViewById(R.id.suborder_list_view);
+        mSubOrdersListView.setItemAnimator(new DefaultItemAnimator());
+        mSubOrdersListView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        mSubOrdersListView.addItemDecoration(new RecyclerViewSpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.card_margin_vertical), 0));
         mSuborders = new ArrayList<>();
         mSuborderAdapter = new SubOrderAdapter(getContext(), mSuborders);
         mSubOrdersListView.setAdapter(mSuborderAdapter);
+        mSubOrdersListView.setNestedScrollingEnabled(false);
 
         mPageLayout.setVisibility(View.INVISIBLE);
 
@@ -150,6 +159,6 @@ public class OrderDetailsFragment extends Fragment implements LoaderManager.Load
         mSuborders.clear();
         mSuborders.addAll(mOrder.getSuborders());
         mSuborderAdapter.notifyDataSetChanged();
-        HelperFunctions.setListViewHeightBasedOnChildren(mSubOrdersListView);
+        //HelperFunctions.setListViewHeightBasedOnChildren(mSubOrdersListView);
     }
 }

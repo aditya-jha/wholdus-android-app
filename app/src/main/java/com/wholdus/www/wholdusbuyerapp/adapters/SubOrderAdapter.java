@@ -1,17 +1,17 @@
 package com.wholdus.www.wholdusbuyerapp.adapters;
 
 import android.content.Context;
-import android.util.TypedValue;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
+import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.models.Suborder;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * Created by kaustubh on 31/12/16.
  */
 
-public class SubOrderAdapter extends BaseAdapter {
+public class SubOrderAdapter extends RecyclerView.Adapter<SubOrderAdapter.MyViewHolder> {
 
     private Context mContext;
     private ArrayList<Suborder> mData;
@@ -31,36 +31,18 @@ public class SubOrderAdapter extends BaseAdapter {
     }
 
     @Override
-    public int getCount() {
+    public int getItemCount() {
         return mData.size();
     }
 
     @Override
-    public Object getItem(int i) {
-        return mData.get(i);
+    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new MyViewHolder(LayoutInflater.from(mContext).inflate(R.layout.list_view_subcart, parent, false));
     }
 
     @Override
-    public long getItemId(int i) {
-        return i;
-    }
-
-    @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        ViewHolder holder;
-
-        if (view == null) {
-            view = LayoutInflater.from(mContext).inflate(R.layout.list_view_subcart, viewGroup, false);
-            holder = new ViewHolder();
-            holder.sellerName = (TextView) view.findViewById(R.id.subcart_seller_name_text_view);
-            holder.summary = (TextView) view.findViewById(R.id.subcart_summary_text_view);
-            holder.orderItems = (ListView) view.findViewById(R.id.sub_cart_items_list_view);
-            view.setTag(holder);
-        } else {
-            holder = (ViewHolder) view.getTag();
-        }
-
-        Suborder subOrder = mData.get(i);
+    public void onBindViewHolder(final MyViewHolder holder, int position) {
+        Suborder subOrder = mData.get(position);
 
         holder.sellerName.setText(subOrder.getSeller().getCompanyName());
         holder.summary.setText(String.format(mContext.getString(R.string.pieces_price_format),
@@ -69,14 +51,24 @@ public class SubOrderAdapter extends BaseAdapter {
 
         OrderItemsAdapter orderItemsAdapter = new OrderItemsAdapter(mContext, subOrder.getOrderItems());
         holder.orderItems.setAdapter(orderItemsAdapter);
-
-        return view;
     }
 
-    private class ViewHolder {
+
+    class MyViewHolder extends RecyclerView.ViewHolder{
         int id;
         TextView sellerName;
         TextView summary;
-        ListView orderItems;
+        RecyclerView orderItems;
+
+        private MyViewHolder(final View itemView) {
+            super(itemView);
+            sellerName = (TextView) itemView.findViewById(R.id.subcart_seller_name_text_view);
+            summary = (TextView) itemView.findViewById(R.id.subcart_summary_text_view);
+            orderItems = (RecyclerView) itemView.findViewById(R.id.sub_cart_items_list_view);
+            orderItems = (RecyclerView) itemView.findViewById(R.id.sub_cart_items_list_view);
+            orderItems.setItemAnimator(new DefaultItemAnimator());
+            orderItems.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
+            orderItems.addItemDecoration(new RecyclerViewSpaceItemDecoration(mContext.getResources().getDimensionPixelSize(R.dimen.text_divider_gap_small), 0));
+        }
     }
 }

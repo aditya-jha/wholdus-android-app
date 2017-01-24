@@ -86,13 +86,14 @@ public class OrdersFragment extends Fragment implements ItemClickListener, Loade
 
         mPageLoader = (ProgressBar) view.findViewById(R.id.page_loader);
         mOrdersRecyclerView = (RecyclerView) view.findViewById(R.id.orders_recycler_view);
-        mLayoutManager = new LinearLayoutManager(getContext());
+        mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         mOrdersRecyclerView.setLayoutManager(mLayoutManager);
         mOrdersRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mOrdersRecyclerView.addItemDecoration(new RecyclerViewSpaceItemDecoration(40, 0));
         mOrderArrayList = new ArrayList<>();
         ordersAdapter = new OrdersAdapter(getContext(), mOrderArrayList, this);
         mOrdersRecyclerView.setAdapter(ordersAdapter);
+        mOrdersRecyclerView.setNestedScrollingEnabled(false);
 
         mNoOrders = (CardView) view.findViewById(R.id.no_orders);
 

@@ -1,6 +1,8 @@
 package com.wholdus.www.wholdusbuyerapp.adapters;
 
 import android.content.Context;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.models.Order;
@@ -57,7 +60,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
         SuborderListViewAdapter suborderAdapter = new SuborderListViewAdapter(mContext, suborders);
         holder.suborderListView.setAdapter(suborderAdapter);
 
-        HelperFunctions.setListViewHeightBasedOnChildren(holder.suborderListView);
+        //HelperFunctions.setListViewHeightBasedOnChildren(holder.suborderListView);
 
         holder.mListener = mListener;
     }
@@ -67,7 +70,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
         private TextView orderStatus;
         private TextView orderDate;
         private TextView orderAmount;
-        private ListView suborderListView;
+        private RecyclerView suborderListView;
         private ItemClickListener mListener;
 
         private MyViewHolder(final View itemView) {
@@ -76,14 +79,17 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
             orderStatus = (TextView) itemView.findViewById(R.id.order_status_text_view);
             orderDate = (TextView) itemView.findViewById(R.id.order_date_text_view);
             orderAmount = (TextView) itemView.findViewById(R.id.order_amount_text_view);
-            suborderListView = (ListView) itemView.findViewById(R.id.suborder_list_view);
+            suborderListView = (RecyclerView) itemView.findViewById(R.id.suborder_list_view);
             itemView.setOnClickListener(this);
-            suborderListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            suborderListView.setItemAnimator(new DefaultItemAnimator());
+            suborderListView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
+            suborderListView.addItemDecoration(new RecyclerViewSpaceItemDecoration(mContext.getResources().getDimensionPixelSize(R.dimen.text_divider_gap_small), 0));
+            /**suborderListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     onClick(itemView);
                 }
-            });
+            });**/
         }
 
         @Override
