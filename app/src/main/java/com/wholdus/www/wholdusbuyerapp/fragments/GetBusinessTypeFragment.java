@@ -104,6 +104,12 @@ public class GetBusinessTypeFragment extends Fragment implements LoaderManager.L
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         mUserServiceResponseReceiver= null;

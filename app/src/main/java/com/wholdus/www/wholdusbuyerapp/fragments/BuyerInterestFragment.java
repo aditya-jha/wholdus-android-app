@@ -118,6 +118,7 @@ public class BuyerInterestFragment extends Fragment implements LoaderManager.Loa
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener = null;
     }
 
     @Override

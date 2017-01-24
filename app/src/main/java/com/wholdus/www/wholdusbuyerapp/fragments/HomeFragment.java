@@ -190,6 +190,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         mCategoryServiceResponseReceiver = null;

@@ -133,6 +133,12 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         mListener = null;

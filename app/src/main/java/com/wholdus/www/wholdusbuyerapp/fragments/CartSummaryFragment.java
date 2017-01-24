@@ -103,6 +103,12 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         mCartServiceResponseReceiver = null;

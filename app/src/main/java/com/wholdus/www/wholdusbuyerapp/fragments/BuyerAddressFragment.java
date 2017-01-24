@@ -112,6 +112,12 @@ public class BuyerAddressFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         mUserServiceResponseReceiver = null;

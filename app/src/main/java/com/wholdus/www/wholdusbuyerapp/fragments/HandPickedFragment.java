@@ -183,6 +183,12 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         mBuyerProductServiceResponseReceiver = null;

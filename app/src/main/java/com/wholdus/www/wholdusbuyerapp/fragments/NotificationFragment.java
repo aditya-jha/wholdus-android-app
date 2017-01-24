@@ -87,6 +87,12 @@ public class NotificationFragment extends Fragment
         mListener.fragmentCreated(getString(R.string.notification_key));
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
     private void setViewForNotifications(ArrayList<Notification> notifications) {
         if (notifications.size() > 0) {
             mNotificationArrayList.clear();
