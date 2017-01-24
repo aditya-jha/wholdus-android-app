@@ -126,7 +126,7 @@ public final class FilterClass {
                 returnValue = mBrands;
                 break;
             default:
-                returnValue = mSizes;
+                return null;
         }
         return returnValue;
     }
