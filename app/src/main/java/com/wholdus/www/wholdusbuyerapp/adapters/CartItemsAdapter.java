@@ -4,12 +4,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -27,6 +27,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartSummaryListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.models.CartItem;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
+import com.wholdus.www.wholdusbuyerapp.models.SubCart;
 import com.wholdus.www.wholdusbuyerapp.services.CartService;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ import java.util.ArrayList;
  * Created by kaustubh on 30/12/16.
  */
 
-public class CartItemsAdapter extends BaseAdapter {
+public class CartItemsAdapter extends RecyclerView.Adapter<CartItemsAdapter.MyViewHolder> {
 
     private Context mContext;
     private ArrayList<CartItem> mData;
@@ -48,39 +49,17 @@ public class CartItemsAdapter extends BaseAdapter {
     }
 
     @Override
-    public int getCount() {
+    public int getItemCount() {
         return mData.size();
     }
 
     @Override
-    public long getItemId(int i) {
-        return i;
+    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new MyViewHolder(LayoutInflater.from(mContext).inflate(R.layout.list_item_layout_cart_items, parent, false));
     }
 
     @Override
-    public Object getItem(int i) {
-        return mData.get(i);
-    }
-
-    @Override
-    public View getView(final int position, View convertView, ViewGroup viewGroup) {
-        ViewHolder holder;
-
-        if (convertView == null) {
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_layout_cart_items, viewGroup, false);
-            holder = new ViewHolder();
-            holder.productName = (TextView) convertView.findViewById(R.id.cart_item_product_name_text_view);
-            holder.pricePerPiece = (TextView) convertView.findViewById(R.id.cart_item_product_price_per_piece_text_view);
-            holder.total = (TextView) convertView.findViewById(R.id.cart_item_final_price_text_view);
-            holder.pieces = (Spinner) convertView.findViewById(R.id.cart_item_pieces_spinner);
-            holder.progressBar = (ProgressBar) convertView.findViewById(R.id.loading_indicator);
-            holder.productImage = (ImageView) convertView.findViewById(R.id.product_image);
-            holder.removeButton = (ImageButton) convertView.findViewById(R.id.cart_item_remove_button);
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-
+    public void onBindViewHolder(final MyViewHolder holder, final int position) {
         CartItem cartItem = mData.get(position);
         Product product = cartItem.getProduct();
 
@@ -154,8 +133,6 @@ public class CartItemsAdapter extends BaseAdapter {
 
             }
         });
-
-        return convertView;
     }
 
     private void addProductToCart(int pieces, int position) {
@@ -181,7 +158,7 @@ public class CartItemsAdapter extends BaseAdapter {
         mContext.startActivity(intent);
     }
 
-    class ViewHolder {
+    class MyViewHolder extends RecyclerView.ViewHolder {
         int id;
         TextView productName;
         TextView pricePerPiece;
@@ -190,5 +167,16 @@ public class CartItemsAdapter extends BaseAdapter {
         ImageView productImage;
         ProgressBar progressBar;
         ImageButton removeButton;
+
+        private MyViewHolder(final View itemView) {
+            super(itemView);
+            productName = (TextView) itemView.findViewById(R.id.cart_item_product_name_text_view);
+            pricePerPiece = (TextView) itemView.findViewById(R.id.cart_item_product_price_per_piece_text_view);
+            total = (TextView) itemView.findViewById(R.id.cart_item_final_price_text_view);
+            pieces = (Spinner) itemView.findViewById(R.id.cart_item_pieces_spinner);
+            progressBar = (ProgressBar) itemView.findViewById(R.id.loading_indicator);
+            productImage = (ImageView) itemView.findViewById(R.id.product_image);
+            removeButton = (ImageButton) itemView.findViewById(R.id.cart_item_remove_button);
+        }
     }
 }

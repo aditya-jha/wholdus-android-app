@@ -8,9 +8,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +27,7 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.HomeActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.SubCartAdapter;
+import com.wholdus.www.wholdusbuyerapp.decorators.GridDividerItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartListenerInterface;
@@ -47,7 +52,7 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
     private TextView mOrderValueTextView, mShippingChargeTextView, mNoProductsLeftTextView;
     private CardView mTopSummary, mNoProducts;
     private Button mContinueShopping;
-    private ListView mSubCartListView;
+    private RecyclerView mSubCartListView;
 
     private SubCartAdapter mSubCartAdapter;
     private ArrayList<SubCart> mSubCarts;
@@ -133,10 +138,17 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
 
         mNoProducts = (CardView) view.findViewById(R.id.no_products);
         mNoProductsLeftTextView = (TextView) view.findViewById(R.id.no_products_left_text_view);
-        mSubCartListView = (ListView) view.findViewById(R.id.cart_summary_suborder_list_view);
+
+        mSubCartListView = (RecyclerView) view.findViewById(R.id.cart_summary_suborder_list_view);
+        mSubCartListView.setItemAnimator(new DefaultItemAnimator());
+        mSubCartListView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        mSubCartListView.addItemDecoration(new GridDividerItemDecoration(
+                ContextCompat.getDrawable(getContext(), R.drawable.divider),
+                ContextCompat.getDrawable(getContext(), R.drawable.divider), 1));
         mSubCarts = new ArrayList<>();
         mSubCartAdapter = new SubCartAdapter(getContext(), mSubCarts, this);
         mSubCartListView.setAdapter(mSubCartAdapter);
+        mSubCartListView.setNestedScrollingEnabled(false);
     }
 
     @Override
