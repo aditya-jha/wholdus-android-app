@@ -24,6 +24,13 @@
         android:textColor="@android:color/black"
         android:textSize="20sp" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/card_margin_horizontal"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/waiting_for_otp" />
+
     <include layout="@layout/layout_otp_input" />
 
     <Button
