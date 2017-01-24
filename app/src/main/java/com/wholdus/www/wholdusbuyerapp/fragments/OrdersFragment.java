@@ -132,7 +132,11 @@ public class OrdersFragment extends Fragment implements ItemClickListener, Loade
     public void onPause() {
         super.onPause();
         mOrderListViewState = mLayoutManager.onSaveInstanceState();
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mOrderServiceResponseReceiver);
+        try {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mOrderServiceResponseReceiver);
+        } catch (Exception e){
+
+        }
     }
 
     @Override

@@ -100,7 +100,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onStop() {
         super.onDestroy();
         if (mOrderServiceResponseReceiver != null) {
             try {

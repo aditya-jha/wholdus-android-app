@@ -103,7 +103,12 @@ public class BuyerAddressFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mUserServiceResponseReceiver);
+        try {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mUserServiceResponseReceiver);
+        } catch (Exception e){
+
+        }
+
     }
 
     @Override

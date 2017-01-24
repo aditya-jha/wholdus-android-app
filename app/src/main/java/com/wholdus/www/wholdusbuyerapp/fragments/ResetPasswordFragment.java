@@ -48,7 +48,11 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mListener = (LoginSignupListenerInterface) context;
+        try {
+            mListener = (LoginSignupListenerInterface) context;
+        } catch (Exception e){
+
+        }
     }
 
     @Override
@@ -120,14 +124,19 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
     @Override
     public void onPause() {
         super.onPause();
-        getActivity().unregisterReceiver(mReceiver);
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+        try {
+            getActivity().unregisterReceiver(mReceiver);
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+        } catch (Exception e){
+
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         mListener = null;
+        mReceiver = null;
     }
 
     @Override

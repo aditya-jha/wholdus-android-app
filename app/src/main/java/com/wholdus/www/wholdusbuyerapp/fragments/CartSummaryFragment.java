@@ -93,6 +93,21 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mCartServiceResponseReceiver, intentFilter);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        try {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mCartServiceResponseReceiver);
+        } catch (Exception e) {
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mCartServiceResponseReceiver = null;
+    }
+
     public void initReferences(ViewGroup view) {
         mOrderValueTextView = (TextView) view.findViewById(R.id.cart_summary_order_value_text_view);
         mShippingChargeTextView = (TextView) view.findViewById(R.id.cart_summary_shipping_charge_text_view);

@@ -83,6 +83,27 @@ public class GetWhatsappNumberFragment extends Fragment implements LoaderManager
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        try {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mUserServiceResponseReceiver);
+        } catch (Exception e){
+
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mUserServiceResponseReceiver = null;
+    }
+
     private void initReferences(ViewGroup rootView){
         mMobileNumberEditText = (TextInputEditText) rootView.findViewById(R.id.mobile_number_edit_text);
         mMobileNumberEditText.setHint("Whatsapp Number");

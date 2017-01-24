@@ -162,32 +162,32 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        try {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mBuyerProductServiceResponseReceiver);
+        } catch (Exception e) {
+        }
+
+        try {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mProductServiceResponseReceiver);
+        } catch (Exception e) {
+
+        }
+
+        try {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mSpecificProductServiceResponseReceiver);
+        } catch (Exception e) {
+
+        }
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mBuyerProductServiceResponseReceiver != null) {
-            try {
-                LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mBuyerProductServiceResponseReceiver);
-            } catch (Exception e) {
-
-            }
-            mBuyerProductServiceResponseReceiver = null;
-        }
-        if (mProductServiceResponseReceiver != null) {
-            try {
-                LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mProductServiceResponseReceiver);
-            } catch (Exception e) {
-
-            }
-            mProductServiceResponseReceiver = null;
-        }
-        if (mSpecificProductServiceResponseReceiver != null) {
-            try {
-                LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mSpecificProductServiceResponseReceiver);
-            } catch (Exception e) {
-
-            }
-            mSpecificProductServiceResponseReceiver = null;
-        }
+        mBuyerProductServiceResponseReceiver = null;
+        mProductServiceResponseReceiver = null;
+        mSpecificProductServiceResponseReceiver = null;
     }
 
 
@@ -332,7 +332,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         getContext().startService(intent);
     }
 
-    private void updateUnsyncedResponses(){
+    private void updateUnsyncedResponses() {
         Intent intent = new Intent(getContext(), BuyerProductService.class);
         intent.putExtra("TODO", TODO.UPDATE_UNSYNCED_BUYER_RESPONSES);
         getContext().startService(intent);

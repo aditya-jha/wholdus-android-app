@@ -90,7 +90,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
     @Override
     public void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+        try {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+        }catch (Exception e){
+
+        }
     }
 
     @Override
@@ -101,6 +105,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mReceiver = null;
     }
 
     @Override

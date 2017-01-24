@@ -41,7 +41,7 @@ public class GetBusinessTypeFragment extends Fragment implements LoaderManager.L
 
     private final int BUSINESS_TYPE_DB_LOADER = 1100;
 
-    public GetBusinessTypeFragment(){
+    public GetBusinessTypeFragment() {
     }
 
     @Override
@@ -76,7 +76,7 @@ public class GetBusinessTypeFragment extends Fragment implements LoaderManager.L
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         mListener.fragmentCreated("Business Type", false);
 
@@ -88,26 +88,35 @@ public class GetBusinessTypeFragment extends Fragment implements LoaderManager.L
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        if (mUserServiceResponseReceiver != null) {
-            try {
-                LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mUserServiceResponseReceiver);
-            } catch (Exception e){
+    public void onPause() {
+        super.onPause();
+        try {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mUserServiceResponseReceiver);
+        } catch (Exception e) {
 
-            }
-            mUserServiceResponseReceiver = null;
         }
     }
 
-    private void initReferences(ViewGroup view){
+    @Override
+    public void onStop() {
+        super.onStop();
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mUserServiceResponseReceiver= null;
+    }
+
+    private void initReferences(ViewGroup view) {
         mBusinessTypeListView = (ListView) view.findViewById(R.id.business_type_listview);
         mBusinessTypes = new ArrayList<>();
         mBusinessTypeSelectAdapter = new BusinessTypeSelectAdapter(getContext(), mBusinessTypes);
         mBusinessTypeListView.setAdapter(mBusinessTypeSelectAdapter);
     }
 
-    public void setViewForData(ArrayList<BusinessTypes> data){
+    public void setViewForData(ArrayList<BusinessTypes> data) {
         mBusinessTypes.clear();
         mBusinessTypes.addAll(data);
         mBusinessTypeSelectAdapter.notifyDataSetChanged();
@@ -132,27 +141,27 @@ public class GetBusinessTypeFragment extends Fragment implements LoaderManager.L
         }
     }
 
-    private void handleAPIResponse(Intent intent){
-        if (mBusinessTypes.isEmpty()){
-                getActivity().getSupportLoaderManager().restartLoader(BUSINESS_TYPE_DB_LOADER, null, this);
+    private void handleAPIResponse(Intent intent) {
+        if (mBusinessTypes.isEmpty()) {
+            getActivity().getSupportLoaderManager().restartLoader(BUSINESS_TYPE_DB_LOADER, null, this);
         }
     }
 
-    private void fetchDataFromServer(){
+    private void fetchDataFromServer() {
         Intent businessTypesIntent = new Intent(getContext(), UserService.class);
         businessTypesIntent.putExtra("TODO", R.string.fetch_business_types);
         getContext().startService(businessTypesIntent);
     }
 
-    public void updateBusinessType(){
+    public void updateBusinessType() {
         int selectedPosition = mBusinessTypeSelectAdapter.getSelectedPosition();
-        if (selectedPosition != -1){
+        if (selectedPosition != -1) {
             Intent intent = new Intent(getContext(), UserService.class);
             intent.putExtra("TODO", R.string.update_buyer_type);
             intent.putExtra(getString(R.string.business_type_key), String.valueOf(mBusinessTypes.get(selectedPosition).getBusinessTypeID()));
             getContext().startService(intent);
             mListener.businessTypeSaved();
-        }else {
+        } else {
             Toast.makeText(getContext(), "Please select a value", Toast.LENGTH_SHORT).show();
         }
     }
