@@ -63,8 +63,8 @@ public class CartItemsAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup viewGroup) {
-        final ViewHolder holder;
+    public View getView(final int position, View convertView, ViewGroup viewGroup) {
+        ViewHolder holder;
 
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_layout_cart_items, viewGroup, false);
@@ -82,7 +82,7 @@ public class CartItemsAdapter extends BaseAdapter {
         }
 
         CartItem cartItem = mData.get(position);
-        final Product product = cartItem.getProduct();
+        Product product = cartItem.getProduct();
 
         holder.productName.setText(product.getName());
         holder.pricePerPiece.setText(String.format(mContext.getString(R.string.price_per_pcs_format), String.valueOf((int) Math.ceil(product.getMinPricePerUnit()))));
@@ -106,9 +106,14 @@ public class CartItemsAdapter extends BaseAdapter {
         holder.productImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, ProductDetailActivity.class);
-                intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME, product.getProductID());
-                mContext.startActivity(intent);
+                openProductDetails(position);
+            }
+        });
+
+        holder.productName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openProductDetails(position);
             }
         });
 
@@ -116,8 +121,8 @@ public class CartItemsAdapter extends BaseAdapter {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if (oldSelectionPosition != i) {
-                    holder.pieces.setSelection(i);
-                    addProductToCart(((int) holder.pieces.getSelectedItem()) / product.getLotSize(), product);
+                    adapterView.setSelection(i);
+                    addProductToCart((int) adapterView.getSelectedItem(), position);
                 }
             }
 
@@ -134,7 +139,7 @@ public class CartItemsAdapter extends BaseAdapter {
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case DialogInterface.BUTTON_POSITIVE:
-                                addProductToCart(0, product);
+                                addProductToCart(0, position);
                                 break;
 
                             case DialogInterface.BUTTON_NEGATIVE:
@@ -153,8 +158,10 @@ public class CartItemsAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private void addProductToCart(int lots, Product product) {
+    private void addProductToCart(int pieces, int position) {
+        Product product = mData.get(position).getProduct();
         mListener.enableProgressBar();
+        int lots = (pieces/product.getLotSize());
         Intent intent = new Intent(mContext, CartService.class);
         intent.putExtra("TODO", R.string.write_cart_item);
         intent.putExtra(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, product.getProductID());
@@ -165,6 +172,13 @@ public class CartItemsAdapter extends BaseAdapter {
         intent.putExtra(CartContract.CartItemsTable.COLUMN_CALCULATED_PRICE_PER_PIECE, product.getMinPricePerUnit());
         intent.putExtra(CartContract.CartItemsTable.COLUMN_FINAL_PRICE, product.getMinPricePerUnit() * lots * product.getLotSize());
         mContext.startService(intent);
+    }
+
+    private void openProductDetails(int position){
+        Product product = mData.get(position).getProduct();
+        Intent intent = new Intent(mContext, ProductDetailActivity.class);
+        intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME, product.getProductID());
+        mContext.startActivity(intent);
     }
 
     class ViewHolder {

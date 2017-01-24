@@ -100,16 +100,19 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     }
 
     @Override
-    protected void onStop() {
-        super.onDestroy();
-        if (mOrderServiceResponseReceiver != null) {
-            try {
-                LocalBroadcastManager.getInstance(this).unregisterReceiver(mOrderServiceResponseReceiver);
-            } catch (Exception e) {
+    protected void onPause() {
+        super.onPause();
+        try {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mOrderServiceResponseReceiver);
+        } catch (Exception e) {
 
-            }
-            mOrderServiceResponseReceiver = null;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mOrderServiceResponseReceiver = null;
     }
 
     private void initToolbar() {
