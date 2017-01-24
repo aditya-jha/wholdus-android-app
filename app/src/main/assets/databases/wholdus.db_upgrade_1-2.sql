@@ -1,1 +1,0 @@
-ALTER TABLE 'notification' ADD COLUMN 'notification_seen' INTEGER default 0;
