@@ -80,7 +80,7 @@ public class ProductSwipeDeckAdapter extends BaseAdapter {
         Glide.with(mContext)
                 .load(product.getImageUrl(Constants.LARGE_IMAGE, "1"))
                 .asBitmap()
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(new BitmapImageViewTarget(holder.productImageView));
 
         mListener.cardCreated();

@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.ProductDetailActivity;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract;
@@ -99,8 +100,8 @@ public class CartItemsAdapter extends BaseAdapter {
         Glide.with(mContext)
                 .load(product.getImageUrl(Constants.SMALL_IMAGE, "1"))
                 .asBitmap()
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                .into(holder.productImage);
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(new BitmapImageViewTarget(holder.productImage));
 
         holder.productImage.setOnClickListener(new View.OnClickListener() {
             @Override

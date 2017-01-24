@@ -48,7 +48,7 @@ public class GalleryImageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         final TouchImageView imageView = (TouchImageView) inflater.inflate(R.layout.layout_product_gallery_image_view, container, false);
-        Glide.with(this).load(mImageUrl).asBitmap().thumbnail(0.05f).diskCacheStrategy(DiskCacheStrategy.ALL).into(new SimpleTarget<Bitmap>() {
+        Glide.with(this).load(mImageUrl).asBitmap().thumbnail(0.05f).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                 imageView.setImageBitmap(resource);

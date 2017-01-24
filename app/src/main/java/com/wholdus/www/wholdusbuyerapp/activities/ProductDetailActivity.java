@@ -368,7 +368,7 @@ public class ProductDetailActivity extends AppCompatActivity
         Glide.with(this)
                 .load(mProduct.getImageUrl(Constants.LARGE_IMAGE, mProduct.getProductImageNumbers()[position]))
                 .asBitmap()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .skipMemoryCache(true)
                 .into(mDisplayImage);
     }
