@@ -14,6 +14,7 @@
     <string name="update_buyer_whatsapp_number">updateBuyerWhatsappNumber</string>
     <string name="fetch_sellers">fetchSellers</string>
     <string name="seller_category_details">seller_category_details</string>
+    <string name="category_product_details">category_product_details</string>
 
     <!-- orders -->
     <string name="fetch_orders">fetchOrders</string>

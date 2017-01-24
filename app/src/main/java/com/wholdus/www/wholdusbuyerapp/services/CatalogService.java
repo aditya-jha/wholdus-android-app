@@ -53,7 +53,8 @@ public class CatalogService extends IntentService {
         int todo = intent.getIntExtra("TODO", -1);
         switch (todo) {
             case TODO.FETCH_CATEGORIES:
-                fetchCategories(todo, intent.getBooleanExtra(getString(R.string.seller_category_details), false));
+                fetchCategories(todo, intent.getBooleanExtra(getString(R.string.seller_category_details), false),
+                        intent.getBooleanExtra(getString(R.string.category_product_details), false));
                 break;
             case R.integer.fetch_products:
                 int pageNumber = intent.getIntExtra("page_number", 0);
@@ -75,35 +76,41 @@ public class CatalogService extends IntentService {
 
     private void fetchProducts(int todo, int pageNumber, int itemsPerPage) {
         HashMap<String, String> params = FilterClass.getFilterHashMap();
+        params.putAll(getProductDetailsParams());
         params.put("items_per_page", String.valueOf(itemsPerPage));
         params.put("page_number", String.valueOf(pageNumber));
-        params.put("product_image_details", "1");
-        params.put("product_details_details", "1");
-        params.put("product_show_online", "1");
-        params.put("seller_details", "1");
-        params.put("seller_address_details", "1");
         String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.product_url), params);
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }
 
     private void fetchSpecificProducts(int todo, Intent intent) {
-        HashMap<String, String> params = new HashMap<>();
+        HashMap<String, String> params = getProductDetailsParams();
         params.put(ProductsTable.COLUMN_PRODUCT_ID, intent.getStringExtra("productIDs"));
         params.put("items_per_page", intent.getStringExtra("items_per_page"));
         params.put("page_number", "1");
+
+        String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.product_url), params);
+        volleyStringRequest(todo, Request.Method.GET, endPoint, null);
+    }
+
+    public static HashMap<String, String> getProductDetailsParams(){
+        HashMap<String, String> params = new HashMap<>();
         params.put("product_image_details", "1");
         params.put("product_details_details", "1");
         params.put("product_show_online", "1");
         params.put("seller_details", "1");
         params.put("seller_address_details", "1");
-        String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.product_url), params);
-        volleyStringRequest(todo, Request.Method.GET, endPoint, null);
+        return params;
     }
 
-    private void fetchCategories(int todo, boolean categoryDetails) {
+    private void fetchCategories(int todo, boolean categoryDetails, boolean productDetails) {
         HashMap<String, String> params = new HashMap<>();
         if (categoryDetails) {
             params.put("seller_category_details", "1");
+        }
+        if (productDetails) {
+            params.put("category_product_details", "1");
+            params.putAll(getProductDetailsParams());
         }
         params.put("category_show_online", "1");
         String endPoint = GlobalAccessHelper.generateUrl(APIConstants.CATEGORY_URL, params);

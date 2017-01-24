@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -18,12 +19,15 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -45,7 +49,6 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ShareIntentClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
-import com.wholdus.www.wholdusbuyerapp.interfaces.CartDialogListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.GridProductsLoader;
@@ -78,12 +81,17 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     private Snackbar mSnackbar;
     private Queue<Integer> mRequestQueue;
     private HashSet<Integer> mPagesLoaded;
+    private LinearLayout mSortFilterLayout;
 
     private CartMenuItemHelper mCartMenuItemHelper;
 
     private String mFilters;
     private int mTotalPages, mRecyclerViewPosition, mActivePageCall, mTotalProductsOnServer;
+    private boolean mSortFilterVisible = true;
     private boolean mLoaderLoading, mLoadMoreData;
+
+    Animation mSlideInBottom, mSlideOutBottom;
+    private int mScrollingCounter1 = 0, mScrollingCounter2 = 1;
 
     private ArrayList<Integer> mResponseCodes;
 
@@ -155,13 +163,48 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                     mRequestQueue.add(activePage);
                     fetchProductsFromServer();
                 }
+                Log.w("GRID", "dy " + dy);
+                if (dy > 0){
+                    hideSortFilterLayout();
+                    mScrollingCounter1 += 1;
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mScrollingCounter1 == mScrollingCounter2) {
+                                showSortFilterLayout();
+                            }
+                            mScrollingCounter2 += 1;
+                        }
+                    }, 700);
+
+                } else {
+                    showSortFilterLayout();
+                }
+
+
             }
         });
+
 
         if (mProducts.size() > 0) {
             setVisibility(View.INVISIBLE, View.VISIBLE, View.INVISIBLE);
         }
         loadData();
+    }
+
+    private void hideSortFilterLayout(){
+        if (mSortFilterVisible) {
+            mSortFilterLayout.startAnimation(mSlideOutBottom);
+            mSortFilterLayout.setVisibility(View.GONE);
+            mSortFilterVisible = false;
+        }
+    }
+
+    private void showSortFilterLayout(){
+        if (!mSortFilterVisible) {
+            mSortFilterLayout.startAnimation(mSlideInBottom);
+            mSortFilterVisible = true;
+        }
     }
 
     @Override
@@ -192,6 +235,26 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         mRecyclerView.setHasFixedSize(true);
 
         mNoProducts = (CardView) view.findViewById(R.id.no_products);
+
+        mSortFilterLayout = (LinearLayout) view.findViewById(R.id.sort_filter_sheet);
+        mSlideInBottom = AnimationUtils.loadAnimation(getContext(), R.anim.bottom_sheet_in_bottom);
+        mSlideInBottom.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mSortFilterLayout.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        mSlideOutBottom = AnimationUtils.loadAnimation(getContext(), R.anim.bottom_sheet_out_bottom);
     }
 
     @Override

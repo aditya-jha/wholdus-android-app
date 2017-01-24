@@ -20,12 +20,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:gravity="center_horizontal"
             android:padding="@dimen/activity_horizontal_margin">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/no_orders_text"
+                android:textColor="@color/primary_text"
+                android:gravity="center_horizontal"
                 android:textSize="16sp" />
 
             <Button
@@ -33,7 +36,7 @@
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="cart_summary_continue_shopping" />
+                android:text="@string/cart_summary_continue_shopping" />
         </LinearLayout>
     </android.support.v7.widget.CardView>
 

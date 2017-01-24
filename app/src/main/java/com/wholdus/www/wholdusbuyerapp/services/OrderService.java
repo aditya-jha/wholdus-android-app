@@ -51,12 +51,9 @@ public class OrderService extends IntentService {
         params.put("items_per_page", "10");
         params.put("page_number", String.valueOf(pageNumber));
         params.put("sub_order_details", "1");
-        params.put("seller_details", "1");
-        params.put("seller_address_details", "1");
         params.put("order_item_details", "1");
         params.put("product_details", "1");
-        params.put("product_details_details","1");
-        params.put("product_image_details", "1");
+        params.putAll(CatalogService.getProductDetailsParams());
         String url = GlobalAccessHelper.generateUrl(getString(R.string.orders_url), params);
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }

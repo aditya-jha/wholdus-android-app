@@ -3,6 +3,7 @@ package com.wholdus.www.wholdusbuyerapp.databaseHelpers;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 
@@ -42,11 +43,18 @@ public class NotificationDBHelper extends BaseDBHelper {
         return getCursor(query);
     }
 
-    public void saveNotificationData(JSONObject notification) throws JSONException{
+    public int getUnreadNotificationCount(){
+        SQLiteDatabase db = mDatabaseHelper.openDatabase();
+        String selection = NotificationTable.COLUMN_NOTIFICATION_SEEN + " = 0";
+        return (int) DatabaseUtils.queryNumEntries(db,  NotificationTable.TABLE_NAME, selection);
+    }
+
+    public int saveNotificationData(JSONObject notification) throws JSONException{
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
         ContentValues values = getNotificationContentValues(notification);
-        db.insert(NotificationTable.TABLE_NAME, null, values);
+        int primaryKey = (int) db.insert(NotificationTable.TABLE_NAME, null, values);
         mDatabaseHelper.closeDatabase();
+        return primaryKey;
     }
 
     private ContentValues getNotificationContentValues(JSONObject notification) throws JSONException{
@@ -54,6 +62,7 @@ public class NotificationDBHelper extends BaseDBHelper {
         contentValues.put(NotificationTable.COLUMN_NOTIFICATION_JSON, notification.getString(NotificationTable.COLUMN_NOTIFICATION_JSON));
         contentValues.put(NotificationTable.COLUMN_NOTIFICATION_TYPE, notification.getString(NotificationTable.COLUMN_NOTIFICATION_TYPE));
         contentValues.put(NotificationTable.COLUMN_NOTIFICATION_TIME, DateFormat.getDateTimeInstance().format(new Date()));
+        contentValues.put(NotificationTable.COLUMN_NOTIFICATION_SEEN, 0);
         return contentValues;
     }
 
@@ -70,5 +79,16 @@ public class NotificationDBHelper extends BaseDBHelper {
             selection += NotificationTable.COLUMN_NOTIFICATION_TYPE + " = " + type;
         }
         db.delete(NotificationTable.TABLE_NAME,selection,null);
+    }
+
+    public void updateNotificationSeenStatus(int id){
+        SQLiteDatabase db = mDatabaseHelper.openDatabase();
+        ContentValues values = new ContentValues();
+        values.put(NotificationTable.COLUMN_NOTIFICATION_SEEN, 1);
+        String selection = null;
+        if (id != -1) {
+            selection = NotificationTable._ID + " = " + id;
+        }
+        db.update(NotificationTable.TABLE_NAME, values, selection, null);
     }
 }

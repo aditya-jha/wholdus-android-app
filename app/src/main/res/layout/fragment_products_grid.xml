@@ -65,7 +65,8 @@
             android:layout_height="1dp"
             android:background="@drawable/toolbar_drop_shadow" />
 
-        <LinearLayout style="@style/AppTheme.BottomBar">
+        <LinearLayout style="@style/AppTheme.BottomBar"
+            android:id="@+id/sort_filter_sheet">
 
             <Button
                 android:id="@+id/sort_button"

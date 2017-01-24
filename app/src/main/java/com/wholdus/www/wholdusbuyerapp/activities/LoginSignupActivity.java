@@ -150,6 +150,12 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
             userDataIntent.putExtra("TODO", TODO.FETCH_USER_PROFILE);
             startService(userDataIntent);
 
+            Intent categoryIntent = new Intent(this, CatalogService.class);
+            categoryIntent.putExtra("TODO", TODO.FETCH_CATEGORIES);
+            categoryIntent.putExtra(getString(R.string.category_product_details), true);
+            categoryIntent.putExtra(getString(R.string.seller_category_details), true);
+            startService(categoryIntent);
+
             Intent intent = new Intent();
             if (!registered) {
                 intent.setClass(this, HomeActivity.class);

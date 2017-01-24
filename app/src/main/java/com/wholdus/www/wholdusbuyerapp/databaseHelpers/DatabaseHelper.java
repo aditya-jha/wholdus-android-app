@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract.CartTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract.SubCartsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract.CartItemsTable;
@@ -25,9 +26,9 @@ import static com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContr
  * Created by aditya on 7/12/16.
  */
 
-public class DatabaseHelper extends SQLiteOpenHelper {
+public class DatabaseHelper extends SQLiteAssetHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "wholdus.db";
 
     private static final String TEXT_TYPE = " TEXT";
@@ -378,7 +379,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public synchronized void closeDatabase() {
         /* TODO: implement closeDatabase function if logcat shows open connection error */
     }
-
+    /**
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(SQL_CREATE_USER_TABLE);
@@ -401,8 +402,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         sqLiteDatabase.execSQL(SQL_CREATE_NOTIFICATION_TABLE);
 
-    }
-
+    }**/
+    /**
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         sqLiteDatabase.execSQL(SQL_DROP_USER_TABLE);
@@ -426,10 +427,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_DROP_NOTIFICATION_TABLE);
 
         onCreate(sqLiteDatabase);
-    }
+    }**/
 
-    @Override
-    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        onUpgrade(db, oldVersion, newVersion);
+    public void clearDatabase(){
+        SQLiteDatabase database = openDatabase();
+        database.execSQL("DELETE FROM " + UserTable.TABLE_NAME);
+        database.execSQL("DELETE FROM " + UserAddressTable.TABLE_NAME);
+        database.execSQL("DELETE FROM " + BusinessTypesTable.TABLE_NAME);
+        database.execSQL("DELETE FROM " + OrdersTable.TABLE_NAME);
+        database.execSQL("DELETE FROM " + SubordersTable.TABLE_NAME);
+        database.execSQL("DELETE FROM " + OrderItemsTable.TABLE_NAME);
+        database.execSQL("DELETE FROM " + ProductsTable.TABLE_NAME);
+        database.execSQL("DELETE FROM " + CategoriesTable.TABLE_NAME);
+        database.execSQL("DELETE FROM " + SellersTable.TABLE_NAME);
+        database.execSQL("DELETE FROM " + SellerAddressTable.TABLE_NAME);
+        database.execSQL("DELETE FROM " + CategorySellersTable.TABLE_NAME);
+        database.execSQL("DELETE FROM " + CartTable.TABLE_NAME);
+        database.execSQL("DELETE FROM " + SubCartsTable.TABLE_NAME);
+        database.execSQL("DELETE FROM " + CartItemsTable.TABLE_NAME);
+        database.execSQL("DELETE FROM " + NotificationTable.TABLE_NAME);
     }
 }

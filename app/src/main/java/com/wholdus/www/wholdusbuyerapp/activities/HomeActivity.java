@@ -34,6 +34,7 @@ import android.widget.Toast;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
+import com.wholdus.www.wholdusbuyerapp.databaseHelpers.NotificationDBHelper;
 import com.wholdus.www.wholdusbuyerapp.fragments.CategoryGridFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ContactUsFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.HomeFragment;
@@ -48,6 +49,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.NavDrawerHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.CartLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Cart;
+import com.wholdus.www.wholdusbuyerapp.models.Notification;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -324,6 +326,23 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
 
         String activityToStart = bundle.getString("activity", "");
 
+        final String notificationID = bundle.getString("notificationID", "");
+
+        if (!(notificationID.equals(""))){
+            final NotificationDBHelper notificationDBHelper = new NotificationDBHelper(this);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        notificationDBHelper.updateNotificationSeenStatus(Integer.parseInt(notificationID));
+                    }
+                    catch (Exception e){{
+
+                    }}
+                }
+            }).start();
+        }
+
         switch (activityToStart) {
             case "Handpicked":
                 activityClass = HandPickedActivity.class;
@@ -372,6 +391,5 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         NavDrawerHelper.getInstance().setOpenActivity(this.getClass().getSimpleName());
         NavDrawerHelper.getInstance().setOpenFragment(fragmentName);
     }
-
 
 }

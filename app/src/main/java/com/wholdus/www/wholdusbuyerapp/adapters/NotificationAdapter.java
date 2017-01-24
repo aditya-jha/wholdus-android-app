@@ -1,11 +1,15 @@
 package com.wholdus.www.wholdusbuyerapp.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
@@ -45,7 +49,11 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.mNotificationBody.setText(notification.getNotificationBody());
         holder.mNotificationDate.setText(notification.getNotificationTime());
         holder.mListener = mListener;
-
+        if (notification.getNotificationSeen() == 1) {
+            int color =ResourcesCompat.getColor(mContext.getResources(), R.color.background, null);
+            holder.mNotificationIcon.setImageResource(R.drawable.ic_notifications_grey_24dp);
+            holder.itemView.setBackgroundColor(color);
+        }
     }
 
     @Override
@@ -57,6 +65,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         private TextView mNotificationTitle;
         private TextView mNotificationBody;
         private TextView mNotificationDate;
+        private ImageView mNotificationIcon;
         private ItemClickListener mListener;
 
         private MyViewHolder(final View itemView) {
@@ -64,8 +73,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             mNotificationTitle = (TextView) itemView.findViewById(R.id.notification_title_text_view);
             mNotificationBody = (TextView) itemView.findViewById(R.id.notification_body_text_view);
             mNotificationDate = (TextView) itemView.findViewById(R.id.notification_date_text_view);
+            mNotificationIcon = (ImageView) itemView.findViewById(R.id.notification_icon);
             itemView.setOnClickListener(this);
-
         }
 
         @Override

@@ -306,7 +306,7 @@ public class ProductDetailActivity extends AppCompatActivity
         mCheckPincodeButton.setText("Change");
         mCheckPincodeButton.setEnabled(true);
         if (shippingAvailable) {
-            mPincodeEditText.setText("Delivers at " + mPincodeText);
+            mPincodeEditText.setText("Delivery at " + mPincodeText);
         } else {
             mPincodeEditText.setText("No delivery at " + mPincodeText);
         }

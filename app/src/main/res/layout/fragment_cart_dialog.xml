@@ -75,7 +75,7 @@
                 android:textColor="@color/primary_text"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                tools:text="Rs. 100000" />
+                tools:text="Rs. 1000" />
 
         </LinearLayout>
 
@@ -139,6 +139,7 @@
                 android:textColor="@color/primary_text"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:text="@string/total_price_placeholder"
                 tools:text="Rs. 100000" />
         </LinearLayout>
 

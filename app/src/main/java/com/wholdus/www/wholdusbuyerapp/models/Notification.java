@@ -20,6 +20,7 @@ public class Notification {
     private String mNotificationBody;
     private String mNotificationType;
     private String mNotificationTime;
+    private int mNotificationSeen;
 
     public Notification(Cursor cursor) {
         setDataFromCursor(cursor);
@@ -37,6 +38,7 @@ public class Notification {
         m_ID = cursor.getInt(cursor.getColumnIndexOrThrow(NotificationTable._ID));
         mNotificationType = cursor.getString(cursor.getColumnIndexOrThrow(NotificationTable.COLUMN_NOTIFICATION_TYPE));
         mNotificationTime = cursor.getString(cursor.getColumnIndexOrThrow(NotificationTable.COLUMN_NOTIFICATION_TIME));
+        mNotificationSeen = cursor.getInt(cursor.getColumnIndexOrThrow(NotificationTable.COLUMN_NOTIFICATION_SEEN));
         mNotificationJSON = cursor.getString(cursor.getColumnIndexOrThrow(NotificationTable.COLUMN_NOTIFICATION_JSON));
         try {
             JSONObject jsonObject = new JSONObject(mNotificationJSON);
@@ -60,4 +62,6 @@ public class Notification {
     public String getNotificationType(){return mNotificationType;}
 
     public String getNotificationTime(){return mNotificationTime;}
+
+    public int getNotificationSeen(){return mNotificationSeen;}
 }

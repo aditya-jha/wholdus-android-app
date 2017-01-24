@@ -1,13 +1,16 @@
 package com.wholdus.www.wholdusbuyerapp.fragments;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +18,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.CategoryProductActivity;
@@ -23,10 +28,12 @@ import com.wholdus.www.wholdusbuyerapp.activities.NotificationActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.CategoryHomePageAdapter;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductHomePageAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
+import com.wholdus.www.wholdusbuyerapp.databaseHelpers.NotificationDBHelper;
 import com.wholdus.www.wholdusbuyerapp.decorators.GridDividerItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.NavDrawerHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
@@ -38,6 +45,7 @@ import com.wholdus.www.wholdusbuyerapp.models.Product;
 import java.util.ArrayList;
 
 import static com.wholdus.www.wholdusbuyerapp.R.id.help;
+import static com.wholdus.www.wholdusbuyerapp.R.id.neft_radio_button;
 
 /**
  * Created by aditya on 16/11/16.
@@ -60,6 +68,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
     private static final int PRODUCTS_DB_LOADER = 901;
     private static final int CATEGORIES_DB_LOADER = 902;
 
+    private BroadcastReceiver mCategoryServiceResponseReceiver;
+    private ProgressBar mProgressBar;
+    private TextView mNotificationCount;
+
     public HomeFragment() {
     }
 
@@ -77,12 +89,22 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mCategoryServiceResponseReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                handleCategoryAPIResponse(intent);
+            }
+        };
         return inflater.inflate(R.layout.fragment_home, container, false);
+
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mProgressBar = (ProgressBar) view.findViewById(R.id.loading_indicator);
+        mProgressBar.setVisibility(View.VISIBLE);
 
         Button categoriesButton = (Button) view.findViewById(R.id.shortlist);
         categoriesButton.setOnClickListener(this);
@@ -115,6 +137,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
         mCategoriesRecyclerView.setAdapter(mCategoryHomePageAdapter);
         //mProductsRecyclerView.setVerticalScrollBarEnabled(false);
         mCategoriesRecyclerView.setNestedScrollingEnabled(false);
+
+        mNotificationCount = (TextView) view.findViewById(R.id.notification_count_text_view);
     }
 
     @Override
@@ -140,6 +164,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
     public void onResume() {
         super.onResume();
         mListener.fragmentCreated(getString(R.string.app_name), false);
+
+        IntentFilter intentFilter = new IntentFilter(IntentFilters.CATEGORY_DATA);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mCategoryServiceResponseReceiver, intentFilter);
+
         mProductsLoader = new ProductsLoaderManager();
         getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, mProductsLoader);
 
@@ -148,6 +176,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
 
         NavDrawerHelper.getInstance().setOpenActivity(getActivity().getClass().getSimpleName());
         NavDrawerHelper.getInstance().setOpenFragment(this.getClass().getSimpleName());
+
+        getNotificationCount();
     }
 
     @Override
@@ -185,6 +215,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
                         @Override
                         public void run() {
                             mProductHomePageAdapter.notifyDataSetChanged();
+                            mProgressBar.setVisibility(View.GONE);
                         }
                     });
 
@@ -212,6 +243,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
                         @Override
                         public void run() {
                             mCategoryHomePageAdapter.notifyDataSetChanged();
+                            mProgressBar.setVisibility(View.GONE);
                         }
                     });
                 }
@@ -227,7 +259,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
 
         @Override
         public void onLoadFinished(Loader<ArrayList<Product>> loader, ArrayList<Product> data) {
-            if (data != null) {
+            if (data != null && data.size() > 0 && mProducts.isEmpty()) {
                 setViewForProducts(data);
             }
         }
@@ -250,8 +282,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
 
         @Override
         public void onLoadFinished(Loader<ArrayList<Category>> loader, ArrayList<Category> data) {
-            if (data != null) {
+            if (data != null && data.size() > 0 && mCategories.isEmpty()) {
                 setViewForCategories(data);
+                mProgressBar.setVisibility(View.GONE);
             }
         }
 
@@ -259,5 +292,55 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
         public Loader<ArrayList<Category>> onCreateLoader(final int id, Bundle args) {
             return new CategoriesGridLoader(getContext(), true);
         }
+    }
+
+    private void handleCategoryAPIResponse(Intent intent){
+        Bundle extras = intent.getExtras();
+        if (extras.getString(Constants.ERROR_RESPONSE) != null) {
+        } else {
+            int insertedUpdated = intent.getIntExtra(Constants.INSERTED_UPDATED, 0);
+            if (insertedUpdated > 0 && mCategories.isEmpty()) {
+                // new data available, restart the loader
+                if (mCategoriesLoader == null){
+                    mCategoriesLoader = new CategoryLoaderManager();
+                }
+                getActivity().getSupportLoaderManager().restartLoader(CATEGORIES_DB_LOADER, null, mCategoriesLoader);
+            }
+            if (insertedUpdated > 0 && mProducts.isEmpty()) {
+                // new data available, restart the loader
+                if (mProductsLoader == null){
+                    mProductsLoader = new ProductsLoaderManager();
+                }
+                getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_DB_LOADER, null, mProductsLoader);
+            }
+        }
+    }
+
+    private void getNotificationCount(){
+        final NotificationDBHelper notificationDBHelper = new NotificationDBHelper(getContext());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final int count = notificationDBHelper.getUnreadNotificationCount();
+                try{
+                    if (getActivity() != null){
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (count > 0) {
+                                    mNotificationCount.setText(String.valueOf(count));
+                                    mNotificationCount.setVisibility(View.VISIBLE);
+                                } else {
+                                    mNotificationCount.setVisibility(View.GONE);
+                                }
+                            }
+                        });
+                    }
+
+                } catch (Exception e){
+
+                }
+            }
+        }).start();
     }
 }
