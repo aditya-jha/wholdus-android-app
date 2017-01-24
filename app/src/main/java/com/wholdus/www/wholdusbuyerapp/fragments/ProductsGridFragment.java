@@ -273,7 +273,12 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onDestroy() {
         super.onDestroy();
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+        try {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+        } catch (Exception e){
+
+        }
+        mReceiver = null;
     }
 
     @Override

@@ -117,6 +117,12 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
     public void onClick(View view) {
         final int ID = view.getId();
         switch (ID) {

@@ -115,7 +115,11 @@ public class EditProfileDetailsFragment extends Fragment implements LoaderManage
     @Override
     public void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mUserServiceResponseReceiver);
+        try {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mUserServiceResponseReceiver);
+        } catch (Exception e){
+
+        }
     }
 
     @Override

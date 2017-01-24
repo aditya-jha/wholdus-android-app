@@ -52,7 +52,11 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mListener = (LoginSignupListenerInterface) context;
+        try {
+            mListener = (LoginSignupListenerInterface) context;
+        } catch (Exception e){
+
+        }
     }
 
     @Override
@@ -114,7 +118,17 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+        try {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+        } catch (Exception e){
+
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mReceiver = null;
     }
 
     @Override
