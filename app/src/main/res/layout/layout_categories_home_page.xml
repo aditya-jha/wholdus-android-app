@@ -38,5 +38,7 @@
         android:id="@+id/products_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:scrollbarSize="1.5dp"
+        android:scrollbarThumbHorizontal="@color/accent"
         android:scrollbars="horizontal" />
 </LinearLayout>
