@@ -129,7 +129,7 @@ public class CategoryGridFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
-        mListener.fragmentCreated("All Categories", true);
+        mListener.fragmentCreated("Categories", true);
 
         IntentFilter intentFilter = new IntentFilter(IntentFilters.CATEGORY_DATA);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);

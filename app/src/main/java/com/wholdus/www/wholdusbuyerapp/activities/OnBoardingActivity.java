@@ -2,6 +2,7 @@ package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.fragments.CategoryGridFragment;
@@ -36,6 +38,8 @@ public class OnBoardingActivity extends AppCompatActivity implements OnBoardingL
     private ProgressBar mProgressBar;
     private TextView mStepCount;
     private TextView mStatement;
+    private boolean mDoublePressToExit;
+    private int mSelectedPosition = -1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,6 +53,15 @@ public class OnBoardingActivity extends AppCompatActivity implements OnBoardingL
     private void initToolbar(){
         mToolbar = (Toolbar) findViewById(R.id.default_toolbar);
         setSupportActionBar(mToolbar);
+    }
+
+    @Override
+    public void changeProgressBarState(boolean state){
+        if (state) {
+            mProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            mProgressBar.setVisibility(View.GONE);
+        }
     }
 
     private void initReferences(){
@@ -71,7 +84,7 @@ public class OnBoardingActivity extends AppCompatActivity implements OnBoardingL
     @Override
     public void fragmentCreated(String title, boolean backEnabled) {
         mToolbar.setTitle(title);
-        if (backEnabled && mToolbar.getNavigationContentDescription() != "backEnabled") {
+        if (backEnabled) {
             mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
             mToolbar.setNavigationContentDescription("backEnabled");
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -129,7 +142,18 @@ public class OnBoardingActivity extends AppCompatActivity implements OnBoardingL
         }
 
         if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
-            startHomeActivity();
+            if (!mDoublePressToExit) {
+                mDoublePressToExit = true;
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDoublePressToExit = false;
+                    }
+                }, 3000);
+            } else {
+                startHomeActivity();
+            }
         } else {
             super.onBackPressed();
         }
@@ -143,6 +167,10 @@ public class OnBoardingActivity extends AppCompatActivity implements OnBoardingL
             mStepCount.setText("Step 2 of 3");
             mStatement.setText("Please let us know your whatsapp number so that we can update you");
         } else if (fragmentName.equals(GetBusinessTypeFragment.class.getSimpleName())) {
+            if (bundle == null){
+                bundle = new Bundle();
+            }
+            bundle.putInt("businessTypeSelectedPosition", mSelectedPosition);
             fragment = new GetBusinessTypeFragment();
             mStepCount.setText("Step 1 of 3");
             mStatement.setText("Please let us know what business you run");
@@ -151,6 +179,10 @@ public class OnBoardingActivity extends AppCompatActivity implements OnBoardingL
             mStatement.setText("Tell us your favourite categories so we can provide you products to your liking");
             mStepCount.setText("Step 3 of 3");
         } else {
+            if (bundle == null){
+                bundle = new Bundle();
+            }
+            bundle.putInt("businessTypeSelectedPosition", mSelectedPosition);
             fragment = new GetBusinessTypeFragment();
             mStepCount.setText("Step 1 of 3");
             mStatement.setText("Please let us know what business you run");
@@ -203,7 +235,8 @@ public class OnBoardingActivity extends AppCompatActivity implements OnBoardingL
     }
 
     @Override
-    public void businessTypeSaved() {
+    public void businessTypeSaved(int position) {
+        mSelectedPosition = position;
         openToFragment(GetWhatsappNumberFragment.class.getSimpleName(), null);
     }
 
