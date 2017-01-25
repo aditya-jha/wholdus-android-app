@@ -21,7 +21,6 @@ import java.util.ArrayList;
 public class FilterBrandValuesDisplayAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<CategorySeller> mData;
-    private final String mKeyValue = "Brand";
 
     public FilterBrandValuesDisplayAdapter(Context context, ArrayList<CategorySeller> data) {
         mContext = context;
@@ -52,7 +51,7 @@ public class FilterBrandValuesDisplayAdapter extends BaseAdapter {
         CategorySeller categorySeller = mData.get(i);
 
         CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
-        if (FilterClass.isItemSelected(mKeyValue, String.valueOf(categorySeller.getSellerID()))) {
+        if (FilterClass.isItemSelected(FilterClass.FILTER_BRAND_KEY, String.valueOf(categorySeller.getSellerID()))) {
             checkBox.setChecked(true);
         } else {
             checkBox.setChecked(false);
@@ -72,6 +71,6 @@ public class FilterBrandValuesDisplayAdapter extends BaseAdapter {
     public void itemClicked(View view, int position) {
         CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
         checkBox.toggle();
-        FilterClass.toggleFilterItem(mKeyValue, String.valueOf(mData.get(position).getSellerID()));
+        FilterClass.toggleFilterItem(FilterClass.FILTER_BRAND_KEY, String.valueOf(mData.get(position).getSellerID()));
     }
 }

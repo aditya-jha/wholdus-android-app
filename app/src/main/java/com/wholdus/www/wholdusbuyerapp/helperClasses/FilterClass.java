@@ -36,6 +36,11 @@ public final class FilterClass {
     private static HashSet<String> mBrands = new HashSet<>();
     private static boolean mFilterApplied = false;
 
+    public static final String FILTER_FABRIC_KEY = "Fabric";
+    public static final String FILTER_COLOUR_KEY = "Colors";
+    public static final String FILTER_SIZE_KEY = "Sizes";
+    public static final String FILTER_BRAND_KEY = "Brands";
+    public static final String FILTER_CATEGORY_KEY = "Category";
 
     public static int getCategoryID() {
         if (mCategoryIDs.isEmpty()){
@@ -113,16 +118,16 @@ public final class FilterClass {
     public static HashSet<String> getSelectedItems(String type) {
         HashSet<String> returnValue;
         switch (type) {
-            case "Fabric":
+            case FILTER_FABRIC_KEY:
                 returnValue = mFabrics;
                 break;
-            case "Colors":
+            case FILTER_COLOUR_KEY:
                 returnValue = mColors;
                 break;
-            case "Sizes":
+            case FILTER_SIZE_KEY:
                 returnValue = mSizes;
                 break;
-            case "Brands":
+            case FILTER_BRAND_KEY:
                 returnValue = mBrands;
                 break;
             default:
@@ -132,7 +137,11 @@ public final class FilterClass {
     }
 
     public static boolean isItemSelected(String type, String value) {
-        return getSelectedItems(type).contains(value);
+        HashSet set = getSelectedItems(type);
+        if (set == null){
+            return false;
+        }
+        return set.contains(value);
     }
 
     public static void setPriceFilter(int min, int max) {
