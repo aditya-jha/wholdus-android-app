@@ -462,7 +462,9 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         try {
             JSONObject requestBody = new JSONObject();
             HashMap<String, String> params = new HashMap<>();
-            if (mStatus == 0 && mCheckoutID == null && mCart.getSynced() == 1) {
+            if (mCart == null){
+                return;
+            } else if (mStatus == 0 && mCheckoutID == null && mCart.getSynced() == 1) {
                 updateCart(requestBody, Request.Method.POST, TODO.CREATE_CART, params);
             } else if (mStatus == 0 && mCheckoutID != null && mCheckoutID > 0 && mBuyerAddressID > 0) {
                 requestBody.put("checkoutID", mCheckoutID);
