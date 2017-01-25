@@ -66,7 +66,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     private LinearLayout mProceedButtonLayout;
     private ProgressBar mProgressBar;
 
-    private BroadcastReceiver mOrderServiceResponseReceiver;
+    private BroadcastReceiver mOrderServiceResponseReceiver, mUserAddressServiceResponseReceiver;
 
     public static final String REQUEST_TAG = "CHECKOUT_API_REQUESTS";
 
@@ -107,12 +107,18 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         } catch (Exception e) {
 
         }
+        try {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mUserAddressServiceResponseReceiver);
+        } catch (Exception e) {
+
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mOrderServiceResponseReceiver = null;
+        mUserAddressServiceResponseReceiver = null;
     }
 
     private void initToolbar() {
@@ -172,7 +178,10 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.cart_fragment_container);
             if (fragment instanceof EditAddressFragment || fragment instanceof BuyerAddressFragment) {
                 openToFragment(CartSummaryFragment.class.getSimpleName(), null);
-            } else {
+            } else if (fragment instanceof CheckoutAddressConfirmFragment){
+                openToFragment(BuyerAddressFragment.class.getSimpleName(), null);
+            }
+            else {
                 super.onBackPressed();
             }
         } else {
@@ -189,8 +198,30 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     }
 
     @Override
-    public void addressSaved() {
-        openToFragment(BuyerAddressFragment.class.getSimpleName(), null);
+    public void addressSaved(int addressID) {
+        if (addressID > 0){
+            addressClicked(addressID, -1);
+        } else {
+            mProgressBar.setVisibility(View.VISIBLE);
+            waitForAddressResponse();
+        }
+    }
+
+    public void waitForAddressResponse(){
+        mUserAddressServiceResponseReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                startAddressConfirmFragment(intent);
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter(getString(R.string.user_address_data_updated));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mUserAddressServiceResponseReceiver, intentFilter);
+    }
+
+    public void startAddressConfirmFragment(Intent intent){
+        Bundle args = intent.getBundleExtra("extra");
+        int addressID = args.getInt(UserProfileContract.UserAddressTable.COLUMN_ADDRESS_ID, -1);
+        addressClicked(addressID, -1);
     }
 
     @Override

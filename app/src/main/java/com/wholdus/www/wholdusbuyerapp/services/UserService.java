@@ -3,6 +3,7 @@ package com.wholdus.www.wholdusbuyerapp.services;
 import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -197,6 +198,14 @@ public class UserService extends IntentService {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
+    private void sendUserAddressUpdatedBroadcast(@Nullable Bundle extra) {
+        Intent intent = new Intent(getString(R.string.user_address_data_updated));
+        if (extra != null) {
+            intent.putExtra("extra", extra);
+        }
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
 
     public void volleyStringRequest(final int todo, int method, String endPoint, final String jsonData) {
 
@@ -283,6 +292,9 @@ public class UserService extends IntentService {
         UserDBHelper userDBHelper = new UserDBHelper(getApplicationContext());
         userDBHelper.updateUserAddressDataFromJSONObject(data.getJSONObject("address"), false);
         sendUserDataUpdatedBroadCast(null);
+        Bundle bundle = new Bundle();
+        bundle.putInt(UserAddressTable.COLUMN_ADDRESS_ID, data.getJSONObject("address").getInt(UserAddressTable.COLUMN_ADDRESS_ID));
+        sendUserAddressUpdatedBroadcast(bundle);
     }
 
     public void updateBuyerType(int todo, Intent intent) {

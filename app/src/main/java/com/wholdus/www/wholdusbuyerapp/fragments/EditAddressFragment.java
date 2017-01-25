@@ -459,7 +459,7 @@ public class EditAddressFragment extends Fragment implements
 
             getContext().startService(intent);
 
-            mListener.addressSaved();
+            mListener.addressSaved(mAddressID);
         } catch (Exception e) {
             e.printStackTrace();
         }
