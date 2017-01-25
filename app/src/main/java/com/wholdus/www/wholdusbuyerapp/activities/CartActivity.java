@@ -220,8 +220,16 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
 
     public void startAddressConfirmFragment(Intent intent){
         Bundle args = intent.getBundleExtra("extra");
-        int addressID = args.getInt(UserProfileContract.UserAddressTable.COLUMN_ADDRESS_ID, -1);
-        addressClicked(addressID, -1);
+        if (args != null) {
+            int addressID = args.getInt(UserProfileContract.UserAddressTable.COLUMN_ADDRESS_ID, -1);
+            if (addressID != -1) {
+                addressClicked(addressID, -1);
+            } else {
+                openToFragment(BuyerAddressFragment.class.getSimpleName(), null);
+            }
+        } else {
+            openToFragment(BuyerAddressFragment.class.getSimpleName(), null);
+        }
     }
 
     @Override
