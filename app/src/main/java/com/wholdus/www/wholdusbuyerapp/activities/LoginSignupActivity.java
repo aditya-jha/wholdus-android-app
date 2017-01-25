@@ -157,7 +157,7 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
             startService(categoryIntent);
 
             Intent intent = new Intent();
-            if (!registered) {
+            if (registered) {
                 intent.setClass(this, HomeActivity.class);
                 intent.putExtra(Constants.OPEN_FRAGMENT_KEY, HomeFragment.class.getSimpleName());
             } else {
