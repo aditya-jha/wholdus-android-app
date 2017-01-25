@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.models.Suborder;
 
 import java.util.ArrayList;
@@ -20,10 +21,12 @@ public class SuborderListViewAdapter extends RecyclerView.Adapter<SuborderListVi
 
     private ArrayList<Suborder> mListData;
     private Context mContext;
+    private ItemClickListener mListener;
 
-    public SuborderListViewAdapter(Context context, ArrayList<Suborder> listData) {
+    public SuborderListViewAdapter(Context context, ArrayList<Suborder> listData, final ItemClickListener listener) {
         mContext = context;
         mListData = listData;
+        mListener = listener;
     }
 
     @Override
@@ -42,17 +45,31 @@ public class SuborderListViewAdapter extends RecyclerView.Adapter<SuborderListVi
 
         holder.sellerName.setText(suborder.getSeller().getCompanyName());
         holder.pieces.setText(String.valueOf(suborder.getPieces()));
+
+        holder.mListener = mListener;
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder  {
+    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         int id;
         TextView sellerName;
         TextView pieces;
+        private ItemClickListener mListener;
 
         private MyViewHolder(final View itemView) {
             super(itemView);
             sellerName = (TextView) itemView.findViewById(R.id.suborder_seller_name_text_view);
             pieces = (TextView) itemView.findViewById(R.id.suborder_pieces_text_view);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int position = getAdapterPosition();
+            if (position == RecyclerView.NO_POSITION) return;
+
+            if (mListener != null) {
+                mListener.itemClicked(view, position, -1);
+            }
         }
     }
 }
