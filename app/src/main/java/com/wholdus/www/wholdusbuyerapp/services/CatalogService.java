@@ -79,6 +79,7 @@ public class CatalogService extends IntentService {
         params.putAll(getProductDetailsParams());
         params.put("items_per_page", String.valueOf(itemsPerPage));
         params.put("page_number", String.valueOf(pageNumber));
+        params.put("product_show_online", "1");
         String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.product_url), params);
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }
@@ -88,7 +89,7 @@ public class CatalogService extends IntentService {
         params.put(ProductsTable.COLUMN_PRODUCT_ID, intent.getStringExtra("productIDs"));
         params.put("items_per_page", intent.getStringExtra("items_per_page"));
         params.put("page_number", "1");
-
+        params.put("product_show_online", "1");
         String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.product_url), params);
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }
@@ -97,7 +98,6 @@ public class CatalogService extends IntentService {
         HashMap<String, String> params = new HashMap<>();
         params.put("product_image_details", "1");
         params.put("product_details_details", "1");
-        params.put("product_show_online", "1");
         params.put("seller_details", "1");
         params.put("seller_address_details", "1");
         return params;

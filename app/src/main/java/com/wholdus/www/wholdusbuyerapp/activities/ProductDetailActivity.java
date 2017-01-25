@@ -440,6 +440,11 @@ public class ProductDetailActivity extends AppCompatActivity
         }
 
         setFavButtonImage();
+
+        if (mProduct.getDeleteStatus() || !mProduct.getShowOnline()){
+            mCartButton.setEnabled(false);
+            mCartButton.setText(R.string.out_of_stock_key);
+        }
     }
 
     private void setFavButtonImage() {

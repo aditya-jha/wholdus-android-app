@@ -175,6 +175,12 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
+
+        if (mProduct.getDeleteStatus() || !mProduct.getShowOnline()){
+            mAddtoCartButton.setEnabled(false);
+            mAddtoCartButton.setText(R.string.out_of_stock_key);
+        }
+
     }
 
     public void addProductToCart() {
@@ -242,6 +248,7 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
                 setViewOnLoad();
             } else {
                 dismiss();
+                Toast.makeText(getContext(), R.string.api_error_message,Toast.LENGTH_SHORT).show();
             }
         }
 

@@ -149,6 +149,8 @@
     <string name="lot_key">Lot Size</string>
     <string name="lot_description_key">Lot Description</string>
 
+    <string name="out_of_stock_key">Out of Stock</string>
+
     <string name="value_not_provided">Not Provided</string>
 
     <string name="delivery_options">Delivery Options</string>
