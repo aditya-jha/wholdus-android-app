@@ -84,13 +84,10 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
             suborderListView.setItemAnimator(new DefaultItemAnimator());
             suborderListView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
             suborderListView.addItemDecoration(new RecyclerViewSpaceItemDecoration(mContext.getResources().getDimensionPixelSize(R.dimen.text_divider_gap_small), 0));
-            /**suborderListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    onClick(itemView);
-                }
-            });**/
+
         }
+
+
 
         @Override
         public void onClick(View view) {

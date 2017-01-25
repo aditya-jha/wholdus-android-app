@@ -228,7 +228,7 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onLoadFinished(Loader<Cart> loader, Cart data) {
-        boolean cartChanged = (mCart == null || (mCart.getPieces() != data.getPieces()));
+        boolean cartChanged = (mCart == null || data == null || (mCart.getPieces() != data.getPieces()));
         mCart = data;
         if (data != null) {
             if (data.getSynced() == 1) {
