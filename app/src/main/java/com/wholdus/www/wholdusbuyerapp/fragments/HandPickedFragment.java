@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -66,12 +67,13 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     private ArrayList<Integer> mExcludeProductIDs, mProductIDs;
     private SwipeDeck mSwipeDeck;
     private ImageButton mLikeButton, mDislikeButton, mAddToCartButton, mFilterButton;
+    private Button mNoProductsLeftButton;
     private ProductSwipeDeckAdapter mProductSwipeDeckAdapter;
     private LinearLayout mNoProductsLeft;
     private TextView mNoProductsLeftTextView;
     private ProgressBar mNoProductsLeftProgressBar;
     private int mPosition = 0, mProductsLeft = 0, mProductBuffer = 8, mProductsPageNumber, mTotalProductPages;
-    private boolean mHasSwiped = true, mFirstLoad = true, mButtonEnabled;
+    private boolean mHasSwiped = true, mFirstLoad = true, mButtonEnabled, mCartButtonEnabled = true;
     private final int mProductsLimit = 20;
 
     private static final int ANIMATION_DURATION = 250;
@@ -295,7 +297,14 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             @Override
             public void onClick(View view) {
                 addToCartButtonLayout.startAnimation(animButtonScale);
-                if (mProductsLeft > 0 && mButtonEnabled) {
+                if (mProductsLeft > 0 && mButtonEnabled && mCartButtonEnabled) {
+                    mCartButtonEnabled = false;
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mCartButtonEnabled = true;
+                        }
+                    }, 300);
                     FragmentManager fragmentManager = getFragmentManager();
                     CartDialogFragment dialogFragment = new CartDialogFragment();
                     Bundle args = new Bundle();
@@ -311,12 +320,8 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             @Override
             public void onClick(View view) {
                 filterButtonLayout.startAnimation(animButtonScale);
-                //resetProducts();
-                //FilterClass.setCategoryID(-1);
-                if (mButtonEnabled) {
-                    mListener.openFilter(true);
-                    mListener.fragmentCreated("Filter");
-                }
+                mListener.openFilter(true);
+                mListener.fragmentCreated("Filter");
             }
         });
 
@@ -327,6 +332,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
 
         mNoProductsLeft = (LinearLayout) rootView.findViewById(R.id.no_products_left);
         mNoProductsLeftTextView = (TextView) rootView.findViewById(R.id.no_products_left_text_view);
+        mNoProductsLeftButton = (Button) rootView.findViewById(R.id.hand_picked_no_products_left_button);
         mNoProductsLeftProgressBar = (ProgressBar) rootView.findViewById(R.id.loading_indicator);
 
         resetProducts();
@@ -487,6 +493,15 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             mNoProductsLeftTextView.setText(R.string.no_products_left);
         } else {
             mNoProductsLeftTextView.setText(R.string.filter_no_products);
+            mNoProductsLeftButton.setVisibility(View.VISIBLE);
+            mNoProductsLeftButton.setText(R.string.reset_filter);
+            mNoProductsLeftButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mListener.openFilter(true);
+                    mListener.fragmentCreated("Filter");
+                }
+            });
         }
     }
 
@@ -537,6 +552,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
 
         mNoProductsLeft.setVisibility(View.VISIBLE);
         mNoProductsLeftTextView.setVisibility(View.GONE);
+        mNoProductsLeftButton.setVisibility(View.GONE);
         mNoProductsLeftProgressBar.setVisibility(View.VISIBLE);
         mProductsArrayList.clear();
         mExcludeProductIDs.clear();
