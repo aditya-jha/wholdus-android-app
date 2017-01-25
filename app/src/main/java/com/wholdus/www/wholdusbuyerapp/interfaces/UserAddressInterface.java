@@ -14,5 +14,5 @@ public interface UserAddressInterface {
 
     void addressClicked(int addressID, int _ID);
 
-    void addressSaved();
+    void addressSaved(int addressID);
 }

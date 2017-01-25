@@ -3,6 +3,7 @@ package com.wholdus.www.wholdusbuyerapp.adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.models.Category;
 
@@ -53,12 +55,12 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
 
         holder.mNameTextView.setText(category.getCategoryName());
 
-        if (category.getBuyerInterestIsActive()==1) {
+        if (category.getBuyerInterestIsActive() == 1) {
             holder.mFavIconImageView.setImageResource(R.drawable.ic_favorite_red_24dp);
         } else {
             holder.mFavIconImageView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
         }
-
+        // TODO : Only load image if image not already present
         Glide.with(mContext)
                 .load(category.getImageURL())
                 .asBitmap()
@@ -71,6 +73,7 @@ public class CategoriesGridAdapter extends RecyclerView.Adapter<CategoriesGridAd
                         holder.mProgressBar.setVisibility(View.GONE);
                     }
                 });
+
         holder.mListener = mListener;
     }
 

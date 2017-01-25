@@ -100,6 +100,7 @@
 
     <!-- keys -->
     <string name="name_key">Name</string>
+    <string name="edit_key">Edit</string>
     <string name="mobile_number_key">Mobile Number</string>
     <string name="whatsapp_number_key">Whatsapp Number</string>
     <string name="company_name_key">Company Name</string>
@@ -174,6 +175,7 @@
     <string name="set_price_key">Set Price</string>
     <string name="no_products_left">Return in some time for more products</string>
     <string name="filter_no_products">No products for filter</string>
+    <string name="reset_filter">CHANGE FILTERS</string>
 
     <!-- cart dialog fragment -->
     <string name="lot_size_key">Lot Size &#160;</string>

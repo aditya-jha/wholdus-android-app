@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -14,6 +16,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -32,6 +35,20 @@ import java.util.regex.Pattern;
  */
 
 public final class HelperFunctions {
+
+    public static boolean hasImage(ImageView view) {
+        if (view == null){
+            return false;
+        }
+        Drawable drawable = view.getDrawable();
+        boolean hasImage = (drawable != null);
+
+        if (hasImage && (drawable instanceof BitmapDrawable)) {
+            hasImage = ((BitmapDrawable)drawable).getBitmap() != null;
+        }
+
+        return hasImage;
+    }
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();

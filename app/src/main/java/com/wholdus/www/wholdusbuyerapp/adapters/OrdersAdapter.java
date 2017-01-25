@@ -48,6 +48,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
+        holder.mListener = mListener;
         Order order = mListData.get(position);
         holder.orderID.setText(String.format(mContext.getString(R.string.order_number_format),
                 order.getDisplayNumber()));
@@ -57,12 +58,14 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
                 String.valueOf((int) Math.ceil(order.getFinalPrice()))));
 
         ArrayList<Suborder> suborders = order.getSuborders();
-        SuborderListViewAdapter suborderAdapter = new SuborderListViewAdapter(mContext, suborders);
+        ItemClickListener itemClickListener = new ItemClickListener() {
+            @Override
+            public void itemClicked(View view, int position, int id) {
+                holder.itemView.callOnClick();
+            }
+        };
+        SuborderListViewAdapter suborderAdapter = new SuborderListViewAdapter(mContext, suborders, itemClickListener);
         holder.suborderListView.setAdapter(suborderAdapter);
-
-        //HelperFunctions.setListViewHeightBasedOnChildren(holder.suborderListView);
-
-        holder.mListener = mListener;
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

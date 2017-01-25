@@ -132,7 +132,7 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
     }
 
     @Override
-    public void addressSaved() {
+    public void addressSaved(int addressID) {
         openToFragment(BuyerAddressFragment.class.getSimpleName(), null);
     }
 

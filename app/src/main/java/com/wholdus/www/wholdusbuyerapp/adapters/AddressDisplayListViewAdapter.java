@@ -63,6 +63,7 @@ public class AddressDisplayListViewAdapter extends BaseAdapter {
             holder.contactNumberTextView = (TextView) view.findViewById(R.id.contact_number_text_view);
             holder.addressTextView = (TextView) view.findViewById(R.id.address_text_view);
             holder.cityStatePincodeTextView = (TextView) view.findViewById(R.id.city_state_pincode_text_view);
+            holder.editTextView = (TextView) view.findViewById(R.id.edit_address_text_view);
             view.setTag(holder);
         }
         else {
@@ -76,7 +77,7 @@ public class AddressDisplayListViewAdapter extends BaseAdapter {
         holder.addressTextView.setText(getAddressTextView(address));
         holder.cityStatePincodeTextView.setText(getCityStatePincodeTextView(address));
 
-        holder.aliasTextView.setOnClickListener(new View.OnClickListener() {
+        holder.editTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mListener != null) {
@@ -117,5 +118,6 @@ public class AddressDisplayListViewAdapter extends BaseAdapter {
         TextView contactNumberTextView;
         TextView addressTextView;
         TextView cityStatePincodeTextView;
+        TextView editTextView;
     }
 }

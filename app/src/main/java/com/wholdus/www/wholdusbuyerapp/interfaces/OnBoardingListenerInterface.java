@@ -7,7 +7,10 @@ package com.wholdus.www.wholdusbuyerapp.interfaces;
 public interface OnBoardingListenerInterface {
     void fragmentCreated(String title, boolean backEnabled);
 
-    void businessTypeSaved();
+    void businessTypeSaved(int position);
 
     void whatsappNumberSaved();
+
+    void changeProgressBarState(boolean state);
+
 }

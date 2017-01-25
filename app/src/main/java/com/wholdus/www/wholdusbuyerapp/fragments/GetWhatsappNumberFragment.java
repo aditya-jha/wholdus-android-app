@@ -74,7 +74,7 @@ public class GetWhatsappNumberFragment extends Fragment implements LoaderManager
     @Override
     public void onResume(){
         super.onResume();
-        mListener.fragmentCreated("Business Type", false);
+        mListener.fragmentCreated("Whatsapp Number", true);
 
         getActivity().getSupportLoaderManager().restartLoader(USER_DB_LOADER, null, this);
 
