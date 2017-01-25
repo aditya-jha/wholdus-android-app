@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.wholdus.www.wholdusbuyerapp.R;
@@ -26,6 +27,7 @@ import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.OrdersAdapter;
 import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.OrdersLoader;
@@ -86,7 +88,7 @@ public class OrdersFragment extends Fragment implements ItemClickListener, Loade
 
         mPageLoader = (ProgressBar) view.findViewById(R.id.page_loader);
         mOrdersRecyclerView = (RecyclerView) view.findViewById(R.id.orders_recycler_view);
-        mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        mLayoutManager = new LinearLayoutManager(getContext());
         mOrdersRecyclerView.setLayoutManager(mLayoutManager);
         mOrdersRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mOrdersRecyclerView.addItemDecoration(new RecyclerViewSpaceItemDecoration(40, 0));
