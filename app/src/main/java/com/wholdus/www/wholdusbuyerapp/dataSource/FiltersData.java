@@ -2,9 +2,12 @@ package com.wholdus.www.wholdusbuyerapp.dataSource;
 
 import android.support.annotation.Nullable;
 
+import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.logging.Filter;
 
 /**
  * Created by aditya on 13/12/16.
@@ -53,13 +56,13 @@ public class FiltersData {
                 "XXXL"
         };
         if (categoryDisplayed){
-            data.put("Category", new ArrayList<String>());
+            data.put(FilterClass.FILTER_CATEGORY_KEY, new ArrayList<String>());
         }
 
-        data.put("Fabric", new ArrayList<>(Arrays.asList(fabric)));
-        data.put("Brand", new ArrayList<String>());
-        data.put("Colors", new ArrayList<>(Arrays.asList(colors)));
-        data.put("Sizes", new ArrayList<>(Arrays.asList(sizes)));
+        data.put(FilterClass.FILTER_FABRIC_KEY, new ArrayList<>(Arrays.asList(fabric)));
+        data.put(FilterClass.FILTER_BRAND_KEY, new ArrayList<String>());
+        data.put(FilterClass.FILTER_COLOUR_KEY, new ArrayList<>(Arrays.asList(colors)));
+        data.put(FilterClass.FILTER_SIZE_KEY, new ArrayList<>(Arrays.asList(sizes)));
 
 
 

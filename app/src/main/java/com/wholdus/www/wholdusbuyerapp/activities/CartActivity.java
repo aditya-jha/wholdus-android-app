@@ -220,8 +220,16 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
 
     public void startAddressConfirmFragment(Intent intent){
         Bundle args = intent.getBundleExtra("extra");
-        int addressID = args.getInt(UserProfileContract.UserAddressTable.COLUMN_ADDRESS_ID, -1);
-        addressClicked(addressID, -1);
+        if (args != null) {
+            int addressID = args.getInt(UserProfileContract.UserAddressTable.COLUMN_ADDRESS_ID, -1);
+            if (addressID != -1) {
+                addressClicked(addressID, -1);
+            } else {
+                openToFragment(BuyerAddressFragment.class.getSimpleName(), null);
+            }
+        } else {
+            openToFragment(BuyerAddressFragment.class.getSimpleName(), null);
+        }
     }
 
     @Override
@@ -454,7 +462,9 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         try {
             JSONObject requestBody = new JSONObject();
             HashMap<String, String> params = new HashMap<>();
-            if (mStatus == 0 && mCheckoutID == null && mCart.getSynced() == 1) {
+            if (mCart == null){
+                return;
+            } else if (mStatus == 0 && mCheckoutID == null && mCart.getSynced() == 1) {
                 updateCart(requestBody, Request.Method.POST, TODO.CREATE_CART, params);
             } else if (mStatus == 0 && mCheckoutID != null && mCheckoutID > 0 && mBuyerAddressID > 0) {
                 requestBody.put("checkoutID", mCheckoutID);

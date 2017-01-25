@@ -186,9 +186,9 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
                 populateValuesListView(filterKeySelected);
                 break;
             case R.id.filter_values_list_view:
-                if (mSelectedFilter.equals("Brand")) {
+                if (mSelectedFilter.equals(FilterClass.FILTER_BRAND_KEY)) {
                     mBrandFilterValuesAdapter.itemClicked(view, position);
-                } else if (mSelectedFilter.equals("Category")) {
+                } else if (mSelectedFilter.equals(FilterClass.FILTER_CATEGORY_KEY)) {
                     mCategoryFilterValuesAdapter.itemClicked(view, position);
                 } else {
                     mFilterValuesAdapter.itemClicked(view, position);
@@ -199,7 +199,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
 
     public void categoryIDChanged(int oldCategoryID) {
         if (FilterClass.getCategoryID() != oldCategoryID) {
-            FilterClass.resetFilter("Brands");
+            FilterClass.resetFilter(FilterClass.FILTER_BRAND_KEY);
             getActivity().getSupportLoaderManager().restartLoader(CATEGORY_SELLERS_DB_LOADER, null, this);
         }
     }
@@ -263,11 +263,11 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
     private void populateValuesListView(String filterKey) {
         mSelectedFilter = filterKey;
         switch (filterKey) {
-            case "Brand":
+            case FilterClass.FILTER_BRAND_KEY:
                 mFilterValues.setAdapter(mBrandFilterValuesAdapter);
                 getActivity().getSupportLoaderManager().restartLoader(CATEGORY_SELLERS_DB_LOADER, null, this);
                 break;
-            case "Category":
+            case FilterClass.FILTER_CATEGORY_KEY:
                 mFilterValues.setAdapter(mCategoryFilterValuesAdapter);
                 getActivity().getSupportLoaderManager().restartLoader(CATEGORY_DB_LOADER, null, new CategoryLoaderManager());
                 break;
