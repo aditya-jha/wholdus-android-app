@@ -131,9 +131,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
         mCategories = new ArrayList<>();
         mCategoryHomePageAdapter = new CategoryHomePageAdapter(getContext(), mCategories, this);
         mCategoriesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        mCategoriesRecyclerView.addItemDecoration(new GridDividerItemDecoration(
-                ContextCompat.getDrawable(getContext(), R.drawable.divider),
-                ContextCompat.getDrawable(getContext(), R.drawable.divider), 1));
+        mCategoriesRecyclerView.addItemDecoration(new RecyclerViewSpaceItemDecoration((int)getResources().getDimension(R.dimen.card_margin_vertical), 0));
         mCategoriesRecyclerView.setAdapter(mCategoryHomePageAdapter);
         //mProductsRecyclerView.setVerticalScrollBarEnabled(false);
         mCategoriesRecyclerView.setNestedScrollingEnabled(false);

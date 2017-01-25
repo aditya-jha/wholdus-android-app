@@ -1,5 +1,7 @@
 package com.wholdus.www.wholdusbuyerapp.interfaces;
 
+import android.support.annotation.Nullable;
+
 import com.wholdus.www.wholdusbuyerapp.models.Cart;
 
 /**
@@ -9,7 +11,7 @@ import com.wholdus.www.wholdusbuyerapp.models.Cart;
 public interface CartListenerInterface {
     void fragmentCreated(String title, boolean backEnabled);
 
-    void setCart(Cart cart);
+    void setCart(@Nullable Cart cart);
 
     void disableProgressBar();
 

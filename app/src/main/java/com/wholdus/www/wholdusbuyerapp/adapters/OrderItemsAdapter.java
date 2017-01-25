@@ -3,6 +3,7 @@ package com.wholdus.www.wholdusbuyerapp.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +30,7 @@ import java.util.ArrayList;
  * Created by kaustubh on 31/12/16.
  */
 
-public class OrderItemsAdapter extends BaseAdapter {
+public class OrderItemsAdapter extends RecyclerView.Adapter<OrderItemsAdapter.MyViewHolder> {
 
     private Context mContext;
     private ArrayList<OrderItem> mData;
@@ -40,40 +41,17 @@ public class OrderItemsAdapter extends BaseAdapter {
     }
 
     @Override
-    public int getCount() {
+    public int getItemCount() {
         return mData.size();
     }
 
     @Override
-    public long getItemId(int i) {
-        return i;
+    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new MyViewHolder(LayoutInflater.from(mContext).inflate(R.layout.list_item_layout_order_items, parent, false));
     }
 
     @Override
-    public Object getItem(int i) {
-        return mData.get(i);
-    }
-
-    @Override
-    public View getView(final int position, View convertView, ViewGroup viewGroup) {
-        ViewHolder holder;
-
-        if (convertView == null) {
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_layout_order_items, viewGroup, false);
-            holder = new ViewHolder();
-            holder.productName = (TextView) convertView.findViewById(R.id.order_item_product_name_text_view);
-            holder.pricePerPiece = (TextView) convertView.findViewById(R.id.order_item_product_price_per_piece_text_view);
-            holder.total = (TextView) convertView.findViewById(R.id.order_item_final_price_text_view);
-            holder.pieces = (TextView) convertView.findViewById(R.id.order_item_pieces_text_view);
-            holder.status = (TextView) convertView.findViewById(R.id.order_item_status_text_view);
-            holder.progressBar = (ProgressBar) convertView.findViewById(R.id.loading_indicator);
-            holder.productImage = (ImageView) convertView.findViewById(R.id.product_image);
-            holder.tracking = (Button) convertView.findViewById(R.id.order_item_track_button);
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-
+    public void onBindViewHolder(final MyViewHolder holder, final int position) {
         OrderItem orderItem = mData.get(position);
         Product product = orderItem.getProduct();
 
@@ -114,9 +92,8 @@ public class OrderItemsAdapter extends BaseAdapter {
         } else {
             holder.tracking.setVisibility(View.GONE);
         }
-
-        return convertView;
     }
+
     private void openProductDetails(int position){
         Product product = mData.get(position).getProduct();
         Intent intent = new Intent(mContext, ProductDetailActivity.class);
@@ -134,7 +111,7 @@ public class OrderItemsAdapter extends BaseAdapter {
     }
 
 
-    class ViewHolder {
+    class MyViewHolder extends RecyclerView.ViewHolder {
         int id;
         TextView productName;
         TextView pricePerPiece;
@@ -144,5 +121,17 @@ public class OrderItemsAdapter extends BaseAdapter {
         ImageView productImage;
         ProgressBar progressBar;
         Button tracking;
+
+        private MyViewHolder(final View itemView) {
+            super(itemView);
+            productName = (TextView) itemView.findViewById(R.id.order_item_product_name_text_view);
+            pricePerPiece = (TextView) itemView.findViewById(R.id.order_item_product_price_per_piece_text_view);
+            total = (TextView) itemView.findViewById(R.id.order_item_final_price_text_view);
+            pieces = (TextView) itemView.findViewById(R.id.order_item_pieces_text_view);
+            status = (TextView) itemView.findViewById(R.id.order_item_status_text_view);
+            progressBar = (ProgressBar) itemView.findViewById(R.id.loading_indicator);
+            productImage = (ImageView) itemView.findViewById(R.id.product_image);
+            tracking = (Button) itemView.findViewById(R.id.order_item_track_button);
+        }
     }
 }

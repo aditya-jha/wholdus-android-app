@@ -227,15 +227,21 @@
                     </TableLayout>
                 </LinearLayout>
 
-                <ListView
-                    android:id="@+id/suborder_list_view"
+                <android.support.v4.widget.NestedScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:descendantFocusability="afterDescendants"
-                    android:divider="@null"
-                    android:dividerHeight="@dimen/text_divider_gap"
-                    android:listSelector="@android:color/transparent"
-                    android:scrollbars="none" />
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/suborder_list_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:descendantFocusability="afterDescendants"
+                        android:divider="@null"
+                        android:dividerHeight="@dimen/text_divider_gap"
+                        android:listSelector="@android:color/transparent"
+                        android:scrollbars="none" />
+                </android.support.v4.widget.NestedScrollView>
             </LinearLayout>
         </android.support.v7.widget.CardView>
     </ScrollView>

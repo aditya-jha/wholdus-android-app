@@ -25,6 +25,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@string/font_normal"
                 android:textColor="@color/primary_text"
+                android:textStyle="bold"
                 android:textSize="16sp"
                 tools:text="Anjani Kurti" />
 
@@ -41,11 +42,7 @@
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
-    <LinearLayout
-        android:id="@+id/linear_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ListView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/sub_cart_items_list_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -54,5 +51,5 @@
             android:dividerHeight="1dp"
             android:listSelector="@android:color/transparent"
             android:scrollbars="none" />
-    </LinearLayout>
+
 </LinearLayout>
