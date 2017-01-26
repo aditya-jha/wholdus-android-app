@@ -580,7 +580,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         final int updatedInserted = intent.getIntExtra(Constants.INSERTED_UPDATED, 0);
 
         mTotalPages = totalPages;
-        if (updatedInserted > 0) {
+        if (updatedInserted > 0 && pageNumber != -1) {
             if (!mLoaderLoading) {
                 if (getActivity() != null) {
                     getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, this);

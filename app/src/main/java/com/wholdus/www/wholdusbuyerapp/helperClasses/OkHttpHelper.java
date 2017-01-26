@@ -30,7 +30,7 @@ public class OkHttpHelper {
     }
 
     public static String generateUrl(String endpoint) {
-        return APIConstants.TEMP_API_BASE + endpoint;
+        return APIConstants.API_BASE + endpoint;
     }
 
     public static Response makeGetRequest(Context context, String url) throws IOException {
