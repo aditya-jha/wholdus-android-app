@@ -431,7 +431,12 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
                     break;
                 case TODO.UPDATE_CART_PAYMENT_METHOD:
                     View parentLayout = findViewById(R.id.activity_cart);
-                    Snackbar.make(parentLayout, "Order successfully placed", Snackbar.LENGTH_INDEFINITE).show();
+                    Snackbar.make(parentLayout, "Order successfully placed", Snackbar.LENGTH_LONG).setAction("OK", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    }).show();
                     //Toast.makeText(this, "Order successfully placed", Toast.LENGTH_SHORT).show();
                     Intent cartIntent = new Intent(this, CartService.class);
                     cartIntent.putExtra("TODO", R.string.delete_cart);
