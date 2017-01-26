@@ -25,6 +25,7 @@ import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.SubCartAdapter;
 import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartSummaryListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.CartLoader;
@@ -150,12 +151,16 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
     }
 
     private void fetchDataFromServer() {
-        Intent intent = new Intent(getContext(), CartService.class);
-        intent.putExtra("TODO", R.string.post_cart_item);
-        getContext().startService(intent);
+        syncCartItems();
         Intent cartServiceIntent = new Intent(getContext(), CartService.class);
         cartServiceIntent.putExtra("TODO", R.string.fetch_cart);
         getContext().startService(cartServiceIntent);
+    }
+
+    private void syncCartItems(){
+        Intent intent = new Intent(getContext(), CartService.class);
+        intent.putExtra("TODO", R.string.post_cart_item);
+        getContext().startService(intent);
     }
 
     private void handleAPIResponse() {
@@ -191,15 +196,18 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
     }
 
     private void setViewForUnsyncedCart() {
-        fetchDataFromServer();
-
+        syncCartItems();
         mTopSummary.setVisibility(View.GONE);
-        mNoProducts.setVisibility(View.VISIBLE);
-        mContinueShopping.setVisibility(View.GONE);
-        mNoProductsLeftTextView.setText("You do not seem to have an active internet connection.\nPlease connect to the internet and try again");
+
+        if (!HelperFunctions.isNetworkAvailable(getContext())) {
+            mNoProducts.setVisibility(View.VISIBLE);
+            mContinueShopping.setVisibility(View.GONE);
+            mNoProductsLeftTextView.setText("You do not seem to have an active internet connection.\nPlease connect to the internet and try again");
+        }
 
         mSubCarts.clear();
         setBasicCartView();
+        mListener.enableProgressBar();
 
         mShippingChargeTextView.setText("");
         mOrderValueTextView.setText("");

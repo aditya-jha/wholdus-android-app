@@ -52,6 +52,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.wholdus.www.wholdusbuyerapp.fragments.CheckoutPaymentMethodFragment.COD_CHARGE_PERCENT;
+
 public class CartActivity extends AppCompatActivity implements CartListenerInterface, UserAddressInterface, OrderDetailsListenerInterface {
 
     private int mStatus = 0;
@@ -243,7 +245,6 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         args.putString("fragment_title", "Select Address");
         openToFragment(BuyerAddressFragment.class.getSimpleName(), args);
         mProgressBar.setVisibility(View.GONE);
-        mProceedButtonLayout.setVisibility(View.GONE);
     }
 
     @Override
@@ -252,9 +253,8 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         args.putInt(UserProfileContract.UserAddressTable.COLUMN_ADDRESS_ID, addressID);
         openToFragment(CheckoutAddressConfirmFragment.class.getSimpleName(), args);
         mProgressBar.setVisibility(View.VISIBLE);
-        mProceedButtonLayout.setVisibility(View.VISIBLE);
-
     }
+
 
 
     public void updateCart(JSONObject requestBody, int requestMethod, int todo, HashMap<String, String> params) {
@@ -267,6 +267,15 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     public void setCart(Cart cart) {
         mCart = cart;
         setViewForProceedButtonLayout();
+    }
+
+    @Override
+    public void CODApplied(boolean applied){
+        int orderValue = (int) Math.ceil(mCart.getFinalPrice());
+        if (applied) {
+            orderValue = (int) Math.ceil(mCart.getFinalPrice() + (mCart.getCalculatedPrice()*COD_CHARGE_PERCENT));
+        }
+        mTotalTextView.setText("Total " + String.format(getString(R.string.price_format), String.valueOf(orderValue)));
     }
 
     @Override
@@ -291,12 +300,13 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
 
         } else {
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.cart_fragment_container);
-            if (fragment instanceof EditAddressFragment || fragment instanceof BuyerAddressFragment) {
+            if (fragment instanceof EditAddressFragment || fragment instanceof BuyerAddressFragment ||
+                    fragment instanceof OrderDetailsFragment) {
                 mProceedButton.setEnabled(false);
                 mProceedButtonLayout.setVisibility(View.GONE);
             } else {
                 mProceedButtonLayout.setVisibility(View.VISIBLE);
-                mTotalTextView.setText("Total " + String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mCart.getFinalPrice()))));
+                CODApplied(mPaymentMethod == 0);
                 mProductsPiecesTextView.setText(String.valueOf(mCart.getProductCount()) + " products - "
                         + String.valueOf(mCart.getPieces()) + " pieces");
                 mProceedButton.setEnabled(true);
@@ -326,14 +336,19 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
             mProceedButtonLayout.setVisibility(View.VISIBLE);
             fragment = new CartSummaryFragment();
         } else if (fragmentName.equals(BuyerAddressFragment.class.getSimpleName())) {
+            mProceedButtonLayout.setVisibility(View.GONE);
             fragment = new BuyerAddressFragment();
         } else if (fragmentName.equals(CheckoutAddressConfirmFragment.class.getSimpleName())) {
+            mProceedButtonLayout.setVisibility(View.VISIBLE);
             fragment = new CheckoutAddressConfirmFragment();
         } else if (fragmentName.equals(EditAddressFragment.class.getSimpleName())) {
+            mProceedButtonLayout.setVisibility(View.GONE);
             fragment = new EditAddressFragment();
         } else if (fragmentName.equals(CheckoutPaymentMethodFragment.class.getSimpleName())) {
+            mProceedButtonLayout.setVisibility(View.VISIBLE);
             fragment = new CheckoutPaymentMethodFragment();
         } else if (fragmentName.equals(OrderDetailsFragment.class.getSimpleName())) {
+            mProceedButtonLayout.setVisibility(View.GONE);
             mProgressBar.setVisibility(View.GONE);
             fragment = new OrderDetailsFragment();
         } else {
@@ -462,6 +477,11 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         intent.putExtra("TODO", R.string.fetch_orders);
         startService(intent);
     }
+    private void syncCartItems(){
+        Intent intent = new Intent(this, CartService.class);
+        intent.putExtra("TODO", R.string.post_cart_item);
+        startService(intent);
+    }
 
     private void proceedButtonClicked() {
         try {
@@ -469,6 +489,8 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
             HashMap<String, String> params = new HashMap<>();
             if (mCart == null){
                 return;
+            } else if (mCart.getSynced()==0){
+                syncCartItems();
             } else if (mStatus == 0 && mCheckoutID == null && mCart.getSynced() == 1) {
                 updateCart(requestBody, Request.Method.POST, TODO.CREATE_CART, params);
             } else if (mStatus == 0 && mCheckoutID != null && mCheckoutID > 0 && mBuyerAddressID > 0) {
@@ -500,7 +522,6 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     }
 
     public void startOrderDetailsActivity() {
-        mProceedButtonLayout.setVisibility(View.GONE);
         Bundle bundle = new Bundle();
         bundle.putInt("orderID", mOrderID);
         openToFragment(OrderDetailsFragment.class.getSimpleName(), bundle);

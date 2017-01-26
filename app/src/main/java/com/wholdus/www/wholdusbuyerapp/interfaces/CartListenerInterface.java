@@ -22,4 +22,6 @@ public interface CartListenerInterface {
     void openSelectAddress();
 
     void setPaymentMethod(int paymentMethod);
+
+    void CODApplied(boolean applied);
 }
