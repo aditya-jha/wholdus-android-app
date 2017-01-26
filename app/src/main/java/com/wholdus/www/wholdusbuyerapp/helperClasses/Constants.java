@@ -10,7 +10,6 @@ public final class Constants {
 
     public static final String WEBSITE_URL = "http://www.wholdus.com/";
     public static final String API_BASE = "http://api.wholdus.com/";
-    public static final String TEMP_API_BASE = "http://13.76.211.119:8000/";
 
     public static final String THUMB_IMAGE = "100x100";
     public static final String EXTRA_SMALL_IMAGE = "200x200";

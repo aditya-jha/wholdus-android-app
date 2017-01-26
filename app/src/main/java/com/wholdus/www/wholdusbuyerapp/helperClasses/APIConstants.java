@@ -7,7 +7,6 @@ package com.wholdus.www.wholdusbuyerapp.helperClasses;
 public class APIConstants {
 
     public static final String API_BASE = "http://api.wholdus.com/";
-    public static final String TEMP_API_BASE = "http://13.76.211.119:8000/";
 
     public static final String LOGIN_URL = "users/buyer/login/";
     public static final String REGISTER_URL = "users/buyer/register/";
