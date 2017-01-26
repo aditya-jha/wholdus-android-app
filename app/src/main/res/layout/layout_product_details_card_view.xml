@@ -54,7 +54,7 @@
                     android:fontFamily="@string/font_normal"
                     android:paddingBottom="@dimen/text_divider_gap"
                     android:paddingTop="@dimen/text_divider_gap"
-                    android:textColor="@color/accent"
+                    android:textColor="@android:color/holo_green_dark"
                     android:textSize="18sp"
                     android:textStyle="normal" />
             </LinearLayout>
