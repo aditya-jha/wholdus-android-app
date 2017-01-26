@@ -29,6 +29,8 @@ public class CheckoutPaymentMethodFragment extends Fragment {
     private float mCODValue;
     private float mOrderValue;
 
+    public static final float COD_CHARGE_PERCENT = (float) 0.02;
+
     public CheckoutPaymentMethodFragment() {
     }
 
@@ -54,7 +56,7 @@ public class CheckoutPaymentMethodFragment extends Fragment {
         Bundle args = getArguments();
         mListener.fragmentCreated("Payment Method", true);
         if (args != null) {
-            mCODValue = args.getFloat("orderValue", 5000) / 50;
+            mCODValue = args.getFloat("orderValue", 5000)*COD_CHARGE_PERCENT;
             mOrderValue = args.getFloat("finalValue", 5000);
         }
     }
@@ -94,12 +96,16 @@ public class CheckoutPaymentMethodFragment extends Fragment {
     }
 
     private void radioButtonClicked(int option, boolean checked) {
+        mListener.CODApplied(false);
         switch (option) {
             case 1:
                 if (checked) {
                     mNEFTRadioButton.setChecked(false);
                     mListener.setPaymentMethod(0);
-                    String descriptionText = "2 % COD charges at Rs. " + String.valueOf((int) Math.ceil(mCODValue));
+                    String descriptionText = "2 % COD charges at " + String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mCODValue)));
+                    int orderValue = (int) Math.ceil(mCODValue +mOrderValue);
+                    descriptionText += "\nOrder value will be " + String.format(getString(R.string.price_format), String.valueOf(orderValue));
+                    mListener.CODApplied(true);
                     mDescription.setText(descriptionText);
                 } else {
                     mListener.setPaymentMethod(-1);
