@@ -300,7 +300,8 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
 
         } else {
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.cart_fragment_container);
-            if (fragment instanceof EditAddressFragment || fragment instanceof BuyerAddressFragment) {
+            if (fragment instanceof EditAddressFragment || fragment instanceof BuyerAddressFragment ||
+                    fragment instanceof OrderDetailsFragment) {
                 mProceedButton.setEnabled(false);
                 mProceedButtonLayout.setVisibility(View.GONE);
             } else {
@@ -476,6 +477,11 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         intent.putExtra("TODO", R.string.fetch_orders);
         startService(intent);
     }
+    private void syncCartItems(){
+        Intent intent = new Intent(this, CartService.class);
+        intent.putExtra("TODO", R.string.post_cart_item);
+        startService(intent);
+    }
 
     private void proceedButtonClicked() {
         try {
@@ -483,6 +489,8 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
             HashMap<String, String> params = new HashMap<>();
             if (mCart == null){
                 return;
+            } else if (mCart.getSynced()==0){
+                syncCartItems();
             } else if (mStatus == 0 && mCheckoutID == null && mCart.getSynced() == 1) {
                 updateCart(requestBody, Request.Method.POST, TODO.CREATE_CART, params);
             } else if (mStatus == 0 && mCheckoutID != null && mCheckoutID > 0 && mBuyerAddressID > 0) {
