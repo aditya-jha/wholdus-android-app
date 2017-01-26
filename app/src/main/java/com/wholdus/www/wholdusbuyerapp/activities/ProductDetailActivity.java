@@ -479,6 +479,11 @@ public class ProductDetailActivity extends AppCompatActivity
     }
 
     private void setCartButtonText(int pieces) {
+        if (mProduct!= null && (mProduct.getDeleteStatus() || !mProduct.getShowOnline())){
+            mCartButton.setEnabled(false);
+            mCartButton.setText(R.string.out_of_stock_key);
+            return;
+        }
         if (pieces == 0) {
             mCartButton.setText(getString(R.string.add_to_cart));
             return;

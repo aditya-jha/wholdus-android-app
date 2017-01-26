@@ -326,14 +326,19 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
             mProceedButtonLayout.setVisibility(View.VISIBLE);
             fragment = new CartSummaryFragment();
         } else if (fragmentName.equals(BuyerAddressFragment.class.getSimpleName())) {
+            mProceedButtonLayout.setVisibility(View.GONE);
             fragment = new BuyerAddressFragment();
         } else if (fragmentName.equals(CheckoutAddressConfirmFragment.class.getSimpleName())) {
+            mProceedButtonLayout.setVisibility(View.VISIBLE);
             fragment = new CheckoutAddressConfirmFragment();
         } else if (fragmentName.equals(EditAddressFragment.class.getSimpleName())) {
+            mProceedButtonLayout.setVisibility(View.GONE);
             fragment = new EditAddressFragment();
         } else if (fragmentName.equals(CheckoutPaymentMethodFragment.class.getSimpleName())) {
+            mProceedButtonLayout.setVisibility(View.VISIBLE);
             fragment = new CheckoutPaymentMethodFragment();
         } else if (fragmentName.equals(OrderDetailsFragment.class.getSimpleName())) {
+            mProceedButtonLayout.setVisibility(View.GONE);
             mProgressBar.setVisibility(View.GONE);
             fragment = new OrderDetailsFragment();
         } else {
