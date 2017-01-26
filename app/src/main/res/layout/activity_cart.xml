@@ -82,7 +82,7 @@
 
             <TextView
                 android:id="@+id/cart_summary_proceed_button"
-                style="@style/Widget.AppCompat.Button.Borderless"
+                android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="?attr/selectableItemBackgroundBorderless"
