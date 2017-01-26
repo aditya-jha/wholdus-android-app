@@ -20,6 +20,7 @@
     <!-- Mobile Number and Password helper layout -->
     <string name="hint_mobile_number">Mobile Number</string>
     <string name="hint_password">Password</string>
+    <string name="hint_set_password">Set Password</string>
     <string name="hint_name">Your name</string>
     <string name="login_fragment_header">Login</string>
     <string name="register_fragment_header">Register</string>
