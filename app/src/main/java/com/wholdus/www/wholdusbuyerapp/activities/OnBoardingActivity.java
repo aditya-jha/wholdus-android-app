@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -16,7 +15,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.fragments.CategoryGridFragment;
@@ -50,13 +48,13 @@ public class OnBoardingActivity extends AppCompatActivity implements OnBoardingL
         openToFragment(getFragmentToOpenName(savedInstanceState), null);
     }
 
-    private void initToolbar(){
+    private void initToolbar() {
         mToolbar = (Toolbar) findViewById(R.id.default_toolbar);
         setSupportActionBar(mToolbar);
     }
 
     @Override
-    public void changeProgressBarState(boolean state){
+    public void changeProgressBarState(boolean state) {
         if (state) {
             mProgressBar.setVisibility(View.VISIBLE);
         } else {
@@ -64,7 +62,7 @@ public class OnBoardingActivity extends AppCompatActivity implements OnBoardingL
         }
     }
 
-    private void initReferences(){
+    private void initReferences() {
         mProgressBar = (ProgressBar) findViewById(R.id.loading_indicator);
         mProgressBar.setVisibility(View.VISIBLE);
         mSubmitButton = (Button) findViewById(R.id.onboarding_submit_button);
@@ -117,7 +115,7 @@ public class OnBoardingActivity extends AppCompatActivity implements OnBoardingL
         return super.onOptionsItemSelected(item);
     }
 
-    public void startHomeActivity(){
+    public void startHomeActivity() {
         Intent intent = new Intent(this, HomeActivity.class);
         intent.putExtra(Constants.OPEN_FRAGMENT_KEY, HomeFragment.class.getSimpleName());
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -167,7 +165,7 @@ public class OnBoardingActivity extends AppCompatActivity implements OnBoardingL
             mStepCount.setText("Step 2 of 3");
             mStatement.setText("Please let us know your whatsapp number so that we can update you");
         } else if (fragmentName.equals(GetBusinessTypeFragment.class.getSimpleName())) {
-            if (bundle == null){
+            if (bundle == null) {
                 bundle = new Bundle();
             }
             bundle.putInt("businessTypeSelectedPosition", mSelectedPosition);
@@ -179,7 +177,7 @@ public class OnBoardingActivity extends AppCompatActivity implements OnBoardingL
             mStatement.setText("Tell us your favourite categories so we can provide you products to your liking");
             mStepCount.setText("Step 3 of 3");
         } else {
-            if (bundle == null){
+            if (bundle == null) {
                 bundle = new Bundle();
             }
             bundle.putInt("businessTypeSelectedPosition", mSelectedPosition);
@@ -217,21 +215,18 @@ public class OnBoardingActivity extends AppCompatActivity implements OnBoardingL
         return openFragment;
     }
 
-    private void submitButtonClicked(){
+    private void submitButtonClicked() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 
-        if (fragment instanceof GetWhatsappNumberFragment){
+        if (fragment instanceof GetWhatsappNumberFragment) {
             GetWhatsappNumberFragment activeFragment = (GetWhatsappNumberFragment) fragment;
             activeFragment.updateWhatsappNumber();
-        }
-        else if (fragment instanceof GetBusinessTypeFragment){
+        } else if (fragment instanceof GetBusinessTypeFragment) {
             GetBusinessTypeFragment activeFragment = (GetBusinessTypeFragment) fragment;
             activeFragment.updateBusinessType();
-        }
-        else {
+        } else {
             startHomeActivity();
         }
-
     }
 
     @Override
