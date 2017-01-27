@@ -1,25 +1,12 @@
 package com.wholdus.www.wholdusbuyerapp.helperClasses;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.support.annotation.Nullable;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 
-import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.WholdusApplication;
-import com.wholdus.www.wholdusbuyerapp.models.Seller;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Objects;
 
 /**
  * Created by aditya on 26/11/16.
