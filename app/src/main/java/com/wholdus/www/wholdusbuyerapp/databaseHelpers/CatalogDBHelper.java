@@ -186,8 +186,12 @@ public class CatalogDBHelper extends BaseDBHelper {
             whereApplied = true;
         }
         if (sizes != null && !sizes.isEmpty()) {
-            query += whereClauseHelper(whereApplied) + " ( LOWER(" + ProductsTable.COLUMN_SIZES + ") LIKE LOWER('%" +
-                    TextUtils.join("%') OR LOWER(" + ProductsTable.COLUMN_SIZES + ") LIKE LOWER('%", sizes) + "%') ) ";
+            ArrayList<String> sizeList = new ArrayList<>();
+            for (String size:sizes){
+                sizeList.add("," + size + ",");
+            }
+            query += whereClauseHelper(whereApplied) + " ( ',' || REPLACE(LOWER(" + ProductsTable.COLUMN_SIZES + "), ' ', '') || ',' LIKE LOWER('%" +
+                    TextUtils.join("%') OR ',' || REPLACE(LOWER(" + ProductsTable.COLUMN_SIZES + "), ' ', '') || ',' LIKE LOWER('%", sizeList) + "%') ) ";
             whereApplied = true;
         }
         if (responseCodes != null && !responseCodes.isEmpty()) {
