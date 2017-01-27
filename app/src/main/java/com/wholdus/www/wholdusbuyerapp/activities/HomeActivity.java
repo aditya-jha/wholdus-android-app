@@ -95,7 +95,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     @Override
     public void onBackPressed() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (fragment instanceof CategoryGridFragment) {
+        if (fragment != null && fragment instanceof CategoryGridFragment) {
             getSupportFragmentManager().popBackStack();
             openToFragment(HomeFragment.class.getSimpleName(), new Bundle());
             return;

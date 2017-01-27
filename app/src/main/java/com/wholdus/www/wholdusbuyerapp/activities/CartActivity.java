@@ -92,7 +92,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == EditAddressFragment.REQUEST_CHECK_SETTINGS) {
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.cart_fragment_container);
-            if (fragment instanceof EditAddressFragment) {
+            if (fragment != null && fragment instanceof EditAddressFragment) {
                 EditAddressFragment activeFragment = (EditAddressFragment) fragment;
                 activeFragment.onActivityResult(requestCode, resultCode, data);
             }
@@ -178,9 +178,9 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
                     .setNegativeButton("No", dialogClickListener).show();
         } else if (mStatus == 0 && mCheckoutID != null && mCheckoutID > 0) {
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.cart_fragment_container);
-            if (fragment instanceof EditAddressFragment || fragment instanceof BuyerAddressFragment) {
+            if (fragment != null && (fragment instanceof EditAddressFragment || fragment instanceof BuyerAddressFragment)) {
                 openToFragment(CartSummaryFragment.class.getSimpleName(), null);
-            } else if (fragment instanceof CheckoutAddressConfirmFragment){
+            } else if (fragment != null && fragment instanceof CheckoutAddressConfirmFragment){
                 openToFragment(BuyerAddressFragment.class.getSimpleName(), null);
             }
             else {
@@ -300,8 +300,8 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
 
         } else {
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.cart_fragment_container);
-            if (fragment instanceof EditAddressFragment || fragment instanceof BuyerAddressFragment ||
-                    fragment instanceof OrderDetailsFragment) {
+            if (fragment != null && (fragment instanceof EditAddressFragment || fragment instanceof BuyerAddressFragment ||
+                    fragment instanceof OrderDetailsFragment)) {
                 mProceedButton.setEnabled(false);
                 mProceedButtonLayout.setVisibility(View.GONE);
             } else {

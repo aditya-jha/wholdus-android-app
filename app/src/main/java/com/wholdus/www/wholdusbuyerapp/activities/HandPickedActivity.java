@@ -100,9 +100,10 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
 
     @Override
     public void dismissDialog() {
-        HandPickedFragment fragment = (HandPickedFragment) getSupportFragmentManager().findFragmentById(R.id.handpicked_fragment_container);
-        if (fragment != null) {
-            fragment.dismissDialog();
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.handpicked_fragment_container);
+        if (fragment != null && fragment instanceof HandPickedFragment) {
+            HandPickedFragment handPickedFragment = (HandPickedFragment) fragment;
+            handPickedFragment.dismissDialog();
         }
     }
 

@@ -127,13 +127,13 @@ public class OnBoardingActivity extends AppCompatActivity implements OnBoardingL
     public void onBackPressed() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 
-        if (fragment instanceof CategoryGridFragment) {
+        if (fragment != null && fragment instanceof CategoryGridFragment) {
             getSupportFragmentManager().popBackStack();
             openToFragment(GetWhatsappNumberFragment.class.getSimpleName(), new Bundle());
             return;
         }
 
-        if (fragment instanceof GetWhatsappNumberFragment) {
+        if (fragment != null && fragment instanceof GetWhatsappNumberFragment) {
             getSupportFragmentManager().popBackStack();
             openToFragment(GetBusinessTypeFragment.class.getSimpleName(), new Bundle());
             return;
@@ -218,10 +218,10 @@ public class OnBoardingActivity extends AppCompatActivity implements OnBoardingL
     private void submitButtonClicked() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 
-        if (fragment instanceof GetWhatsappNumberFragment) {
+        if (fragment != null && fragment instanceof GetWhatsappNumberFragment) {
             GetWhatsappNumberFragment activeFragment = (GetWhatsappNumberFragment) fragment;
             activeFragment.updateWhatsappNumber();
-        } else if (fragment instanceof GetBusinessTypeFragment) {
+        } else if (fragment != null && fragment instanceof GetBusinessTypeFragment) {
             GetBusinessTypeFragment activeFragment = (GetBusinessTypeFragment) fragment;
             activeFragment.updateBusinessType();
         } else {

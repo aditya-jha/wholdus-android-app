@@ -166,9 +166,10 @@ public class CategoryProductActivity extends AppCompatActivity
 
     @Override
     public void dismissDialog() {
-        ProductsGridFragment fragment = (ProductsGridFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (fragment != null) {
-            fragment.dismissDialog();
+        Fragment fragment =  getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (fragment != null && fragment instanceof ProductsGridFragment) {
+            ProductsGridFragment productsGridFragment = (ProductsGridFragment) fragment;
+            productsGridFragment.dismissDialog();
         }
     }
 
@@ -230,9 +231,10 @@ public class CategoryProductActivity extends AppCompatActivity
     }
 
     private void updateProducts() {
-        ProductsGridFragment fragment = (ProductsGridFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (fragment != null) {
-            fragment.loadData();
+        Fragment fragment =  getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (fragment != null && fragment instanceof ProductsGridFragment) {
+            ProductsGridFragment productsGridFragment = (ProductsGridFragment) fragment;
+            productsGridFragment.loadData();
         } else {
             // fragment is not added yet
             openToFragment("", new Bundle());
