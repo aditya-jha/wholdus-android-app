@@ -97,7 +97,7 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
         switch (groupPosition) {
             case 0:
                 Intent intent = new Intent(getContext(), HomeActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);;
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 if (!NavDrawerHelper.getInstance().getOpenActivity().equals(HomeActivity.class.getSimpleName()) ||
                         !NavDrawerHelper.getInstance().getOpenFragment().equals(HomeFragment.class.getSimpleName())) {
                     intent.putExtra(Constants.OPEN_FRAGMENT_KEY, HomeFragment.class.getSimpleName());
@@ -112,6 +112,7 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
             case 2:
                 if (!NavDrawerHelper.getInstance().getOpenFragment().equals(CategoryGridFragment.class.getSimpleName())){
                     Intent categories = new Intent(getContext(), HomeActivity.class);
+                    categories.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     categories.putExtra(Constants.OPEN_FRAGMENT_KEY, CategoryGridFragment.class.getSimpleName());
                     getContext().startActivity(categories);
                 }

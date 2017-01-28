@@ -465,6 +465,9 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         mPageLoader.setVisibility(loader);
         mPageLayout.setVisibility(layout);
         mNoProducts.setVisibility(error);
+        if (loader == View.INVISIBLE){
+            showSortFilterLayout();
+        }
     }
 
     private void initResponseCodes(Bundle args) {
