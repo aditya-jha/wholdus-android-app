@@ -1,16 +1,20 @@
 package com.wholdus.www.wholdusbuyerapp.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
-import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
 import java.util.ArrayList;
 
@@ -22,13 +26,11 @@ public class ThumbImageAdapter extends RecyclerView.Adapter<ThumbImageAdapter.Vi
 
     private Context mContext;
     private ArrayList<String> mImages;
-    private ImageLoader mImageLoader;
     private ItemClickListener mListener;
 
     public ThumbImageAdapter(Context context, ArrayList<String> images, final ItemClickListener listener) {
         mImages = images;
         mContext = context;
-        mImageLoader = VolleySingleton.getInstance(context).getImageLoader();
         mListener = listener;
     }
 
@@ -39,8 +41,12 @@ public class ThumbImageAdapter extends RecyclerView.Adapter<ThumbImageAdapter.Vi
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.mNetworkImageView.setImageUrl(mImages.get(position), mImageLoader);
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+        Glide.with(mContext)
+                .load(mImages.get(position))
+                .asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(holder.mImageView);
         holder.mListener = mListener;
     }
 
@@ -49,15 +55,22 @@ public class ThumbImageAdapter extends RecyclerView.Adapter<ThumbImageAdapter.Vi
         return mImages.size();
     }
 
+
+    @Override
+    public void onViewRecycled(ViewHolder holder) {
+        super.onViewRecycled(holder);
+        Glide.clear(holder.mImageView);
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private NetworkImageView mNetworkImageView;
+        private ImageView mImageView;
         private ItemClickListener mListener;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            mNetworkImageView = (NetworkImageView) itemView.findViewById(R.id.thumb_image);
-            mNetworkImageView.setOnClickListener(this);
+            mImageView = (ImageView) itemView.findViewById(R.id.thumb_image);
+            mImageView.setOnClickListener(this);
         }
 
         @Override
