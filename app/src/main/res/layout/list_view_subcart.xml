@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/primary"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/card_margin_horizontal"
+            android:paddingRight="@dimen/card_margin_horizontal"
+            android:paddingTop="@dimen/card_margin_horizontal">
+
+            <TextView
+                android:id="@+id/subcart_seller_name_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@string/font_normal"
+                android:textColor="@color/primary_text"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                tools:text="Anjani Kurti" />
+
+            <TextView
+                android:id="@+id/subcart_summary_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@string/font_normal"
+                android:gravity="end"
+                android:textColor="@color/primary_text"
+                android:textSize="16sp"
+                tools:text="15 pieces - Rs. 1000" />
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/sub_cart_items_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:descendantFocusability="afterDescendants"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="1dp"
+            android:listSelector="@android:color/transparent"
+            android:scrollbars="none" />
+
+</LinearLayout>

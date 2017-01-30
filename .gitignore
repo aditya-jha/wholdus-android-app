@@ -1,13 +1,19 @@
 *.iml
 .gradle
+/gradle.properties
 /local.properties
 /.idea/workspace.xml
+/.idea/statistic.xml
 /.idea/libraries
+.idea/modules.xml
+.idea/misc.xml
+.idea/gradle.xml
 .DS_Store
 /build
 /captures
 .externalNativeBuild
-
+.idea/gradle.xml
+.idea/modules.xml
 
 # Created by https://www.gitignore.io/api/linux,windows,android,java,git,c++,c
 
@@ -182,7 +188,8 @@ dkms.conf
 .mtj.tmp/
 
 # Package Files #
-*.jar
+app/*.jar
+build/*.jar
 *.war
 *.ear
 

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_product_detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.wholdus.www.wholdusbuyerapp.activities.ProductDetailActivity">
+
+    <include layout="@layout/default_toolbar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:isScrollContainer="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include layout="@layout/layout_image_card_view" />
+
+            <include layout="@layout/layout_product_details_card_view" />
+
+            <include layout="@layout/layout_delivery_card_view" />
+
+            <include layout="@layout/layout_replacement_card_view" />
+
+            <include layout="@layout/layout_more_product_details" />
+
+            <include layout="@layout/layout_seller_details" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/toolbar_drop_shadow" />
+
+    <LinearLayout
+        style="@style/ThemeOverlay.AppCompat.Light"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/primary"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/fav_icon"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/like_key"
+            android:paddingBottom="@dimen/card_margin_horizontal"
+            android:paddingEnd="@dimen/card_margin_horizontal"
+            android:paddingLeft="@dimen/activity_vertical_margin"
+            android:paddingRight="@dimen/card_margin_horizontal"
+            android:paddingStart="@dimen/activity_vertical_margin"
+            android:paddingTop="@dimen/card_margin_horizontal"
+            android:src="@drawable/ic_favorite_border_black_28dp" />
+
+        <ImageView
+            android:id="@+id/share_button"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/share_description"
+            android:paddingBottom="@dimen/card_margin_horizontal"
+            android:paddingEnd="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/card_margin_horizontal"
+            android:paddingRight="@dimen/activity_vertical_margin"
+            android:paddingStart="@dimen/card_margin_horizontal"
+            android:paddingTop="@dimen/card_margin_horizontal"
+            android:src="@drawable/ic_share_black_24dp" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/accent">
+
+            <TextView
+                android:id="@+id/cart_button"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:text="@string/add_to_cart"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
