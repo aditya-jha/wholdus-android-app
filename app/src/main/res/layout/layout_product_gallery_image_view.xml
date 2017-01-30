@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.wholdus.www.wholdusbuyerapp.helperClasses.TouchImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/gallery_image"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:adjustViewBounds="true" />
+    android:layout_height="match_parent">
+
+    <com.wholdus.www.wholdusbuyerapp.helperClasses.TouchImageView
+        android:id="@+id/gallery_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        tools:src="@drawable/slide_1" />
+</RelativeLayout>
