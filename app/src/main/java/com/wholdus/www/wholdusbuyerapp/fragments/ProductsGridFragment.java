@@ -33,10 +33,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.CartActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.CategoryProductActivity;
+import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.ProductDetailActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductsGridAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
@@ -232,6 +234,12 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
 
         mNoProducts = (CardView) view.findViewById(R.id.no_products);
 
+        TextView noProductsText = (TextView) view.findViewById(R.id.no_products_text);
+        if (mResponseCodes.size() == 1) {
+            filterButtonNoProducts.setText(getString(R.string.cart_summary_continue_shopping));
+            noProductsText.setVisibility(View.GONE);
+        }
+
         mSortFilterLayout = (LinearLayout) view.findViewById(R.id.sort_filter_sheet);
         mSlideInBottom = AnimationUtils.loadAnimation(getContext(), R.anim.bottom_sheet_in_bottom);
         mSlideInBottom.setAnimationListener(new Animation.AnimationListener() {
@@ -385,9 +393,19 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.filter_button:
-            case R.id.filter_button_no_products:
                 mListener.openFilter(true);
                 break;
+            case R.id.filter_button_no_products:
+                if (mResponseCodes.size() > 1) {
+                    mListener.openFilter(true);
+                    break;
+                } else {
+                    Intent intent = new Intent(getContext(), HandPickedActivity.class);
+                    FilterClass.resetFilter();
+                    FilterClass.resetCategoryFilter();
+                    startActivity(intent);
+                    break;
+                }
             case R.id.sort_button:
                 SortBottomSheetFragment.newInstance().show(getChildFragmentManager(), "Sort");
                 break;
