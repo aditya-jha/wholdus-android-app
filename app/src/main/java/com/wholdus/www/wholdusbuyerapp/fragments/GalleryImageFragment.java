@@ -29,6 +29,7 @@ public class GalleryImageFragment extends Fragment {
 
     private String mImageUrl, mName, mUrl;
     private ItemClickListener mListener;
+    private TouchImageView mImageView;
 
     public GalleryImageFragment() {
     }
@@ -36,32 +37,38 @@ public class GalleryImageFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            mListener = (ItemClickListener) context;
-        } catch (ClassCastException cee) {
-            cee.printStackTrace();
-        }
+        mListener = (ItemClickListener) context;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        final TouchImageView imageView = (TouchImageView) inflater.inflate(R.layout.layout_product_gallery_image_view, container, false);
-        Glide.with(this).load(mImageUrl).asBitmap().thumbnail(0.05f).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(new SimpleTarget<Bitmap>() {
-            @Override
-            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                imageView.setImageBitmap(resource);
-            }
-        });
+        return inflater.inflate(R.layout.layout_product_gallery_image_view, container, false);
+    }
 
-        imageView.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mImageView = (TouchImageView) view.findViewById(R.id.gallery_image);
+
+        Glide.with(getContext())
+                .load(mImageUrl)
+                .asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        mImageView.setImageBitmap(resource);
+                    }
+                });
+
+        mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mListener.itemClicked(view, -1, -1);
             }
         });
-        return imageView;
     }
 
     @Override

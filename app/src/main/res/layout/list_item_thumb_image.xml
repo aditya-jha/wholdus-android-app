@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.android.volley.toolbox.NetworkImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/thumb_image"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:adjustViewBounds="true"
-    android:paddingEnd="@dimen/text_divider_gap"
-    android:paddingLeft="@dimen/text_divider_gap"
-    android:paddingRight="@dimen/text_divider_gap"
-    android:paddingStart="@dimen/text_divider_gap" />
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/thumb_image"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:adjustViewBounds="true"
+        android:paddingEnd="@dimen/text_divider_gap"
+        android:paddingLeft="@dimen/text_divider_gap"
+        android:paddingRight="@dimen/text_divider_gap"
+        android:paddingStart="@dimen/text_divider_gap" />
+</RelativeLayout>
