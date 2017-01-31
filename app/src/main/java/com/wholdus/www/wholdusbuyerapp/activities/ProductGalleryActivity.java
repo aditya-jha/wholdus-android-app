@@ -106,7 +106,7 @@ public class ProductGalleryActivity extends AppCompatActivity
                 }
             });
 
-            ArrayList<String> thumbImages = data.getAllImageUrls(Constants.THUMB_IMAGE);
+            ArrayList<String> thumbImages = data.getAllImageUrls(Constants.EXTRA_SMALL_IMAGE);
             if (thumbImages.size() <= 1) {
                 mThumbImagesView.setVisibility(View.GONE);
             }
