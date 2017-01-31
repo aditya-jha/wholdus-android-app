@@ -1,5 +1,7 @@
 package com.wholdus.www.wholdusbuyerapp.interfaces;
 
+import android.view.View;
+
 /**
  * Created by kaustubh on 17/12/16.
  */

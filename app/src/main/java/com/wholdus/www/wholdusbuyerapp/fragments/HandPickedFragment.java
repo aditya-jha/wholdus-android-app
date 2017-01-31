@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -13,7 +15,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
-import android.util.Log;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,8 +32,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.support.v7.widget.Toolbar;
 
 import com.daprlabs.aaron.swipedeck.SwipeDeck;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.CartActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.CategoryProductActivity;
@@ -42,7 +49,6 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
-import com.wholdus.www.wholdusbuyerapp.interfaces.CartDialogListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HandPickedListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProductCardListenerInterface;
@@ -52,6 +58,8 @@ import com.wholdus.www.wholdusbuyerapp.services.BuyerProductService;
 import com.wholdus.www.wholdusbuyerapp.services.CatalogService;
 
 import java.util.ArrayList;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by kaustubh on 17/12/16.
@@ -79,6 +87,12 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     private static final int ANIMATION_DURATION = 250;
     private CartMenuItemHelper mCartMenuItemHelper;
 
+    private static final String
+            INSTRUCTIONS_SHARED_PREFERENCES = "InstructionsSharedPreference",
+            LIKED_DISLIKED_BUTTONS_KEY = "LikedDislikedButtonsKey",
+            SHORTLIST_ICON_KEY = "ShortlistIconKey";
+    private boolean mShowLikedDislikedInstructions, mShowShortlistInstructions;
+
     public HandPickedFragment() {
     }
 
@@ -91,6 +105,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             cee.printStackTrace();
         }
     }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -161,6 +176,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         }
 
         dismissDialog();
+
     }
 
     @Override
@@ -204,7 +220,6 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         inflater.inflate(R.menu.default_action_buttons, menu);
         mCartMenuItemHelper = new CartMenuItemHelper(getContext(), menu.findItem(R.id.action_bar_checkout), getActivity().getSupportLoaderManager());
         mCartMenuItemHelper.restartLoader();
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -336,6 +351,19 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         mNoProductsLeftProgressBar = (ProgressBar) rootView.findViewById(R.id.loading_indicator);
 
         resetProducts();
+
+        SharedPreferences instructionsPreferences = getActivity().getSharedPreferences(INSTRUCTIONS_SHARED_PREFERENCES, MODE_PRIVATE);
+        mShowLikedDislikedInstructions = instructionsPreferences.getBoolean(LIKED_DISLIKED_BUTTONS_KEY, true);
+        mShowShortlistInstructions = instructionsPreferences.getBoolean(SHORTLIST_ICON_KEY, true);
+
+        if (mShowLikedDislikedInstructions) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startLikeDislikeInstructions();
+                }
+            }, 800);
+        }
     }
 
     private void fetchBuyerProducts() {
@@ -409,6 +437,15 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     }
 
     private void actionAfterSwipe(boolean liked) {
+
+        if (liked && mShowShortlistInstructions){
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    showShortlistInstructions();
+                }
+            }, 500);
+        }
 
         sendBuyerProductResponse(liked);
 
@@ -616,4 +653,99 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         }
         mTotalProductPages = totalPages;
     }
+
+    public void startLikeDislikeInstructions() {
+        if (getView() == null || !mShowLikedDislikedInstructions) {
+            return;
+        }
+        new TapTargetSequence(getActivity())
+                .targets(
+                        TapTarget.forView(
+                                getView().findViewById(R.id.hand_picked_like_button),
+                                getResources().getString(R.string.liked_help_title),
+                                getResources().getString(R.string.liked_help_description)
+                        )
+                                .outerCircleColor(R.color.accent)
+                                .descriptionTextColor(R.color.primary)
+                                .transparentTarget(false),
+                        TapTarget.forView(
+                                getView().findViewById(R.id.hand_picked_dislike_button),
+                                getResources().getString(R.string.disliked_help_title),
+                                getResources().getString(R.string.disliked_help_description)
+                        )
+                                .outerCircleColor(R.color.primary_text)
+                                .descriptionTextColor(R.color.primary)
+                                .transparentTarget(false)
+                )
+                .continueOnCancel(true)
+                .listener(new TapTargetSequence.Listener() {
+                    @Override
+                    public void onSequenceFinish() {
+                        SharedPreferences instructionsPreferences = getActivity().getSharedPreferences(INSTRUCTIONS_SHARED_PREFERENCES, MODE_PRIVATE);
+                        SharedPreferences.Editor editor = instructionsPreferences.edit();
+                        editor.putBoolean(LIKED_DISLIKED_BUTTONS_KEY, false);
+                        editor.apply();
+                        mShowLikedDislikedInstructions = false;
+                    }
+
+                    @Override
+                    public void onSequenceStep(TapTarget lastTarget) {
+
+                    }
+
+                    @Override
+                    public void onSequenceCanceled(TapTarget lastTarget) {
+
+                    }
+                })
+                .start();
+    }
+
+    public void showShortlistInstructions() {
+        if (!mShowShortlistInstructions) {
+            return;
+        }
+
+        int iconWidth = 54;
+        int toolbarHeight = 52;
+
+        /*
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.default_toolbar);
+        if (toolbar != null){
+            toolbarHeight = getDPFromPixels(toolbar.getHeight());
+        }*/
+
+        Rect shortListIconView = new Rect(0, 0, getPixelsFromDP(iconWidth), getPixelsFromDP(toolbarHeight));
+
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int width = displaymetrics.widthPixels;
+        shortListIconView.offset(width - getPixelsFromDP(iconWidth * 2), getPixelsFromDP(toolbarHeight / 2));
+
+        TapTargetView.showFor(
+                getActivity(),
+                TapTarget.forBounds(
+                        shortListIconView,
+                        getResources().getString(R.string.shortlist_help_title),
+                        getResources().getString(R.string.shortlist_help_description))
+                        .outerCircleColor(R.color.accent)
+                        .descriptionTextColor(R.color.primary)
+                        .transparentTarget(true)
+        );
+
+        SharedPreferences instructionsPreferences = getActivity().getSharedPreferences(INSTRUCTIONS_SHARED_PREFERENCES, MODE_PRIVATE);
+        SharedPreferences.Editor editor = instructionsPreferences.edit();
+        editor.putBoolean(SHORTLIST_ICON_KEY, false);
+        editor.apply();
+        mShowShortlistInstructions = false;
+    }
+
+    private int getPixelsFromDP(int dp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
+    }
+
+    public int getDPFromPixels(int px) {
+        return Math.round(px / (getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+
 }

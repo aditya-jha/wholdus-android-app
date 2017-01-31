@@ -11,4 +11,5 @@
         android:fitsSystemWindows="true"
         android:gravity="center_vertical"
         android:minHeight="?actionBarSize" />
+
 </android.support.design.widget.AppBarLayout>
