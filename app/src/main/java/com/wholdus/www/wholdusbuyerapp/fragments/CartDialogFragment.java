@@ -141,6 +141,7 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
 
         mAddtoCartButton = (Button) rootView.findViewById(R.id.cart_dialog_add_to_cart_button);
         mAddtoCartButton.setOnClickListener(this);
+        mAddtoCartButton.setEnabled(false);
     }
 
     public void setViewOnLoad() {
@@ -179,6 +180,8 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
         if (mProduct.getDeleteStatus() || !mProduct.getShowOnline()){
             mAddtoCartButton.setEnabled(false);
             mAddtoCartButton.setText(R.string.out_of_stock_key);
+        } else {
+            mAddtoCartButton.setEnabled(true);
         }
 
     }
