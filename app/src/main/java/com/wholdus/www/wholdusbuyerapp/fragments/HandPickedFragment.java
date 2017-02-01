@@ -90,8 +90,9 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     private static final String
             INSTRUCTIONS_SHARED_PREFERENCES = "InstructionsSharedPreference",
             LIKED_DISLIKED_BUTTONS_KEY = "LikedDislikedButtonsKey",
-            SHORTLIST_ICON_KEY = "ShortlistIconKey";
-    private boolean mShowLikedDislikedInstructions, mShowShortlistInstructions;
+            SHORTLIST_ICON_KEY = "ShortlistIconKey",
+            FILTER_ICON_KEY = "FilterIconKey";
+    private boolean mShowLikedDislikedInstructions, mShowShortlistInstructions, mShowFilterInstructions;
 
     public HandPickedFragment() {
     }
