@@ -184,7 +184,7 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
     }
 
     public void addProductToCart() {
-        if (mOldLots != mLots) {
+        if (mOldLots != mLots && mProduct != null) {
             Intent intent = new Intent(getContext(), CartService.class);
             intent.putExtra("TODO", R.string.write_cart_item);
             intent.putExtra(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, mProduct.getProductID());
