@@ -190,6 +190,10 @@ public class AccountActivity extends AppCompatActivity implements ProfileListene
     private void openToFragment(String fragmentName, @Nullable Bundle bundle) {
         Fragment fragment;
 
+        if (fragmentName == null){
+            fragmentName = ProfileFragment.class.getSimpleName();
+        }
+
         if (fragmentName.equals(ProfileFragment.class.getSimpleName())) {
             fragment = new ProfileFragment();
         } else if (fragmentName.equals(OrdersFragment.class.getSimpleName())) {

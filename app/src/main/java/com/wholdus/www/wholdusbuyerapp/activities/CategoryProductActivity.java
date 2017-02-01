@@ -244,7 +244,7 @@ public class CategoryProductActivity extends AppCompatActivity
     private void openToFragment(String fragmentName, @NonNull Bundle bundle) {
         Fragment fragment;
 
-        if (fragmentName.equals("")){
+        if (fragmentName == null || fragmentName.equals("")){
             fragmentName = ProductsGridFragment.class.getSimpleName();
         }
 
