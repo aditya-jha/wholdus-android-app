@@ -563,7 +563,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
 
         @Override
         public void onLoadFinished(Loader<ArrayList<Product>> loader, ArrayList<Product> data) {
-            if (data != null) {
+            if (data != null && mListener != null) {
                 setViewForProducts(data);
             }
         }

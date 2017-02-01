@@ -139,6 +139,12 @@ public class BuyerAddressFragment extends Fragment implements LoaderManager.Load
 
         mNoAddressTextView = (TextView) rootView.findViewById(R.id.no_address_text_view);
         mNoAddressTextView.setVisibility(View.INVISIBLE);
+        mNoAddressTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.editAddress(-1, -1);
+            }
+        });
 
         mAddAddressTextView = (TextView) rootView.findViewById(R.id.add_address_text_view);
         mAddAddressTextView.setOnClickListener(new View.OnClickListener() {
@@ -170,7 +176,7 @@ public class BuyerAddressFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<ArrayList<BuyerAddress>> loader, ArrayList<BuyerAddress> address) {
-        if (address != null) {
+        if (address != null && mListener != null) {
             if (address.isEmpty() && mAPIDataLoaded) {
                 mNoAddressTextView.setVisibility(View.VISIBLE);
             } else if (!address.isEmpty()) {

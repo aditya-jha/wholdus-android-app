@@ -142,7 +142,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public void onLoadFinished(Loader<Buyer> loader, Buyer buyer) {
-        if (buyer == null || buyer.getMobileNumber() == null) return;
+        if (buyer == null || buyer.getMobileNumber() == null || mListener == null) return;
 
         mPageLoader.setVisibility(View.INVISIBLE);
         mProfileCard.setVisibility(View.VISIBLE);

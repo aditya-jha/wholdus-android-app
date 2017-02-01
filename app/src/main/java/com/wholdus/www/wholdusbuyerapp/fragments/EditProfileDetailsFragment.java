@@ -141,7 +141,7 @@ public class EditProfileDetailsFragment extends Fragment implements LoaderManage
 
     @Override
     public void onLoadFinished(Loader<EditProfileData> loader, EditProfileData data) {
-        if (data != null) {
+        if (data != null && mListener != null) {
             setViewForPersonalDetails(data.getBuyer());
             setViewForBusinessTypes(data.getBusinessType());
         }

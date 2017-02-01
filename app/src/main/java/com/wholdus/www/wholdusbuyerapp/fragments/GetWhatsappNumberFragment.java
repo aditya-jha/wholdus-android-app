@@ -155,7 +155,7 @@ public class GetWhatsappNumberFragment extends Fragment implements LoaderManager
 
     @Override
     public void onLoadFinished(Loader<Buyer> loader, Buyer data) {
-        if (data != null){
+        if (data != null && mListener != null){
             mBuyer = data;
             mMobileNumberEditText.setText(mBuyer.getWhatsappNumber());
         }
