@@ -160,6 +160,10 @@ public class OnBoardingActivity extends AppCompatActivity implements OnBoardingL
     private void openToFragment(String fragmentName, @Nullable Bundle bundle) {
         Fragment fragment;
 
+        if (fragmentName == null){
+            fragmentName = GetBusinessTypeFragment.class.getSimpleName();
+        }
+
         if (fragmentName.equals(GetWhatsappNumberFragment.class.getSimpleName())) {
             fragment = new GetWhatsappNumberFragment();
             mStepCount.setText("Step 2 of 3");

@@ -81,6 +81,10 @@ public class NotificationActivity extends AppCompatActivity implements Notificat
     private void openToFragment(String fragmentName, @Nullable Bundle bundle) {
         Fragment fragment;
 
+        if (fragmentName == null){
+            fragmentName = "notification";
+        }
+
         switch (fragmentName) {
             case "notification":
                 fragment = new NotificationFragment();

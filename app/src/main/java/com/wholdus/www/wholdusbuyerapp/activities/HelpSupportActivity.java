@@ -95,6 +95,10 @@ public class HelpSupportActivity extends AppCompatActivity implements HelpSuppor
     private void openToFragment(String fragmentName, @Nullable Bundle bundle) {
         Fragment fragment;
 
+        if (fragmentName == null){
+            fragmentName = ContactUsFragment.class.getSimpleName();
+        }
+
         if (fragmentName.equals(FAQFragment.class.getSimpleName())) {
             fragment = new FAQFragment();
         } else if (fragmentName.equals(HelpSupportFragment.class.getSimpleName())) {

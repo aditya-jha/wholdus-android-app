@@ -261,7 +261,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     private void openToFragment(String fragmentName, @Nullable Bundle bundle) {
         Fragment fragment;
 
-        if (fragmentName.equals("")){
+        if (fragmentName == null || fragmentName.equals("")){
             fragmentName = HomeFragment.class.getSimpleName();
         }
 

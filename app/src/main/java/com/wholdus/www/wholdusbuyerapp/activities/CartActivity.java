@@ -330,6 +330,10 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     private void openToFragment(String fragmentName, @Nullable Bundle bundle) {
         Fragment fragment;
 
+        if (fragmentName == null){
+            fragmentName = CartSummaryFragment.class.getSimpleName();
+        }
+
         if (fragmentName.equals(CartSummaryFragment.class.getSimpleName())) {
             mProgressBar.setVisibility(View.VISIBLE);
             resetAllIDs();
