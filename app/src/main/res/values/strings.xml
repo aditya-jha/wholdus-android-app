@@ -179,6 +179,12 @@
     <string name="no_products_left">Return in some time for more products</string>
     <string name="filter_no_products">No products for filter</string>
     <string name="reset_filter">CHANGE FILTERS</string>
+    <string name="liked_help_title">CLICK TO LIKE</string>
+    <string name="liked_help_description">Press this button\nOR\nSWIPE RIGHT\nto add product to your shortlist</string>
+    <string name="disliked_help_title">CLICK TO DISLIKE</string>
+    <string name="disliked_help_description">Press this button\nOR\nSWIPE LEFT\nto reject product</string>
+    <string name="shortlist_help_title">VIEW SHORTLIST</string>
+    <string name="shortlist_help_description">You can view your shortlist by pressing this button</string>
 
     <!-- cart dialog fragment -->
     <string name="lot_size_key">Lot Size &#160;</string>
