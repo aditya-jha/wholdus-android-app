@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.google.firebase.crash.FirebaseCrash;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ShareIntentClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TouchImageView;
@@ -37,7 +38,11 @@ public class GalleryImageFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mListener = (ItemClickListener) context;
+        try {
+            mListener = (ItemClickListener) context;
+        } catch (ClassCastException cee) {
+            FirebaseCrash.report(cee);
+        }
     }
 
     @Nullable
