@@ -707,21 +707,23 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             return;
         }
 
-        int iconWidth = 54;
-        int toolbarHeight = 52;
+        int iconWidth = 53;
+        int toolbarHeight = 56;
+        int iconSize = 24;
 
-        /*
+        toolbarHeight = getPixelsFromDP( (toolbarHeight - iconSize) / 2);
+
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.default_toolbar);
         if (toolbar != null){
-            toolbarHeight = getDPFromPixels(toolbar.getHeight());
-        }*/
+            toolbarHeight = toolbar.getHeight() - getPixelsFromDP(iconSize/2);
+        }
 
-        Rect shortListIconView = new Rect(0, 0, getPixelsFromDP(iconWidth), getPixelsFromDP(toolbarHeight));
+        Rect shortListIconView = new Rect(0, 0, getPixelsFromDP(iconSize), getPixelsFromDP(iconSize));
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int width = displaymetrics.widthPixels;
-        shortListIconView.offset(width - getPixelsFromDP(iconWidth * 2), getPixelsFromDP(toolbarHeight / 2));
+        shortListIconView.offset(width - getPixelsFromDP(iconWidth*3/2) - getPixelsFromDP(iconSize/2), toolbarHeight);
 
         TapTargetView.showFor(
                 getActivity(),
