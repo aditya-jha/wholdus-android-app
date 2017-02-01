@@ -35,6 +35,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.CartActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.CategoryProductActivity;
@@ -468,23 +469,31 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     }
 
     public void loadData() {
-        String filter = FilterClass.getFilterString();
-        if (mFilters == null || !FilterClass.getFilterString().equals(mFilters)) {
-            setVisibility(View.VISIBLE, View.INVISIBLE, View.INVISIBLE);
-            mFilters = filter;
-            resetVariables();
-            getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, ProductsGridFragment.this);
-            mRequestQueue.add(1);
-            fetchProductsFromServer();
+        try {
+            String filter = FilterClass.getFilterString();
+            if (mFilters == null || !FilterClass.getFilterString().equals(mFilters)) {
+                setVisibility(View.VISIBLE, View.INVISIBLE, View.INVISIBLE);
+                mFilters = filter;
+                resetVariables();
+                getActivity().getSupportLoaderManager().restartLoader(PRODUCTS_GRID_LOADER, null, ProductsGridFragment.this);
+                mRequestQueue.add(1);
+                fetchProductsFromServer();
+            }
+        } catch (Exception e) {
+            FirebaseCrash.report(e);
         }
     }
 
     private void setVisibility(int loader, int layout, int error) {
-        mPageLoader.setVisibility(loader);
-        mPageLayout.setVisibility(layout);
-        mNoProducts.setVisibility(error);
-        if (loader == View.INVISIBLE){
-            showSortFilterLayout();
+        try {
+            mPageLoader.setVisibility(loader);
+            mPageLayout.setVisibility(layout);
+            mNoProducts.setVisibility(error);
+            if (loader == View.INVISIBLE){
+                showSortFilterLayout();
+            }
+        } catch (Exception e) {
+            FirebaseCrash.report(e);
         }
     }
 
