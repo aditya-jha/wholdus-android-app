@@ -131,7 +131,7 @@ public class OrderDetailsFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Order>> loader, ArrayList<Order> data) {
-        if (data != null && data.size() == 1 && mOrder == null) {
+        if (data != null && data.size() == 1 && mOrder == null  && mListener != null) {
             mPageLoader.setVisibility(View.INVISIBLE);
             mPageLayout.setVisibility(View.VISIBLE);
             mOrder = data.get(0);

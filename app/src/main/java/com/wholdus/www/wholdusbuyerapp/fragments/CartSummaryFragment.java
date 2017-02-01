@@ -231,7 +231,7 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
     @Override
     public void onLoadFinished(Loader<Cart> loader, Cart data) {
         mCart = data;
-        if (data != null) {
+        if (data != null && mListener != null) {
             if (data.getSynced() == 1) {
                 if (data.getPieces() > 0) {
                     setViewForCart();
@@ -241,7 +241,7 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
             } else {
                 setViewForUnsyncedCart();
             }
-        } else {
+        } else if (mListener != null) {
             setViewForEmptyCart();
         }
     }

@@ -63,7 +63,7 @@
     <!-- Profile Fragment -->
     <string name="personal_details">Personal Details</string>
     <string name="address">Address</string>
-    <string name="no_address">No address Saved</string>
+    <string name="no_address">ADD ADDRESS</string>
     <string name="add_key">ADD</string>
 
     <!-- Edit Profile Fragment -->
