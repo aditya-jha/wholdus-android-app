@@ -125,6 +125,10 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
     private void openToFragment(String fragmentName, @Nullable Bundle bundle) {
         Fragment fragment;
 
+        if (fragmentName == null){
+            fragmentName = "handpicked";
+        }
+
         switch (fragmentName) {
             case "handpicked":
                 fragment = new HandPickedFragment();
