@@ -90,8 +90,9 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     private static final String
             INSTRUCTIONS_SHARED_PREFERENCES = "InstructionsSharedPreference",
             LIKED_DISLIKED_BUTTONS_KEY = "LikedDislikedButtonsKey",
-            SHORTLIST_ICON_KEY = "ShortlistIconKey";
-    private boolean mShowLikedDislikedInstructions, mShowShortlistInstructions;
+            SHORTLIST_ICON_KEY = "ShortlistIconKey",
+            FILTER_ICON_KEY = "FilterIconKey";
+    private boolean mShowLikedDislikedInstructions, mShowShortlistInstructions, mShowFilterInstructions;
 
     public HandPickedFragment() {
     }
@@ -335,8 +336,12 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             @Override
             public void onClick(View view) {
                 filterButtonLayout.startAnimation(animButtonScale);
-                mListener.openFilter(true);
-                mListener.fragmentCreated("Filter");
+                if (mShowFilterInstructions) {
+                    showFilterInstructions();
+                } else {
+                    mListener.openFilter(true);
+                    mListener.fragmentCreated("Filter");
+                }
             }
         });
 
@@ -355,6 +360,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         SharedPreferences instructionsPreferences = getActivity().getSharedPreferences(INSTRUCTIONS_SHARED_PREFERENCES, MODE_PRIVATE);
         mShowLikedDislikedInstructions = instructionsPreferences.getBoolean(LIKED_DISLIKED_BUTTONS_KEY, true);
         mShowShortlistInstructions = instructionsPreferences.getBoolean(SHORTLIST_ICON_KEY, true);
+        mShowFilterInstructions = instructionsPreferences.getBoolean(FILTER_ICON_KEY, true);
 
         if (mShowLikedDislikedInstructions) {
             new Handler().postDelayed(new Runnable() {
@@ -706,21 +712,23 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             return;
         }
 
-        int iconWidth = 54;
-        int toolbarHeight = 52;
+        int iconWidth = 53;
+        int toolbarHeight = 56;
+        int iconSize = 24;
 
-        /*
+        toolbarHeight = getPixelsFromDP( (toolbarHeight - iconSize) / 2);
+
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.default_toolbar);
         if (toolbar != null){
-            toolbarHeight = getDPFromPixels(toolbar.getHeight());
-        }*/
+            toolbarHeight = toolbar.getHeight() - getPixelsFromDP(iconSize/2);
+        }
 
-        Rect shortListIconView = new Rect(0, 0, getPixelsFromDP(iconWidth), getPixelsFromDP(toolbarHeight));
+        Rect shortListIconView = new Rect(0, 0, getPixelsFromDP(iconSize), getPixelsFromDP(iconSize));
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int width = displaymetrics.widthPixels;
-        shortListIconView.offset(width - getPixelsFromDP(iconWidth * 2), getPixelsFromDP(toolbarHeight / 2));
+        shortListIconView.offset(width - getPixelsFromDP(iconWidth*3/2) - getPixelsFromDP(iconSize/2), toolbarHeight);
 
         TapTargetView.showFor(
                 getActivity(),
@@ -738,6 +746,54 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         editor.putBoolean(SHORTLIST_ICON_KEY, false);
         editor.apply();
         mShowShortlistInstructions = false;
+    }
+
+    public void showFilterInstructions(){
+        if (getView() == null || !mShowFilterInstructions) {
+            return;
+        }
+        new TapTargetSequence(getActivity())
+                .targets(
+                        TapTarget.forView(
+                                getView().findViewById(R.id.hand_picked_filter_button),
+                                getResources().getString(R.string.filter_help_title),
+                                getResources().getString(R.string.filter_help_description)
+                        )
+                                .outerCircleColor(R.color.accent)
+                                .descriptionTextColor(R.color.primary)
+                                .transparentTarget(false)
+                )
+                .continueOnCancel(true)
+                .listener(new TapTargetSequence.Listener() {
+                    @Override
+                    public void onSequenceFinish() {
+                        SharedPreferences instructionsPreferences = getActivity().getSharedPreferences(INSTRUCTIONS_SHARED_PREFERENCES, MODE_PRIVATE);
+                        SharedPreferences.Editor editor = instructionsPreferences.edit();
+                        editor.putBoolean(FILTER_ICON_KEY, false);
+                        editor.apply();
+                        mShowFilterInstructions = false;
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mListener.openFilter(true);
+                                mListener.fragmentCreated("Filter");
+                            }
+                        }, 500);
+
+                    }
+
+                    @Override
+                    public void onSequenceStep(TapTarget lastTarget) {
+
+                    }
+
+                    @Override
+                    public void onSequenceCanceled(TapTarget lastTarget) {
+
+                    }
+                })
+                .start();
     }
 
     private int getPixelsFromDP(int dp) {
