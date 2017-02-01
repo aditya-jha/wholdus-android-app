@@ -521,7 +521,7 @@ public class EditAddressFragment extends Fragment implements
 
     @Override
     public void onLoadFinished(Loader<ArrayList<BuyerAddress>> loader, ArrayList<BuyerAddress> data) {
-        if (data != null && data.size() > 0){
+        if (data != null && data.size() > 0 && mListener != null){
             mProgressBar.setVisibility(View.INVISIBLE);
             mBuyerAddress = data.get(0);
             setViewFromData(mBuyerAddress);
@@ -542,7 +542,7 @@ public class EditAddressFragment extends Fragment implements
 
         @Override
         public void onLoadFinished(Loader<Buyer> loader, Buyer data) {
-            if (data != null && mMobileNumberEditText.getText().toString().equals("")) {
+            if (data != null && mMobileNumberEditText.getText().toString().equals("") && mListener != null) {
                 mMobileNumberEditText.setText(data.getMobileNumber());
             }
         }

@@ -178,7 +178,7 @@ public class CategoryGridFragment extends Fragment implements
     @Override
     public void onLoadFinished(Loader<ArrayList<Category>> loader, final ArrayList<Category> data) {
         mLoaderDataLoaded = true;
-        if (data != null && data.size() > 0) {
+        if (data != null && data.size() > 0 && mListener != null) {
             setDataToView(data);
             mPageLoader.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);

@@ -132,7 +132,7 @@ public class NotificationFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Notification>> loader, ArrayList<Notification> data) {
-        if (data != null) {
+        if (data != null && mListener != null) {
             setViewForNotifications(data);
         }
     }

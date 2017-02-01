@@ -278,7 +278,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
 
         @Override
         public void onLoadFinished(Loader<ArrayList<Product>> loader, ArrayList<Product> data) {
-            if (data != null && data.size() > 0 && mProducts.isEmpty()) {
+            if (data != null && data.size() > 0 && mProducts.isEmpty() && mListener != null) {
                 setViewForProducts(data);
             }
         }
@@ -301,7 +301,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
 
         @Override
         public void onLoadFinished(Loader<ArrayList<Category>> loader, ArrayList<Category> data) {
-            if (data != null && data.size() > 0 && mCategories.isEmpty()) {
+            if (data != null && data.size() > 0 && mCategories.isEmpty() && mListener != null) {
                 setViewForCategories(data);
                 mProgressBar.setVisibility(View.GONE);
             }

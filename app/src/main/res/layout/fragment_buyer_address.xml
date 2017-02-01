@@ -55,9 +55,14 @@
 
             <TextView
                 android:id="@+id/no_address_text_view"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
                 android:padding="@dimen/activity_vertical_margin"
+                android:textColor="@color/primary_text"
+                android:drawableStart="@drawable/ic_add_black_24dp"
+                android:drawableLeft="@drawable/ic_add_black_24dp"
                 android:text="@string/no_address" />
 e
             <ListView
