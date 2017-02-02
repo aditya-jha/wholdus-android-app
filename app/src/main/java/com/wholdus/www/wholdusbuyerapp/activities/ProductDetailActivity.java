@@ -197,8 +197,8 @@ public class ProductDetailActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         mCartServiceResponseReceiver = null;
     }
 
