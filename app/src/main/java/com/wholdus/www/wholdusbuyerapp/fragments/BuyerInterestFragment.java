@@ -103,11 +103,6 @@ public class BuyerInterestFragment extends Fragment implements LoaderManager.Loa
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
         if (mSnackbar != null && mSnackbar.isShownOrQueued()) {

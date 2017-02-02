@@ -98,11 +98,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
         mReceiver = null;

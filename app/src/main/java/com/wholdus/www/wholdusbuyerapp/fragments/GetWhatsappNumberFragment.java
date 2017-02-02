@@ -94,11 +94,6 @@ public class GetWhatsappNumberFragment extends Fragment implements LoaderManager
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;

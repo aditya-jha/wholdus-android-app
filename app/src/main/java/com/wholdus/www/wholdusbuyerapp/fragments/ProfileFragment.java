@@ -119,11 +119,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
         mUserServiceResponseReceiver = null;
