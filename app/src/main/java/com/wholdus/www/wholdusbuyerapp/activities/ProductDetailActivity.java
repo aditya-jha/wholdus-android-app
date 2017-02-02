@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.ThumbImageAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract;
@@ -40,6 +41,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.OkHttpHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ShareIntentClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TrackingHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartDialogListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.CartItemLoader;
@@ -150,6 +152,14 @@ public class ProductDetailActivity extends AppCompatActivity
                 onReceiveCartIntent(intent);
             }
         };
+
+        // tracking
+        TrackingHelper.getInstance(this).logEvent(
+                FirebaseAnalytics.Event.VIEW_ITEM,
+                "product_detail_view",
+                String.valueOf(mProductID)
+        );
+        //end tracking
     }
 
 
@@ -187,13 +197,9 @@ public class ProductDetailActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-
         try {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(mCartServiceResponseReceiver);
-        } catch (Exception e) {
-
-        }
-
+        } catch (Exception e) {}
     }
 
     @Override
