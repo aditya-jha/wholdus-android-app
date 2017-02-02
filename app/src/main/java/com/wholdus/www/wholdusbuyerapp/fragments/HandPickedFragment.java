@@ -82,7 +82,8 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     private ProgressBar mNoProductsLeftProgressBar;
     private int mPosition = 0, mProductsLeft = 0, mProductBuffer = 8, mProductsPageNumber, mTotalProductPages;
     private boolean mHasSwiped = true, mFirstLoad = true, mButtonEnabled, mCartButtonEnabled = true;
-    private final int mProductsLimit = 20;
+
+    private static final int mProductsLimit = 20;
 
     private static final int ANIMATION_DURATION = 250;
     private CartMenuItemHelper mCartMenuItemHelper;

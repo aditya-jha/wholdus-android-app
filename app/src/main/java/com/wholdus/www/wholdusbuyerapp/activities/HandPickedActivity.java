@@ -14,6 +14,7 @@ import android.view.View;
 
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.fragments.FilterFragment;
@@ -31,6 +32,7 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
         CategoryProductListenerInterface, CartDialogListener {
 
     private Toolbar mToolbar;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +48,7 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
             extras = null;
         }
 
-        //FilterClass.resetCategoryFilter();
-        //FilterClass.resetFilter();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         openToFragment(getFragmentToOpenName(savedInstanceState), extras);
     }
@@ -159,6 +160,12 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
     }
 
     public void openProductDetails(int productID){
+
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "handpicked_product_detail");
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, String.valueOf(productID));
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
         Intent intent = new Intent(this, ProductDetailActivity.class);
         intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME, productID);
         startActivity(intent);
