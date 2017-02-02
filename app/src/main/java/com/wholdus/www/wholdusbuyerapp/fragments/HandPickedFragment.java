@@ -117,9 +117,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         Bundle mArgs = getArguments();
         try {
             mProductIDs = mArgs.getIntegerArrayList(CatalogContract.ProductsTable.TABLE_NAME);
-        } catch (Exception e) {
-
-        }
+        } catch (Exception e) {}
     }
 
     @Nullable
@@ -342,6 +340,11 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         mFilterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                TrackingHelper.getInstance(getContext()).logEvent(
+                        FirebaseAnalytics.Event.SELECT_CONTENT,
+                        "hand_picked_filter_button",
+                        "filter"
+                );
                 filterButtonLayout.startAnimation(animButtonScale);
                 if (mShowFilterInstructions) {
                     showFilterInstructions();
