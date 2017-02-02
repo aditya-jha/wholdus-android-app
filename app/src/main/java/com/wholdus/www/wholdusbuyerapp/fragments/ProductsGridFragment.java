@@ -263,8 +263,10 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         });
         mSlideOutBottom = AnimationUtils.loadAnimation(getContext(), R.anim.bottom_sheet_out_bottom);
 
-        TrackingHelper.getInstance(getContext())
-                .logEvent(FirebaseAnalytics.Event.VIEW_ITEM, this.getClass().getSimpleName(), "");
+        try {
+            TrackingHelper.getInstance(getContext())
+                    .logEvent(FirebaseAnalytics.Event.VIEW_ITEM, this.getClass().getSimpleName(), String.valueOf(mResponseCodes.get(0)));
+        } catch (Exception e) {}
     }
 
     @Override

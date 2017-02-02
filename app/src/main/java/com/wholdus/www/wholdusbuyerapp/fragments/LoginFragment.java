@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
@@ -25,6 +26,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.LoginHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TrackingHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.LoginSignupListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.services.FirebaseNotificationService;
 import com.wholdus.www.wholdusbuyerapp.services.LoginAPIService;
@@ -213,6 +215,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    TrackingHelper.getInstance(getContext())
+                                            .logEvent(FirebaseAnalytics.Event.SIGN_UP, this.getClass().getSimpleName(), "loggedIn");
                                     mProgressBar.setVisibility(View.INVISIBLE);
                                     Toast.makeText(getContext(), getString(R.string.api_error_message), Toast.LENGTH_SHORT).show();
                                 }
@@ -222,6 +226,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Vie
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        TrackingHelper.getInstance(getContext())
+                                                .logEvent(FirebaseAnalytics.Event.SIGN_UP, LoginFragment.class.getSimpleName(), "loggedIn");
                                         mProgressBar.setVisibility(View.INVISIBLE);
                                         getContext().startService(new Intent(getActivity().getApplicationContext(), FirebaseNotificationService.class));
                                         mListener.loginSuccess(false);

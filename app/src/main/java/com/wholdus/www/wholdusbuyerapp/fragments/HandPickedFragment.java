@@ -38,6 +38,7 @@ import com.daprlabs.aaron.swipedeck.SwipeDeck;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.getkeepsafe.taptargetview.TapTargetView;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.CartActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.CategoryProductActivity;
@@ -49,6 +50,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TrackingHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HandPickedListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProductCardListenerInterface;
@@ -231,6 +233,10 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
                 startActivity(new Intent(getContext(), CartActivity.class));
                 break;
             case R.id.action_bar_shortlist:
+
+                TrackingHelper.getInstance(getContext())
+                        .logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, "hand_picked_shortlist", "action_button");
+
                 Intent shortlistIntent = new Intent(getContext(), CategoryProductActivity.class);
                 shortlistIntent.putExtra(Constants.TYPE, Constants.FAV_PRODUCTS);
                 getContext().startActivity(shortlistIntent);
