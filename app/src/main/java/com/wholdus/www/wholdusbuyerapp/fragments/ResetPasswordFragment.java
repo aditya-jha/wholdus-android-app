@@ -89,6 +89,7 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
 
         mPasswordEditText = (TextInputEditText) view.findViewById(R.id.password_edit_text);
         mPasswordWrapper = (TextInputLayout) view.findViewById(R.id.password_wrapper);
+        mPasswordWrapper.setHint(getString(R.string.new_password));
 
         mOTPEditText.setOnFocusChangeListener(this);
         mPasswordEditText.setOnFocusChangeListener(this);

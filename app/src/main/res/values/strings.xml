@@ -121,6 +121,8 @@
     <string name="no_internet_access">No Internet Connection</string>
     <string name="new_products_message">New Products Available</string>
     <string name="show_text">SHOW</string>
+    <string name="new_password">New Password</string>
+
     <!-- messages -->
     <string name="back_press_message">Press again to exit Wholdus</string>
 
