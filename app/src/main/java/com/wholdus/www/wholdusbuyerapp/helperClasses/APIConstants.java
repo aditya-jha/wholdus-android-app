@@ -21,6 +21,9 @@ public class APIConstants {
     public static final String BUYER_INTEREST_URL = "users/buyer/buyerinterest/";
     public static final String FIREBASE_TOKEN_REGISTRATION_URL = "users/buyer/firebase/token/";
 
+    public static final String PRODUCT_URL = "products/";
+    public static final String PRODUCT_DELETED_OFFLINE_URL = "products/offlinedeleted/";
+
     public static final String BUYER_PRODUCT_URL = "users/buyer/buyerproducts/";
     public static final String BUYER_PRODUCT_RESPONSE_URL = "users/buyer/buyerproducts/response/";
 
