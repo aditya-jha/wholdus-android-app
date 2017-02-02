@@ -23,6 +23,7 @@
 
     <!-- product api -->
     <string name="product_url">products/</string>
+    <string name="product_deleted_offline_url">products/offlinedeleted/</string>
 
     <!-- cart api -->
     <string name="cart_url">cart/</string>
