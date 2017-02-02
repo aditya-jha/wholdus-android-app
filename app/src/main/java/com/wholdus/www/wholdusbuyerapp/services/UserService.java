@@ -106,7 +106,7 @@ public class UserService extends IntentService {
 
     private void fetchUserProfile(int todo) {
         HashMap<String, String> params = getUserResponseParams();
-        String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_details_url), params);
+        String url = GlobalAccessHelper.generateUrl(APIConstants.BUYER_DETAILS_URL, params);
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }
 
@@ -126,12 +126,12 @@ public class UserService extends IntentService {
 
         HashMap<String, String> params = getUserResponseParams();
         // send to server
-        String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_details_url), params);
+        String url = GlobalAccessHelper.generateUrl(APIConstants.BUYER_DETAILS_URL, params);
         volleyStringRequest(todo, Request.Method.PUT, url, data.toString());
     }
 
     private void fetchBusinessTypes(int todo) {
-        String url = GlobalAccessHelper.generateUrl(getString(R.string.business_types_url), null);
+        String url = GlobalAccessHelper.generateUrl(APIConstants.BUSINESS_TYPES_URL, null);
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }
 
@@ -259,7 +259,7 @@ public class UserService extends IntentService {
 
     private void sendBuyerAddressToServer(BuyerAddress buyerAddress) {
         HashMap<String, String> params = new HashMap<>();
-        String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_address_url), params);
+        String url = GlobalAccessHelper.generateUrl(APIConstants.BUYER_ADDRESS_URL, params);
         JSONObject requestBody = new JSONObject();
 
         int requestMethod;
@@ -307,7 +307,7 @@ public class UserService extends IntentService {
         } catch (JSONException e) {
             return;
         }
-        String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_details_url), params);
+        String url = GlobalAccessHelper.generateUrl(APIConstants.BUYER_DETAILS_URL, params);
         volleyStringRequest(R.string.update_user_profile, Request.Method.PUT, url, data.toString());
     }
 
@@ -319,7 +319,7 @@ public class UserService extends IntentService {
         } catch (JSONException e) {
             return;
         }
-        String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_details_url), params);
+        String url = GlobalAccessHelper.generateUrl(APIConstants.BUYER_DETAILS_URL, params);
         volleyStringRequest(R.string.update_user_profile, Request.Method.PUT, url, data.toString());
     }
 

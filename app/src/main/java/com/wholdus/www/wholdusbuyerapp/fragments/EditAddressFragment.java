@@ -340,23 +340,32 @@ public class EditAddressFragment extends Fragment implements
             public void run() {
                 Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
                 try {
-                    List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                    if (addresses == null || addresses.size() == 0) {
-                        mProgressBar.setVisibility(View.INVISIBLE);
-                        Toast.makeText(getContext(), "Could not fetch location", Toast.LENGTH_SHORT).show();
-                    } else {
-                        final Address address = addresses.get(0);
+                    final List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                    if (getActivity() != null) {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                setDataFromLocation(address);
-                                mProgressBar.setVisibility(View.INVISIBLE);
+                                if (addresses == null || addresses.size() == 0) {
+                                    mProgressBar.setVisibility(View.INVISIBLE);
+                                    Toast.makeText(getContext(), "Could not fetch location", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    final Address address = addresses.get(0);
+                                    setDataFromLocation(address);
+                                    mProgressBar.setVisibility(View.INVISIBLE);
+                                }
                             }
                         });
                     }
                 } catch (Exception e) {
-                    mProgressBar.setVisibility(View.INVISIBLE);
-                    Toast.makeText(getContext(), "Could not fetch location", Toast.LENGTH_SHORT).show();
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mProgressBar.setVisibility(View.INVISIBLE);
+                                Toast.makeText(getContext(), "Could not fetch location", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
                     e.printStackTrace();
                 }
             }

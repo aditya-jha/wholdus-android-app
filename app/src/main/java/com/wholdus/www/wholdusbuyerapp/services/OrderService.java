@@ -14,6 +14,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.OrderDBHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
 
@@ -54,7 +55,7 @@ public class OrderService extends IntentService {
         params.put("order_item_details", "1");
         params.put("product_details", "1");
         params.putAll(CatalogService.getProductDetailsParams());
-        String url = GlobalAccessHelper.generateUrl(getString(R.string.orders_url), params);
+        String url = GlobalAccessHelper.generateUrl(APIConstants.ORDERS_URL, params);
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }
 

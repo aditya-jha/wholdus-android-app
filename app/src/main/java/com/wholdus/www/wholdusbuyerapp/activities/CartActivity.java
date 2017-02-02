@@ -34,6 +34,7 @@ import com.wholdus.www.wholdusbuyerapp.fragments.CheckoutAddressConfirmFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.CheckoutPaymentMethodFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.EditAddressFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.OrderDetailsFragment;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
@@ -258,7 +259,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
 
 
     public void updateCart(JSONObject requestBody, int requestMethod, int todo, HashMap<String, String> params) {
-        String url = GlobalAccessHelper.generateUrl(getString(R.string.checkout_url), params);
+        String url = GlobalAccessHelper.generateUrl(APIConstants.CHECKOUT_URL, params);
         volleyStringRequest(todo, requestMethod, url, requestBody.toString());
         mProgressBar.setVisibility(View.VISIBLE);
     }

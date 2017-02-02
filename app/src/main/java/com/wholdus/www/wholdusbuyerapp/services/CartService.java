@@ -21,6 +21,7 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract.CartItemsTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CartDBHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.loaders.CartItemLoader;
 import com.wholdus.www.wholdusbuyerapp.models.CartItem;
@@ -75,7 +76,7 @@ public class CartService extends IntentService {
         params.put("product_details", "1");
         params.putAll(CatalogService.getProductDetailsParams());
         params.put("category_details", "1");
-        String url = GlobalAccessHelper.generateUrl(getString(R.string.cart_url), params);
+        String url = GlobalAccessHelper.generateUrl(APIConstants.CART_URL, params);
         volleyStringRequest(todo, Request.Method.GET, url, null);
     }
 
@@ -90,7 +91,7 @@ public class CartService extends IntentService {
         params.put("product_details", "1");
         params.put("sub_cart_details", "1");
         params.put("cart_item_details", "1");
-        String url = GlobalAccessHelper.generateUrl(getString(R.string.cart_item_url), params);
+        String url = GlobalAccessHelper.generateUrl(APIConstants.CART_ITEM_URL, params);
         JSONObject jsonData = new JSONObject();
         JSONArray products = new JSONArray();
 
