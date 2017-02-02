@@ -205,17 +205,26 @@ public class OTPFragment extends Fragment implements View.OnClickListener {
                         @Override
                         public void run() {
                             if (!loginHelper.checkIfLoggedIn()) {
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mProgressBar.setVisibility(View.INVISIBLE);
-                                        mListener.loginSuccess(true);
-                                    }
-                                });
+                                if (getActivity() != null) {
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mProgressBar.setVisibility(View.INVISIBLE);
+                                            mListener.loginSuccess(true);
+                                        }
+                                    });
+                                }
                             } else {
-                                mProgressBar.setVisibility(View.INVISIBLE);
-                                getActivity().startService(new Intent(getActivity().getApplicationContext(), FirebaseNotificationService.class));
-                                mListener.loginSuccess(true);
+                                if (getActivity() != null) {
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mProgressBar.setVisibility(View.INVISIBLE);
+                                            getContext().startService(new Intent(getActivity().getApplicationContext(), FirebaseNotificationService.class));
+                                            mListener.loginSuccess(true);
+                                        }
+                                    });
+                                }
                             }
                         }
                     }).start();
