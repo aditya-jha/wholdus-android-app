@@ -11,11 +11,12 @@ import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.FAQAdapter;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.OkHttpHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TrackingHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HelpSupportListenerInterface;
 
 import org.json.JSONArray;
@@ -72,6 +73,9 @@ public class FAQFragment extends Fragment {
         mExpandableListView = (ExpandableListView) view.findViewById(R.id.expandable_list_view);
         mExpandableListView.setChildDivider(getResources().getDrawable(android.R.color.white));
         fetchFAQFromServer();
+
+        TrackingHelper.getInstance(getContext())
+                .logEvent(FirebaseAnalytics.Event.VIEW_ITEM, this.getClass().getSimpleName(), "");
     }
 
     @Override

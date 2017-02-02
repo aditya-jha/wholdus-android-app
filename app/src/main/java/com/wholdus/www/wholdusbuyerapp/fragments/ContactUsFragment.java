@@ -28,6 +28,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ContactsHelperClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.OkHttpHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TrackingHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HelpSupportListenerInterface;
 
 import org.json.JSONObject;
@@ -93,6 +94,9 @@ public class ContactUsFragment extends Fragment implements View.OnClickListener 
 
         mSubmitLoader = (ProgressBar) view.findViewById(R.id.submit_button_loader);
         mSubmitLoader.setVisibility(View.INVISIBLE);
+
+        TrackingHelper.getInstance(getContext())
+                .logEvent(FirebaseAnalytics.Event.VIEW_ITEM, this.getClass().getSimpleName(), "");
     }
 
     @Override

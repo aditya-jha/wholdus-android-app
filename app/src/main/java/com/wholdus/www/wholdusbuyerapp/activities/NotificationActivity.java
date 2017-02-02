@@ -10,9 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.fragments.NotificationFragment;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TrackingHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.NotificationListenerInterface;
 
 /**
@@ -37,6 +39,9 @@ public class NotificationActivity extends AppCompatActivity implements Notificat
         }
 
         openToFragment(getFragmentToOpenName(savedInstanceState), extras);
+
+        TrackingHelper.getInstance(this)
+                .logEvent(FirebaseAnalytics.Event.VIEW_ITEM, this.getClass().getSimpleName(), "");
     }
 
     private void initToolbar() {

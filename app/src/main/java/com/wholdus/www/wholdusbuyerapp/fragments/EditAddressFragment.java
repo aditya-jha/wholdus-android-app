@@ -39,9 +39,11 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TrackingHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.UserAddressInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.BuyerAddressLoader;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProfileLoader;
@@ -125,6 +127,17 @@ public class EditAddressFragment extends Fragment implements
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        TrackingHelper
+                .getInstance(getContext())
+                .logEvent(
+                        FirebaseAnalytics.Event.VIEW_ITEM,
+                        this.getClass().getSimpleName(),
+                        "");
     }
 
     @Override
