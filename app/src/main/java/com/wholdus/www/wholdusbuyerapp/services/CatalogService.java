@@ -93,7 +93,7 @@ public class CatalogService extends IntentService {
         params.put("items_per_page", String.valueOf(itemsPerPage));
         params.put("page_number", String.valueOf(pageNumber));
         params.put("product_show_online", "1");
-        String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.product_url), params);
+        String endPoint = GlobalAccessHelper.generateUrl(APIConstants.PRODUCT_URL, params);
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }
 
@@ -103,7 +103,7 @@ public class CatalogService extends IntentService {
         params.put("items_per_page", intent.getStringExtra("items_per_page"));
         params.put("page_number", "1");
         params.put("product_show_online", "1");
-        String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.product_url), params);
+        String endPoint = GlobalAccessHelper.generateUrl(APIConstants.PRODUCT_URL, params);
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }
 
@@ -112,7 +112,7 @@ public class CatalogService extends IntentService {
         SharedPreferences preferences = getSharedPreferences(PRODUCT_SHARED_PREFERENCES, MODE_PRIVATE);
         String updatedAt = preferences.getString(OFFLINE_DELETED_PRODUCTS_KEY, "2016-01-01T00:00:00.000Z");
         params.put("product_updated_at", updatedAt);
-        String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.product_deleted_offline_url), params);
+        String endPoint = GlobalAccessHelper.generateUrl(APIConstants.PRODUCT_DELETED_OFFLINE_URL, params);
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }
 
