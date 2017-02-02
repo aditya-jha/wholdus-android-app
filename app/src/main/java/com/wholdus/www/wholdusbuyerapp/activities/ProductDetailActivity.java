@@ -413,7 +413,7 @@ public class ProductDetailActivity extends AppCompatActivity
         }
 
         mProductName.setText(mProduct.getProductDetails().getDisplayName());
-        mProductPrice.setText(String.format(getString(R.string.price_per_pcs_format), String.valueOf(mProduct.getMinPricePerUnit())));
+        mProductPrice.setText(String.format(getString(R.string.price_per_pcs_format), String.valueOf((int) Math.ceil(mProduct.getMinPricePerUnit()))));
         mLotSize.setText(String.valueOf(mProduct.getLotSize()));
         if (mProduct.getProductDetails().getLotDescription().equals("")) {
             mLotDescription.setText(String.valueOf(mProduct.getLotSize()) + " pieces per lot");
