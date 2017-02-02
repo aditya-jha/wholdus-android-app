@@ -572,6 +572,38 @@ public class CatalogDBHelper extends BaseDBHelper {
         return insertUpdated;
     }
 
+    public void updateOfflineProducts(String offlineProducts, String cartProducts, String orderProducts) throws JSONException{
+        if (offlineProducts.length()==0){
+            return;
+        }
+        SQLiteDatabase db = mDatabaseHelper.openDatabase();
+        String deleteSelection = ProductsTable.COLUMN_PRODUCT_ID + " IN (" + offlineProducts + ")";
+        if (cartProducts.length() >0){
+            deleteSelection += " AND " + ProductsTable.COLUMN_PRODUCT_ID + " NOT IN (" + cartProducts + ")";
+        }
+        if (orderProducts.length() >0){
+            deleteSelection += " AND " + ProductsTable.COLUMN_PRODUCT_ID + " NOT IN (" + orderProducts + ")";
+        }
+        db.delete(ProductsTable.TABLE_NAME, deleteSelection, null);
+        if (cartProducts.length() > 0 || orderProducts.length() > 0) {
+            ContentValues values = new ContentValues();
+            values.put(ProductsTable.COLUMN_SHOW_ONLINE, 0);
+            String updateSelection = ProductsTable.COLUMN_PRODUCT_ID + " IN (" + offlineProducts + ")";
+            db.update(ProductsTable.TABLE_NAME, values, updateSelection, null);
+        }
+        mDatabaseHelper.closeDatabase();
+    }
+
+    public void updateDeletedProducts(String deletedProducts) throws JSONException{
+        if (deletedProducts.length()==0){
+            return;
+        }
+        SQLiteDatabase db = mDatabaseHelper.openDatabase();
+        String selection = ProductsTable.COLUMN_PRODUCT_ID + " IN " + deletedProducts;
+        db.delete(ProductsTable.TABLE_NAME, selection, null);
+        mDatabaseHelper.closeDatabase();
+    }
+
     public int saveBuyerProductsDataFromJSONArray(JSONArray buyerProducts) throws JSONException {
         SQLiteDatabase db = mDatabaseHelper.openDatabase();
         int insertedUpdated = 0;
