@@ -44,8 +44,8 @@ import java.util.regex.Pattern;
 public class OTPFragment extends Fragment implements View.OnClickListener {
 
     private LoginSignupListenerInterface mListener;
-    private TextInputEditText mOTPEditText;
-    private TextInputLayout mOTPWrapper;
+    private TextInputEditText mOTPEditText, mMobileNumberEditText;
+    private TextInputLayout mOTPWrapper, mMobileNumberWrapper;
     private String mRegistrationToken, mMobileNumber;
     private BroadcastReceiver mSMSReceiver, mReceiver;
     private ProgressBar mProgressBar;
@@ -96,6 +96,12 @@ public class OTPFragment extends Fragment implements View.OnClickListener {
 
         mOTPEditText = (TextInputEditText) view.findViewById(R.id.otp_edit_text);
         mOTPWrapper = (TextInputLayout) view.findViewById(R.id.otp_wrapper);
+
+        mMobileNumberWrapper = (TextInputLayout) view.findViewById(R.id.mobile_number_wrapper);
+        mMobileNumberEditText = (TextInputEditText) view.findViewById(R.id.mobile_number_edit_text);
+
+        mMobileNumberEditText.setText(mMobileNumber);
+        mMobileNumberEditText.setEnabled(false);
 
         Button submitOTP = (Button) view.findViewById(R.id.submit_otp);
         submitOTP.setOnClickListener(this);
@@ -199,17 +205,26 @@ public class OTPFragment extends Fragment implements View.OnClickListener {
                         @Override
                         public void run() {
                             if (!loginHelper.checkIfLoggedIn()) {
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mProgressBar.setVisibility(View.INVISIBLE);
-                                        mListener.loginSuccess(true);
-                                    }
-                                });
+                                if (getActivity() != null) {
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mProgressBar.setVisibility(View.INVISIBLE);
+                                            mListener.loginSuccess(true);
+                                        }
+                                    });
+                                }
                             } else {
-                                mProgressBar.setVisibility(View.INVISIBLE);
-                                getActivity().startService(new Intent(getActivity().getApplicationContext(), FirebaseNotificationService.class));
-                                mListener.loginSuccess(true);
+                                if (getActivity() != null) {
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mProgressBar.setVisibility(View.INVISIBLE);
+                                            getContext().startService(new Intent(getActivity().getApplicationContext(), FirebaseNotificationService.class));
+                                            mListener.loginSuccess(true);
+                                        }
+                                    });
+                                }
                             }
                         }
                     }).start();

@@ -19,11 +19,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.BuyerPersonalDetailsAdapter;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TrackingHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProfileLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Buyer;
@@ -96,6 +98,13 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         getActivity().getSupportLoaderManager().restartLoader(USER_DB_LOADER, null, this);
 
         fetchDataFromServer();
+
+        TrackingHelper
+                .getInstance(getContext())
+                .logEvent(
+                        FirebaseAnalytics.Event.VIEW_ITEM,
+                        this.getClass().getSimpleName(),
+                        "");
     }
 
     @Override
@@ -113,14 +122,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         super.onPause();
         try {
             LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mUserServiceResponseReceiver);
-        }catch (Exception e){
-
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
+        }catch (Exception e) {}
     }
 
     @Override

@@ -26,6 +26,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.firebase.crash.FirebaseCrash;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract;
 import com.wholdus.www.wholdusbuyerapp.fragments.BuyerAddressFragment;
@@ -34,6 +35,7 @@ import com.wholdus.www.wholdusbuyerapp.fragments.CheckoutAddressConfirmFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.CheckoutPaymentMethodFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.EditAddressFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.OrderDetailsFragment;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
@@ -145,14 +147,18 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
 
     @Override
     public void fragmentCreated(String title, boolean backEnabled) {
-        mToolbar.setTitle(title);
-        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+        try {
+            mToolbar.setTitle(title);
+            mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onBackPressed();
+                }
+            });
+        } catch (Exception e) {
+            FirebaseCrash.report(e);
+        }
     }
 
     @Override
@@ -258,7 +264,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
 
 
     public void updateCart(JSONObject requestBody, int requestMethod, int todo, HashMap<String, String> params) {
-        String url = GlobalAccessHelper.generateUrl(getString(R.string.checkout_url), params);
+        String url = GlobalAccessHelper.generateUrl(APIConstants.CHECKOUT_URL, params);
         volleyStringRequest(todo, requestMethod, url, requestBody.toString());
         mProgressBar.setVisibility(View.VISIBLE);
     }

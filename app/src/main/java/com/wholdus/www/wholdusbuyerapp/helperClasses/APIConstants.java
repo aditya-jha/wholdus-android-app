@@ -7,6 +7,7 @@ package com.wholdus.www.wholdusbuyerapp.helperClasses;
 public class APIConstants {
 
     public static final String API_BASE = "http://api.wholdus.com/";
+    //public static final String API_BASE = "http://13.76.211.119:8000/";
 
     public static final String LOGIN_URL = "users/buyer/login/";
     public static final String REGISTER_URL = "users/buyer/register/";
@@ -26,6 +27,10 @@ public class APIConstants {
     public static final String BUYER_PRODUCT_URL = "users/buyer/buyerproducts/";
     public static final String BUYER_PRODUCT_RESPONSE_URL = "users/buyer/buyerproducts/response/";
 
+    public static final String BUYER_DETAILS_URL = "users/buyer/";
+    public static final String BUSINESS_TYPES_URL = "users/businesstype/";
+    public static final String BUYER_ADDRESS_URL = "users/buyer/address/";
+
     public static final String FAQ_URL = "general/faqs/";
     public static final String ABOUT_US_URL = "general/aboutus/";
     public static final String PRIVACY_POLICY_URL = "general/privacypolicy/";
@@ -33,6 +38,11 @@ public class APIConstants {
     public static final String CONTACT_US_URL = "leads/contactus/";
 
     public static final String PINCODE_SERVICEABILITY_URL = "logistics/pincodeserviceability/";
+
+    public static final String CHECKOUT_URL = "checkout/";
+    public static final String CART_URL = "cart/";
+    public static final String CART_ITEM_URL = "cart/item/";
+    public static final String ORDERS_URL = "orders/";
 
     public static final String API_PAGE_NUMBER_KEY = "page_number";
     public static final String API_TOTAL_PAGES_KEY = "total_pages";

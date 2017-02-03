@@ -12,7 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.AccountActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.CategoryProductActivity;
@@ -29,6 +31,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.LoginHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.NavDrawerHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TrackingHelper;
 import com.wholdus.www.wholdusbuyerapp.models.NavDrawerData;
 
 import java.util.ArrayList;
@@ -237,6 +240,12 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
         progressDialog.setMessage(getString(R.string.logout_loader_message));
         progressDialog.show();
         progressDialog.setCanceledOnTouchOutside(false);
+
+        TrackingHelper.getInstance(getContext())
+                .logEvent(
+                        FirebaseAnalytics.Event.SELECT_CONTENT,
+                        "logout",
+                        "");
 
         new Thread(new Runnable() {
             @Override

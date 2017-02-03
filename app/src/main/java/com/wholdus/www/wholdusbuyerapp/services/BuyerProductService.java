@@ -251,7 +251,7 @@ public class BuyerProductService extends IntentService {
 
     private void sendBuyerProductResponseToServer(BuyerProductResponse buyerProductResponse) {
         HashMap<String, String> params = new HashMap<>();
-        String url = GlobalAccessHelper.generateUrl(getString(R.string.buyer_product_url), params);
+        String url = GlobalAccessHelper.generateUrl(APIConstants.BUYER_PRODUCT_URL, params);
         JSONObject requestBody = new JSONObject();
         try {
             requestBody.put(ProductsTable.COLUMN_PRODUCT_ID, buyerProductResponse.getProductID());

@@ -8,24 +8,19 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
-import com.getkeepsafe.taptargetview.TapTarget;
-import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.fragments.FilterFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.HandPickedFragment;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.CartMenuItemHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TrackingHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartDialogListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HandPickedListenerInterface;
-
-import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 
 public class HandPickedActivity extends AppCompatActivity implements HandPickedListenerInterface,
         CategoryProductListenerInterface, CartDialogListener {
@@ -45,9 +40,6 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
         } else {
             extras = null;
         }
-
-        //FilterClass.resetCategoryFilter();
-        //FilterClass.resetFilter();
 
         openToFragment(getFragmentToOpenName(savedInstanceState), extras);
     }
@@ -159,6 +151,12 @@ public class HandPickedActivity extends AppCompatActivity implements HandPickedL
     }
 
     public void openProductDetails(int productID){
+
+        TrackingHelper.getInstance(this).logEvent(
+                FirebaseAnalytics.Event.SELECT_CONTENT,
+                "handpicked_product_detail",
+                String.valueOf(productID));
+
         Intent intent = new Intent(this, ProductDetailActivity.class);
         intent.putExtra(CatalogContract.ProductsTable.TABLE_NAME, productID);
         startActivity(intent);

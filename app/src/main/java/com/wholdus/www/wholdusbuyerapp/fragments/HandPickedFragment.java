@@ -38,6 +38,7 @@ import com.daprlabs.aaron.swipedeck.SwipeDeck;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.getkeepsafe.taptargetview.TapTargetView;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.CartActivity;
 import com.wholdus.www.wholdusbuyerapp.activities.CategoryProductActivity;
@@ -49,6 +50,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TrackingHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HandPickedListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProductCardListenerInterface;
@@ -82,7 +84,8 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     private ProgressBar mNoProductsLeftProgressBar;
     private int mPosition = 0, mProductsLeft = 0, mProductBuffer = 8, mProductsPageNumber, mTotalProductPages;
     private boolean mHasSwiped = true, mFirstLoad = true, mButtonEnabled, mCartButtonEnabled = true;
-    private final int mProductsLimit = 20;
+
+    private static final int mProductsLimit = 20;
 
     private static final int ANIMATION_DURATION = 250;
     private CartMenuItemHelper mCartMenuItemHelper;
@@ -114,9 +117,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         Bundle mArgs = getArguments();
         try {
             mProductIDs = mArgs.getIntegerArrayList(CatalogContract.ProductsTable.TABLE_NAME);
-        } catch (Exception e) {
-
-        }
+        } catch (Exception e) {}
     }
 
     @Nullable
@@ -230,6 +231,10 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
                 startActivity(new Intent(getContext(), CartActivity.class));
                 break;
             case R.id.action_bar_shortlist:
+
+                TrackingHelper.getInstance(getContext())
+                        .logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, "hand_picked_shortlist", "action_button");
+
                 Intent shortlistIntent = new Intent(getContext(), CategoryProductActivity.class);
                 shortlistIntent.putExtra(Constants.TYPE, Constants.FAV_PRODUCTS);
                 getContext().startActivity(shortlistIntent);
@@ -335,6 +340,11 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         mFilterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                TrackingHelper.getInstance(getContext()).logEvent(
+                        FirebaseAnalytics.Event.SELECT_CONTENT,
+                        "hand_picked_filter_button",
+                        "filter"
+                );
                 filterButtonLayout.startAnimation(animButtonScale);
                 if (mShowFilterInstructions) {
                     showFilterInstructions();

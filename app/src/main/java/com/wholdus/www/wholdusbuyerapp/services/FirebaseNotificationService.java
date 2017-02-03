@@ -47,13 +47,12 @@ public class FirebaseNotificationService extends IntentService {
 
             Response response = okHttpClient.newCall(request).execute();
             if (!response.isSuccessful())
-                throw new IOException("unable to push token to server " + response);
+                throw new IOException("unable to push token to server " + response + data.toString());
             else {
                 response.body().close();
             }
         } catch (Exception e) {
             e.printStackTrace();
-            FirebaseCrash.report(e);
         }
     }
 }

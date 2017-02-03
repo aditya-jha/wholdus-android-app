@@ -101,6 +101,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         mPasswordWrapper = (TextInputLayout) view.findViewById(R.id.password_wrapper);
         mNameWrapper = (TextInputLayout) view.findViewById(R.id.name_wrapper);
 
+        mPasswordWrapper.setHint(getString(R.string.hint_set_password));
+
         Bundle args = getArguments();
         if (args != null) {
             mMobileNumberEditText.setText(args.getString(UserProfileContract.UserTable.COLUMN_MOBILE_NUMBER, ""));
