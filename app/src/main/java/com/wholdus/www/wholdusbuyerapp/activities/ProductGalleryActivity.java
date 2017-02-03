@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
@@ -126,10 +127,10 @@ public class ProductGalleryActivity extends AppCompatActivity
                 mThumbImagesView.setAdapter(new ThumbImageAdapter(this, thumbImages, this));
             } catch (Exception e) {
                 FirebaseCrash.report(e);
-                onBackPressed();
+                Toast.makeText(this, getString(R.string.api_error_message), Toast.LENGTH_SHORT).show();
             }
         } else {
-            onBackPressed();
+            Toast.makeText(this, getString(R.string.api_error_message), Toast.LENGTH_SHORT).show();
         }
     }
 
