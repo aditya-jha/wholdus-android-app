@@ -49,9 +49,7 @@ public class GalleryImageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.layout_product_gallery_image_view, container, false);
-
-        mImageView = (TouchImageView) rootView.findViewById(R.id.gallery_image);
+        mImageView = (TouchImageView) inflater.inflate(R.layout.layout_product_gallery_image_view, container, false);
 
         Glide.with(getContext())
                 .load(mImageUrl)
@@ -71,7 +69,7 @@ public class GalleryImageFragment extends Fragment {
             }
         });
 
-        return rootView;
+        return mImageView;
     }
 
     @Override
