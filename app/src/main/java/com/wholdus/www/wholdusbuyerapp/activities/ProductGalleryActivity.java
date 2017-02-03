@@ -13,11 +13,14 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crash.FirebaseCrash;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.ProductGalleryViewPagerAdapter;
 import com.wholdus.www.wholdusbuyerapp.adapters.ThumbImageAdapter;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TrackingHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProductLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
@@ -33,6 +36,7 @@ public class ProductGalleryActivity extends AppCompatActivity
 
     private int mProductID, mActiveImagePosition;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +51,14 @@ public class ProductGalleryActivity extends AppCompatActivity
         mThumbImagesView = (RecyclerView) findViewById(R.id.thumb_images_recycler_view);
         mThumbImagesView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         getSupportLoaderManager().initLoader(100, null, this);
+
+        // tracking
+        TrackingHelper.getInstance(this).logEvent(
+                FirebaseAnalytics.Event.VIEW_ITEM,
+                "product_gallery_open",
+                String.valueOf(mProductID)
+        );
+        //end tracking
     }
 
     @Override
@@ -90,27 +102,32 @@ public class ProductGalleryActivity extends AppCompatActivity
     @Override
     public void onLoadFinished(Loader<Product> loader, Product data) {
         if (data != null) {
-            mToolbar.setTitle(data.getProductDetails().getDisplayName());
-            ProductGalleryViewPagerAdapter viewPagerAdapter =
-                    new ProductGalleryViewPagerAdapter(
-                            getSupportFragmentManager(),
-                            data.getAllImageUrls(Constants.LARGE_IMAGE),
-                            data.getName(),
-                            data.getUrl());
-            mViewPager.setAdapter(viewPagerAdapter);
-            mViewPager.setCurrentItem(mActiveImagePosition);
-            mThumbImagesView.addItemDecoration(new RecyclerView.ItemDecoration() {
-                @Override
-                public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                    outRect.left = 15;
-                }
-            });
+            try {
+                mToolbar.setTitle(data.getProductDetails().getDisplayName());
+                ProductGalleryViewPagerAdapter viewPagerAdapter =
+                        new ProductGalleryViewPagerAdapter(
+                                getSupportFragmentManager(),
+                                data.getAllImageUrls(Constants.LARGE_IMAGE),
+                                data.getName(),
+                                data.getUrl());
+                mViewPager.setAdapter(viewPagerAdapter);
+                mViewPager.setCurrentItem(mActiveImagePosition);
+                mThumbImagesView.addItemDecoration(new RecyclerView.ItemDecoration() {
+                    @Override
+                    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                        outRect.left = 15;
+                    }
+                });
 
-            ArrayList<String> thumbImages = data.getAllImageUrls(Constants.EXTRA_SMALL_IMAGE);
-            if (thumbImages.size() <= 1) {
-                mThumbImagesView.setVisibility(View.GONE);
+                ArrayList<String> thumbImages = data.getAllImageUrls(Constants.EXTRA_SMALL_IMAGE);
+                if (thumbImages.size() <= 1) {
+                    mThumbImagesView.setVisibility(View.GONE);
+                }
+                mThumbImagesView.setAdapter(new ThumbImageAdapter(this, thumbImages, this));
+            } catch (Exception e) {
+                FirebaseCrash.report(e);
+                onBackPressed();
             }
-            mThumbImagesView.setAdapter(new ThumbImageAdapter(this, thumbImages, this));
         } else {
             onBackPressed();
         }

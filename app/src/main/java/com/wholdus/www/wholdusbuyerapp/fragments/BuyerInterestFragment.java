@@ -103,11 +103,6 @@ public class BuyerInterestFragment extends Fragment implements LoaderManager.Loa
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
         if (mSnackbar != null && mSnackbar.isShownOrQueued()) {
@@ -134,7 +129,7 @@ public class BuyerInterestFragment extends Fragment implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<Buyer> loader, Buyer data) {
-        if (data != null && data.getBuyerInterest().size() > 0) {
+        if (data != null && data.getBuyerInterest().size() > 0 && mListener != null) {
             mPageLoader.setVisibility(View.INVISIBLE);
             mPageLayout.setVisibility(View.VISIBLE);
             BuyerInterestsAdapter adapter = new BuyerInterestsAdapter(getContext(), data.getBuyerInterest());

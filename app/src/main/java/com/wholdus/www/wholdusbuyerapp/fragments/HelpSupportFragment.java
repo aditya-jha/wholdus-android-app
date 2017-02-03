@@ -13,10 +13,12 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.OkHttpHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TrackingHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HelpSupportListenerInterface;
 
 import org.json.JSONObject;
@@ -67,6 +69,9 @@ public class HelpSupportFragment extends Fragment {
         mContentTextView = (TextView) view.findViewById(R.id.content);
 
         fetchContentFromServer();
+
+        TrackingHelper.getInstance(getContext())
+                .logEvent(FirebaseAnalytics.Event.VIEW_ITEM, this.getClass().getSimpleName(), "");
     }
 
     @Override

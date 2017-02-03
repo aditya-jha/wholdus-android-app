@@ -2,9 +2,11 @@ package com.wholdus.www.wholdusbuyerapp.services;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -14,9 +16,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.CategoriesTable;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract.ProductsTable;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.OrdersContract;
+import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CartDBHelper;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
+import com.wholdus.www.wholdusbuyerapp.databaseHelpers.OrderDBHelper;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProductsGridFragment;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
@@ -32,6 +38,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +50,9 @@ import java.util.Map;
 public class CatalogService extends IntentService {
 
     private static final String REQUEST_TAG = "CATALOG_REQUEST";
+    private static final String
+            PRODUCT_SHARED_PREFERENCES = "ProductsSharedPreference",
+            OFFLINE_DELETED_PRODUCTS_KEY = "OfflineDeletedProductsKey";
 
     public CatalogService() {
         super("CatalogService");
@@ -60,6 +70,9 @@ public class CatalogService extends IntentService {
                 int pageNumber = intent.getIntExtra("page_number", 0);
                 int itemsPerPage = intent.getIntExtra("items_per_page", 20);
                 fetchProducts(todo, pageNumber, itemsPerPage);
+                break;
+            case TODO.FETCH_DELETED_OFFLINE_PRODUCTS:
+                fetchDeletedOfflineProducts(todo, intent);
                 break;
             case TODO.UPDATE_BUYER_INTEREST:
                 updateBuyerInterest(todo, intent);
@@ -80,7 +93,7 @@ public class CatalogService extends IntentService {
         params.put("items_per_page", String.valueOf(itemsPerPage));
         params.put("page_number", String.valueOf(pageNumber));
         params.put("product_show_online", "1");
-        String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.product_url), params);
+        String endPoint = GlobalAccessHelper.generateUrl(APIConstants.PRODUCT_URL, params);
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }
 
@@ -90,7 +103,16 @@ public class CatalogService extends IntentService {
         params.put("items_per_page", intent.getStringExtra("items_per_page"));
         params.put("page_number", "1");
         params.put("product_show_online", "1");
-        String endPoint = GlobalAccessHelper.generateUrl(getString(R.string.product_url), params);
+        String endPoint = GlobalAccessHelper.generateUrl(APIConstants.PRODUCT_URL, params);
+        volleyStringRequest(todo, Request.Method.GET, endPoint, null);
+    }
+
+    private void fetchDeletedOfflineProducts(int todo, Intent intent){
+        HashMap<String, String> params = new HashMap<>();
+        SharedPreferences preferences = getSharedPreferences(PRODUCT_SHARED_PREFERENCES, MODE_PRIVATE);
+        String updatedAt = preferences.getString(OFFLINE_DELETED_PRODUCTS_KEY, "2016-01-01T00:00:00.000Z");
+        params.put("product_updated_at", updatedAt);
+        String endPoint = GlobalAccessHelper.generateUrl(APIConstants.PRODUCT_DELETED_OFFLINE_URL, params);
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }
 
@@ -134,6 +156,9 @@ public class CatalogService extends IntentService {
                                     break;
                                 case R.integer.fetch_specific_products:
                                     updateSpecificProducts(data);
+                                    break;
+                                case TODO.FETCH_DELETED_OFFLINE_PRODUCTS:
+                                    updateOfflineDeletedProducts(data);
                                     break;
                                 case TODO.UPDATE_BUYER_INTEREST:
                                     updateBuyerInterestFromJSON(data);
@@ -262,6 +287,34 @@ public class CatalogService extends IntentService {
             CatalogDBHelper catalogDBHelper = new CatalogDBHelper(this);
             catalogDBHelper.updateBuyerInterestData(data.getJSONObject("buyer_interest"));
         } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateOfflineDeletedProducts(JSONObject data){
+        try {
+            CatalogDBHelper catalogDBHelper = new CatalogDBHelper(this);
+            CartDBHelper cartDBHelper = new CartDBHelper(this);
+            OrderDBHelper orderDBHelper = new OrderDBHelper(this);
+            Cursor cartItemsCursor = cartDBHelper.getCartItemsData(-1,null,-1,-1,-1,new String[] {CartContract.CartItemsTable.COLUMN_PRODUCT_ID});
+            ArrayList<Integer> cartItemsArray = new ArrayList<>();
+            while (cartItemsCursor.moveToNext()){
+                cartItemsArray.add(cartItemsCursor.getInt(cartItemsCursor.getColumnIndexOrThrow(CartContract.CartItemsTable.COLUMN_PRODUCT_ID)));
+            }
+            String cartItemsString = TextUtils.join(",", cartItemsArray);
+            Cursor orderItemsCursor = orderDBHelper.getOrderItemsData(null,null,null,new String[] {OrdersContract.OrderItemsTable.COLUMN_PRODUCT_ID});
+            ArrayList<Integer> orderItemsArray = new ArrayList<>();
+            while (orderItemsCursor.moveToNext()){
+                orderItemsArray.add(orderItemsCursor.getInt(orderItemsCursor.getColumnIndexOrThrow(OrdersContract.OrderItemsTable.COLUMN_PRODUCT_ID)));
+            }
+            String orderItemsString = TextUtils.join(",", orderItemsArray);
+            catalogDBHelper.updateOfflineProducts(data.getString("offline_products"), cartItemsString, orderItemsString);
+            catalogDBHelper.updateDeletedProducts(data.getString("deleted_products"));
+            SharedPreferences preferences = getSharedPreferences(PRODUCT_SHARED_PREFERENCES, MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString(OFFLINE_DELETED_PRODUCTS_KEY, data.getJSONObject("meta").getString("timestamp"));
+            editor.apply();
+        } catch (Exception e){
             e.printStackTrace();
         }
     }

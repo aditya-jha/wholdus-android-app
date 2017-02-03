@@ -35,12 +35,14 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.NavDrawerHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.CategoriesGridLoader;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProductsLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Category;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
+import com.wholdus.www.wholdusbuyerapp.services.CatalogService;
 
 import java.util.ArrayList;
 
@@ -84,6 +86,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        updateDeletedOfflineProducts();
+    }
+
+    private void updateDeletedOfflineProducts(){
+        Intent intent = new Intent(getContext(), CatalogService.class);
+        intent.putExtra("TODO", TODO.FETCH_DELETED_OFFLINE_PRODUCTS);
+        getActivity().startService(intent);
     }
 
     @Nullable
@@ -278,7 +287,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
 
         @Override
         public void onLoadFinished(Loader<ArrayList<Product>> loader, ArrayList<Product> data) {
-            if (data != null && data.size() > 0 && mProducts.isEmpty()) {
+            if (data != null && data.size() > 0 && mProducts.isEmpty() && mListener != null) {
                 setViewForProducts(data);
             }
         }
@@ -301,7 +310,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
 
         @Override
         public void onLoadFinished(Loader<ArrayList<Category>> loader, ArrayList<Category> data) {
-            if (data != null && data.size() > 0 && mCategories.isEmpty()) {
+            if (data != null && data.size() > 0 && mCategories.isEmpty() && mListener != null) {
                 setViewForCategories(data);
                 mProgressBar.setVisibility(View.GONE);
             }

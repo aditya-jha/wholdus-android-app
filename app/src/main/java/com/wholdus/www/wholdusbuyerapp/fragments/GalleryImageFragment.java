@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.google.firebase.crash.FirebaseCrash;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ShareIntentClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TouchImageView;
@@ -37,20 +38,20 @@ public class GalleryImageFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mListener = (ItemClickListener) context;
+        try {
+            mListener = (ItemClickListener) context;
+        } catch (ClassCastException cee) {
+            FirebaseCrash.report(cee);
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        return inflater.inflate(R.layout.layout_product_gallery_image_view, container, false);
-    }
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.layout_product_gallery_image_view, container, false);
 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mImageView = (TouchImageView) view.findViewById(R.id.gallery_image);
+        mImageView = (TouchImageView) rootView.findViewById(R.id.gallery_image);
 
         Glide.with(getContext())
                 .load(mImageUrl)
@@ -69,6 +70,8 @@ public class GalleryImageFragment extends Fragment {
                 mListener.itemClicked(view, -1, -1);
             }
         });
+
+        return rootView;
     }
 
     @Override

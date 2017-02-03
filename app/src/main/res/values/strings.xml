@@ -21,7 +21,7 @@
     <string name="hint_mobile_number">Mobile Number</string>
     <string name="hint_password">Password</string>
     <string name="hint_set_password">Set Password</string>
-    <string name="hint_name">Your name</string>
+    <string name="hint_name">Your Full Name</string>
     <string name="login_fragment_header">Login</string>
     <string name="register_fragment_header">Register</string>
 
@@ -63,7 +63,7 @@
     <!-- Profile Fragment -->
     <string name="personal_details">Personal Details</string>
     <string name="address">Address</string>
-    <string name="no_address">No address Saved</string>
+    <string name="no_address">ADD ADDRESS</string>
     <string name="add_key">ADD</string>
 
     <!-- Edit Profile Fragment -->
@@ -121,6 +121,8 @@
     <string name="no_internet_access">No Internet Connection</string>
     <string name="new_products_message">New Products Available</string>
     <string name="show_text">SHOW</string>
+    <string name="new_password">New Password</string>
+
     <!-- messages -->
     <string name="back_press_message">Press again to exit Wholdus</string>
 

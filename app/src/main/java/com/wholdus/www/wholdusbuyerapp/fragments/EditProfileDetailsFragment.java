@@ -19,9 +19,11 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.BusinessTypesAdapter;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TrackingHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ProfileListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.EditProfileFragmentLoader;
 import com.wholdus.www.wholdusbuyerapp.models.BusinessTypes;
@@ -97,6 +99,13 @@ public class EditProfileDetailsFragment extends Fragment implements LoaderManage
 
         fetchBusinessTypesDataFromServer();
         getActivity().getSupportLoaderManager().restartLoader(EDIT_PROFILE_FRAGMENT_LOADER, null, this);
+
+        TrackingHelper
+                .getInstance(getContext())
+                .logEvent(
+                        FirebaseAnalytics.Event.VIEW_ITEM,
+                        this.getClass().getSimpleName(),
+                        "");
     }
 
     @Override
@@ -141,7 +150,7 @@ public class EditProfileDetailsFragment extends Fragment implements LoaderManage
 
     @Override
     public void onLoadFinished(Loader<EditProfileData> loader, EditProfileData data) {
-        if (data != null) {
+        if (data != null && mListener != null) {
             setViewForPersonalDetails(data.getBuyer());
             setViewForBusinessTypes(data.getBusinessType());
         }

@@ -214,7 +214,7 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
 
         @Override
         public void onLoadFinished(Loader<ArrayList<CartItem>> loader, ArrayList<CartItem> data) {
-            if (data != null && !data.isEmpty()) {
+            if (data != null && !data.isEmpty() && mListener != null) {
                 mAddtoCartButton.setText("UPDATE CART");
                 mLots = data.get(0).getLots();
                 mOldLots = data.get(0).getLots();

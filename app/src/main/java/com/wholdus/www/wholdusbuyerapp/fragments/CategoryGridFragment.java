@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.OnBoardingActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.CategoriesGridAdapter;
@@ -30,6 +31,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TrackingHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
 import com.wholdus.www.wholdusbuyerapp.loaders.CategoriesGridLoader;
@@ -106,6 +108,9 @@ public class CategoryGridFragment extends Fragment implements
 
         getActivity().getSupportLoaderManager().initLoader(CATEGORIES_LOADER, null, this);
         fetchDataFromServer();
+
+        TrackingHelper.getInstance(getContext())
+                .logEvent(FirebaseAnalytics.Event.VIEW_ITEM, this.getClass().getSimpleName(), "");
     }
 
     @Override
@@ -178,7 +183,7 @@ public class CategoryGridFragment extends Fragment implements
     @Override
     public void onLoadFinished(Loader<ArrayList<Category>> loader, final ArrayList<Category> data) {
         mLoaderDataLoaded = true;
-        if (data != null && data.size() > 0) {
+        if (data != null && data.size() > 0 && mListener != null) {
             setDataToView(data);
             mPageLoader.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);

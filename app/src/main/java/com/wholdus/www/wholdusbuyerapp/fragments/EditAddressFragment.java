@@ -39,9 +39,11 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TrackingHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.UserAddressInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.BuyerAddressLoader;
 import com.wholdus.www.wholdusbuyerapp.loaders.ProfileLoader;
@@ -125,6 +127,17 @@ public class EditAddressFragment extends Fragment implements
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        TrackingHelper
+                .getInstance(getContext())
+                .logEvent(
+                        FirebaseAnalytics.Event.VIEW_ITEM,
+                        this.getClass().getSimpleName(),
+                        "");
     }
 
     @Override
@@ -327,23 +340,32 @@ public class EditAddressFragment extends Fragment implements
             public void run() {
                 Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
                 try {
-                    List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                    if (addresses == null || addresses.size() == 0) {
-                        mProgressBar.setVisibility(View.INVISIBLE);
-                        Toast.makeText(getContext(), "Could not fetch location", Toast.LENGTH_SHORT).show();
-                    } else {
-                        final Address address = addresses.get(0);
+                    final List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                    if (getActivity() != null) {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                setDataFromLocation(address);
-                                mProgressBar.setVisibility(View.INVISIBLE);
+                                if (addresses == null || addresses.size() == 0) {
+                                    mProgressBar.setVisibility(View.INVISIBLE);
+                                    Toast.makeText(getContext(), "Could not fetch location", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    final Address address = addresses.get(0);
+                                    setDataFromLocation(address);
+                                    mProgressBar.setVisibility(View.INVISIBLE);
+                                }
                             }
                         });
                     }
                 } catch (Exception e) {
-                    mProgressBar.setVisibility(View.INVISIBLE);
-                    Toast.makeText(getContext(), "Could not fetch location", Toast.LENGTH_SHORT).show();
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mProgressBar.setVisibility(View.INVISIBLE);
+                                Toast.makeText(getContext(), "Could not fetch location", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
                     e.printStackTrace();
                 }
             }
@@ -521,7 +543,7 @@ public class EditAddressFragment extends Fragment implements
 
     @Override
     public void onLoadFinished(Loader<ArrayList<BuyerAddress>> loader, ArrayList<BuyerAddress> data) {
-        if (data != null && data.size() > 0){
+        if (data != null && data.size() > 0 && mListener != null){
             mProgressBar.setVisibility(View.INVISIBLE);
             mBuyerAddress = data.get(0);
             setViewFromData(mBuyerAddress);
@@ -542,7 +564,7 @@ public class EditAddressFragment extends Fragment implements
 
         @Override
         public void onLoadFinished(Loader<Buyer> loader, Buyer data) {
-            if (data != null && mMobileNumberEditText.getText().toString().equals("")) {
+            if (data != null && mMobileNumberEditText.getText().toString().equals("") && mListener != null) {
                 mMobileNumberEditText.setText(data.getMobileNumber());
             }
         }

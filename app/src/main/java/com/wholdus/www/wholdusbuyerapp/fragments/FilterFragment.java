@@ -286,7 +286,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
 
         @Override
         public void onLoadFinished(Loader<ArrayList<Category>> loader, ArrayList<Category> data) {
-            if (data != null) {
+            if (data != null && mListener != null) {
                 mCategoryFilterValuesAdapter.resetData(data);
                 mCategoryFilterValuesAdapter.notifyDataSetChanged();
             }

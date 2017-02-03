@@ -32,4 +32,6 @@ public final class TODO {
     public static final int UPDATE_UNSYNCED_BUYER_INTERESTS = 18;
 
     public static final int UPDATE_NOTIFICATION = 19;
+
+    public static final int FETCH_DELETED_OFFLINE_PRODUCTS = 20;
 }
