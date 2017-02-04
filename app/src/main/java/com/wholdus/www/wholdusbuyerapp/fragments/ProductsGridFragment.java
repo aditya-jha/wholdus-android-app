@@ -492,6 +492,9 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     }
 
     private void setVisibility(int loader, int layout, int error) {
+        if (getActivity() == null){
+            return;
+        }
         try {
             mPageLoader.setVisibility(loader);
             mPageLayout.setVisibility(layout);
