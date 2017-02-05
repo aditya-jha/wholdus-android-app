@@ -8,12 +8,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -27,7 +24,6 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartSummaryListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.models.CartItem;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
-import com.wholdus.www.wholdusbuyerapp.models.SubCart;
 import com.wholdus.www.wholdusbuyerapp.services.CartService;
 
 import java.util.ArrayList;
@@ -69,15 +65,7 @@ public class CartItemsAdapter extends RecyclerView.Adapter<CartItemsAdapter.MyVi
         holder.productName.setText(product.getName());
         holder.pricePerPiece.setText(String.format(mContext.getString(R.string.price_per_pcs_format), String.valueOf((int) Math.ceil(product.getMinPricePerUnit()))));
         holder.total.setText(String.format(mContext.getString(R.string.price_format), String.valueOf((int) Math.ceil(cartItem.getFinalPrice()))));
-
-        ArrayAdapter<Integer> piecesAdapter = new ArrayAdapter<>(mContext, R.layout.cart_dialog_spinner_text_view);
-        for (int j = 1; j < 11; j++) {
-            piecesAdapter.add(product.getLotSize() * j);
-        }
-        piecesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        holder.pieces.setAdapter(piecesAdapter);
-        final int oldSelectionPosition = piecesAdapter.getPosition(cartItem.getLots() * product.getLotSize());
-        holder.pieces.setSelection(oldSelectionPosition);
+        holder.selectedPieces.setText(String.valueOf(cartItem.getPieces()));
 
         Glide.with(mContext)
                 .load(product.getImageUrl(Constants.SMALL_IMAGE, "1"))
@@ -99,17 +87,28 @@ public class CartItemsAdapter extends RecyclerView.Adapter<CartItemsAdapter.MyVi
             }
         });
 
-        holder.pieces.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        holder.minusButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (oldSelectionPosition != i) {
-                    adapterView.setSelection(i);
-                    addProductToCart((int) adapterView.getSelectedItem(), position);
+            public void onClick(View v) {
+                Product product1 = mData.get(position).getProduct();
+                int pieces = Integer.parseInt(holder.selectedPieces.getText().toString());
+                pieces -= product1.getLotSize();
+                if (pieces < product1.getLotSize()) {
+                    return;
                 }
-            }
 
+                addProductToCart(pieces, position);
+            }
+        });
+
+        holder.plusButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+            public void onClick(View v) {
+                Product product1 = mData.get(position).getProduct();
+                int pieces = Integer.parseInt(holder.selectedPieces.getText().toString());
+                pieces += product1.getLotSize();
+
+                addProductToCart(pieces, position);
             }
         });
 
@@ -165,21 +164,25 @@ public class CartItemsAdapter extends RecyclerView.Adapter<CartItemsAdapter.MyVi
         int id;
         TextView productName;
         TextView pricePerPiece;
-        Spinner pieces;
+        TextView selectedPieces;
         TextView total;
         ImageView productImage;
         ProgressBar progressBar;
         ImageButton removeButton;
+        ImageButton minusButton;
+        ImageButton plusButton;
 
         private MyViewHolder(final View itemView) {
             super(itemView);
             productName = (TextView) itemView.findViewById(R.id.cart_item_product_name_text_view);
             pricePerPiece = (TextView) itemView.findViewById(R.id.cart_item_product_price_per_piece_text_view);
             total = (TextView) itemView.findViewById(R.id.cart_item_final_price_text_view);
-            pieces = (Spinner) itemView.findViewById(R.id.cart_item_pieces_spinner);
             progressBar = (ProgressBar) itemView.findViewById(R.id.loading_indicator);
             productImage = (ImageView) itemView.findViewById(R.id.product_image);
             removeButton = (ImageButton) itemView.findViewById(R.id.cart_item_remove_button);
+            minusButton = (ImageButton) itemView.findViewById(R.id.minus_button);
+            plusButton = (ImageButton) itemView.findViewById(R.id.plus_button);
+            selectedPieces = (TextView) itemView.findViewById(R.id.selected_pieces);
         }
     }
 }

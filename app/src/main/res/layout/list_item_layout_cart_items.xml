@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="198dp"
+    android:background="@color/primary"
     android:baselineAligned="false"
     android:orientation="horizontal"
-    android:background="@color/primary"
     android:padding="@dimen/card_margin_vertical">
 
     <RelativeLayout
@@ -108,17 +108,49 @@
                     android:textColor="@color/secondary_text"
                     android:textSize="14sp" />
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
 
-                    <Spinner
-                        android:id="@+id/cart_item_pieces_spinner"
+                    <RelativeLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical" />
-                </RelativeLayout>
+                        android:background="@color/accent">
+
+                        <ImageButton
+                            android:id="@+id/minus_button"
+                            style="@style/Widget.AppCompat.Button.Borderless"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/ic_remove_black_24dp" />
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/selected_pieces"
+                        android:layout_width="0dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:fontFamily="@string/font_black"
+                        android:gravity="center"
+                        android:textSize="16sp"
+                        tools:text="100" />
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/accent">
+
+                        <ImageButton
+                            android:id="@+id/plus_button"
+                            style="@style/Widget.AppCompat.Button.Borderless"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/ic_add_white_24dp" />
+                    </RelativeLayout>
+                </LinearLayout>
             </TableRow>
 
             <TableRow
