@@ -44,7 +44,49 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:textColor="@color/primary_text" />
+            android:fontFamily="@string/font_black"
+            android:textColor="@color/primary_text"
+            android:textSize="16sp"
+            tools:text="5" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@string/font_black"
+        android:gravity="center"
+        android:text="@string/select_pieces_key" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_horizontal_margin">
+
+        <ImageButton
+            android:id="@+id/minus_button"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_remove_black_24dp" />
+
+        <TextView
+            android:id="@+id/editable_pieces"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/primary_text"
+            android:textSize="24sp"
+            tools:text="10" />
+
+        <ImageButton
+            android:id="@+id/plus_button"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_add_white_24dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -74,7 +116,6 @@
                 android:paddingBottom="10dp"
                 android:textColor="@color/primary_text"
                 android:textSize="16sp"
-                android:textStyle="bold"
                 tools:text="Rs. 1000" />
 
         </LinearLayout>
@@ -101,10 +142,14 @@
                 android:textColor="@color/secondary_text"
                 android:textSize="14sp" />
 
-            <Spinner
-                android:id="@+id/cart_dialog_pieces_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/selected_pieces"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@string/font_black"
+                android:textColor="@color/primary_text"
+                android:textSize="16sp"
+                tools:text="5" />
 
         </LinearLayout>
 
@@ -136,14 +181,14 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@string/font_black"
                 android:paddingBottom="@dimen/card_margin_horizontal"
+                android:text="@string/total_price_placeholder"
                 android:textColor="@color/primary_text"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:text="@string/total_price_placeholder"
                 tools:text="Rs. 100000" />
         </LinearLayout>
 
     </LinearLayout>
+
 
     <Button
         android:id="@+id/cart_dialog_add_to_cart_button"

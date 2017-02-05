@@ -122,6 +122,7 @@
     <string name="new_products_message">New Products Available</string>
     <string name="show_text">SHOW</string>
     <string name="new_password">New Password</string>
+    <string name="select_pieces_key">Select Pieces</string>
 
     <!-- messages -->
     <string name="back_press_message">Press again to exit Wholdus</string>

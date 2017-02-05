@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -16,10 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,17 +42,15 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
 
     private CartDialogListener mListener;
 
-    private TextView mLotSize;
-    private TextView mProductName;
-    private TextView mPricePerPiece;
-    private Spinner mPiecesSpinner;
-    private TextView mTotalPrice;
+    private TextView mLotSize, mProductName, mPricePerPiece,
+            mTotalPrice, mSelectedPieces, mEditablePieces;
     private int mProductID;
     private Product mProduct;
     private int mLots;
     private int mOldLots = -1;
-    private ArrayAdapter<Integer> mPiecesAdapter;
     private Button mAddtoCartButton;
+    private ImageButton mMinusButton, mPlusButton;
+    private TextInputEditText mPiecesEditText;
 
     private static final int PRODUCTS_DB_LOADER = 50;
     private static final int CART_DB_LOADER = 51;
@@ -129,7 +126,36 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
             case R.id.cart_dialog_add_to_cart_button:
                 addProductToCart();
                 break;
+            case R.id.minus_button:
+                setPieces(-1);
+                break;
+            case R.id.plus_button:
+                setPieces(1);
+                break;
         }
+    }
+
+    private void setPieces(int direction) {
+        if (direction > 0) {
+            mLots += 1;
+        } else {
+            mLots -= 1;
+        }
+
+        if (mLots < 1) {
+            mLots = 1;
+            return;
+        }
+
+        int pieces = mLots * mProduct.getLotSize();
+        mEditablePieces.setText(String.valueOf(pieces));
+        mSelectedPieces.setText(String.valueOf(pieces));
+        setPrice(pieces);
+    }
+
+    private void setPrice(int pieces) {
+        float price = pieces * mProduct.getMinPricePerUnit();
+        mTotalPrice.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(price))));
     }
 
     public void initReferences(ViewGroup rootView) {
@@ -137,53 +163,43 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
         mProductName = (TextView) rootView.findViewById(R.id.cart_dialog_product_name_text_view);
         mPricePerPiece = (TextView) rootView.findViewById(R.id.cart_dialog_price_per_piece_text_view);
         mTotalPrice = (TextView) rootView.findViewById(R.id.cart_dialog_total_price_text_view);
-        mPiecesSpinner = (Spinner) rootView.findViewById(R.id.cart_dialog_pieces_spinner);
+        mSelectedPieces = (TextView) rootView.findViewById(R.id.selected_pieces);
 
         mAddtoCartButton = (Button) rootView.findViewById(R.id.cart_dialog_add_to_cart_button);
         mAddtoCartButton.setOnClickListener(this);
         mAddtoCartButton.setEnabled(false);
+
+        mMinusButton = (ImageButton) rootView.findViewById(R.id.minus_button);
+        mMinusButton.setOnClickListener(this);
+
+        mPlusButton = (ImageButton) rootView.findViewById(R.id.plus_button);
+        mPlusButton.setOnClickListener(this);
+
+        mEditablePieces = (TextView) rootView.findViewById(R.id.editable_pieces);
     }
 
     public void setViewOnLoad() {
 
-        mPiecesAdapter = new ArrayAdapter<>(getContext(), R.layout.cart_dialog_spinner_text_view);
-        for (int i = 1; i < 11; i++) {
-            mPiecesAdapter.add(mProduct.getLotSize() * i);
-        }
-        //mPiecesAdapter.setDropDownViewResource(R.layout.cart_dialog_spinner_text_view);
-        mPiecesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mPiecesSpinner.setAdapter(mPiecesAdapter);
+        int pieces = mProduct.getLotSize();
         if (mLots != -1) {
-            mPiecesSpinner.setSelection(mPiecesAdapter.getPosition(mLots * mProduct.getLotSize()));
-        } else {
-            mPiecesSpinner.setSelection(mPiecesAdapter.getPosition(mProduct.getLotSize()));
+            pieces = mLots * mProduct.getLotSize();
         }
+
+        mSelectedPieces.setText(String.valueOf(pieces));
+        mEditablePieces.setText(String.valueOf(pieces));
+
+        setPrice(pieces);
 
         mLotSize.setText(String.valueOf(mProduct.getLotSize()));
         mProductName.setText(mProduct.getName());
         mPricePerPiece.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mProduct.getMinPricePerUnit()))));
 
-        mPiecesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                mLots = (((int) (adapterView.getItemAtPosition(i))) / mProduct.getLotSize());
-                float finalPrice = ((int) adapterView.getItemAtPosition(i)) * mProduct.getMinPricePerUnit();
-                mTotalPrice.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(finalPrice))));
-                mPiecesSpinner.setSelection(i);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
-        });
-
-        if (mProduct.getDeleteStatus() || !mProduct.getShowOnline()){
+        if (mProduct.getDeleteStatus() || !mProduct.getShowOnline()) {
             mAddtoCartButton.setEnabled(false);
             mAddtoCartButton.setText(R.string.out_of_stock_key);
         } else {
             mAddtoCartButton.setEnabled(true);
         }
-
     }
 
     public void addProductToCart() {
@@ -218,16 +234,16 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
                 mAddtoCartButton.setText("UPDATE CART");
                 mLots = data.get(0).getLots();
                 mOldLots = data.get(0).getLots();
-                if (mProduct != null && mPiecesAdapter != null) {
-                    float finalPrice = mLots * mProduct.getLotSize() * mProduct.getMinPricePerUnit();
-                    mTotalPrice.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(finalPrice))));
-                    mPiecesSpinner.setSelection(mPiecesAdapter.getPosition(mLots * mProduct.getLotSize()));
+                if (mProduct != null) {
+                    setPrice(mLots * mProduct.getLotSize());
+                    mSelectedPieces.setText(String.valueOf(mLots * mProduct.getLotSize()));
+                    mEditablePieces.setText(String.valueOf(mLots * mProduct.getLotSize()));
                 }
             } else {
-                if (mProduct != null && mPiecesAdapter != null) {
-                    float finalPrice = mProduct.getLotSize() * mProduct.getMinPricePerUnit();
-                    mTotalPrice.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(finalPrice))));
-                    mPiecesSpinner.setSelection(mPiecesAdapter.getPosition(mProduct.getLotSize()));
+                if (mProduct != null) {
+                    setPrice(mProduct.getLotSize());
+                    mSelectedPieces.setText(String.valueOf(mProduct.getLotSize()));
+                    mEditablePieces.setText(String.valueOf(mProduct.getLotSize()));
                 }
             }
         }
@@ -251,7 +267,7 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
                 setViewOnLoad();
             } else {
                 dismiss();
-                Toast.makeText(getContext(), R.string.api_error_message,Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.api_error_message, Toast.LENGTH_SHORT).show();
             }
         }
 
