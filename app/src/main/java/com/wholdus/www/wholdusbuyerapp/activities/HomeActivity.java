@@ -321,6 +321,18 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         Class activityClass;
         Intent intent = new Intent();
 
+        String linkToOpen = bundle.getString("linkToOpen", "");
+
+        if (!linkToOpen.equals("")){
+            try {
+                Intent linkToOpenIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(linkToOpen));
+                startActivity(linkToOpenIntent);
+                return;
+            } catch (Exception e) {
+
+            }
+        }
+
         String activityToStart = bundle.getString("activity", "");
 
         final String notificationID = bundle.getString("notificationID", "");
