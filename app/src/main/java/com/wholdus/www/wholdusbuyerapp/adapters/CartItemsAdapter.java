@@ -62,6 +62,9 @@ public class CartItemsAdapter extends RecyclerView.Adapter<CartItemsAdapter.MyVi
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
         CartItem cartItem = mData.get(position);
         Product product = cartItem.getProduct();
+        if (cartItem == null || product == null){
+            return;
+        }
 
         holder.productName.setText(product.getName());
         holder.pricePerPiece.setText(String.format(mContext.getString(R.string.price_per_pcs_format), String.valueOf((int) Math.ceil(product.getMinPricePerUnit()))));

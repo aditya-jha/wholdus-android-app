@@ -80,17 +80,19 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
                 List<NavDrawerData> mNavigationDrawerData = NavigationDrawerData.getData();
                 final NavigationDrawerAdapter mNavigationDrawerAdapter = new NavigationDrawerAdapter(getContext(), mNavigationDrawerData);
 
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
-                        ExpandableListView expandableListView = (ExpandableListView) view.findViewById(R.id.expandable_list_view);
-                        expandableListView.setAdapter(mNavigationDrawerAdapter);
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
+                            ExpandableListView expandableListView = (ExpandableListView) view.findViewById(R.id.expandable_list_view);
+                            expandableListView.setAdapter(mNavigationDrawerAdapter);
 
-                        expandableListView.setOnGroupClickListener(NavigationDrawerFragment.this);
-                        expandableListView.setOnChildClickListener(NavigationDrawerFragment.this);
-                    }
-                });
+                            expandableListView.setOnGroupClickListener(NavigationDrawerFragment.this);
+                            expandableListView.setOnChildClickListener(NavigationDrawerFragment.this);
+                        }
+                    });
+                }
             }
         }).start();
     }
