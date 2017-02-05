@@ -45,6 +45,9 @@ public class SubCartAdapter extends RecyclerView.Adapter<SubCartAdapter.MyViewHo
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         SubCart subCart = mData.get(position);
+        if (subCart == null){
+            return;
+        }
 
         holder.sellerName.setText(subCart.getSeller().getCompanyName());
         holder.summary.setText(String.valueOf(subCart.getPieces()) + " pieces - Rs. " +
