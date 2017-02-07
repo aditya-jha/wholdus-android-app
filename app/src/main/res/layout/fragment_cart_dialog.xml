@@ -21,39 +21,16 @@
         android:layout_height="0.5dp"
         android:background="@color/divider" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingTop="@dimen/activity_vertical_margin">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawableLeft="@drawable/nonselected_dot_6dp"
-            android:drawablePadding="@dimen/activity_horizontal_margin"
-            android:drawableStart="@drawable/nonselected_dot_6dp"
-            android:text="@string/lot_size_key"
-            android:textColor="@color/secondary_text"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/cart_dialog_lot_size_text_view"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:fontFamily="@string/font_black"
-            android:textColor="@color/primary_text"
-            android:textSize="16sp"
-            tools:text="5" />
-    </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
+        android:id="@+id/cart_dialog_select_pieces"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/card_margin_vertical"
         android:fontFamily="@string/font_black"
+        android:textColor="@color/secondary_text"
+        android:textSize="16sp"
         android:gravity="center"
         android:text="@string/select_pieces_key" />
 
@@ -188,6 +165,31 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <LinearLayout
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_width="0px"
+        android:layout_height="0px"/>
+
+    <android.support.design.widget.TextInputLayout
+        style="@style/TextLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/remarks_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_assignment_black_24dp"
+            android:drawablePadding="@dimen/activity_vertical_margin"
+            android:drawableStart="@drawable/ic_assignment_black_24dp"
+            android:hint="@string/remarks_key"
+            android:maxLines="3"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:nextFocusUp="@id/remarks_edit_text"
+            android:nextFocusLeft="@id/remarks_edit_text"/>
+    </android.support.design.widget.TextInputLayout>
 
 
     <Button

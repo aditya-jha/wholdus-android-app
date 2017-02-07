@@ -100,6 +100,7 @@ public class CartService extends IntentService {
                 JSONObject product = new JSONObject();
                 product.put(CartItemsTable.COLUMN_PRODUCT_ID, cartItem.getProductID());
                 product.put(CartItemsTable.COLUMN_LOTS, cartItem.getLots());
+                product.put(CartItemsTable.COLUMN_REMARKS, cartItem.getRemarks());
                 products.put(product);
             }
             jsonData.put("products", products);
@@ -194,6 +195,7 @@ public class CartService extends IntentService {
             cartItem.put(CartItemsTable.COLUMN_LOTS, intent.getIntExtra(CartItemsTable.COLUMN_LOTS, 1));
             cartItem.put(CartItemsTable.COLUMN_PIECES, intent.getIntExtra(CartItemsTable.COLUMN_PIECES, 1));
             cartItem.put(CartItemsTable.COLUMN_LOT_SIZE, intent.getIntExtra(CartItemsTable.COLUMN_LOT_SIZE, 1));
+            cartItem.put(CartItemsTable.COLUMN_REMARKS, intent.getStringExtra(CartItemsTable.COLUMN_REMARKS));
             cartItem.put(CartItemsTable.COLUMN_RETAIL_PRICE_PER_PIECE, intent.getFloatExtra(CartItemsTable.COLUMN_RETAIL_PRICE_PER_PIECE, 1));
             cartItem.put(CartItemsTable.COLUMN_CALCULATED_PRICE_PER_PIECE, intent.getFloatExtra(CartItemsTable.COLUMN_CALCULATED_PRICE_PER_PIECE, 1));
             cartItem.put(CartItemsTable.COLUMN_SHIPPING_CHARGE, 0);

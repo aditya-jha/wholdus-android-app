@@ -34,11 +34,13 @@ import com.wholdus.www.wholdusbuyerapp.fragments.CartSummaryFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.CheckoutAddressConfirmFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.CheckoutPaymentMethodFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.EditAddressFragment;
+import com.wholdus.www.wholdusbuyerapp.fragments.HandPickedFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.OrderDetailsFragment;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
+import com.wholdus.www.wholdusbuyerapp.interfaces.CartDialogListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.OrderDetailsListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.UserAddressInterface;
@@ -56,7 +58,8 @@ import java.util.Map;
 
 import static com.wholdus.www.wholdusbuyerapp.fragments.CheckoutPaymentMethodFragment.COD_CHARGE_PERCENT;
 
-public class CartActivity extends AppCompatActivity implements CartListenerInterface, UserAddressInterface, OrderDetailsListenerInterface {
+public class CartActivity extends AppCompatActivity implements CartListenerInterface,
+        UserAddressInterface, OrderDetailsListenerInterface, CartDialogListener {
 
     private int mStatus = 0;
     private int mBuyerAddressID = 0;
@@ -70,7 +73,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     private LinearLayout mProceedButtonLayout;
     private ProgressBar mProgressBar;
 
-    private BroadcastReceiver mOrderServiceResponseReceiver, mUserAddressServiceResponseReceiver;
+    private BroadcastReceiver mOrderServiceResponseReceiver, mUserAddressServiceResponseReceiver, mCartServiceBroadcastReceiver;
 
     public static final String REQUEST_TAG = "CHECKOUT_API_REQUESTS";
 
@@ -88,6 +91,14 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     protected void onResume() {
         super.onResume();
         setViewForProceedButtonLayout();
+        mCartServiceBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                enableProgressBar();
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter(getString(R.string.cart_item_written));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mCartServiceBroadcastReceiver, intentFilter);
     }
 
     @Override
@@ -116,6 +127,11 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         } catch (Exception e) {
 
         }
+        try {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mCartServiceBroadcastReceiver);
+        } catch (Exception e) {
+
+        }
     }
 
     @Override
@@ -123,6 +139,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         super.onDestroy();
         mOrderServiceResponseReceiver = null;
         mUserAddressServiceResponseReceiver = null;
+        mCartServiceBroadcastReceiver = null;
     }
 
     private void initToolbar() {
@@ -535,5 +552,10 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         Bundle bundle = new Bundle();
         bundle.putInt("orderID", mOrderID);
         openToFragment(OrderDetailsFragment.class.getSimpleName(), bundle);
+    }
+
+    @Override
+    public void dismissDialog() {
+
     }
 }
