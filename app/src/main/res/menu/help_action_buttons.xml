@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_bar_call"
-        android:icon="@drawable/ic_phone_black_24dp"
+        android:icon="@drawable/ic_phone_green_24dp"
         android:title="@string/action_bar_call"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_bar_chat"
-        android:icon="@drawable/ic_chat_bubble_black_24dp"
+        android:icon="@drawable/ic_chat_black_24dp"
         android:actionLayout="@layout/cart_icon_item_count"
         android:title="@string/action_bar_chat"
         app:showAsAction="ifRoom" />
