@@ -592,6 +592,9 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     }
 
     private void handleOnBroadcastReceive(final Intent intent) {
+        if (getActivity() == null){
+            return;
+        }
         if (mRequestQueue.size() > 0) {
             mPagesLoaded.add(mRequestQueue.remove());
         }
