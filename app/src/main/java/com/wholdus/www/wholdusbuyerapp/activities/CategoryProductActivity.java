@@ -123,7 +123,7 @@ public class CategoryProductActivity extends AppCompatActivity
 
     @Override
     public Loader<ArrayList<Category>> onCreateLoader(int id, Bundle args) {
-        return new CategoriesGridLoader(this, false);
+        return new CategoriesGridLoader(this, false, null);
     }
 
     @Override

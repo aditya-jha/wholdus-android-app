@@ -294,7 +294,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
 
         @Override
         public Loader<ArrayList<Category>> onCreateLoader(final int id, Bundle args) {
-            return new CategoriesGridLoader(getContext(), false);
+            return new CategoriesGridLoader(getContext(), false, null);
         }
     }
 }
