@@ -49,6 +49,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.CartMenuItemHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.ShortListMenuItemHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TrackingHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HandPickedListenerInterface;
@@ -89,6 +90,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
 
     private static final int ANIMATION_DURATION = 250;
     private CartMenuItemHelper mCartMenuItemHelper;
+    private ShortListMenuItemHelper mShortListMenuItemHelper;
 
     private static final String
             INSTRUCTIONS_SHARED_PREFERENCES = "InstructionsSharedPreference",
@@ -178,6 +180,12 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         }
 
         dismissDialog();
+        if (mCartMenuItemHelper != null) {
+            mCartMenuItemHelper.restartLoader();
+        }
+        if (mShortListMenuItemHelper != null){
+            mShortListMenuItemHelper.refreshShortListCount();
+        }
 
     }
 
@@ -222,6 +230,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         inflater.inflate(R.menu.default_action_buttons, menu);
         mCartMenuItemHelper = new CartMenuItemHelper(getContext(), menu.findItem(R.id.action_bar_checkout), getActivity().getSupportLoaderManager());
         mCartMenuItemHelper.restartLoader();
+        mShortListMenuItemHelper = new ShortListMenuItemHelper(getContext(), menu.findItem(R.id.action_bar_shortlist));
     }
 
     @Override
@@ -450,6 +459,9 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         intent.putExtra(CatalogContract.ProductsTable.COLUMN_HAS_SWIPED, mHasSwiped);
         intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONSE_CODE, liked ? 1 : 2);
         getContext().startService(intent);
+        if (mShortListMenuItemHelper != null && liked) {
+            mShortListMenuItemHelper.incrementShortListCount();
+        }
     }
 
     private void actionAfterSwipe(boolean liked) {

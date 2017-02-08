@@ -52,6 +52,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ShareIntentClass;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.ShortListMenuItemHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TrackingHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
@@ -89,6 +90,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
     private LinearLayout mSortFilterLayout;
 
     private CartMenuItemHelper mCartMenuItemHelper;
+    private ShortListMenuItemHelper mShortListMenuItemHelper;
 
     private String mFilters;
     private int mTotalPages, mRecyclerViewPosition, mActivePageCall, mTotalProductsOnServer;
@@ -277,6 +279,13 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         mGridLayoutManager.scrollToPosition(mRecyclerViewPosition);
 
         dismissDialog();
+
+        if (mCartMenuItemHelper != null) {
+            mCartMenuItemHelper.restartLoader();
+        }
+        if (mShortListMenuItemHelper != null){
+            mShortListMenuItemHelper.refreshShortListCount();
+        }
     }
 
     @Override
@@ -308,6 +317,7 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
         inflater.inflate(R.menu.default_action_buttons, menu);
         mCartMenuItemHelper = new CartMenuItemHelper(getContext(), menu.findItem(R.id.action_bar_checkout), getActivity().getSupportLoaderManager());
         mCartMenuItemHelper.restartLoader();
+        mShortListMenuItemHelper = new ShortListMenuItemHelper(getContext(), menu.findItem(R.id.action_bar_shortlist));
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -447,6 +457,14 @@ public class ProductsGridFragment extends Fragment implements LoaderManager.Load
                 intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONDED_FROM, 1);
                 intent.putExtra(CatalogContract.ProductsTable.COLUMN_HAS_SWIPED, false);
                 intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONSE_CODE, product.getLikeStatus() ? 1 : 2);
+
+                if (mShortListMenuItemHelper != null){
+                    if (product.getLikeStatus()){
+                        mShortListMenuItemHelper.incrementShortListCount();
+                    } else {
+                        mShortListMenuItemHelper.decrementShortListCount();
+                    }
+                }
 
                 getContext().startService(intent);
                 break;

@@ -26,7 +26,6 @@ import com.wholdus.www.wholdusbuyerapp.adapters.CategorySpinnerAdapter;
 import com.wholdus.www.wholdusbuyerapp.fragments.FilterFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProductsGridFragment;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.CartMenuItemHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.NavDrawerHelper;

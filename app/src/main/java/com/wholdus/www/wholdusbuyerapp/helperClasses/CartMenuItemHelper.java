@@ -103,7 +103,11 @@ public class CartMenuItemHelper {
         if (mCartItemCountTextView != null && mContext != null) {
             if (mCartProducts > 0) {
                 mCartItemCountTextView.setVisibility(View.VISIBLE);
-                mCartItemCountTextView.setText(String.valueOf(mCartProducts));
+                if (mCartProducts < 10) {
+                    mCartItemCountTextView.setText(String.valueOf(mCartProducts));
+                } else {
+                    mCartItemCountTextView.setText("9+");
+                }
             } else {
                 mCartItemCountTextView.setVisibility(View.INVISIBLE);
             }

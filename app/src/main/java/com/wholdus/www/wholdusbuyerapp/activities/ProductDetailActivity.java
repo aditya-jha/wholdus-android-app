@@ -40,6 +40,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.OkHttpHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ShareIntentClass;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.ShortListMenuItemHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TrackingHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartDialogListener;
@@ -83,11 +84,12 @@ public class ProductDetailActivity extends AppCompatActivity
     private static final int PRODUCT_LOADER = 10;
     private static final int CART_ITEM_LOADER = 11;
 
-    private static final String SHIPPING_SHARED_PREFERENCES = "ShippingSharedPreference";
-    private static final String PINCODE_KEY = "PincodeKey";
-    private static final String SHIPPING_AVAILABLE_KEY = "ShippingAvailableKey";
+    public static final String SHIPPING_SHARED_PREFERENCES = "ShippingSharedPreference";
+    public static final String PINCODE_KEY = "PincodeKey";
+    public static final String SHIPPING_AVAILABLE_KEY = "ShippingAvailableKey";
 
     private CartMenuItemHelper mCartMenuItemHelper;
+    private ShortListMenuItemHelper mShortListMenuItemHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,6 +170,7 @@ public class ProductDetailActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.default_action_buttons, menu);
         mCartMenuItemHelper = new CartMenuItemHelper(this, menu.findItem(R.id.action_bar_checkout), getSupportLoaderManager());
         mCartMenuItemHelper.restartLoader();
+        mShortListMenuItemHelper = new ShortListMenuItemHelper(this, menu.findItem(R.id.action_bar_shortlist));
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -192,6 +195,12 @@ public class ProductDetailActivity extends AppCompatActivity
         IntentFilter intentFilter = new IntentFilter(getString(R.string.cart_item_written));
         LocalBroadcastManager.getInstance(this).registerReceiver(mCartServiceResponseReceiver, intentFilter);
         loadCartCount();
+        if (mCartMenuItemHelper != null) {
+            mCartMenuItemHelper.restartLoader();
+        }
+        if (mShortListMenuItemHelper != null){
+            mShortListMenuItemHelper.refreshShortListCount();
+        }
     }
 
     @Override
@@ -255,6 +264,13 @@ public class ProductDetailActivity extends AppCompatActivity
                 intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONDED_FROM, 2);
                 intent.putExtra(CatalogContract.ProductsTable.COLUMN_HAS_SWIPED, false);
                 intent.putExtra(CatalogContract.ProductsTable.COLUMN_RESPONSE_CODE, mProduct.getLikeStatus() ? 1 : 2);
+                if (mShortListMenuItemHelper != null){
+                    if (mProduct.getLikeStatus()){
+                        mShortListMenuItemHelper.incrementShortListCount();
+                    } else {
+                        mShortListMenuItemHelper.decrementShortListCount();
+                    }
+                }
 
                 startService(intent);
                 break;

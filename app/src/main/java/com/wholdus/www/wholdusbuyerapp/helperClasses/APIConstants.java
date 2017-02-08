@@ -26,6 +26,7 @@ public class APIConstants {
 
     public static final String BUYER_PRODUCT_URL = "users/buyer/buyerproducts/";
     public static final String BUYER_PRODUCT_RESPONSE_URL = "users/buyer/buyerproducts/response/";
+    public static final String BUYER_PRODUCT_RESPONSE_COUNT_URL = "users/buyer/buyerproducts/response/count/";
 
     public static final String BUYER_DETAILS_URL = "users/buyer/";
     public static final String BUSINESS_TYPES_URL = "users/businesstype/";
