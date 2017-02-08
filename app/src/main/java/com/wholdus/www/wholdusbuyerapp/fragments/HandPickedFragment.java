@@ -734,7 +734,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             return;
         }
 
-        int iconWidth = 53;
+        int iconWidth = 56;
         int toolbarHeight = 56;
         int iconSize = 24;
 

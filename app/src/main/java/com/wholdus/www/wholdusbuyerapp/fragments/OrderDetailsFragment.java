@@ -1,24 +1,37 @@
 package com.wholdus.www.wholdusbuyerapp.fragments;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crash.FirebaseCrash;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.SubOrderAdapter;
 import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.ContactsHelperClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.interfaces.OrderDetailsListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.OrdersLoader;
@@ -52,6 +65,8 @@ public class OrderDetailsFragment extends Fragment implements LoaderManager.Load
     private ProgressBar mPageLoader;
     private ViewGroup mPageLayout;
 
+    private static final int CONTACTS_PERMISSION = 0;
+
     public OrderDetailsFragment() {
     }
 
@@ -65,6 +80,88 @@ public class OrderDetailsFragment extends Fragment implements LoaderManager.Load
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mOrderID = getArguments().getInt("orderID", -1);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.help_action_buttons, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_bar_call:
+                callPhone(getString(R.string.phone1));
+                break;
+            case R.id.action_bar_chat:
+                chatButtonClicked();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void callPhone(String number) {
+        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + number));
+        startActivity(intent);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case CONTACTS_PERMISSION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    chatButtonClicked();
+                } else {
+                    Toast.makeText(getContext(), "Permission needed to chat with us", Toast.LENGTH_SHORT).show();
+                }
+        }
+    }
+
+    private void chatButtonClicked() {
+
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        ContactsHelperClass contactsHelperClass = new ContactsHelperClass(getActivity().getApplicationContext());
+                        String savedNumber = contactsHelperClass.getSavedNumber();
+                        if (savedNumber != null) {
+                            openWhatsapp(savedNumber);
+                        } else {
+                            contactsHelperClass.saveWholdusContacts();
+                            savedNumber = contactsHelperClass.getSavedNumber();
+                            if (savedNumber != null) openWhatsapp(savedNumber);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        FirebaseCrash.report(e);
+                    }
+                }
+            }).start();
+        } else {
+            requestPermissions(new String[]{Manifest.permission.WRITE_CONTACTS}, CONTACTS_PERMISSION);
+        }
+    }
+
+    private void openWhatsapp(final String number) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final Uri uri = Uri.parse("smsto:" + number);
+                    Intent i = new Intent(Intent.ACTION_SENDTO, uri);
+                    i.putExtra("sms_body", "I need some help");
+                    i.setPackage("com.whatsapp");
+                    getContext().startActivity(i);
+                } catch (Exception e) {
+                    Toast.makeText(getContext(), "Whatsapp not installed", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     @Nullable

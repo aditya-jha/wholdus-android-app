@@ -14,6 +14,8 @@
     <string name="action_bar_checkout">Proceed to Checkout</string>
     <string name="action_bar_clear">CLEAR</string>
     <string name="action_bar_skip">SKIP</string>
+    <string name="action_bar_chat">Chat for help</string>
+    <string name="action_bar_call">Call for help</string>
 
     <string name="logo_content_description">@string/intro_page_1</string>
 
