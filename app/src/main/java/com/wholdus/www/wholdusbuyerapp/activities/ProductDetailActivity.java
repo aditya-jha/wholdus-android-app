@@ -38,6 +38,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.CartMenuItemHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.OkHttpHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ShareIntentClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ShortListMenuItemHelper;
@@ -152,6 +153,7 @@ public class ProductDetailActivity extends AppCompatActivity
             @Override
             public void onReceive(Context context, Intent intent) {
                 onReceiveCartIntent(intent);
+                refreshCartMenuItemHelper();
             }
         };
 
@@ -169,7 +171,7 @@ public class ProductDetailActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.default_action_buttons, menu);
         mCartMenuItemHelper = new CartMenuItemHelper(this, menu.findItem(R.id.action_bar_checkout), getSupportLoaderManager());
-        mCartMenuItemHelper.restartLoader();
+        refreshCartMenuItemHelper();
         mShortListMenuItemHelper = new ShortListMenuItemHelper(this, menu.findItem(R.id.action_bar_shortlist));
         return super.onCreateOptionsMenu(menu);
     }
@@ -192,12 +194,10 @@ public class ProductDetailActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        IntentFilter intentFilter = new IntentFilter(getString(R.string.cart_item_written));
+        IntentFilter intentFilter = new IntentFilter(IntentFilters.CART_ITEM_WRITTEN);
         LocalBroadcastManager.getInstance(this).registerReceiver(mCartServiceResponseReceiver, intentFilter);
         loadCartCount();
-        if (mCartMenuItemHelper != null) {
-            mCartMenuItemHelper.restartLoader();
-        }
+        refreshCartMenuItemHelper();
         if (mShortListMenuItemHelper != null){
             mShortListMenuItemHelper.refreshShortListCount();
         }
@@ -308,9 +308,7 @@ public class ProductDetailActivity extends AppCompatActivity
     }
 
     private void loadCartCount() {
-        if (mCartMenuItemHelper != null) {
-            mCartMenuItemHelper.restartLoader();
-        }
+        refreshCartMenuItemHelper();
         getSupportLoaderManager().restartLoader(CART_ITEM_LOADER, null, mCartItemLoaderManager);
     }
 
@@ -528,6 +526,12 @@ public class ProductDetailActivity extends AppCompatActivity
             } catch (Exception e) {
 
             }
+        }
+    }
+
+    private void refreshCartMenuItemHelper(){
+        if (mCartMenuItemHelper != null) {
+            mCartMenuItemHelper.restartLoader();
         }
     }
 

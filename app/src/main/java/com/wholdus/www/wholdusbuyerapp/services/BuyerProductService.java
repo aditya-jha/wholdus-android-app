@@ -21,6 +21,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ShortListMenuItemHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.models.BuyerProductResponse;
@@ -157,7 +158,7 @@ public class BuyerProductService extends IntentService {
     }
 
     private void saveBuyerProductsToDB(String response) throws JSONException {
-        Intent intent = new Intent(getString(R.string.buyer_product_data_updated));
+        Intent intent = new Intent(IntentFilters.BUYER_PRODUCT_DATA_UPDATED);
         if (response == null) {
             // error response
             intent.putExtra(Constants.ERROR_RESPONSE, "Error");
@@ -229,7 +230,7 @@ public class BuyerProductService extends IntentService {
     }
 
     private void saveBuyerProductResponseToDB(String response) throws JSONException {
-        Intent intent = new Intent(getString(R.string.buyer_product_data_updated));
+        Intent intent = new Intent(IntentFilters.BUYER_PRODUCT_DATA_UPDATED);
         if (response == null) {
             // error response
             intent.putExtra(Constants.ERROR_RESPONSE, "Error");

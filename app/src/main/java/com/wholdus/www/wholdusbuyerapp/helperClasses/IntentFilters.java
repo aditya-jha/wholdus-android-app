@@ -12,5 +12,7 @@ public final class IntentFilters {
     public static final String PRODUCT_DATA = "product_data";
     public static final String SPECIFIC_PRODUCT_DATA = "specific_product_data";
     public static final String LOGIN_SIGNUP_DATA = "login_signup_data";
-    public static final String BUYER_PRODUCT_DATA = "BUYER_PRODUCTS_DATA_UPDATED";
+
+    public static final String BUYER_PRODUCT_DATA_UPDATED = "buyer_products_data_updated";
+    public static final String CART_ITEM_WRITTEN = "cart_item_written";
 }

@@ -39,6 +39,7 @@ import com.wholdus.www.wholdusbuyerapp.fragments.OrderDetailsFragment;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartDialogListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartListenerInterface;
@@ -94,10 +95,19 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         mCartServiceBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                enableProgressBar();
+                String intentAction = intent.getAction();
+                if (intentAction == null){
+                    return;
+                }
+                switch (intentAction){
+                    case IntentFilters.CART_ITEM_WRITTEN:
+                        enableProgressBar();
+                        break;
+                }
             }
         };
-        IntentFilter intentFilter = new IntentFilter(getString(R.string.cart_item_written));
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(IntentFilters.CART_ITEM_WRITTEN);
         LocalBroadcastManager.getInstance(this).registerReceiver(mCartServiceBroadcastReceiver, intentFilter);
     }
 

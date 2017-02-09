@@ -72,7 +72,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
 
     private HandPickedListenerInterface mListener;
     private final int PRODUCTS_DB_LOADER = 30;
-    private BroadcastReceiver mBuyerProductServiceResponseReceiver, mProductServiceResponseReceiver, mSpecificProductServiceResponseReceiver;
+    private BroadcastReceiver mResponseReceiver;
     private ProductsLoaderManager mProductsLoader;
     private ArrayList<Product> mProductsArrayList;
     private ArrayList<Integer> mExcludeProductIDs, mProductIDs;
@@ -128,26 +128,30 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         setHasOptionsMenu(true);
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_handpicked, container, false);
         initReferences(rootView);
-        mBuyerProductServiceResponseReceiver = new BroadcastReceiver() {
+        mResponseReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                handleBuyerProductAPIResponse();
-            }
-        };
-        mProductServiceResponseReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                handleProductAPIResponse(intent);
-            }
-        };
-        if (mProductIDs != null) {
-            mSpecificProductServiceResponseReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    handleBuyerProductAPIResponse();
+                String intentAction = intent.getAction();
+                if (intentAction == null){
+                    return;
                 }
-            };
-        }
+                switch (intentAction){
+                    case IntentFilters.BUYER_PRODUCT_DATA_UPDATED:
+                        handleBuyerProductAPIResponse();
+                        break;
+                    case IntentFilters.PRODUCT_DATA:
+                        handleProductAPIResponse(intent);
+                        break;
+                    case IntentFilters.SPECIFIC_PRODUCT_DATA:
+                        handleBuyerProductAPIResponse();
+                        break;
+                    case IntentFilters.CART_ITEM_WRITTEN:
+                        refreshCartMenuItemHelper();
+                        break;
+                }
+
+            }
+        };
         return rootView;
     }
 
@@ -164,25 +168,21 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
 
         mProductsLoader = new ProductsLoaderManager();
 
-        IntentFilter intentFilter = new IntentFilter(getString(R.string.buyer_product_data_updated));
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mBuyerProductServiceResponseReceiver, intentFilter);
-
-        IntentFilter productIntentFilter = new IntentFilter(IntentFilters.PRODUCT_DATA);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mProductServiceResponseReceiver, productIntentFilter);
-
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(IntentFilters.BUYER_PRODUCT_DATA_UPDATED);
+        intentFilter.addAction(IntentFilters.PRODUCT_DATA);
         if (mProductIDs != null) {
-            IntentFilter specificProductIntentFilter = new IntentFilter(IntentFilters.SPECIFIC_PRODUCT_DATA);
-            LocalBroadcastManager.getInstance(getContext()).registerReceiver(mSpecificProductServiceResponseReceiver, specificProductIntentFilter);
+            intentFilter.addAction(IntentFilters.SPECIFIC_PRODUCT_DATA);
         }
+        intentFilter.addAction(IntentFilters.CART_ITEM_WRITTEN);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mResponseReceiver, intentFilter);
 
         if (mProductsArrayList.isEmpty()) {
             updateProducts();
         }
 
         dismissDialog();
-        if (mCartMenuItemHelper != null) {
-            mCartMenuItemHelper.restartLoader();
-        }
+        refreshCartMenuItemHelper();
         if (mShortListMenuItemHelper != null){
             mShortListMenuItemHelper.refreshShortListCount();
         }
@@ -193,20 +193,8 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     public void onPause() {
         super.onPause();
         try {
-            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mBuyerProductServiceResponseReceiver);
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mResponseReceiver);
         } catch (Exception e) {
-        }
-
-        try {
-            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mProductServiceResponseReceiver);
-        } catch (Exception e) {
-
-        }
-
-        try {
-            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mSpecificProductServiceResponseReceiver);
-        } catch (Exception e) {
-
         }
     }
 
@@ -219,9 +207,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mBuyerProductServiceResponseReceiver = null;
-        mProductServiceResponseReceiver = null;
-        mSpecificProductServiceResponseReceiver = null;
+        mResponseReceiver = null;
     }
 
 
@@ -229,8 +215,8 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.default_action_buttons, menu);
         mCartMenuItemHelper = new CartMenuItemHelper(getContext(), menu.findItem(R.id.action_bar_checkout), getActivity().getSupportLoaderManager());
-        mCartMenuItemHelper.restartLoader();
         mShortListMenuItemHelper = new ShortListMenuItemHelper(getContext(), menu.findItem(R.id.action_bar_shortlist));
+        refreshCartMenuItemHelper();
     }
 
     @Override
@@ -253,9 +239,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     }
 
     public void dismissDialog() {
-        if (mCartMenuItemHelper != null) {
-            mCartMenuItemHelper.restartLoader();
-        }
+        refreshCartMenuItemHelper();
     }
 
     private void handleBuyerProductAPIResponse() {
@@ -824,6 +808,12 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
 
     public int getDPFromPixels(int px) {
         return Math.round(px / (getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+
+    private void refreshCartMenuItemHelper(){
+        if (mCartMenuItemHelper != null) {
+            mCartMenuItemHelper.restartLoader();
+        }
     }
 
 }
