@@ -49,6 +49,7 @@ public class BuyerAddressFragment extends Fragment implements LoaderManager.Load
     private ArrayList<BuyerAddress> mBuyerAddresses;
     private AddressDisplayListViewAdapter mAddressDisplayListViewAdapter;
     private boolean mAPIDataLoaded;
+    private boolean mShowSelectAddressButton = false;
 
     private final int USER_ADDRESS_DB_LOADER = 50;
 
@@ -71,6 +72,10 @@ public class BuyerAddressFragment extends Fragment implements LoaderManager.Load
                 handleAPIResponse();
             }
         };
+        Bundle args = getArguments();
+        if (args != null){
+            mShowSelectAddressButton = args.getBoolean("showSelectAddressButton",false);
+        }
     }
 
     @Nullable
@@ -126,7 +131,7 @@ public class BuyerAddressFragment extends Fragment implements LoaderManager.Load
     private void initReferences(ViewGroup rootView) {
         mAddressListView = (ListView) rootView.findViewById(R.id.address_list_view);
         mBuyerAddresses = new ArrayList<>();
-        mAddressDisplayListViewAdapter = new AddressDisplayListViewAdapter(getActivity().getApplicationContext(), mBuyerAddresses, this);
+        mAddressDisplayListViewAdapter = new AddressDisplayListViewAdapter(getActivity().getApplicationContext(), mBuyerAddresses, this, mShowSelectAddressButton);
         mAddressListView.setAdapter(mAddressDisplayListViewAdapter);
 
         mAddressListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

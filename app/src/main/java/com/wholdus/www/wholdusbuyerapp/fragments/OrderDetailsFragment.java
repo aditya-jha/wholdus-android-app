@@ -1,10 +1,13 @@
 package com.wholdus.www.wholdusbuyerapp.fragments;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +25,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -31,14 +36,23 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.SubOrderAdapter;
 import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ContactsHelperClass;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.OkHttpHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.OrderDetailsListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.OrdersLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Order;
 import com.wholdus.www.wholdusbuyerapp.models.Suborder;
+import com.wholdus.www.wholdusbuyerapp.services.OrderService;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import okhttp3.Response;
 
 /**
  * Created by kaustubh on 13/12/16.
@@ -59,11 +73,15 @@ public class OrderDetailsFragment extends Fragment implements LoaderManager.Load
     private TextView mCODCharge;
     private TextView mShippingCharge;
     private TextView mFinalPrice;
+    private Button mCancelButton;
     private RecyclerView mSubOrdersListView;
     private ArrayList<Suborder> mSuborders;
     private SubOrderAdapter mSuborderAdapter;
     private ProgressBar mPageLoader;
     private ViewGroup mPageLayout;
+    private boolean mCancelledRequest = false;
+
+    private BroadcastReceiver mOrderServiceResponseReceiver;
 
     private static final int CONTACTS_PERMISSION = 0;
 
@@ -185,6 +203,7 @@ public class OrderDetailsFragment extends Fragment implements LoaderManager.Load
         mCODCharge = (TextView) view.findViewById(R.id.order_details_cod_charge_text_view);
         mShippingCharge = (TextView) view.findViewById(R.id.order_details_shipping_charge_text_view);
         mFinalPrice = (TextView) view.findViewById(R.id.order_details_total_amount_text_view);
+        mCancelButton = (Button) view.findViewById(R.id.order_details_cancel_button);
 
         mSubOrdersListView = (RecyclerView) view.findViewById(R.id.suborder_list_view);
         mSubOrdersListView.setItemAnimator(new DefaultItemAnimator());
@@ -208,11 +227,17 @@ public class OrderDetailsFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onPause() {
         super.onPause();
+        try {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mOrderServiceResponseReceiver);
+        } catch (Exception e) {
+
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mOrderServiceResponseReceiver = null;
     }
 
     @Override
@@ -228,7 +253,7 @@ public class OrderDetailsFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Order>> loader, ArrayList<Order> data) {
-        if (data != null && data.size() == 1 && mOrder == null  && mListener != null) {
+        if (data != null && data.size() == 1 && mListener != null) {
             mPageLoader.setVisibility(View.INVISIBLE);
             mPageLayout.setVisibility(View.VISIBLE);
             mOrder = data.get(0);
@@ -252,10 +277,72 @@ public class OrderDetailsFragment extends Fragment implements LoaderManager.Load
         mCODCharge.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mOrder.getCODCharge()))));
         mShippingCharge.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mOrder.getShippingCharge()))));
         mFinalPrice.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mOrder.getFinalPrice()))));
+        if (mOrder.getOrderStatusValue() == 0){
+            mCancelButton.setVisibility(View.VISIBLE);
+            mCancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mPageLoader.setVisibility(View.VISIBLE);
+                    if (!mCancelledRequest) {
+                        new CancelRequest().execute();
+                    }
+                    mCancelledRequest = true;
+                }
+            });
+        } else {
+            mCancelButton.setVisibility(View.GONE);
+        }
 
         mSuborders.clear();
         mSuborders.addAll(mOrder.getSuborders());
         mSuborderAdapter.notifyDataSetChanged();
         //HelperFunctions.setListViewHeightBasedOnChildren(mSubOrdersListView);
+    }
+
+    private class CancelRequest extends AsyncTask<Void, Void, Boolean> {
+
+        protected Boolean doInBackground(Void... par) {
+            HashMap<String, String> params = new HashMap<>();
+            String url = GlobalAccessHelper.generateUrl(APIConstants.ORDERS_URL, params);
+            try {
+                JSONObject data = new JSONObject();
+                data.put("orderID", mOrder.getOrderID());
+                Response response = OkHttpHelper.makeDeleteRequest(getContext().getApplicationContext(), url, data.toString());
+                return response.isSuccessful();
+            }catch (Exception e) {
+                return false;
+            }
+        }
+
+        protected void onPostExecute(Boolean result) {
+            if (result){
+                runOrderService();
+            }else {
+                Toast.makeText(getContext(), getString(R.string.api_error_message),Toast.LENGTH_SHORT).show();
+                mPageLoader.setVisibility(View.GONE);
+                mCancelledRequest =false;
+            }
+        }
+
+
+    }
+
+    private void runOrderService() {
+        mOrderServiceResponseReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                cancellationSuccess();
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter(getString(R.string.order_data_updated));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mOrderServiceResponseReceiver, intentFilter);
+        Intent intent = new Intent(getContext(), OrderService.class);
+        intent.putExtra("TODO", R.string.fetch_orders);
+        getContext().startService(intent);
+    }
+
+    private void cancellationSuccess(){
+        getActivity().getSupportLoaderManager().restartLoader(ORDERS_DB_LOADER, null, this);
+        Toast.makeText(getContext(), getString(R.string.cancel_order_success_message),Toast.LENGTH_SHORT).show();
     }
 }

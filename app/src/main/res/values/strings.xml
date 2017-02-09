@@ -94,6 +94,8 @@
     <string name="order_details_cod_charge">COD Charge &#160;</string>
     <string name="order_details_shipping">Shipping &#160;</string>
     <string name="order_details_total_amount">Total Amount &#160;</string>
+    <string name="order_details_cancel_order">Cancel Order</string>
+    <string name="cancel_order_success_message">Order Successfully Cancelled</string>
 
     <string name="order_item_price_per_piece">Price/pc</string>
     <string name="order_item_pieces">Pieces</string>
@@ -219,8 +221,10 @@
     <string name="cart_item_remarks">Remarks</string>
     <string name="cart_item_edit">Edit</string>
 
+    <!-- buyer address fragment -->
     <string name="checkout_confirm_address_delivery_address">Delivery Address</string>
     <string name="checkout_confirm_address_select_another">SELECT ANOTHER</string>
+    <string name="select_address_key">Select Address</string>
 
     <string name="checkout_payment_method_cod">Cash on Delivery</string>
     <string name="checkout_payment_method_cod_description">2% COD Charge</string>

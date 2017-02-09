@@ -364,6 +364,10 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
             fragment = new CartSummaryFragment();
         } else if (fragmentName.equals(BuyerAddressFragment.class.getSimpleName())) {
             mProceedButtonLayout.setVisibility(View.GONE);
+            if (bundle == null){
+                bundle = new Bundle();
+            }
+            bundle.putBoolean("showSelectAddressButton", true);
             fragment = new BuyerAddressFragment();
         } else if (fragmentName.equals(CheckoutAddressConfirmFragment.class.getSimpleName())) {
             mProceedButtonLayout.setVisibility(View.VISIBLE);
