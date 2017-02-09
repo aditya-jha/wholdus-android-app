@@ -42,7 +42,7 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
 
     private CartDialogListener mListener;
 
-    private TextView mLotSize, mProductName, mPricePerPiece,
+    private TextView mSelectPieces, mProductName, mPricePerPiece,
             mTotalPrice, mSelectedPieces, mEditablePieces;
     private int mProductID;
     private Product mProduct;
@@ -50,7 +50,8 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
     private int mOldLots = -1;
     private Button mAddtoCartButton;
     private ImageButton mMinusButton, mPlusButton;
-    private TextInputEditText mPiecesEditText;
+    private TextInputEditText mPiecesEditText, mRemarks;
+    private boolean mShowToast;
 
     private static final int PRODUCTS_DB_LOADER = 50;
     private static final int CART_DB_LOADER = 51;
@@ -89,6 +90,7 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_cart_dialog, container, false);
         Bundle mArgs = getArguments();
         mProductID = mArgs.getInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID);
+        mShowToast = mArgs.getBoolean("showToast", true);
         mLots = 1;
         return rootView;
     }
@@ -159,7 +161,7 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
     }
 
     public void initReferences(ViewGroup rootView) {
-        mLotSize = (TextView) rootView.findViewById(R.id.cart_dialog_lot_size_text_view);
+        mSelectPieces = (TextView) rootView.findViewById(R.id.cart_dialog_select_pieces);
         mProductName = (TextView) rootView.findViewById(R.id.cart_dialog_product_name_text_view);
         mPricePerPiece = (TextView) rootView.findViewById(R.id.cart_dialog_price_per_piece_text_view);
         mTotalPrice = (TextView) rootView.findViewById(R.id.cart_dialog_total_price_text_view);
@@ -176,6 +178,7 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
         mPlusButton.setOnClickListener(this);
 
         mEditablePieces = (TextView) rootView.findViewById(R.id.editable_pieces);
+        mRemarks = (TextInputEditText) rootView.findViewById(R.id.remarks_edit_text);
     }
 
     public void setViewOnLoad() {
@@ -190,7 +193,7 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
 
         setPrice(pieces);
 
-        mLotSize.setText(String.valueOf(mProduct.getLotSize()));
+        mSelectPieces.setText("Select Pieces (Lot Size : " + String.valueOf(mProduct.getLotSize()) + ")");
         mProductName.setText(mProduct.getName());
         mPricePerPiece.setText(String.format(getString(R.string.price_format), String.valueOf((int) Math.ceil(mProduct.getMinPricePerUnit()))));
 
@@ -203,7 +206,8 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
     }
 
     public void addProductToCart() {
-        if (mOldLots != mLots && mProduct != null) {
+        dismiss();
+        if ((mOldLots != mLots || !mRemarks.getText().toString().equals("")) && mProduct != null) {
             Intent intent = new Intent(getContext(), CartService.class);
             intent.putExtra("TODO", R.string.write_cart_item);
             intent.putExtra(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, mProduct.getProductID());
@@ -213,14 +217,16 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
             intent.putExtra(CartContract.CartItemsTable.COLUMN_RETAIL_PRICE_PER_PIECE, mProduct.getPricePerUnit());
             intent.putExtra(CartContract.CartItemsTable.COLUMN_CALCULATED_PRICE_PER_PIECE, mProduct.getMinPricePerUnit());
             intent.putExtra(CartContract.CartItemsTable.COLUMN_FINAL_PRICE, mProduct.getMinPricePerUnit() * mLots * mProduct.getLotSize());
+            intent.putExtra(CartContract.CartItemsTable.COLUMN_REMARKS, mRemarks.getText().toString());
             getContext().startService(intent);
-            if (mOldLots == -1) {
-                Toast.makeText(getContext(), "Added to Cart", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getContext(), "Cart updated", Toast.LENGTH_SHORT).show();
+            if (mShowToast) {
+                if (mOldLots == -1) {
+                    Toast.makeText(getContext(), "Added to Cart", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Cart updated", Toast.LENGTH_SHORT).show();
+                }
             }
         }
-        dismiss();
     }
 
     private class CartItemLoaderManager implements LoaderManager.LoaderCallbacks<ArrayList<CartItem>> {
@@ -234,6 +240,7 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
                 mAddtoCartButton.setText("UPDATE CART");
                 mLots = data.get(0).getLots();
                 mOldLots = data.get(0).getLots();
+                mRemarks.setText(data.get(0).getRemarks());
                 if (mProduct != null) {
                     setPrice(mLots * mProduct.getLotSize());
                     mSelectedPieces.setText(String.valueOf(mLots * mProduct.getLotSize()));

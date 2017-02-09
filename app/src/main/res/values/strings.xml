@@ -122,7 +122,7 @@
     <string name="new_products_message">New Products Available</string>
     <string name="show_text">SHOW</string>
     <string name="new_password">New Password</string>
-    <string name="select_pieces_key">Select Pieces</string>
+    <string name="select_pieces_key">Select Pieces (Lot Size : -)</string>
 
     <!-- messages -->
     <string name="back_press_message">Press again to exit Wholdus</string>
@@ -196,6 +196,7 @@
     <string name="lot_details_key">Details &#160;</string>
     <string name="price_per_piece">Price/pc &#160;</string>
     <string name="pieces_key">Pieces</string>
+    <string name="remarks_key">Sizes, Other Remarks</string>
     <string name="total_price_key">Total</string>
     <string name="total_price_placeholder">Rs. &#160; &#160; &#160; &#160; &#160; </string>
     <string name="cart_dialog_shipping_condition">*Shipping charge extra = Rs.35/kg</string>
@@ -213,6 +214,8 @@
     <string name="cart_item_price_per_piece">Price/pc</string>
     <string name="cart_item_pieces">Pieces</string>
     <string name="cart_item_total">Total</string>
+    <string name="cart_item_remarks">Remarks</string>
+    <string name="cart_item_edit">Edit</string>
 
     <string name="checkout_confirm_address_delivery_address">Delivery Address</string>
     <string name="checkout_confirm_address_select_another">SELECT ANOTHER</string>

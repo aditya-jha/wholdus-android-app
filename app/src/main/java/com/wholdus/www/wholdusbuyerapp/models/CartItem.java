@@ -25,6 +25,7 @@ public class CartItem {
     private String mCreatedAt;
     private String mUpdatedAt;
     private int mSynced;
+    private String mRemarks;
 
     public CartItem(Cursor cursor){
         setDataFromCursor(cursor);
@@ -48,6 +49,7 @@ public class CartItem {
         mCreatedAt = cursor.getString(cursor.getColumnIndexOrThrow(CartItemsTable.COLUMN_CREATED_AT));
         mUpdatedAt = cursor.getString(cursor.getColumnIndexOrThrow(CartItemsTable.COLUMN_UPDATED_AT));
         mSynced = cursor.getInt(cursor.getColumnIndexOrThrow(CartItemsTable.COLUMN_SYNCED));
+        mRemarks = cursor.getString(cursor.getColumnIndexOrThrow(CartItemsTable.COLUMN_REMARKS));
     }
 
     public static ArrayList<CartItem> getCartItemsFromCursor(Cursor cursor){
@@ -87,4 +89,6 @@ public class CartItem {
     public String getUpdatedAt(){return mUpdatedAt;}
 
     public int getSynced(){return mSynced;}
+
+    public String getRemarks(){return mRemarks;}
 }

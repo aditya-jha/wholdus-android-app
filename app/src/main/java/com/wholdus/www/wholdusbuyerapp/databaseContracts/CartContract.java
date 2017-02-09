@@ -25,6 +25,7 @@ public class CartContract {
         public static final String COLUMN_UPDATED_AT = "updated_at";
 
         public static final String COLUMN_SYNCED = "synced";
+        public static final String COLUMN_REMARKS = "remarks";
     }
 
     public static final class SubCartsTable implements BaseColumns {
@@ -44,6 +45,7 @@ public class CartContract {
         public static final String COLUMN_UPDATED_AT = "updated_at";
 
         public static final String COLUMN_SYNCED = "synced";
+        public static final String COLUMN_REMARKS = "remarks";
     }
 
     public static final class CartItemsTable implements BaseColumns {
@@ -64,5 +66,6 @@ public class CartContract {
         public static final String COLUMN_UPDATED_AT = "updated_at";
 
         public static final String COLUMN_SYNCED = "synced";
+        public static final String COLUMN_REMARKS = "remarks";
     }
 }

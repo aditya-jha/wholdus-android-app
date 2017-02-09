@@ -28,7 +28,7 @@ import static com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContr
 
 public class DatabaseHelper extends SQLiteAssetHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "wholdus.db";
 
     private static final String TEXT_TYPE = " TEXT";

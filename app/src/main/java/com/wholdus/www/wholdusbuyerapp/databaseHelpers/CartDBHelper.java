@@ -346,6 +346,11 @@ public class CartDBHelper extends BaseDBHelper {
         values.put(CartItemsTable.COLUMN_FINAL_PRICE, cart.getDouble(CartItemsTable.COLUMN_FINAL_PRICE));
         values.put(CartItemsTable.COLUMN_CREATED_AT, cart.getString(CartItemsTable.COLUMN_CREATED_AT));
         values.put(CartItemsTable.COLUMN_UPDATED_AT, cart.getString(CartItemsTable.COLUMN_UPDATED_AT));
+        if (cart.has(CartItemsTable.COLUMN_REMARKS)){
+            values.put(CartItemsTable.COLUMN_REMARKS, cart.getString(CartItemsTable.COLUMN_REMARKS));
+        } else {
+            values.put(CartItemsTable.COLUMN_REMARKS, "");
+        }
         if (cart.has(CartItemsTable.COLUMN_SYNCED)){
             values.put(CartItemsTable.COLUMN_SYNCED, cart.getInt(CartItemsTable.COLUMN_SYNCED));
         } else {

@@ -1,13 +1,20 @@
 package com.wholdus.www.wholdusbuyerapp.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -20,6 +27,7 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.ProductDetailActivity;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CartContract;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
+import com.wholdus.www.wholdusbuyerapp.fragments.CartDialogFragment;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartSummaryListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.models.CartItem;
@@ -57,7 +65,7 @@ public class CartItemsAdapter extends RecyclerView.Adapter<CartItemsAdapter.MyVi
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
         CartItem cartItem = mData.get(position);
-        Product product = cartItem.getProduct();
+        final Product product = cartItem.getProduct();
         if (cartItem == null || product == null){
             return;
         }
@@ -66,6 +74,12 @@ public class CartItemsAdapter extends RecyclerView.Adapter<CartItemsAdapter.MyVi
         holder.pricePerPiece.setText(String.format(mContext.getString(R.string.price_per_pcs_format), String.valueOf((int) Math.ceil(product.getMinPricePerUnit()))));
         holder.total.setText(String.format(mContext.getString(R.string.price_format), String.valueOf((int) Math.ceil(cartItem.getFinalPrice()))));
         holder.selectedPieces.setText(String.valueOf(cartItem.getPieces()));
+        String remarks = cartItem.getRemarks();
+        if (remarks.equals("")){
+            holder.remarks.setText("-");
+        } else {
+            holder.remarks.setText(remarks);
+        }
 
         Glide.with(mContext)
                 .load(product.getImageUrl(Constants.SMALL_IMAGE, "1"))
@@ -87,30 +101,23 @@ public class CartItemsAdapter extends RecyclerView.Adapter<CartItemsAdapter.MyVi
             }
         });
 
-        holder.minusButton.setOnClickListener(new View.OnClickListener() {
+        holder.editButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Product product1 = mData.get(position).getProduct();
-                int pieces = Integer.parseInt(holder.selectedPieces.getText().toString());
-                pieces -= product1.getLotSize();
-                if (pieces < product1.getLotSize()) {
-                    return;
+            public void onClick(View view) {
+                try {
+                    FragmentManager fragmentManager = ((FragmentActivity) mContext).getSupportFragmentManager();
+                    CartDialogFragment dialogFragment = new CartDialogFragment();
+                    Bundle args = new Bundle();
+                    args.putInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, product.getProductID());
+                    args.putBoolean("showToast", false);
+                    dialogFragment.setArguments(args);
+                    dialogFragment.show(fragmentManager, dialogFragment.getClass().getSimpleName());
+                }catch (Exception e){
+                    Log.w("Test", e);
                 }
-
-                addProductToCart(pieces, position);
             }
         });
 
-        holder.plusButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Product product1 = mData.get(position).getProduct();
-                int pieces = Integer.parseInt(holder.selectedPieces.getText().toString());
-                pieces += product1.getLotSize();
-
-                addProductToCart(pieces, position);
-            }
-        });
 
         holder.removeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,8 +176,8 @@ public class CartItemsAdapter extends RecyclerView.Adapter<CartItemsAdapter.MyVi
         ImageView productImage;
         ProgressBar progressBar;
         ImageButton removeButton;
-        ImageButton minusButton;
-        ImageButton plusButton;
+        TextView remarks;
+        Button editButton;
 
         private MyViewHolder(final View itemView) {
             super(itemView);
@@ -180,9 +187,9 @@ public class CartItemsAdapter extends RecyclerView.Adapter<CartItemsAdapter.MyVi
             progressBar = (ProgressBar) itemView.findViewById(R.id.loading_indicator);
             productImage = (ImageView) itemView.findViewById(R.id.product_image);
             removeButton = (ImageButton) itemView.findViewById(R.id.cart_item_remove_button);
-            minusButton = (ImageButton) itemView.findViewById(R.id.minus_button);
-            plusButton = (ImageButton) itemView.findViewById(R.id.plus_button);
             selectedPieces = (TextView) itemView.findViewById(R.id.selected_pieces);
+            remarks = (TextView) itemView.findViewById(R.id.cart_item_remarks_text_view);
+            editButton = (Button) itemView.findViewById(R.id.cart_item_edit_button);
         }
     }
 }
