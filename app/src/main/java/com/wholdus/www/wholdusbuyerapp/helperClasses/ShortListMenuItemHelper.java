@@ -3,7 +3,9 @@ package com.wholdus.www.wholdusbuyerapp.helperClasses;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
 import android.view.MenuItem;
 import android.view.View;
@@ -131,6 +133,21 @@ public class ShortListMenuItemHelper {
             }
         }
 
+
+    }
+
+    @Nullable
+    public Rect getBounds(){
+        if (mShortlistItemCountLayout == null){
+            return null;
+        }
+        Rect rect = new Rect();
+
+        if (mShortlistItemCountLayout.getGlobalVisibleRect(rect)){
+            return rect;
+        } else {
+            return null;
+        }
 
     }
 }
