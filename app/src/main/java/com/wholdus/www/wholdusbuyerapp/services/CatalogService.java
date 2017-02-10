@@ -134,7 +134,7 @@ public class CatalogService extends IntentService {
             params.put("category_product_details", "1");
             params.putAll(getProductDetailsParams());
         }
-        params.put("category_show_online", "1");
+        //params.put("category_show_online", "1");
         String endPoint = GlobalAccessHelper.generateUrl(APIConstants.CATEGORY_URL, params);
         volleyStringRequest(todo, Request.Method.GET, endPoint, null);
     }
