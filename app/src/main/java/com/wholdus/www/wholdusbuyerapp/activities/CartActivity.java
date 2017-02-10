@@ -347,6 +347,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         if (mCart == null || mCart.getSynced() == 0 || mCart.getPieces() == 0){
             mProceedButton.setEnabled(false);
             mProceedButtonLayout.setVisibility(View.GONE);
+            mCartMessageLayout.setVisibility(View.GONE);
 
         } else {
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.cart_fragment_container);

@@ -16,7 +16,7 @@ android {
         applicationId "com.wholdus.www.wholdusbuyerapp"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 12
+        versionCode 13
         versionName "1.2.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
