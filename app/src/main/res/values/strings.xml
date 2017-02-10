@@ -194,6 +194,8 @@
     <string name="shortlist_help_description">You can view your shortlist by pressing this button</string>
     <string name="filter_help_title">CLICK TO FILTER</string>
     <string name="filter_help_description">You can apply filters to products by pressing this button</string>
+    <string name="cart_help_title">ADD TO CART</string>
+    <string name="cart_help_description">You can add product to cart by pressing this button</string>
 
     <!-- cart dialog fragment -->
     <string name="lot_size_key">Lot Size &#160;</string>
