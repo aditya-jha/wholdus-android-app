@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -16,6 +18,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -40,6 +44,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.OkHttpHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartDialogListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartListenerInterface;
@@ -68,15 +73,20 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     private Cart mCart;
     private Integer mCheckoutID;
     private int mOrderID = -1;
+    private int mMinCartValue = 2000;
 
     private Toolbar mToolbar;
-    private TextView mTotalTextView, mProductsPiecesTextView, mProceedButton;
-    private LinearLayout mProceedButtonLayout;
+    private TextView mTotalTextView, mProductsPiecesTextView, mProceedButton, mCartMessageTextView;
+    private LinearLayout mProceedButtonLayout, mCartMessageLayout;
     private ProgressBar mProgressBar;
 
     private BroadcastReceiver mOrderServiceResponseReceiver, mUserAddressServiceResponseReceiver, mCartServiceBroadcastReceiver;
 
     public static final String REQUEST_TAG = "CHECKOUT_API_REQUESTS";
+
+    private static final String
+            CART_SHARED_PREFERENCES = "CartSharedPreference",
+            CART_MIN_VALUE_KEY = "CartMinValueKey";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,6 +180,13 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
             }
         });
         mProceedButton.setEnabled(false);
+
+        mCartMessageLayout = (LinearLayout) findViewById(R.id.cart_message_layout);
+        mCartMessageTextView = (TextView) findViewById(R.id.cart_message_text_view);
+
+        SharedPreferences cartPreferences = getSharedPreferences(CART_SHARED_PREFERENCES, MODE_PRIVATE);
+        mMinCartValue = cartPreferences.getInt(CART_MIN_VALUE_KEY, 2000);
+        new CartMinValueRequest().execute();
     }
 
     @Override
@@ -337,12 +354,20 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
                     fragment instanceof OrderDetailsFragment)) {
                 mProceedButton.setEnabled(false);
                 mProceedButtonLayout.setVisibility(View.GONE);
+                mCartMessageLayout.setVisibility(View.GONE);
             } else {
                 mProceedButtonLayout.setVisibility(View.VISIBLE);
                 CODApplied(mPaymentMethod == 0);
                 mProductsPiecesTextView.setText(String.valueOf(mCart.getProductCount()) + " products - "
                         + String.valueOf(mCart.getPieces()) + " pieces");
                 mProceedButton.setEnabled(true);
+            }
+
+            if (mCart.getFinalPrice() < mMinCartValue){
+                mCartMessageLayout.setVisibility(View.VISIBLE);
+                mCartMessageTextView.setText(String.format(getString(R.string.cart_min_cart_value_message), mMinCartValue));
+            } else {
+                mCartMessageLayout.setVisibility(View.GONE);
             }
         }
     }
@@ -533,7 +558,14 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
             } else if (mCart.getSynced()==0){
                 syncCartItems();
             } else if (mStatus == 0 && mCheckoutID == null && mCart.getSynced() == 1) {
-                updateCart(requestBody, Request.Method.POST, TODO.CREATE_CART, params);
+                if (mCart.getFinalPrice() < 2000){
+                    if (mCartMessageLayout.getVisibility() == View.VISIBLE){
+                        Animation animation = AnimationUtils.loadAnimation(this, R.anim.button_scale_down_up_prominent);
+                        mCartMessageTextView.startAnimation(animation);
+                    }
+                } else {
+                    updateCart(requestBody, Request.Method.POST, TODO.CREATE_CART, params);
+                }
             } else if (mStatus == 0 && mCheckoutID != null && mCheckoutID > 0 && mBuyerAddressID > 0) {
                 requestBody.put("checkoutID", mCheckoutID);
                 requestBody.put("status", mStatus + 1);
@@ -570,6 +602,39 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
 
     @Override
     public void dismissDialog() {
+
+    }
+
+    private class CartMinValueRequest extends AsyncTask<Void, Void, Integer> {
+
+        protected Integer doInBackground(Void... par) {
+            HashMap<String, String> params = new HashMap<>();
+            String url = GlobalAccessHelper.generateUrl(APIConstants.CART_MIN_VALUE_URL, params);
+            try {
+                okhttp3.Response response = OkHttpHelper.makeGetRequest(getApplicationContext(), url);
+                if (response.isSuccessful()) {
+                    JSONObject responseJSON = new JSONObject(response.body().string());
+                    Integer result = responseJSON.getInt("cart_min_value");
+                    response.body().close();
+                    return result;
+                } else {
+                    return -1;
+                }
+            }catch (Exception e) {
+                return -1;
+            }
+        }
+
+        protected void onPostExecute(Integer result) {
+            if (result != -1 && result != mMinCartValue){
+                mMinCartValue = result;
+                SharedPreferences cartPreferences = getSharedPreferences(CART_SHARED_PREFERENCES, MODE_PRIVATE);
+                SharedPreferences.Editor editor = cartPreferences.edit();
+                editor.putInt(CART_MIN_VALUE_KEY, result);
+                editor.apply();
+            }
+        }
+
 
     }
 }

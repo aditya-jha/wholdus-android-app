@@ -216,6 +216,7 @@
     <string name="cart_summary_shipping">Shipping &#160;</string>
     <string name="cart_summary_no_products">Your cart looks empty.\n\nWant to add products to your cart?</string>
     <string name="cart_summary_continue_shopping">Discover Products</string>
+    <string name="cart_min_cart_value_message">Min cart value must be Rs.%1$d to place order!</string>
 
     <string name="cart_item_price_per_piece">Price/pc</string>
     <string name="cart_item_pieces">Pieces</string>

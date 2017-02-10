@@ -28,6 +28,36 @@
             android:layout_centerVertical="true" />
     </RelativeLayout>
 
+    <LinearLayout
+        android:id="@+id/cart_message_layout"
+        style="@style/Theme.AppCompat.Light.DarkActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary"
+        android:baselineAligned="true"
+        android:visibility="gone"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/divider" />
+
+        <TextView
+            android:id="@+id/cart_message_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@string/font_condensed"
+            android:layout_gravity="center_horizontal"
+            android:paddingBottom="@dimen/card_margin_vertical"
+            android:paddingTop="@dimen/card_margin_vertical"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/accent"
+            tools:text="Minimum cart value must be Rs.2000 to place order" />
+
+    </LinearLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
