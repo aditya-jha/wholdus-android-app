@@ -99,6 +99,9 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             FILTER_ICON_KEY = "FilterIconKey";
     private boolean mShowLikedDislikedInstructions, mShowShortlistInstructions, mShowFilterInstructions;
 
+    private Animation mAnimButtonScale, mAnimButtonScaleProminent;
+    private FrameLayout mLikeButtonLayout, mDislikeButtonLayout;
+
     public HandPickedFragment() {
     }
 
@@ -266,13 +269,14 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             }
         });
 
-        final Animation animButtonScale = AnimationUtils.loadAnimation(getContext(), R.anim.button_scale_down_up);
-        final FrameLayout likeButtonLayout = (FrameLayout) rootView.findViewById(R.id.hand_picked_like_button_layout);
+        mAnimButtonScale = AnimationUtils.loadAnimation(getContext(), R.anim.button_scale_down_up);
+        mAnimButtonScaleProminent = AnimationUtils.loadAnimation(getContext(), R.anim.button_scale_down_up_prominent);
+        mLikeButtonLayout = (FrameLayout) rootView.findViewById(R.id.hand_picked_like_button_layout);
         mLikeButton = (ImageButton) rootView.findViewById(R.id.hand_picked_like_button);
         mLikeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                likeButtonLayout.startAnimation(animButtonScale);
+                mLikeButtonLayout.startAnimation(mAnimButtonScale);
                 if (mProductsLeft > 0 && mButtonEnabled) {
                     bringFeedbackImageToFront(true);
                     mHasSwiped = false;
@@ -286,12 +290,12 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
                 }
             }
         });
-        final FrameLayout dislikeButtonLayout = (FrameLayout) rootView.findViewById(R.id.hand_picked_dislike_button_layout);
+        mDislikeButtonLayout = (FrameLayout) rootView.findViewById(R.id.hand_picked_dislike_button_layout);
         mDislikeButton = (ImageButton) rootView.findViewById(R.id.hand_picked_dislike_button);
         mDislikeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dislikeButtonLayout.startAnimation(animButtonScale);
+                mDislikeButtonLayout.startAnimation(mAnimButtonScale);
                 if (mProductsLeft > 0 && mButtonEnabled) {
                     bringFeedbackImageToFront(false);
                     mHasSwiped = false;
@@ -310,7 +314,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         mAddToCartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addToCartButtonLayout.startAnimation(animButtonScale);
+                addToCartButtonLayout.startAnimation(mAnimButtonScale);
                 if (mProductsLeft > 0 && mButtonEnabled && mCartButtonEnabled) {
                     mCartButtonEnabled = false;
                     new Handler().postDelayed(new Runnable() {
@@ -338,7 +342,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
                         "hand_picked_filter_button",
                         "filter"
                 );
-                filterButtonLayout.startAnimation(animButtonScale);
+                filterButtonLayout.startAnimation(mAnimButtonScale);
                 if (mShowFilterInstructions) {
                     showFilterInstructions();
                 } else {
@@ -449,6 +453,14 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     }
 
     private void actionAfterSwipe(boolean liked) {
+
+        if (mHasSwiped){
+            if (liked){
+                mLikeButtonLayout.startAnimation(mAnimButtonScaleProminent);
+            } else {
+                mDislikeButtonLayout.startAnimation(mAnimButtonScaleProminent);
+            }
+        }
 
         if (liked && mShowShortlistInstructions){
             new Handler().postDelayed(new Runnable() {
