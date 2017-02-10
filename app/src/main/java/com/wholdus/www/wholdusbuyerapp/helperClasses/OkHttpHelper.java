@@ -55,4 +55,16 @@ public class OkHttpHelper {
 
         return okHttpClient.newCall(request).execute();
     }
+
+    public static Response makeDeleteRequest(Context context, String url, String data) throws IOException {
+        RequestBody requestBody = RequestBody.create(JSON, data);
+        OkHttpClient okHttpClient = OkHttpHelper.getClient(context);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .delete(requestBody)
+                .build();
+
+        return okHttpClient.newCall(request).execute();
+    }
 }

@@ -72,7 +72,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
 
     private HandPickedListenerInterface mListener;
     private final int PRODUCTS_DB_LOADER = 30;
-    private BroadcastReceiver mBuyerProductServiceResponseReceiver, mProductServiceResponseReceiver, mSpecificProductServiceResponseReceiver;
+    private BroadcastReceiver mResponseReceiver;
     private ProductsLoaderManager mProductsLoader;
     private ArrayList<Product> mProductsArrayList;
     private ArrayList<Integer> mExcludeProductIDs, mProductIDs;
@@ -88,7 +88,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
 
     private static final int mProductsLimit = 20;
 
-    private static final int ANIMATION_DURATION = 250;
+    private static final int ANIMATION_DURATION = 400;
     private CartMenuItemHelper mCartMenuItemHelper;
     private ShortListMenuItemHelper mShortListMenuItemHelper;
 
@@ -98,6 +98,9 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             SHORTLIST_ICON_KEY = "ShortlistIconKey",
             FILTER_ICON_KEY = "FilterIconKey";
     private boolean mShowLikedDislikedInstructions, mShowShortlistInstructions, mShowFilterInstructions;
+
+    private Animation mAnimButtonScale, mAnimButtonScaleProminent;
+    private FrameLayout mLikeButtonLayout, mDislikeButtonLayout;
 
     public HandPickedFragment() {
     }
@@ -128,26 +131,30 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         setHasOptionsMenu(true);
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_handpicked, container, false);
         initReferences(rootView);
-        mBuyerProductServiceResponseReceiver = new BroadcastReceiver() {
+        mResponseReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                handleBuyerProductAPIResponse();
-            }
-        };
-        mProductServiceResponseReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                handleProductAPIResponse(intent);
-            }
-        };
-        if (mProductIDs != null) {
-            mSpecificProductServiceResponseReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    handleBuyerProductAPIResponse();
+                String intentAction = intent.getAction();
+                if (intentAction == null){
+                    return;
                 }
-            };
-        }
+                switch (intentAction){
+                    case IntentFilters.BUYER_PRODUCT_DATA_UPDATED:
+                        handleBuyerProductAPIResponse();
+                        break;
+                    case IntentFilters.PRODUCT_DATA:
+                        handleProductAPIResponse(intent);
+                        break;
+                    case IntentFilters.SPECIFIC_PRODUCT_DATA:
+                        handleBuyerProductAPIResponse();
+                        break;
+                    case IntentFilters.CART_ITEM_WRITTEN:
+                        refreshCartMenuItemHelper();
+                        break;
+                }
+
+            }
+        };
         return rootView;
     }
 
@@ -164,25 +171,21 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
 
         mProductsLoader = new ProductsLoaderManager();
 
-        IntentFilter intentFilter = new IntentFilter(getString(R.string.buyer_product_data_updated));
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mBuyerProductServiceResponseReceiver, intentFilter);
-
-        IntentFilter productIntentFilter = new IntentFilter(IntentFilters.PRODUCT_DATA);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mProductServiceResponseReceiver, productIntentFilter);
-
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(IntentFilters.BUYER_PRODUCT_DATA_UPDATED);
+        intentFilter.addAction(IntentFilters.PRODUCT_DATA);
         if (mProductIDs != null) {
-            IntentFilter specificProductIntentFilter = new IntentFilter(IntentFilters.SPECIFIC_PRODUCT_DATA);
-            LocalBroadcastManager.getInstance(getContext()).registerReceiver(mSpecificProductServiceResponseReceiver, specificProductIntentFilter);
+            intentFilter.addAction(IntentFilters.SPECIFIC_PRODUCT_DATA);
         }
+        intentFilter.addAction(IntentFilters.CART_ITEM_WRITTEN);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mResponseReceiver, intentFilter);
 
         if (mProductsArrayList.isEmpty()) {
             updateProducts();
         }
 
         dismissDialog();
-        if (mCartMenuItemHelper != null) {
-            mCartMenuItemHelper.restartLoader();
-        }
+        refreshCartMenuItemHelper();
         if (mShortListMenuItemHelper != null){
             mShortListMenuItemHelper.refreshShortListCount();
         }
@@ -193,20 +196,8 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     public void onPause() {
         super.onPause();
         try {
-            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mBuyerProductServiceResponseReceiver);
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mResponseReceiver);
         } catch (Exception e) {
-        }
-
-        try {
-            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mProductServiceResponseReceiver);
-        } catch (Exception e) {
-
-        }
-
-        try {
-            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mSpecificProductServiceResponseReceiver);
-        } catch (Exception e) {
-
         }
     }
 
@@ -219,9 +210,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mBuyerProductServiceResponseReceiver = null;
-        mProductServiceResponseReceiver = null;
-        mSpecificProductServiceResponseReceiver = null;
+        mResponseReceiver = null;
     }
 
 
@@ -229,8 +218,8 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.default_action_buttons, menu);
         mCartMenuItemHelper = new CartMenuItemHelper(getContext(), menu.findItem(R.id.action_bar_checkout), getActivity().getSupportLoaderManager());
-        mCartMenuItemHelper.restartLoader();
         mShortListMenuItemHelper = new ShortListMenuItemHelper(getContext(), menu.findItem(R.id.action_bar_shortlist));
+        refreshCartMenuItemHelper();
     }
 
     @Override
@@ -253,9 +242,7 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     }
 
     public void dismissDialog() {
-        if (mCartMenuItemHelper != null) {
-            mCartMenuItemHelper.restartLoader();
-        }
+        refreshCartMenuItemHelper();
     }
 
     private void handleBuyerProductAPIResponse() {
@@ -282,13 +269,14 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
             }
         });
 
-        final Animation animButtonScale = AnimationUtils.loadAnimation(getContext(), R.anim.button_scale_down_up);
-        final FrameLayout likeButtonLayout = (FrameLayout) rootView.findViewById(R.id.hand_picked_like_button_layout);
+        mAnimButtonScale = AnimationUtils.loadAnimation(getContext(), R.anim.button_scale_down_up);
+        mAnimButtonScaleProminent = AnimationUtils.loadAnimation(getContext(), R.anim.button_scale_down_up_prominent);
+        mLikeButtonLayout = (FrameLayout) rootView.findViewById(R.id.hand_picked_like_button_layout);
         mLikeButton = (ImageButton) rootView.findViewById(R.id.hand_picked_like_button);
         mLikeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                likeButtonLayout.startAnimation(animButtonScale);
+                mLikeButtonLayout.startAnimation(mAnimButtonScale);
                 if (mProductsLeft > 0 && mButtonEnabled) {
                     bringFeedbackImageToFront(true);
                     mHasSwiped = false;
@@ -302,12 +290,19 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
                 }
             }
         });
-        final FrameLayout dislikeButtonLayout = (FrameLayout) rootView.findViewById(R.id.hand_picked_dislike_button_layout);
+        mLikeButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                TapTargetView.showFor(getActivity(), getLikeTapTarget());
+                return true;
+            }
+        });
+        mDislikeButtonLayout = (FrameLayout) rootView.findViewById(R.id.hand_picked_dislike_button_layout);
         mDislikeButton = (ImageButton) rootView.findViewById(R.id.hand_picked_dislike_button);
         mDislikeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dislikeButtonLayout.startAnimation(animButtonScale);
+                mDislikeButtonLayout.startAnimation(mAnimButtonScale);
                 if (mProductsLeft > 0 && mButtonEnabled) {
                     bringFeedbackImageToFront(false);
                     mHasSwiped = false;
@@ -321,12 +316,19 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
                 }
             }
         });
+        mDislikeButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                TapTargetView.showFor(getActivity(), getDislikeTapTarget());
+                return true;
+            }
+        });
         final FrameLayout addToCartButtonLayout = (FrameLayout) rootView.findViewById(R.id.hand_picked_cart_button_layout);
         mAddToCartButton = (ImageButton) rootView.findViewById(R.id.hand_picked_cart_button);
         mAddToCartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addToCartButtonLayout.startAnimation(animButtonScale);
+                addToCartButtonLayout.startAnimation(mAnimButtonScale);
                 if (mProductsLeft > 0 && mButtonEnabled && mCartButtonEnabled) {
                     mCartButtonEnabled = false;
                     new Handler().postDelayed(new Runnable() {
@@ -344,6 +346,13 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
                 }
             }
         });
+        mAddToCartButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                TapTargetView.showFor(getActivity(), getCartTapTarget());
+                return true;
+            }
+        });
         final FrameLayout filterButtonLayout = (FrameLayout) rootView.findViewById(R.id.hand_picked_filter_button_layout);
         mFilterButton = (ImageButton) rootView.findViewById(R.id.hand_picked_filter_button);
         mFilterButton.setOnClickListener(new View.OnClickListener() {
@@ -354,13 +363,20 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
                         "hand_picked_filter_button",
                         "filter"
                 );
-                filterButtonLayout.startAnimation(animButtonScale);
+                filterButtonLayout.startAnimation(mAnimButtonScale);
                 if (mShowFilterInstructions) {
                     showFilterInstructions();
                 } else {
                     mListener.openFilter(true);
                     mListener.fragmentCreated("Filter");
                 }
+            }
+        });
+        mFilterButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                TapTargetView.showFor(getActivity(), getFilterTapTarget());
+                return true;
             }
         });
 
@@ -465,6 +481,14 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
     }
 
     private void actionAfterSwipe(boolean liked) {
+
+        if (mHasSwiped){
+            if (liked){
+                mLikeButtonLayout.startAnimation(mAnimButtonScaleProminent);
+            } else {
+                mDislikeButtonLayout.startAnimation(mAnimButtonScaleProminent);
+            }
+        }
 
         if (liked && mShowShortlistInstructions){
             new Handler().postDelayed(new Runnable() {
@@ -682,28 +706,35 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         mTotalProductPages = totalPages;
     }
 
+    public TapTarget getLikeTapTarget(){
+        return TapTarget.forView(
+                getView().findViewById(R.id.hand_picked_like_button),
+                getResources().getString(R.string.liked_help_title),
+                getResources().getString(R.string.liked_help_description)
+        )
+                .outerCircleColor(R.color.accent)
+                .descriptionTextColor(R.color.primary)
+                .transparentTarget(false);
+    }
+
+    public TapTarget getDislikeTapTarget(){
+        return TapTarget.forView(
+                getView().findViewById(R.id.hand_picked_dislike_button),
+                getResources().getString(R.string.disliked_help_title),
+                getResources().getString(R.string.disliked_help_description)
+        )
+                .outerCircleColor(R.color.primary_text)
+                .descriptionTextColor(R.color.primary)
+                .transparentTarget(false);
+    }
+
     public void startLikeDislikeInstructions() {
         if (getView() == null || !mShowLikedDislikedInstructions) {
             return;
         }
         new TapTargetSequence(getActivity())
-                .targets(
-                        TapTarget.forView(
-                                getView().findViewById(R.id.hand_picked_like_button),
-                                getResources().getString(R.string.liked_help_title),
-                                getResources().getString(R.string.liked_help_description)
-                        )
-                                .outerCircleColor(R.color.accent)
-                                .descriptionTextColor(R.color.primary)
-                                .transparentTarget(false),
-                        TapTarget.forView(
-                                getView().findViewById(R.id.hand_picked_dislike_button),
-                                getResources().getString(R.string.disliked_help_title),
-                                getResources().getString(R.string.disliked_help_description)
-                        )
-                                .outerCircleColor(R.color.primary_text)
-                                .descriptionTextColor(R.color.primary)
-                                .transparentTarget(false)
+                .targets(getLikeTapTarget(),
+                        getDislikeTapTarget()
                 )
                 .continueOnCancel(true)
                 .listener(new TapTargetSequence.Listener() {
@@ -729,38 +760,49 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
                 .start();
     }
 
+    public TapTarget getShortListTapTarget(){
+        Rect shortListIconView = null;
+        if (mShortListMenuItemHelper != null){
+            shortListIconView = mShortListMenuItemHelper.getBounds();
+        }
+        if (shortListIconView == null) {
+            int iconWidth = 56;
+            int toolbarHeight = 56;
+            int iconSize = 24;
+
+            toolbarHeight = getPixelsFromDP((toolbarHeight - iconSize) / 2);
+
+            Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.default_toolbar);
+            if (toolbar != null) {
+                toolbarHeight = toolbar.getHeight() - getPixelsFromDP(iconSize / 2);
+            }
+
+            shortListIconView = new Rect(0, 0, getPixelsFromDP(iconSize), getPixelsFromDP(iconSize));
+
+            DisplayMetrics displaymetrics = new DisplayMetrics();
+            getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+            int width = displaymetrics.widthPixels;
+            shortListIconView.offset(width - getPixelsFromDP(iconWidth * 3 / 2) - getPixelsFromDP(iconSize / 2), toolbarHeight);
+        }
+
+        return TapTarget.forBounds(
+                shortListIconView,
+                getResources().getString(R.string.shortlist_help_title),
+                getResources().getString(R.string.shortlist_help_description))
+                .outerCircleColor(R.color.accent)
+                .descriptionTextColor(R.color.primary)
+                .transparentTarget(true);
+    }
+
     public void showShortlistInstructions() {
         if (!mShowShortlistInstructions) {
             return;
         }
 
-        int iconWidth = 53;
-        int toolbarHeight = 56;
-        int iconSize = 24;
-
-        toolbarHeight = getPixelsFromDP( (toolbarHeight - iconSize) / 2);
-
-        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.default_toolbar);
-        if (toolbar != null){
-            toolbarHeight = toolbar.getHeight() - getPixelsFromDP(iconSize/2);
-        }
-
-        Rect shortListIconView = new Rect(0, 0, getPixelsFromDP(iconSize), getPixelsFromDP(iconSize));
-
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int width = displaymetrics.widthPixels;
-        shortListIconView.offset(width - getPixelsFromDP(iconWidth*3/2) - getPixelsFromDP(iconSize/2), toolbarHeight);
 
         TapTargetView.showFor(
                 getActivity(),
-                TapTarget.forBounds(
-                        shortListIconView,
-                        getResources().getString(R.string.shortlist_help_title),
-                        getResources().getString(R.string.shortlist_help_description))
-                        .outerCircleColor(R.color.accent)
-                        .descriptionTextColor(R.color.primary)
-                        .transparentTarget(true)
+                getShortListTapTarget()
         );
 
         SharedPreferences instructionsPreferences = getActivity().getSharedPreferences(INSTRUCTIONS_SHARED_PREFERENCES, MODE_PRIVATE);
@@ -770,20 +812,35 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
         mShowShortlistInstructions = false;
     }
 
+    public TapTarget getCartTapTarget(){
+        return TapTarget.forView(
+                getView().findViewById(R.id.hand_picked_cart_button),
+                getResources().getString(R.string.cart_help_title),
+                getResources().getString(R.string.cart_help_description)
+        )
+                .outerCircleColor(R.color.primary_text)
+                .descriptionTextColor(R.color.primary)
+                .transparentTarget(false);
+    }
+
+    public TapTarget getFilterTapTarget(){
+        return TapTarget.forView(
+                getView().findViewById(R.id.hand_picked_filter_button),
+                getResources().getString(R.string.filter_help_title),
+                getResources().getString(R.string.filter_help_description)
+        )
+                .outerCircleColor(R.color.primary_text)
+                .descriptionTextColor(R.color.primary)
+                .transparentTarget(false);
+    }
+
     public void showFilterInstructions(){
         if (getView() == null || !mShowFilterInstructions) {
             return;
         }
         new TapTargetSequence(getActivity())
                 .targets(
-                        TapTarget.forView(
-                                getView().findViewById(R.id.hand_picked_filter_button),
-                                getResources().getString(R.string.filter_help_title),
-                                getResources().getString(R.string.filter_help_description)
-                        )
-                                .outerCircleColor(R.color.accent)
-                                .descriptionTextColor(R.color.primary)
-                                .transparentTarget(false)
+                        getFilterTapTarget()
                 )
                 .continueOnCancel(true)
                 .listener(new TapTargetSequence.Listener() {
@@ -824,6 +881,12 @@ public class HandPickedFragment extends Fragment implements ProductCardListenerI
 
     public int getDPFromPixels(int px) {
         return Math.round(px / (getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+
+    private void refreshCartMenuItemHelper(){
+        if (mCartMenuItemHelper != null) {
+            mCartMenuItemHelper.restartLoader();
+        }
     }
 
 }

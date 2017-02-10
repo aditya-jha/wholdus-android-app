@@ -29,6 +29,6 @@
         android:gravity="center"
         android:textColor="@color/icons"
         android:textSize="12sp"
-        android:visibility="visible"
+        android:visibility="invisible"
         tools:text="10" />
 </RelativeLayout>
