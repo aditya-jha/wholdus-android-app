@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -31,10 +33,14 @@ import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.NotificationDBHelper;
 import com.wholdus.www.wholdusbuyerapp.decorators.GridDividerItemDecoration;
 import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.NavDrawerHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.OkHttpHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.ShortListMenuItemHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.ItemClickListener;
@@ -44,8 +50,15 @@ import com.wholdus.www.wholdusbuyerapp.models.Category;
 import com.wholdus.www.wholdusbuyerapp.models.Product;
 import com.wholdus.www.wholdusbuyerapp.services.CatalogService;
 
-import java.util.ArrayList;
+import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+
+import okhttp3.Response;
+
+import static android.content.Context.MODE_PRIVATE;
 import static com.wholdus.www.wholdusbuyerapp.R.id.help;
 import static com.wholdus.www.wholdusbuyerapp.R.id.neft_radio_button;
 
@@ -72,7 +85,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
 
     private BroadcastReceiver mCategoryServiceResponseReceiver;
     private ProgressBar mProgressBar;
-    private TextView mNotificationCount;
+    private TextView mNotificationCount, mShortlistCount;
 
     public HomeFragment() {
     }
@@ -146,6 +159,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
         mCategoriesRecyclerView.setNestedScrollingEnabled(false);
 
         mNotificationCount = (TextView) view.findViewById(R.id.notification_count_text_view);
+        mShortlistCount = (TextView) view.findViewById(R.id.shortlist_count_text_view);
     }
 
     @Override
@@ -185,6 +199,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
         NavDrawerHelper.getInstance().setOpenFragment(this.getClass().getSimpleName());
 
         getNotificationCount();
+        getShortlistCount();
     }
 
     @Override
@@ -287,7 +302,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
 
         @Override
         public void onLoadFinished(Loader<ArrayList<Product>> loader, ArrayList<Product> data) {
-            if (data != null && data.size() > 0 && mProducts.isEmpty() && mListener != null) {
+            if (data != null && data.size() > 0 && mListener != null) {
                 setViewForProducts(data);
             }
         }
@@ -310,7 +325,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
 
         @Override
         public void onLoadFinished(Loader<ArrayList<Category>> loader, ArrayList<Category> data) {
-            if (data != null && data.size() > 0 && mCategories.isEmpty() && mListener != null) {
+            if (data != null && data.size() > 0 && mListener != null) {
                 setViewForCategories(data);
                 mProgressBar.setVisibility(View.GONE);
             }
@@ -318,7 +333,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
 
         @Override
         public Loader<ArrayList<Category>> onCreateLoader(final int id, Bundle args) {
-            return new CategoriesGridLoader(getContext(), true);
+            return new CategoriesGridLoader(getContext(), true, new ArrayList<>(Arrays.asList(0)));
         }
     }
 
@@ -370,5 +385,37 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Item
                 }
             }
         }).start();
+    }
+
+    private void getShortlistCount(){
+        class ShortlistCountRequest extends AsyncTask<Void, Void, Integer> {
+
+            protected Integer doInBackground(Void... par) {
+                try {
+                    if(getActivity()!= null) {
+                        SharedPreferences shortlistPreferences = getActivity().getSharedPreferences(ShortListMenuItemHelper.SHORTLIST_SHARED_PREFERENCES, MODE_PRIVATE);
+                        return shortlistPreferences.getInt(ShortListMenuItemHelper.SHORTLIST_COUNT_KEY, 0);
+                    }
+                } catch (Exception e){
+                    return -1;
+                }
+                return -1;
+            }
+
+            protected void onPostExecute(Integer result) {
+                if (result > 0 && mShortlistCount != null){
+                    mShortlistCount.setVisibility(View.VISIBLE);
+                    if (result < 100) {
+                        mShortlistCount.setText(String.valueOf(result));
+                    } else {
+                        mShortlistCount.setText(String.valueOf("99+"));
+                    }
+                } else if (mShortlistCount != null) {
+                    mShortlistCount.setVisibility(View.GONE);
+                }
+            }
+        }
+
+        new ShortlistCountRequest().execute();
     }
 }

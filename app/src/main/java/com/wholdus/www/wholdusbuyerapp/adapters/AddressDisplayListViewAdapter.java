@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
@@ -30,11 +31,16 @@ public class AddressDisplayListViewAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<BuyerAddress> mData;
     private ItemClickListener mListener;
+    private boolean mShowSelectAddressButton;
 
-    public AddressDisplayListViewAdapter(Context context, ArrayList<BuyerAddress> data, final ItemClickListener listener) {
+    public AddressDisplayListViewAdapter(Context context,
+                                         ArrayList<BuyerAddress> data,
+                                         final ItemClickListener listener,
+                                         boolean showSelectAddressButton) {
         mContext = context;
         mData = data;
         mListener = listener;
+        mShowSelectAddressButton = showSelectAddressButton;
     }
 
     @Override
@@ -64,6 +70,7 @@ public class AddressDisplayListViewAdapter extends BaseAdapter {
             holder.addressTextView = (TextView) view.findViewById(R.id.address_text_view);
             holder.cityStatePincodeTextView = (TextView) view.findViewById(R.id.city_state_pincode_text_view);
             holder.editTextView = (TextView) view.findViewById(R.id.edit_address_text_view);
+            holder.selectAddressButton = (Button) view.findViewById(R.id.select_address_button);
             view.setTag(holder);
         }
         else {
@@ -85,6 +92,10 @@ public class AddressDisplayListViewAdapter extends BaseAdapter {
                 }
             }
         });
+
+        if (mShowSelectAddressButton){
+            holder.selectAddressButton.setVisibility(View.VISIBLE);
+        }
 
         return view;
     }
@@ -119,5 +130,6 @@ public class AddressDisplayListViewAdapter extends BaseAdapter {
         TextView addressTextView;
         TextView cityStatePincodeTextView;
         TextView editTextView;
+        Button selectAddressButton;
     }
 }

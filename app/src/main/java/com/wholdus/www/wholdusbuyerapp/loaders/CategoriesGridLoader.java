@@ -1,6 +1,7 @@
 package com.wholdus.www.wholdusbuyerapp.loaders;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CatalogDBHelper;
 import com.wholdus.www.wholdusbuyerapp.models.Category;
@@ -16,10 +17,16 @@ import java.util.Arrays;
 public class CategoriesGridLoader extends AbstractLoader<ArrayList<Category>> {
 
     private boolean mInitialiseProducts;
+    private ArrayList<Integer> mResponseCodes;
 
-    public CategoriesGridLoader(Context context, boolean initialiseProducts) {
+    public CategoriesGridLoader(Context context, boolean initialiseProducts, @Nullable ArrayList<Integer> responseCodes) {
         super(context);
         mInitialiseProducts = initialiseProducts;
+        if (responseCodes != null){
+            mResponseCodes = responseCodes;
+        } else {
+            mResponseCodes = new ArrayList<>(Arrays.asList(0, 1));
+        }
     }
 
     @Override
@@ -29,7 +36,7 @@ public class CategoriesGridLoader extends AbstractLoader<ArrayList<Category>> {
 
         if (mInitialiseProducts) {
             for (Category category : categories) {
-                category.setProducts(Product.getProductsFromCursor(catalogDBHelper.getProductData(null, null, null, null, null, null, null, new ArrayList<>(Arrays.asList(category.getCategoryID())), -1, -1, null, null, null, new ArrayList<>(Arrays.asList(0, 1)), 0, 1, -1, -1, null, 10, 0, null)));
+                category.setProducts(Product.getProductsFromCursor(catalogDBHelper.getProductData(null, null, null, null, null, null, null, new ArrayList<>(Arrays.asList(category.getCategoryID())), -1, -1, null, null, null, mResponseCodes, 0, 1, -1, -1, null, 10, 0, null)));
             }
         }
         return categories;

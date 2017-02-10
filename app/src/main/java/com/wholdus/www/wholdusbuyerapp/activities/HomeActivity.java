@@ -43,6 +43,7 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.ContactsHelperClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.NavDrawerHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.ShortListMenuItemHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.CartLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Cart;
@@ -60,6 +61,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     private static final int CONTACTS_PERMISSION = 0;
 
     private CartMenuItemHelper mCartMenuItemHelper;
+    private ShortListMenuItemHelper mShortListMenuItemHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +91,9 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         FilterClass.resetCategoryFilter();
         if (mCartMenuItemHelper != null) {
             mCartMenuItemHelper.restartLoader();
+        }
+        if (mShortListMenuItemHelper != null){
+            mShortListMenuItemHelper.refreshShortListCount();
         }
     }
 
@@ -125,6 +130,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         getMenuInflater().inflate(R.menu.default_action_buttons, menu);
         mCartMenuItemHelper = new CartMenuItemHelper(this, menu.findItem(R.id.action_bar_checkout), getSupportLoaderManager());
         mCartMenuItemHelper.restartLoader();
+        mShortListMenuItemHelper = new ShortListMenuItemHelper(this, menu.findItem(R.id.action_bar_shortlist));
         return super.onCreateOptionsMenu(menu);
     }
 

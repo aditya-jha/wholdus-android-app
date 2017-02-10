@@ -12,7 +12,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
+        android:layout_marginTop="@dimen/card_margin_vertical"
         android:padding="@dimen/card_padding_vertical"
         android:src="@drawable/ic_place_black_24dp" />
 
@@ -31,7 +31,6 @@
                 android:id="@+id/alias_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:fontFamily="@string/font_normal"
                 android:gravity="center_vertical"
                 android:paddingBottom="@dimen/text_divider_gap"
@@ -90,5 +89,20 @@
             android:paddingTop="@dimen/text_divider_gap"
             android:textColor="@color/primary_text"
             tools:text="Mumbai, Maharastra, 485001" />
+
+        <Button
+            android:id="@+id/select_address_button"
+            android:layout_marginRight="@dimen/card_margin_horizontal"
+            android:layout_marginEnd="@dimen/card_margin_horizontal"
+            style="@style/Base.Widget.AppCompat.Button.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:text="@string/select_address_key"
+            android:visibility="gone"
+/>
     </LinearLayout>
 </LinearLayout>

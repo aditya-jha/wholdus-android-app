@@ -10,6 +10,7 @@
     <string name="category_data_updated">intentFilter.CATEGORIES_DATA_UPDATED</string>
 
     <string name="buyer_product_data_updated">intentFilter.BUYER_PRODUCTS_DATA_UPDATED</string>
+    <string name="buyer_product_response_data_updated">intentFilter.BUYER_PRODUCT_RESPONSE_DATA_UPDATED</string>
 
     <string name="cart_data_updated">intentFilter.CART_DATA_UPDATED</string>
     <string name="cart_item_written">intentFilter.CART_ITEM_WRITTEN</string>
