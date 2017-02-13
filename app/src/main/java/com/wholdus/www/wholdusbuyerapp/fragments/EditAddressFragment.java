@@ -41,6 +41,7 @@ import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.activities.ProductDetailActivity;
 import com.wholdus.www.wholdusbuyerapp.databaseContracts.UserProfileContract.UserAddressTable;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.InputValidationHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TrackingHelper;
@@ -86,8 +87,6 @@ public class EditAddressFragment extends Fragment implements
     private int USER_ADDRESS_LOADER = 80;
     private final int USER_DB_LOADER = 81;
 
-    private static final String SHIPPING_SHARED_PREFERENCES = "ShippingSharedPreference";
-    private static final String PINCODE_KEY = "PincodeKey";
     private static final int MINIMUM_LOCATION_ACCURACY = 30;
     public static final int REQUEST_CHECK_SETTINGS = 0x1;
 
@@ -144,8 +143,8 @@ public class EditAddressFragment extends Fragment implements
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (mAddressID == -1 && m_ID == -1) {
-            SharedPreferences shippingPreferences = getActivity().getSharedPreferences(SHIPPING_SHARED_PREFERENCES, MODE_PRIVATE);
-            String pincode = shippingPreferences.getString(PINCODE_KEY, null);
+            SharedPreferences shippingPreferences = getActivity().getSharedPreferences(ProductDetailActivity.SHIPPING_SHARED_PREFERENCES, MODE_PRIVATE);
+            String pincode = shippingPreferences.getString(ProductDetailActivity.PINCODE_KEY, null);
             if (pincode != null) {
                 mPincodeEditText.setText(pincode);
             }

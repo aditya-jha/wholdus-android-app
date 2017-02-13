@@ -2,6 +2,7 @@ package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -43,10 +44,13 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.ContactsHelperClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.NavDrawerHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.ShortListMenuItemHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.CartLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Cart;
 import com.wholdus.www.wholdusbuyerapp.models.Notification;
+import com.wholdus.www.wholdusbuyerapp.services.BuyerContactsService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,6 +64,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     private static final int CONTACTS_PERMISSION = 0;
 
     private CartMenuItemHelper mCartMenuItemHelper;
+    private ShortListMenuItemHelper mShortListMenuItemHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +84,8 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         initNavigationDrawer(getIntent().getExtras());
 
         openToFragment(getFragmentToOpenName(savedInstanceState), null);
+
+        checkContactsToSend();
     }
 
     @Override
@@ -89,6 +96,9 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         FilterClass.resetCategoryFilter();
         if (mCartMenuItemHelper != null) {
             mCartMenuItemHelper.restartLoader();
+        }
+        if (mShortListMenuItemHelper != null){
+            mShortListMenuItemHelper.refreshShortListCount();
         }
     }
 
@@ -125,6 +135,7 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         getMenuInflater().inflate(R.menu.default_action_buttons, menu);
         mCartMenuItemHelper = new CartMenuItemHelper(this, menu.findItem(R.id.action_bar_checkout), getSupportLoaderManager());
         mCartMenuItemHelper.restartLoader();
+        mShortListMenuItemHelper = new ShortListMenuItemHelper(this, menu.findItem(R.id.action_bar_shortlist));
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -205,9 +216,16 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
                     }
                 }
             }).start();
+            startBuyerContactsService();
         } else {
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.WRITE_CONTACTS}, CONTACTS_PERMISSION);
         }
+    }
+
+    public void startBuyerContactsService(){
+        Intent intent = new Intent(this, BuyerContactsService.class);
+        intent.putExtra("TODO", TODO.SEND_BUYER_CONTACTS);
+        startService(intent);
     }
 
     @Override
@@ -399,6 +417,17 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     public void sendFragmentOpenBroadcast(String fragmentName){
         NavDrawerHelper.getInstance().setOpenActivity(this.getClass().getSimpleName());
         NavDrawerHelper.getInstance().setOpenFragment(fragmentName);
+    }
+
+    private void checkContactsToSend(){
+        SharedPreferences preferences = getSharedPreferences(BuyerContactsService.BUYER_CONTACTS_PREFERENCES, MODE_PRIVATE);
+        String sentContacts = preferences.getString(BuyerContactsService.SENT_CONTACTS_KEY, "0");
+        if (sentContacts.equals("0")){
+            if ((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED)
+                || (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED)){
+                startBuyerContactsService();
+            }
+        }
     }
 
 }

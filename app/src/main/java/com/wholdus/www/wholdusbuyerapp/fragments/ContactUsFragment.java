@@ -28,8 +28,10 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ContactsHelperClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.OkHttpHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TrackingHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HelpSupportListenerInterface;
+import com.wholdus.www.wholdusbuyerapp.services.BuyerContactsService;
 
 import org.json.JSONObject;
 
@@ -179,9 +181,16 @@ public class ContactUsFragment extends Fragment implements View.OnClickListener 
                     }
                 }
             }).start();
+            startBuyerContactsService();
         } else {
             requestPermissions(new String[]{Manifest.permission.WRITE_CONTACTS}, CONTACTS_PERMISSION);
         }
+    }
+
+    public void startBuyerContactsService(){
+        Intent intent = new Intent(getContext(), BuyerContactsService.class);
+        intent.putExtra("TODO", TODO.SEND_BUYER_CONTACTS);
+        getContext().startService(intent);
     }
 
     private void openWhatsapp(final String number) {

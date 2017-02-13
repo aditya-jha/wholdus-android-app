@@ -26,10 +26,13 @@ public class APIConstants {
 
     public static final String BUYER_PRODUCT_URL = "users/buyer/buyerproducts/";
     public static final String BUYER_PRODUCT_RESPONSE_URL = "users/buyer/buyerproducts/response/";
+    public static final String BUYER_PRODUCT_RESPONSE_COUNT_URL = "users/buyer/buyerproducts/response/count/";
 
     public static final String BUYER_DETAILS_URL = "users/buyer/";
     public static final String BUSINESS_TYPES_URL = "users/businesstype/";
     public static final String BUYER_ADDRESS_URL = "users/buyer/address/";
+
+    public static final String BUYER_CONTACTS_URL = "users/buyer/contacts/";
 
     public static final String FAQ_URL = "general/faqs/";
     public static final String ABOUT_US_URL = "general/aboutus/";
@@ -38,6 +41,8 @@ public class APIConstants {
     public static final String CONTACT_US_URL = "leads/contactus/";
 
     public static final String PINCODE_SERVICEABILITY_URL = "logistics/pincodeserviceability/";
+
+    public static final String CART_MIN_VALUE_URL = "general/configuration/cartminvalue/";
 
     public static final String CHECKOUT_URL = "checkout/";
     public static final String CART_URL = "cart/";

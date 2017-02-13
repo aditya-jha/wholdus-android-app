@@ -23,6 +23,7 @@ import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.databaseHelpers.CartDBHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.IntentFilters;
 import com.wholdus.www.wholdusbuyerapp.loaders.CartItemLoader;
 import com.wholdus.www.wholdusbuyerapp.models.CartItem;
 import com.wholdus.www.wholdusbuyerapp.singletons.VolleySingleton;
@@ -223,7 +224,7 @@ public class CartService extends IntentService {
     }
 
     private void sendCartItemWriteBroadCast(@Nullable Bundle extra) {
-        Intent intent = new Intent(getString(R.string.cart_item_written));
+        Intent intent = new Intent(IntentFilters.CART_ITEM_WRITTEN);
         if (extra != null) {
             intent.putExtra("extra", extra);
         }

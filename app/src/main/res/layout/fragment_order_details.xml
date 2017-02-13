@@ -4,12 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ProgressBar
-        android:id="@id/page_loader"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true" />
-
     <ScrollView
         android:id="@+id/page_layout"
         android:layout_width="match_parent"
@@ -225,10 +219,26 @@
                                 tools:text="Rs. 85000" />
                         </TableRow>
                     </TableLayout>
+
                 </LinearLayout>
+
+                <Button
+                    android:id="@+id/order_details_cancel_button"
+                    android:layout_marginRight="@dimen/card_margin_horizontal"
+                    android:layout_marginEnd="@dimen/card_margin_horizontal"
+                    style="@style/Base.Widget.AppCompat.Button.Colored"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:text="@string/order_details_cancel_order"
+                    android:visibility="gone"
+                    />
+
+
 
                 <android.support.v4.widget.NestedScrollView
                     android:layout_width="match_parent"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:layout_height="0dp"
                     android:layout_weight="1">
 
@@ -245,4 +255,10 @@
             </LinearLayout>
         </android.support.v7.widget.CardView>
     </ScrollView>
+
+    <ProgressBar
+        android:id="@id/page_loader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true" />
 </RelativeLayout>

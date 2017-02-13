@@ -99,6 +99,9 @@
             android:name=".services.BuyerProductService"
             android:exported="false" />
         <service
+            android:name=".services.BuyerContactsService"
+            android:exported="false" />
+        <service
             android:name=".services.CatalogService"
             android:exported="false" />
         <service

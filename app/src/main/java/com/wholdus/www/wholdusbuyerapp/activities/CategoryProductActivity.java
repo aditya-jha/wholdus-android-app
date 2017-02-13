@@ -26,7 +26,6 @@ import com.wholdus.www.wholdusbuyerapp.adapters.CategorySpinnerAdapter;
 import com.wholdus.www.wholdusbuyerapp.fragments.FilterFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProductsGridFragment;
-import com.wholdus.www.wholdusbuyerapp.helperClasses.CartMenuItemHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.NavDrawerHelper;
@@ -124,7 +123,7 @@ public class CategoryProductActivity extends AppCompatActivity
 
     @Override
     public Loader<ArrayList<Category>> onCreateLoader(int id, Bundle args) {
-        return new CategoriesGridLoader(this, false);
+        return new CategoriesGridLoader(this, false, null);
     }
 
     @Override

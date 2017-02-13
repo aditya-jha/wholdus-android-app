@@ -2,7 +2,9 @@ package com.wholdus.www.wholdusbuyerapp.helperClasses;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
@@ -103,7 +105,11 @@ public class CartMenuItemHelper {
         if (mCartItemCountTextView != null && mContext != null) {
             if (mCartProducts > 0) {
                 mCartItemCountTextView.setVisibility(View.VISIBLE);
-                mCartItemCountTextView.setText(String.valueOf(mCartProducts));
+                if (mCartProducts < 10) {
+                    mCartItemCountTextView.setText(String.valueOf(mCartProducts));
+                } else {
+                    mCartItemCountTextView.setText("9+");
+                }
             } else {
                 mCartItemCountTextView.setVisibility(View.INVISIBLE);
             }
