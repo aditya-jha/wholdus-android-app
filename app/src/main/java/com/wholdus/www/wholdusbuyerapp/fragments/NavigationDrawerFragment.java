@@ -115,7 +115,7 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
                 startActivity(new Intent(getContext(), HandPickedActivity.class));
                 break;
             case 2:
-                if (!NavDrawerHelper.getInstance().getOpenFragment().equals(CategoryGridFragment.class.getSimpleName())){
+                if (!NavDrawerHelper.getInstance().getOpenFragment().equals(CategoryGridFragment.class.getSimpleName())) {
                     Intent categories = new Intent(getContext(), HomeActivity.class);
                     categories.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     categories.putExtra(Constants.OPEN_FRAGMENT_KEY, CategoryGridFragment.class.getSimpleName());
@@ -236,35 +236,36 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
     }
 
     private void logout() {
+        if (getActivity() != null) {
+            final ProgressDialog progressDialog = new ProgressDialog(getContext());
 
-        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+            progressDialog.setTitle(getString(R.string.logout_loader_title));
+            progressDialog.setMessage(getString(R.string.logout_loader_message));
+            progressDialog.show();
+            progressDialog.setCanceledOnTouchOutside(false);
 
-        progressDialog.setTitle(getString(R.string.logout_loader_title));
-        progressDialog.setMessage(getString(R.string.logout_loader_message));
-        progressDialog.show();
-        progressDialog.setCanceledOnTouchOutside(false);
+            TrackingHelper.getInstance(getContext())
+                    .logEvent(
+                            FirebaseAnalytics.Event.SELECT_CONTENT,
+                            "logout",
+                            "");
 
-        TrackingHelper.getInstance(getContext())
-                .logEvent(
-                        FirebaseAnalytics.Event.SELECT_CONTENT,
-                        "logout",
-                        "");
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                LoginHelper loginHelper = new LoginHelper(getActivity().getApplicationContext());
-                if (loginHelper.logout()) {
-                    progressDialog.dismiss();
-                    Intent intent = new Intent(getContext(), LoginSignupActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    getActivity().startActivity(intent);
-                    getActivity().finish();
-                } else {
-                    progressDialog.dismiss();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    LoginHelper loginHelper = new LoginHelper(getActivity().getApplicationContext());
+                    if (loginHelper.logout()) {
+                        progressDialog.dismiss();
+                        Intent intent = new Intent(getContext(), LoginSignupActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        getActivity().startActivity(intent);
+                        getActivity().finish();
+                    } else {
+                        progressDialog.dismiss();
+                    }
                 }
-            }
-        }).start();
+            }).start();
+        }
     }
 
 }

@@ -112,7 +112,9 @@ public class CartDialogFragment extends DialogFragment implements View.OnClickLi
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
-        mListener.dismissDialog();
+        if (mListener != null) {
+            mListener.dismissDialog();
+        }
     }
 
     @Override
