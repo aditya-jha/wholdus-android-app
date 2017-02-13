@@ -202,7 +202,7 @@
     <string name="lot_details_key">Details &#160;</string>
     <string name="price_per_piece">Price/pc &#160;</string>
     <string name="pieces_key">Pieces</string>
-    <string name="remarks_key">Sizes, Other Remarks</string>
+    <string name="remarks_key">Mention Sizes, Other Remarks</string>
     <string name="total_price_key">Total</string>
     <string name="total_price_placeholder">Rs. &#160; &#160; &#160; &#160; &#160; </string>
     <string name="cart_dialog_shipping_condition">*Shipping charge extra = Rs.35/kg</string>

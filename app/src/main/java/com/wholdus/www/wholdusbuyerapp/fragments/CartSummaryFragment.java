@@ -37,11 +37,13 @@ import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoratio
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ContactsHelperClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartSummaryListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.CartLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Cart;
 import com.wholdus.www.wholdusbuyerapp.models.SubCart;
+import com.wholdus.www.wholdusbuyerapp.services.BuyerContactsService;
 import com.wholdus.www.wholdusbuyerapp.services.CartService;
 
 import java.util.ArrayList;
@@ -142,9 +144,16 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
                     }
                 }
             }).start();
+            startBuyerContactsService();
         } else {
             requestPermissions(new String[]{Manifest.permission.WRITE_CONTACTS}, CONTACTS_PERMISSION);
         }
+    }
+
+    public void startBuyerContactsService(){
+        Intent intent = new Intent(getContext(), BuyerContactsService.class);
+        intent.putExtra("TODO", TODO.SEND_BUYER_CONTACTS);
+        getContext().startService(intent);
     }
 
     private void openWhatsapp(final String number) {

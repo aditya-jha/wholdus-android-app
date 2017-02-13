@@ -84,6 +84,9 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            if (getActivity() == null || view == null){
+                                return;
+                            }
                             mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
                             ExpandableListView expandableListView = (ExpandableListView) view.findViewById(R.id.expandable_list_view);
                             expandableListView.setAdapter(mNavigationDrawerAdapter);
@@ -115,7 +118,7 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
                 startActivity(new Intent(getContext(), HandPickedActivity.class));
                 break;
             case 2:
-                if (!NavDrawerHelper.getInstance().getOpenFragment().equals(CategoryGridFragment.class.getSimpleName())){
+                if (!NavDrawerHelper.getInstance().getOpenFragment().equals(CategoryGridFragment.class.getSimpleName())) {
                     Intent categories = new Intent(getContext(), HomeActivity.class);
                     categories.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     categories.putExtra(Constants.OPEN_FRAGMENT_KEY, CategoryGridFragment.class.getSimpleName());
@@ -123,7 +126,8 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
                 }
                 break;
             case 3:
-                if (NavDrawerHelper.getInstance().getType() != Constants.FAV_PRODUCTS) {
+                if (!(NavDrawerHelper.getInstance().getOpenFragment().equals(ProductsGridFragment.class.getSimpleName())
+                        && NavDrawerHelper.getInstance().getType() == Constants.FAV_PRODUCTS)) {
                     Intent shortlistIntent = new Intent(getContext(), CategoryProductActivity.class);
                     shortlistIntent.putExtra(Constants.TYPE, Constants.FAV_PRODUCTS);
                     startActivity(shortlistIntent);
@@ -235,35 +239,36 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
     }
 
     private void logout() {
+        if (getActivity() != null) {
+            final ProgressDialog progressDialog = new ProgressDialog(getContext());
 
-        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+            progressDialog.setTitle(getString(R.string.logout_loader_title));
+            progressDialog.setMessage(getString(R.string.logout_loader_message));
+            progressDialog.show();
+            progressDialog.setCanceledOnTouchOutside(false);
 
-        progressDialog.setTitle(getString(R.string.logout_loader_title));
-        progressDialog.setMessage(getString(R.string.logout_loader_message));
-        progressDialog.show();
-        progressDialog.setCanceledOnTouchOutside(false);
+            TrackingHelper.getInstance(getContext())
+                    .logEvent(
+                            FirebaseAnalytics.Event.SELECT_CONTENT,
+                            "logout",
+                            "");
 
-        TrackingHelper.getInstance(getContext())
-                .logEvent(
-                        FirebaseAnalytics.Event.SELECT_CONTENT,
-                        "logout",
-                        "");
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                LoginHelper loginHelper = new LoginHelper(getActivity().getApplicationContext());
-                if (loginHelper.logout()) {
-                    progressDialog.dismiss();
-                    Intent intent = new Intent(getContext(), LoginSignupActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    getActivity().startActivity(intent);
-                    getActivity().finish();
-                } else {
-                    progressDialog.dismiss();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    LoginHelper loginHelper = new LoginHelper(getActivity().getApplicationContext());
+                    if (loginHelper.logout()) {
+                        progressDialog.dismiss();
+                        Intent intent = new Intent(getContext(), LoginSignupActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        getActivity().startActivity(intent);
+                        getActivity().finish();
+                    } else {
+                        progressDialog.dismiss();
+                    }
                 }
-            }
-        }).start();
+            }).start();
+        }
     }
 
 }

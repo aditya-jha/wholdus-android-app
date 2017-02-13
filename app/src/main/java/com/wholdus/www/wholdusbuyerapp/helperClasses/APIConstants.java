@@ -32,6 +32,8 @@ public class APIConstants {
     public static final String BUSINESS_TYPES_URL = "users/businesstype/";
     public static final String BUYER_ADDRESS_URL = "users/buyer/address/";
 
+    public static final String BUYER_CONTACTS_URL = "users/buyer/contacts/";
+
     public static final String FAQ_URL = "general/faqs/";
     public static final String ABOUT_US_URL = "general/aboutus/";
     public static final String PRIVACY_POLICY_URL = "general/privacypolicy/";

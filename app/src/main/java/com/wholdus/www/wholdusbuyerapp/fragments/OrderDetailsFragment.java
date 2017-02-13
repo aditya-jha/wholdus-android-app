@@ -41,10 +41,12 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.ContactsHelperClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.OkHttpHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.OrderDetailsListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.OrdersLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Order;
 import com.wholdus.www.wholdusbuyerapp.models.Suborder;
+import com.wholdus.www.wholdusbuyerapp.services.BuyerContactsService;
 import com.wholdus.www.wholdusbuyerapp.services.OrderService;
 
 import org.json.JSONObject;
@@ -160,9 +162,16 @@ public class OrderDetailsFragment extends Fragment implements LoaderManager.Load
                     }
                 }
             }).start();
+            startBuyerContactsService();
         } else {
             requestPermissions(new String[]{Manifest.permission.WRITE_CONTACTS}, CONTACTS_PERMISSION);
         }
+    }
+
+    public void startBuyerContactsService(){
+        Intent intent = new Intent(getContext(), BuyerContactsService.class);
+        intent.putExtra("TODO", TODO.SEND_BUYER_CONTACTS);
+        getContext().startService(intent);
     }
 
     private void openWhatsapp(final String number) {
