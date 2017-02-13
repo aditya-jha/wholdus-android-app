@@ -44,10 +44,12 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.NavDrawerHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ShortListMenuItemHelper;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.HomeListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.CartLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Cart;
 import com.wholdus.www.wholdusbuyerapp.models.Notification;
+import com.wholdus.www.wholdusbuyerapp.services.BuyerContactsService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -211,9 +213,16 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
                     }
                 }
             }).start();
+            startBuyerContactsService();
         } else {
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.WRITE_CONTACTS}, CONTACTS_PERMISSION);
         }
+    }
+
+    public void startBuyerContactsService(){
+        Intent intent = new Intent(this, BuyerContactsService.class);
+        intent.putExtra("TODO", TODO.SEND_BUYER_CONTACTS);
+        startService(intent);
     }
 
     @Override
