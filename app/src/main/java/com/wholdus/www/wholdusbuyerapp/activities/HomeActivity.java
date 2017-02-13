@@ -2,6 +2,7 @@ package com.wholdus.www.wholdusbuyerapp.activities;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -83,6 +84,8 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
         initNavigationDrawer(getIntent().getExtras());
 
         openToFragment(getFragmentToOpenName(savedInstanceState), null);
+
+        checkContactsToSend();
     }
 
     @Override
@@ -414,6 +417,17 @@ public class HomeActivity extends AppCompatActivity implements HomeListenerInter
     public void sendFragmentOpenBroadcast(String fragmentName){
         NavDrawerHelper.getInstance().setOpenActivity(this.getClass().getSimpleName());
         NavDrawerHelper.getInstance().setOpenFragment(fragmentName);
+    }
+
+    private void checkContactsToSend(){
+        SharedPreferences preferences = getSharedPreferences(BuyerContactsService.BUYER_CONTACTS_PREFERENCES, MODE_PRIVATE);
+        String sentContacts = preferences.getString(BuyerContactsService.SENT_CONTACTS_KEY, "0");
+        if (sentContacts.equals("0")){
+            if ((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED)
+                || (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED)){
+                startBuyerContactsService();
+            }
+        }
     }
 
 }
