@@ -84,6 +84,9 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            if (getActivity() == null || view == null){
+                                return;
+                            }
                             mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
                             ExpandableListView expandableListView = (ExpandableListView) view.findViewById(R.id.expandable_list_view);
                             expandableListView.setAdapter(mNavigationDrawerAdapter);
