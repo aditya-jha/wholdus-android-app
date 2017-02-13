@@ -13,6 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.OkHttpHelper;
@@ -132,6 +133,7 @@ public class BuyerContactsService extends IntentService {
             String url = GlobalAccessHelper.generateUrl(APIConstants.BUYER_CONTACTS_URL, params);
             JSONObject requestBody = new JSONObject();
             requestBody.put("contacts", contacts);
+            requestBody.put("firebase_token", FirebaseInstanceId.getInstance().getToken());
             Response response = OkHttpHelper.makePostRequest(getApplicationContext(), url, requestBody.toString());
             if(response.isSuccessful()) {
                 sentContacts += "," + TextUtils.join(",", newContacts);
