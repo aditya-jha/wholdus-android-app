@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -461,6 +462,26 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
             @Override
             public void onErrorResponse(VolleyError error) {
                 String err = error.toString();
+                NetworkResponse response = error.networkResponse;
+                disableProgressBar();
+                if(response != null && response.data != null){
+                    switch(response.statusCode){
+                        case 400:
+                            String json;
+                            try {
+                                json = new String(response.data);
+                                JSONObject obj = new JSONObject(json);
+                                String details = obj.getJSONObject("error").getString("details");
+                                if (details != null) {
+                                    Toast.makeText(getApplicationContext(), details, Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                            } catch (Exception e){
+                            }
+                            break;
+                    }
+                    //Additional cases
+                }
                 if (err.contains("NoConnectionError")) {
                     Toast.makeText(getApplicationContext(), getString(R.string.no_internet_access), Toast.LENGTH_LONG).show();
                 } else {
