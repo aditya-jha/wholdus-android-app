@@ -5,8 +5,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -34,9 +36,12 @@ import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.activities.HandPickedActivity;
 import com.wholdus.www.wholdusbuyerapp.adapters.SubCartAdapter;
 import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.ContactsHelperClass;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.FilterClass;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.GlobalAccessHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.HelperFunctions;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.OkHttpHelper;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.TODO;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartSummaryListenerInterface;
@@ -46,7 +51,14 @@ import com.wholdus.www.wholdusbuyerapp.models.SubCart;
 import com.wholdus.www.wholdusbuyerapp.services.BuyerContactsService;
 import com.wholdus.www.wholdusbuyerapp.services.CartService;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import static android.content.Context.MODE_PRIVATE;
+import static com.wholdus.www.wholdusbuyerapp.activities.CartActivity.CART_SELLER_MIN_PIECES_KEY;
+import static com.wholdus.www.wholdusbuyerapp.activities.CartActivity.CART_SHARED_PREFERENCES;
 
 /**
  * Created by kaustubh on 26/12/16.
@@ -69,6 +81,9 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
     private static final int CART_DB_LOADER = 90;
 
     private static final int CONTACTS_PERMISSION = 0;
+
+    private int mCartSellerMinPieces = 5;
+    private boolean mCartPiecesCondtionSatisfied = false;
 
     public CartSummaryFragment() {
     }
@@ -225,6 +240,11 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
     }
 
     public void initReferences(ViewGroup view) {
+
+        SharedPreferences cartPreferences = getActivity().getSharedPreferences(CART_SHARED_PREFERENCES, MODE_PRIVATE);
+        mCartSellerMinPieces = cartPreferences.getInt(CART_SELLER_MIN_PIECES_KEY, 5);
+        new CartSellerMinPiecesRequest().execute();
+
         mOrderValueTextView = (TextView) view.findViewById(R.id.cart_summary_order_value_text_view);
         mShippingChargeTextView = (TextView) view.findViewById(R.id.cart_summary_shipping_charge_text_view);
         mTopSummary = (CardView) view.findViewById(R.id.top_summary);
@@ -249,7 +269,7 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
         mSubCartListView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mSubCartListView.addItemDecoration(new RecyclerViewSpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.card_margin_vertical), 0));
         mSubCarts = new ArrayList<>();
-        mSubCartAdapter = new SubCartAdapter(getContext(), mSubCarts, this);
+        mSubCartAdapter = new SubCartAdapter(getContext(), mSubCarts, mCartSellerMinPieces, this);
         mSubCartListView.setAdapter(mSubCartAdapter);
         mSubCartListView.setNestedScrollingEnabled(false);
     }
@@ -327,7 +347,7 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
         mSubCartAdapter.notifyDataSetChanged();
         //HelperFunctions.setListViewHeightBasedOnChildren(mSubCartListView);
 
-        mListener.setCart(mCart);
+        mListener.setCart(mCart, mCartPiecesCondtionSatisfied);
 
         mListener.disableProgressBar();
     }
@@ -343,14 +363,18 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
         if (data != null && mListener != null) {
             if (data.getSynced() == 1) {
                 if (data.getPieces() > 0) {
+                    checkCartCondition();
                     setViewForCart();
                 } else {
+                    mCartPiecesCondtionSatisfied = false;
                     setViewForEmptyCart();
                 }
             } else {
+                mCartPiecesCondtionSatisfied = false;
                 setViewForUnsyncedCart();
             }
         } else if (mListener != null) {
+            mCartPiecesCondtionSatisfied = false;
             setViewForEmptyCart();
         }
     }
@@ -358,5 +382,46 @@ public class CartSummaryFragment extends Fragment implements LoaderManager.Loade
     @Override
     public Loader<Cart> onCreateLoader(int id, Bundle args) {
         return new CartLoader(getContext(), -1, true, true, true, true);
+    }
+
+    private void checkCartCondition(){
+        boolean cartPiecesConditionSatisfied = true;
+        for (SubCart subCart:mCart.getSubCarts()){
+            if (subCart.getPieces() < mCartSellerMinPieces){
+                cartPiecesConditionSatisfied = false;
+            }
+        }
+        mCartPiecesCondtionSatisfied = cartPiecesConditionSatisfied;
+    }
+
+    private class CartSellerMinPiecesRequest extends AsyncTask<Void, Void, Integer> {
+
+        protected Integer doInBackground(Void... par) {
+            HashMap<String, String> params = new HashMap<>();
+            String url = GlobalAccessHelper.generateUrl(APIConstants.CART_SELLER_MIN_PIECES_URL, params);
+            try {
+                okhttp3.Response response = OkHttpHelper.makeGetRequest(getActivity().getApplicationContext(), url);
+                if (response.isSuccessful()) {
+                    JSONObject responseJSON = new JSONObject(response.body().string());
+                    Integer result = responseJSON.getInt("cart_seller_min_pieces");
+                    response.body().close();
+                    return result;
+                } else {
+                    return -1;
+                }
+            }catch (Exception e) {
+                return -1;
+            }
+        }
+
+        protected void onPostExecute(Integer result) {
+            if (result != -1 && result != mCartSellerMinPieces){
+                mCartSellerMinPieces = result;
+                SharedPreferences cartPreferences = getActivity().getSharedPreferences(CART_SHARED_PREFERENCES, MODE_PRIVATE);
+                SharedPreferences.Editor editor = cartPreferences.edit();
+                editor.putInt(CART_SELLER_MIN_PIECES_KEY, result);
+                editor.apply();
+            }
+        }
     }
 }

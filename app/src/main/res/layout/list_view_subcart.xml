@@ -50,6 +50,7 @@
         android:layout_height="0.5dp"
         android:background="@color/divider" />
 
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/sub_cart_items_list_view"
         android:layout_width="match_parent"
@@ -60,6 +61,48 @@
         android:dividerHeight="1dp"
         android:listSelector="@android:color/transparent"
         android:scrollbars="none" />
+
+    <LinearLayout
+        android:id="@+id/cart_seller_min_pieces_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/card_margin_vertical"
+        android:gravity="center_horizontal">
+
+        <View
+            android:layout_marginBottom="@dimen/card_margin_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/divider" />
+
+        <TextView
+            android:id="@+id/cart_seller_min_pieces_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:fontFamily="@string/font_normal"
+            android:textColor="@color/primary_text"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            tools:text="15 pieces - Rs. 1000" />
+
+        <Button
+            android:id="@+id/more_products_from_seller_button"
+            android:layout_marginTop="@dimen/card_margin_vertical"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/AppTheme.ColoredButton"
+            android:textSize="14sp"
+            android:text="@string/more_products_from_seller"/>
+
+    </LinearLayout>
+
 
     <View
         android:layout_width="match_parent"
