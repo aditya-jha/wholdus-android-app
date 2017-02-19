@@ -77,9 +77,9 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
 
     private Toolbar mToolbar;
     private TextView mTotalTextView, mProductsPiecesTextView, mProceedButton;
-    //private TextView mCartMessageTextView;
+    private TextView mCartMessageTextView;
     private LinearLayout mProceedButtonLayout;
-    //private LinearLayout mCartMessageLayout;
+    private LinearLayout mCartMessageLayout;
     private ProgressBar mProgressBar;
     private boolean mCartPiecesCondtionSatisfied = false;
 
@@ -185,8 +185,8 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         });
         mProceedButton.setEnabled(false);
 
-        //mCartMessageLayout = (LinearLayout) findViewById(R.id.cart_message_layout);
-        //mCartMessageTextView = (TextView) findViewById(R.id.cart_message_text_view);
+        mCartMessageLayout = (LinearLayout) findViewById(R.id.cart_message_layout);
+        mCartMessageTextView = (TextView) findViewById(R.id.cart_message_text_view);
 
         //SharedPreferences cartPreferences = getSharedPreferences(CART_SHARED_PREFERENCES, MODE_PRIVATE);
         //mMinCartValue = cartPreferences.getInt(CART_MIN_VALUE_KEY, 2000);
@@ -352,7 +352,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         if (mCart == null || mCart.getSynced() == 0 || mCart.getPieces() == 0){
             mProceedButton.setEnabled(false);
             mProceedButtonLayout.setVisibility(View.GONE);
-            //mCartMessageLayout.setVisibility(View.GONE);
+            mCartMessageLayout.setVisibility(View.GONE);
 
         } else {
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.cart_fragment_container);
@@ -360,7 +360,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
                     fragment instanceof OrderDetailsFragment)) {
                 mProceedButton.setEnabled(false);
                 mProceedButtonLayout.setVisibility(View.GONE);
-                //mCartMessageLayout.setVisibility(View.GONE);
+                mCartMessageLayout.setVisibility(View.GONE);
             } else {
                 mProceedButtonLayout.setVisibility(View.VISIBLE);
                 CODApplied(mPaymentMethod == 0);
@@ -369,12 +369,12 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
                 mProceedButton.setEnabled(true);
             }
 
-            /*if (mCart.getFinalPrice() < mMinCartValue){
-                mCartMessageLayout.setVisibility(View.VISIBLE);
-                mCartMessageTextView.setText(String.format(getString(R.string.cart_min_cart_value_message), mMinCartValue));
-            } else {
+            if (mCartPiecesCondtionSatisfied){
                 mCartMessageLayout.setVisibility(View.GONE);
-            }*/
+            } else {
+                mCartMessageLayout.setVisibility(View.VISIBLE);
+                mCartMessageTextView.setText(getString(R.string.cart_condition_not_satified));
+            }
         }
     }
 
@@ -584,17 +584,14 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
             } else if (mCart.getSynced()==0){
                 syncCartItems();
             } else if (mStatus == 0 && mCheckoutID == null && mCart.getSynced() == 1) {
-                /*
-                if (mCart.getFinalPrice() < 2000){
-                    if (mCartMessageLayout.getVisibility() == View.VISIBLE){
-                        Animation animation = AnimationUtils.loadAnimation(this, R.anim.button_scale_down_up_prominent);
-                        mCartMessageTextView.startAnimation(animation);
-                    }
-                }*/
+
                 if (mCartPiecesCondtionSatisfied) {
                     updateCart(requestBody, Request.Method.POST, TODO.CREATE_CART, params);
                 } else {
-                    Toast.makeText(this, R.string.cart_condition_not_satified, Toast.LENGTH_SHORT).show();
+                    if (mCartMessageLayout.getVisibility() == View.VISIBLE) {
+                        Animation animation = AnimationUtils.loadAnimation(this, R.anim.button_scale_down_up_prominent);
+                        mCartMessageTextView.startAnimation(animation);
+                    }
                 }
             } else if (mStatus == 0 && mCheckoutID != null && mCheckoutID > 0 && mBuyerAddressID > 0) {
                 requestBody.put("checkoutID", mCheckoutID);

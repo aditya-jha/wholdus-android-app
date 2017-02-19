@@ -28,7 +28,6 @@
             android:layout_centerVertical="true" />
     </RelativeLayout>
 
-    <!--
     <LinearLayout
         android:id="@+id/cart_message_layout"
         style="@style/Theme.AppCompat.Light.DarkActionBar"
@@ -57,7 +56,7 @@
             android:textColor="@color/accent"
             tools:text="Minimum cart value must be Rs.2000 to place order" />
 
-    </LinearLayout>-->
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"

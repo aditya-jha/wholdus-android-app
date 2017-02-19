@@ -29,7 +29,7 @@
             android:fontFamily="@string/font_normal"
             android:textAllCaps="true"
             android:textColor="@color/primary_text"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             tools:text="Anjani Kurti Anjani Kurti Anjani Kurti Anjani Kurti" />
 
@@ -41,6 +41,7 @@
             android:gravity="end"
             android:textColor="@color/primary_text"
             android:textSize="16sp"
+            android:textStyle="bold"
             tools:text="15 pieces - Rs. 1000" />
 
     </LinearLayout>
@@ -50,18 +51,6 @@
         android:layout_height="0.5dp"
         android:background="@color/divider" />
 
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/sub_cart_items_list_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/primary"
-        android:descendantFocusability="afterDescendants"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="1dp"
-        android:listSelector="@android:color/transparent"
-        android:scrollbars="none" />
-
     <LinearLayout
         android:id="@+id/cart_seller_min_pieces_layout"
         android:layout_width="match_parent"
@@ -70,12 +59,6 @@
         android:paddingTop="@dimen/activity_vertical_margin"
         android:paddingBottom="@dimen/card_margin_vertical"
         android:gravity="center_horizontal">
-
-        <View
-            android:layout_marginBottom="@dimen/card_margin_vertical"
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/divider" />
 
         <TextView
             android:id="@+id/cart_seller_min_pieces_text_view"
@@ -101,8 +84,26 @@
             android:textSize="14sp"
             android:text="@string/more_products_from_seller"/>
 
+        <View
+            android:layout_marginTop="@dimen/card_margin_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/divider" />
+
     </LinearLayout>
 
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/sub_cart_items_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary"
+        android:descendantFocusability="afterDescendants"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="1dp"
+        android:listSelector="@android:color/transparent"
+        android:scrollbars="none" />
 
     <View
         android:layout_width="match_parent"
