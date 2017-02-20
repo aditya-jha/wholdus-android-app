@@ -97,6 +97,8 @@ public class CategoryProductActivity extends AppCompatActivity
         } else if(mType == Constants.MANUFACTURER_PRODUCTS){
             mCategorySpinner.setVisibility(View.INVISIBLE);
             mSellerID = intent.getIntExtra(CatalogContract.SellersTable.COLUMN_SELLER_ID,0);
+            FilterClass.resetFilter();
+            FilterClass.resetCategoryFilter();
             refreshSellerVariables();
         }
         else {
@@ -115,8 +117,6 @@ public class CategoryProductActivity extends AppCompatActivity
 
     private void refreshSellerVariables(){
         if (mSellerID >0){
-            FilterClass.resetFilter();
-            FilterClass.resetCategoryFilter();
             getSupportLoaderManager().initLoader(SELLER_LOADER, null, new SellerLoaderManager(this));
             FilterClass.toggleFilterItem(FilterClass.FILTER_BRAND_KEY, String.valueOf(mSellerID));
         }
@@ -272,6 +272,9 @@ public class CategoryProductActivity extends AppCompatActivity
             showBackButtonInToolbar();
             if (mType != Constants.ALL_PRODUCTS) {
                 bundle.putBoolean("CategoryDisplayed", true);
+            }
+            if (mSellerID > 0){
+                bundle.putBoolean("BrandDisplayed", false);
             }
             fragment = new FilterFragment();
         } else {
