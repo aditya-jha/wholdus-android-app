@@ -43,6 +43,7 @@ public class APIConstants {
     public static final String PINCODE_SERVICEABILITY_URL = "logistics/pincodeserviceability/";
 
     public static final String CART_MIN_VALUE_URL = "general/configuration/cartminvalue/";
+    public static final String CART_SELLER_MIN_PIECES_URL = "general/configuration/cartsellerminpieces/";
 
     public static final String CHECKOUT_URL = "checkout/";
     public static final String CART_URL = "cart/";

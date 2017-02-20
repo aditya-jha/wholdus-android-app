@@ -959,11 +959,17 @@ public class CatalogDBHelper extends BaseDBHelper {
         return sellers;
     }
 
-    public Cursor getCategorySellers(int categoryID) {
+    public Cursor getCategorySellers(int categoryID, int sellerID) {
         String query = "SELECT * FROM " + CategorySellersTable.TABLE_NAME;
+        boolean whereApplied = false;
         if (categoryID != -1){
-            query += " WHERE " + CategorySellersTable.COLUMN_CATEGORY_ID + "=" + categoryID;
+            query += " WHERE " + CategorySellersTable.COLUMN_CATEGORY_ID + " = " + categoryID;
+            whereApplied = true;
         }
+        if (sellerID != -1){
+            query += whereClauseHelper(whereApplied) + CategorySellersTable.COLUMN_SELLER_ID + " = " + sellerID;
+        }
+        query += " GROUP BY " + CategorySellersTable.COLUMN_SELLER_ID;
         return getCursor(query);
     }
 

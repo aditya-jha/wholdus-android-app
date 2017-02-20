@@ -1,20 +1,18 @@
 package com.wholdus.www.wholdusbuyerapp.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +21,7 @@ import android.widget.Spinner;
 
 import com.wholdus.www.wholdusbuyerapp.R;
 import com.wholdus.www.wholdusbuyerapp.adapters.CategorySpinnerAdapter;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.fragments.FilterFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.NavigationDrawerFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.ProductsGridFragment;
@@ -32,7 +31,9 @@ import com.wholdus.www.wholdusbuyerapp.helperClasses.NavDrawerHelper;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CartDialogListener;
 import com.wholdus.www.wholdusbuyerapp.interfaces.CategoryProductListenerInterface;
 import com.wholdus.www.wholdusbuyerapp.loaders.CategoriesGridLoader;
+import com.wholdus.www.wholdusbuyerapp.loaders.SellerLoader;
 import com.wholdus.www.wholdusbuyerapp.models.Category;
+import com.wholdus.www.wholdusbuyerapp.models.Seller;
 
 import java.util.ArrayList;
 
@@ -42,10 +43,11 @@ public class CategoryProductActivity extends AppCompatActivity
 
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolbar;
-    private static final int CATEGORY_LOADER = 0;
+    private static final int CATEGORY_LOADER = 0, SELLER_LOADER = 1;
     private Spinner mCategorySpinner;
     private boolean mFilterFragmentActive;
     private int mType;
+    private int mSellerID = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,8 +94,17 @@ public class CategoryProductActivity extends AppCompatActivity
                 }
             });
             getSupportLoaderManager().initLoader(CATEGORY_LOADER, null, this);
-        } else {
+        } else if(mType == Constants.MANUFACTURER_PRODUCTS){
             mCategorySpinner.setVisibility(View.INVISIBLE);
+            mSellerID = intent.getIntExtra(CatalogContract.SellersTable.COLUMN_SELLER_ID,0);
+            FilterClass.resetFilter();
+            FilterClass.resetCategoryFilter();
+            refreshSellerVariables();
+        }
+        else {
+            mCategorySpinner.setVisibility(View.INVISIBLE);
+            FilterClass.resetFilter();
+            FilterClass.resetCategoryFilter();
         }
 
         updateProducts();
@@ -102,6 +113,13 @@ public class CategoryProductActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    private void refreshSellerVariables(){
+        if (mSellerID >0){
+            getSupportLoaderManager().initLoader(SELLER_LOADER, null, new SellerLoaderManager(this));
+            FilterClass.toggleFilterItem(FilterClass.FILTER_BRAND_KEY, String.valueOf(mSellerID));
+        }
     }
 
     @Override
@@ -194,6 +212,8 @@ public class CategoryProductActivity extends AppCompatActivity
                 getSupportActionBar().setTitle(getString(R.string.shortlist_title));
             } else if (mType == Constants.REJECTED_PRODUCTS) {
                 getSupportActionBar().setTitle(getString(R.string.rejected_title));
+            }else if (mType == Constants.MANUFACTURER_PRODUCTS) {
+                getSupportActionBar().setTitle(null);
             } else {
                 getSupportActionBar().setTitle(null);
             }
@@ -253,6 +273,9 @@ public class CategoryProductActivity extends AppCompatActivity
             if (mType != Constants.ALL_PRODUCTS) {
                 bundle.putBoolean("CategoryDisplayed", true);
             }
+            if (mSellerID > 0){
+                bundle.putBoolean("BrandDisplayed", false);
+            }
             fragment = new FilterFragment();
         } else {
             mFilterFragmentActive = false;
@@ -287,5 +310,29 @@ public class CategoryProductActivity extends AppCompatActivity
         CategorySpinnerAdapter adapter = new CategorySpinnerAdapter(this, data);
         mCategorySpinner.setAdapter(adapter);
         mCategorySpinner.setSelection(adapter.getPositionFromID(FilterClass.getCategoryID()));
+    }
+
+    private class SellerLoaderManager implements LoaderManager.LoaderCallbacks<Seller>{
+        private Context mContext;
+
+        public SellerLoaderManager(Context context){
+            mContext = context;
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Seller> loader) {
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Seller> loader, Seller data) {
+            if (mToolbar != null && data != null){
+                mToolbar.setTitle(data.getCompanyName());
+            }
+        }
+
+        @Override
+        public Loader<Seller> onCreateLoader(final int id, Bundle args) {
+            return new SellerLoader(mContext, mSellerID);
+        }
     }
 }

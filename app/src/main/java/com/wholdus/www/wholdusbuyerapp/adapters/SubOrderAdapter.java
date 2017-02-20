@@ -1,6 +1,7 @@
 package com.wholdus.www.wholdusbuyerapp.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,7 +12,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.wholdus.www.wholdusbuyerapp.R;
+import com.wholdus.www.wholdusbuyerapp.activities.CategoryProductActivity;
+import com.wholdus.www.wholdusbuyerapp.databaseContracts.CatalogContract;
 import com.wholdus.www.wholdusbuyerapp.decorators.RecyclerViewSpaceItemDecoration;
+import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
 import com.wholdus.www.wholdusbuyerapp.models.Suborder;
 
 import java.util.ArrayList;
@@ -42,12 +46,22 @@ public class SubOrderAdapter extends RecyclerView.Adapter<SubOrderAdapter.MyView
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        Suborder subOrder = mData.get(position);
+        final Suborder subOrder = mData.get(position);
 
         holder.sellerName.setText(subOrder.getSeller().getCompanyName());
         holder.summary.setText(String.format(mContext.getString(R.string.pieces_price_format),
                 String.valueOf((int) Math.ceil(subOrder.getPieces())),
                 String.valueOf((int) Math.ceil(subOrder.getFinalPrice()))));
+
+        holder.sellerName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, CategoryProductActivity.class);
+                intent.putExtra(CatalogContract.SellersTable.COLUMN_SELLER_ID, subOrder.getSellerID());
+                intent.putExtra(Constants.TYPE, Constants.MANUFACTURER_PRODUCTS);
+                mContext.startActivity(intent);
+            }
+        });
 
         OrderItemsAdapter orderItemsAdapter = new OrderItemsAdapter(mContext, subOrder.getOrderItems());
         holder.orderItems.setAdapter(orderItemsAdapter);

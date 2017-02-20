@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -38,7 +39,6 @@ import com.wholdus.www.wholdusbuyerapp.fragments.CartSummaryFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.CheckoutAddressConfirmFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.CheckoutPaymentMethodFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.EditAddressFragment;
-import com.wholdus.www.wholdusbuyerapp.fragments.HandPickedFragment;
 import com.wholdus.www.wholdusbuyerapp.fragments.OrderDetailsFragment;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.APIConstants;
 import com.wholdus.www.wholdusbuyerapp.helperClasses.Constants;
@@ -73,20 +73,24 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     private Cart mCart;
     private Integer mCheckoutID;
     private int mOrderID = -1;
-    private int mMinCartValue = 2000;
+    //private int mMinCartValue = 2000;
 
     private Toolbar mToolbar;
-    private TextView mTotalTextView, mProductsPiecesTextView, mProceedButton, mCartMessageTextView;
-    private LinearLayout mProceedButtonLayout, mCartMessageLayout;
+    private TextView mTotalTextView, mProductsPiecesTextView, mProceedButton;
+    private TextView mCartMessageTextView;
+    private LinearLayout mProceedButtonLayout;
+    private LinearLayout mCartMessageLayout;
     private ProgressBar mProgressBar;
+    private boolean mCartPiecesCondtionSatisfied = false;
 
     private BroadcastReceiver mOrderServiceResponseReceiver, mUserAddressServiceResponseReceiver, mCartServiceBroadcastReceiver;
 
     public static final String REQUEST_TAG = "CHECKOUT_API_REQUESTS";
 
-    private static final String
+    public static final String
             CART_SHARED_PREFERENCES = "CartSharedPreference",
-            CART_MIN_VALUE_KEY = "CartMinValueKey";
+            CART_MIN_VALUE_KEY = "CartMinValueKey",
+            CART_SELLER_MIN_PIECES_KEY = "CartSellerMinPieces";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,9 +188,9 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
         mCartMessageLayout = (LinearLayout) findViewById(R.id.cart_message_layout);
         mCartMessageTextView = (TextView) findViewById(R.id.cart_message_text_view);
 
-        SharedPreferences cartPreferences = getSharedPreferences(CART_SHARED_PREFERENCES, MODE_PRIVATE);
-        mMinCartValue = cartPreferences.getInt(CART_MIN_VALUE_KEY, 2000);
-        new CartMinValueRequest().execute();
+        //SharedPreferences cartPreferences = getSharedPreferences(CART_SHARED_PREFERENCES, MODE_PRIVATE);
+        //mMinCartValue = cartPreferences.getInt(CART_MIN_VALUE_KEY, 2000);
+        //new CartMinValueRequest().execute();
     }
 
     @Override
@@ -314,8 +318,9 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
     }
 
     @Override
-    public void setCart(Cart cart) {
+    public void setCart(Cart cart, boolean cartPiecesCondtionSatisfied) {
         mCart = cart;
+        mCartPiecesCondtionSatisfied = cartPiecesCondtionSatisfied;
         setViewForProceedButtonLayout();
     }
 
@@ -364,11 +369,11 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
                 mProceedButton.setEnabled(true);
             }
 
-            if (mCart.getFinalPrice() < mMinCartValue){
-                mCartMessageLayout.setVisibility(View.VISIBLE);
-                mCartMessageTextView.setText(String.format(getString(R.string.cart_min_cart_value_message), mMinCartValue));
-            } else {
+            if (mCartPiecesCondtionSatisfied){
                 mCartMessageLayout.setVisibility(View.GONE);
+            } else {
+                mCartMessageLayout.setVisibility(View.VISIBLE);
+                mCartMessageTextView.setText(getString(R.string.cart_condition_not_satified));
             }
         }
     }
@@ -461,6 +466,26 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
             @Override
             public void onErrorResponse(VolleyError error) {
                 String err = error.toString();
+                NetworkResponse response = error.networkResponse;
+                disableProgressBar();
+                if(response != null && response.data != null){
+                    switch(response.statusCode){
+                        case 400:
+                            String json;
+                            try {
+                                json = new String(response.data);
+                                JSONObject obj = new JSONObject(json);
+                                String details = obj.getJSONObject("error").getString("details");
+                                if (details != null) {
+                                    Toast.makeText(getApplicationContext(), details, Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                            } catch (Exception e){
+                            }
+                            break;
+                    }
+                    //Additional cases
+                }
                 if (err.contains("NoConnectionError")) {
                     Toast.makeText(getApplicationContext(), getString(R.string.no_internet_access), Toast.LENGTH_LONG).show();
                 } else {
@@ -559,13 +584,14 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
             } else if (mCart.getSynced()==0){
                 syncCartItems();
             } else if (mStatus == 0 && mCheckoutID == null && mCart.getSynced() == 1) {
-                if (mCart.getFinalPrice() < 2000){
-                    if (mCartMessageLayout.getVisibility() == View.VISIBLE){
+
+                if (mCartPiecesCondtionSatisfied) {
+                    updateCart(requestBody, Request.Method.POST, TODO.CREATE_CART, params);
+                } else {
+                    if (mCartMessageLayout.getVisibility() == View.VISIBLE) {
                         Animation animation = AnimationUtils.loadAnimation(this, R.anim.button_scale_down_up_prominent);
                         mCartMessageTextView.startAnimation(animation);
                     }
-                } else {
-                    updateCart(requestBody, Request.Method.POST, TODO.CREATE_CART, params);
                 }
             } else if (mStatus == 0 && mCheckoutID != null && mCheckoutID > 0 && mBuyerAddressID > 0) {
                 requestBody.put("checkoutID", mCheckoutID);
@@ -606,7 +632,7 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
 
     }
 
-    private class CartMinValueRequest extends AsyncTask<Void, Void, Integer> {
+    /*private class CartMinValueRequest extends AsyncTask<Void, Void, Integer> {
 
         protected Integer doInBackground(Void... par) {
             HashMap<String, String> params = new HashMap<>();
@@ -635,7 +661,5 @@ public class CartActivity extends AppCompatActivity implements CartListenerInter
                 editor.apply();
             }
         }
-
-
-    }
+    }*/
 }

@@ -56,6 +56,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
     private String mSelectedFilter;
     private CategoryProductListenerInterface mListener;
     private boolean mCategoryDisplayed = false;
+    private boolean mBrandDisplayed = true;
 
     private static final int CATEGORY_SELLERS_DB_LOADER =2001;
     private static final int CATEGORY_DB_LOADER =2002;
@@ -82,6 +83,11 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
         Bundle args = getArguments();
         try {
             mCategoryDisplayed = args.getBoolean("CategoryDisplayed");
+        } catch (Exception e) {
+
+        }
+        try {
+            mBrandDisplayed = args.getBoolean("BrandDisplayed", true);
         } catch (Exception e) {
 
         }
@@ -233,7 +239,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
             }
         });
 
-        mFilterData = FiltersData.getData(mCategoryDisplayed);
+        mFilterData = FiltersData.getData(mCategoryDisplayed, mBrandDisplayed);
 
         /* TODO: better to create separate class */
         mFilterKeysAdapter = new ArrayAdapter<String>(getContext(), R.layout.list_item_filter_key, new ArrayList<>(mFilterData.keySet())) {
@@ -253,7 +259,9 @@ public class FilterFragment extends Fragment implements View.OnClickListener,
         mFilterKeys.setOnItemClickListener(this);
 
         mFilterValuesAdapter = new FilterValuesDisplayAdapter(getContext(), new ArrayList<String>(), "");
-        mBrandFilterValuesAdapter = new FilterBrandValuesDisplayAdapter(getContext(), new ArrayList<CategorySeller>());
+        if (mBrandDisplayed) {
+            mBrandFilterValuesAdapter = new FilterBrandValuesDisplayAdapter(getContext(), new ArrayList<CategorySeller>());
+        }
         if (mCategoryDisplayed) {
             mCategoryFilterValuesAdapter = new FilterCategoryValuesDisplayAdapter(getContext(), new ArrayList<Category>());
         }

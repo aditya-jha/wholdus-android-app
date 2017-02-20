@@ -75,7 +75,7 @@ public class ProductDetailActivity extends AppCompatActivity
             mProductPattern, mProductStyle, mProductWork, mSellerName, mSellerLocation,
             mSellerSpeciality, mCartButton;
     private ImageView mFavButton;
-    private Button mCheckPincodeButton;
+    private Button mCheckPincodeButton, mMoreProductsFromSellerButton;
     private TextInputEditText mPincodeEditText;
     private TextInputLayout mPincodeWrapper;
     private String mPincodeText = "";
@@ -132,6 +132,9 @@ public class ProductDetailActivity extends AppCompatActivity
 
         mCartButton = (TextView) findViewById(R.id.cart_button);
         mCartButton.setOnClickListener(this);
+
+        mMoreProductsFromSellerButton = (Button) findViewById(R.id.more_products_from_seller_button);
+        mMoreProductsFromSellerButton.setOnClickListener(this);
 
         mPincodeEditText = (TextInputEditText) findViewById(R.id.pincode_edit_text);
         mPincodeWrapper = (TextInputLayout) findViewById(R.id.pincode_wrapper);
@@ -298,6 +301,14 @@ public class ProductDetailActivity extends AppCompatActivity
                     editor.clear();
                     editor.apply();
                     clearPincodeCheck();
+                }
+                break;
+            case R.id.more_products_from_seller_button:
+                if (mProduct!= null){
+                    Intent sellerProductsIntent = new Intent(this, CategoryProductActivity.class);
+                    sellerProductsIntent.putExtra(CatalogContract.SellersTable.COLUMN_SELLER_ID, mProduct.getSellerID());
+                    sellerProductsIntent.putExtra(Constants.TYPE, Constants.MANUFACTURER_PRODUCTS);
+                    startActivity(sellerProductsIntent);
                 }
         }
     }

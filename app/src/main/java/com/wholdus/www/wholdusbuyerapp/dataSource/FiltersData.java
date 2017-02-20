@@ -14,7 +14,7 @@ import java.util.logging.Filter;
  */
 
 public class FiltersData {
-    public static LinkedHashMap<String, ArrayList<String>> getData(boolean categoryDisplayed) {
+    public static LinkedHashMap<String, ArrayList<String>> getData(boolean categoryDisplayed, boolean brandDisplayed) {
         LinkedHashMap<String, ArrayList<String>> data = new LinkedHashMap<>();
 
         /* TODO: validate moving these values dynamic */
@@ -60,7 +60,9 @@ public class FiltersData {
         }
 
         data.put(FilterClass.FILTER_FABRIC_KEY, new ArrayList<>(Arrays.asList(fabric)));
-        data.put(FilterClass.FILTER_BRAND_KEY, new ArrayList<String>());
+        if (brandDisplayed) {
+            data.put(FilterClass.FILTER_BRAND_KEY, new ArrayList<String>());
+        }
         data.put(FilterClass.FILTER_COLOUR_KEY, new ArrayList<>(Arrays.asList(colors)));
         data.put(FilterClass.FILTER_SIZE_KEY, new ArrayList<>(Arrays.asList(sizes)));
 

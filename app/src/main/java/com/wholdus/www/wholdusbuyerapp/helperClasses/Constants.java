@@ -29,4 +29,6 @@ public final class Constants {
     public static final int REJECTED_PRODUCTS = 2;
     public static final int FAV_PRODUCTS = 1;
     public static final int ALL_PRODUCTS = 0;
+    public static final int MANUFACTURER_PRODUCTS = 3;
+
 }

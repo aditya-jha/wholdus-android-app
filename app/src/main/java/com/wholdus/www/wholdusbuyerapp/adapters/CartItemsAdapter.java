@@ -104,17 +104,21 @@ public class CartItemsAdapter extends RecyclerView.Adapter<CartItemsAdapter.MyVi
         holder.editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    FragmentManager fragmentManager = ((FragmentActivity) mContext).getSupportFragmentManager();
-                    CartDialogFragment dialogFragment = new CartDialogFragment();
-                    Bundle args = new Bundle();
-                    args.putInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, product.getProductID());
-                    args.putBoolean("showToast", false);
-                    dialogFragment.setArguments(args);
-                    dialogFragment.show(fragmentManager, dialogFragment.getClass().getSimpleName());
-                }catch (Exception e){
-                    Log.w("Test", e);
-                }
+                openCartDialogFragment(product);
+            }
+        });
+
+        holder.total.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openCartDialogFragment(product);
+            }
+        });
+
+        holder.selectedPieces.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openCartDialogFragment(product);
             }
         });
 
@@ -142,6 +146,19 @@ public class CartItemsAdapter extends RecyclerView.Adapter<CartItemsAdapter.MyVi
 
             }
         });
+    }
+
+    private void openCartDialogFragment(Product product){
+        try {
+            FragmentManager fragmentManager = ((FragmentActivity) mContext).getSupportFragmentManager();
+            CartDialogFragment dialogFragment = new CartDialogFragment();
+            Bundle args = new Bundle();
+            args.putInt(CatalogContract.ProductsTable.COLUMN_PRODUCT_ID, product.getProductID());
+            args.putBoolean("showToast", false);
+            dialogFragment.setArguments(args);
+            dialogFragment.show(fragmentManager, dialogFragment.getClass().getSimpleName());
+        }catch (Exception e){
+        }
     }
 
     private void addProductToCart(int pieces, int position) {
